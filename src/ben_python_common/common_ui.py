@@ -306,22 +306,7 @@ def registerDebughook(b=True):
     else:
         sys.excepthook = sys.__excepthook__
 
-def softDeleteFileFull(s, destination, allowDirs=False, doTrace=False):
-    # as a prefix, the first 2 chars of the parent directory
-    prefix = files.getname(files.getparent(s))[0:2] + '_'
-    newname = destination + files.sep + prefix + files.split(s)[1] + getRandomString()
-    if files.exists(newname):
-        raise Exception('already exists ' + newname +
-            '. is this directory full of files, or was the random seed reused?')
-
-    if doTrace:
-        trace('softDeleteFile()', s, '|to|', newname)
-
-    files.move(s, newname, overwrite=False,
-        warnBetweenDrives=True, allowDirs=allowDirs)
-    return newname
-
-def softDeleteFile(s, allowDirs=False, doTrace=False):
+def getSoftDeleteDir(s):
     try:
         from . import nocpy_get_delete_location
     except ImportError:
@@ -332,5 +317,26 @@ def softDeleteFile(s, allowDirs=False, doTrace=False):
     else:
         destination = files.join(tempfile.gettempdir(), 'ben_python_common_trash')
         files.makedirs(destination)
+    return destination
 
+def getSoftDeleteFullPath(s, destination):
+    # as a prefix, the first 2 chars of the parent directory
+    prefix = files.getname(files.getparent(s))[0:2] + '_'
+    newname = destination + files.sep + prefix + files.split(s)[1] + getRandomString()
+    if files.exists(newname):
+        raise Exception('already exists ' + newname +
+            '. is this directory full of files, or was the random seed reused?')
+    return newname
+
+def softDeleteFileFull(s, destination, allowDirs=False, doTrace=False):
+    newname = getSoftDeleteFullPath(s, destination)
+    if doTrace:
+        trace('softDeleteFile()', s, '|to|', newname)
+
+    files.move(s, newname, overwrite=False,
+        warnBetweenDrives=True, allowDirs=allowDirs)
+    return newname
+
+def softDeleteFile(s, allowDirs=False, doTrace=False):
+    destination = getSoftDeleteDir(s)
     return softDeleteFileFull(s, destination, allowDirs=allowDirs, doTrace=doTrace)

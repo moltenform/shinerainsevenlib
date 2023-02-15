@@ -42,6 +42,11 @@ def getext(s, removeDot=True):
     else:
         return b.lower()
 
+def getwithdifferentext(s, ext_with_dot):
+    parent, short = os.path.split(s)
+    short_before_ext, short_ext = os.path.splitext(short)
+    return os.path.join(parent, short_before_ext + ext_with_dot)
+
 def delete(s, traceToStdout=False):
     if traceToStdout:
         trace('delete()', s)
@@ -441,29 +446,6 @@ warnExt = {'.0xe': 1, '.73k': 1, '.89k': 1, '.a6p': 1, '.ac': 1, '.acc': 1, '.ac
     '.widget': 1, '.wiz': 1, '.wpk': 1, '.wpm': 1, '.xap': 1, '.xbap': 1, '.xlam': 1, '.xlm': 1,
     '.xlsm': 1, '.xltm': 1, '.xqt': 1, '.xys': 1, '.zl9': 1}
 
-# from Duplicati's default_compressed_extensions.txt
-# GNU Lesser General Public License v2.1
-alreadyCompressedExt = {'.7z': 1, '.alz': 1, '.bz': 1, '.bz2': 1, '.cab': 1, '.cbr': 1, '.cbz': 1,
-    '.deb': 1, '.dl_': 1, '.dsft': 1, '.ex_': 1, '.gz': 1, '.jar': 1, '.lzma': 1, '.mpkg': 1,
-    '.msi': 1, '.msp': 1, '.msu': 1, '.pet': 1, '.rar': 1, '.rpm': 1, '.sft': 1, '.sfx': 1,
-    '.sit': 1, '.sitx': 1, '.sy_': 1, '.tgz': 1, '.war': 1, '.wim': 1, '.xar': 1, '.xz': 1,
-    '.zip': 1, '.zipx': 1, '.3gp': 1, '.aa3': 1, '.aac': 1, '.aif': 1, '.ape': 1, '.file': 1,
-    '.flac': 1, '.gsm': 1, '.iff': 1, '.m4a': 1, '.mp3': 1, '.mpa': 1, '.mpc': 1, '.ra': 1,
-    '.ogg': 1, '.wma': 1, '.wv': 1, '.sfark': 1, '.sfpack': 1, '.3g2': 1, '.3gp': 1, '.asf': 1,
-    '.asx': 1, '.avi': 1, '.bsf': 1, '.divx': 1, '.dv': 1, '.f4v': 1, '.flv': 1, '.hdmov': 1,
-    '.m2p': 1, '.m4v': 1, '.mkv': 1, '.mov': 1, '.mp4': 1, '.mpg': 1, '.mts': 1, '.ogv': 1,
-    '.rm': 1, '.swf': 1, '.trp': 1, '.ts': 1, '.vob': 1, '.webm': 1, '.wmv': 1, '.wtv': 1,
-    '.m2ts': 1, '.emz': 1, '.gif': 1, '.j2c': 1, '.jpeg': 1, '.jpg': 1, '.pamp': 1, '.pdn': 1,
-    '.png': 1, '.pspimage': 1, '.tif': 1, '.dng': 1, '.cr2': 1, '.webp': 1, '.nef': 1,
-    '.arw': 1, '.heic': 1, '.eot': 1, '.woff': 1, '.bik': 1, '.mpq': 1, '.chm': 1, '.docx': 1,
-    '.docm': 1, '.dotm': 1, '.dotx': 1, '.epub': 1, '.graffle': 1, '.hxs': 1, '.max': 1,
-    '.mobi': 1, '.mshc': 1, '.odp': 1, '.ods': 1, '.odt': 1, '.otp': 1, '.ots': 1, '.ott': 1,
-    '.pages': 1, '.pptx': 1, '.pptm': 1, '.stw': 1, '.trf': 1, '.webarchive': 1, '.xlsx': 1,
-    '.xlsm': 1, '.xlsb': 1, '.xps': 1, '.d': 1, '.dess': 1, '.i': 1, '.idx': 1, '.nupkg': 1,
-    '.pack': 1, '.swz': 1, '.aes': 1, '.axx': 1, '.gpg': 1, '.hc': 1, '.kdbx': 1, '.tc': 1,
-    '.tpm': 1, '.fve': 1, '.apk': 1, '.eftx': 1, '.sdg': 1, '.thmx': 1, '.vsix': 1, '.vsv': 1,
-    '.wmz': 1, '.xpi': 1}
-
 mostCommonImageExt = {'.gif': 1, '.jpg': 1, '.jpeg': 1, '.png': 1, '.bmp': 1, '.tif': 1,
     '.webp': 1}
 
@@ -545,6 +527,7 @@ def hasherFromString(s):
     else:
         raise ValueError('Unknown hash type ' + s)
 
+# default to 256kb buffer.
 def computeHashBytes(b, hasher='sha1', buffersize=0x40000):
     import io
     with io.BytesIO(b) as f:
@@ -587,39 +570,6 @@ def computeHashImpl(f, hasher, buffersize=0x40000):
                 break
             hasher.update(buffer)
         return hasher.hexdigest()
-
-def addAllToZip(root, zipPath, method='deflate', alreadyCompressedAsStore=False,
-        pathPrefix='', recurse=True, **kwargs):
-    import zipfile
-    methodDict = dict(store=zipfile.ZIP_STORED, deflate=zipfile.ZIP_DEFLATED)
-    try:
-        methodDict['lzma'] = zipfile.ZIP_LZMA
-    except AttributeError:
-        pass  # lzma isn't always available, e.g. python 2.7
-
-    def getMethod(s):
-        if alreadyCompressedAsStore and getext(s, False) in alreadyCompressedExt:
-            return zipfile.ZIP_STORED
-        elif isinstance(method, anystringtype):
-            return methodDict[method]
-        else:
-            return method
-
-    assertTrue(not root.endswith('/') and not root.endswith('\\'))
-    with zipfile.ZipFile(zipPath, 'a') as zip:
-        if isfile(root):
-            thisMethod = getMethod(root)
-            zip.write(root, pathPrefix + getname(root), compress_type=thisMethod)
-        elif isdir(root):
-            itr = recursefiles(root, **kwargs) if recurse else listfiles(root, **kwargs)
-            for f, short in itr:
-                assertTrue(f.startswith(root))
-                shortname = f[len(root) + 1:]
-                thisMethod = getMethod(f)
-                assertTrue(shortname)
-                zip.write(f, pathPrefix + shortname, compress_type=thisMethod)
-        else:
-            raise RuntimeError("not found: " + root)
 
 def windowsUrlFileGet(path):
     assertEq('.url', _os.path.splitext(path)[1].lower())
@@ -756,6 +706,7 @@ def run(listArgs, _ind=_enforceExplicitlyNamedParameters, shell=False, createNoW
         wait=True):
     import subprocess
     _checkNamedParameters(_ind)
+    assertTrue(isfile(listArgs[0]) or _shutil.which(listArgs[0]) or shell, 'file not found?', listArgs[0])
     kwargs = {}
 
     if sys.platform.startswith('win') and createNoWindow:

@@ -37,6 +37,30 @@ class SimpleEnum(object):
     def __delattr__(self, name):
         raise RuntimeError
 
+class ShowPercentAndSleep(object):
+    def __init__(self, totalCount, sleepAfterEveryN=None, sleepDuration=5):
+        self.totalCount = totalCount
+        self.prevShown = None
+        self.sleepAfterEveryN = sleepAfterEveryN
+        self.sleepDuration = sleepDuration
+        self.autoCounter = 0
+    
+    def updateAuto(self, showProgressString=''):
+        self.autoCounter += 1
+        self.update(self.autoCounter, showProgressString=showProgressString)
+        
+    def update(self, currentCount, showProgressString=''):
+        if self.sleepAfterEveryN and currentCount % self.sleepAfterEveryN == 0:
+            trace('sleeping', showProgressString)
+            import time
+            time.sleep(self.sleepDuration)
+            trace('waking')
+            
+        percentage = int(100*currentCount/self.totalCount)
+        if percentage != self.prevShown:
+            self.prevShown = percentage
+            trace(str(percentage) + '%', showProgressString)
+
 def getPrintable(s, okToIgnore=False):
     if not isPy3OrNewer:
         if not isinstance(s, unicode):
@@ -263,6 +287,11 @@ def renderMillisTime(millisTime):
     import time
     return time.strftime("%m/%d/%Y %I:%M:%S %p", time.localtime(t))
 
+def renderMillisTimeStandard(millisTime):
+    t = millisTime / 1000.0
+    import time
+    return time.strftime("%Y-%m-%d %I:%M:%S", time.localtime(t))
+
 class EnglishDateParserWrapper(object):
     def __init__(self, dateOrder='MDY'):
         # default to month-day-year
@@ -388,6 +417,10 @@ def assertException(fn, excType, excTypeExpectedString=None, msg='', regexp=Fals
         assertTrue(passed, 'exception string check failed ' + msg +
             '\ngot exception string:\n' + str(e))
 
+def get_traceback(e):
+    import traceback
+    lines = traceback.format_exception(type(e), e, e.__traceback__)
+    return ''.join(lines)
 
 # Python 2/3 compat, inspired by mutagen/_compat.py
 

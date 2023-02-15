@@ -4,20 +4,6 @@
 import os
 from .common_util import *
 
-def getRandomString(max=100 * 1000):
-    import random
-    return '%s' % random.randrange(max)
-
-def genGuid(asBase64=False):
-    import uuid
-    u = uuid.uuid4()
-    if asBase64:
-        import base64
-        b = base64.urlsafe_b64encode(u.bytes_le)
-        return b.decode('utf8')
-    else:
-        return str(u)
-
 def getNowAsMillisTime():
     import time
     t = time.time()
@@ -91,6 +77,24 @@ def setClipboardText(s):
         setClipboardTextPyperclip(s)
     except ImportError:
         setClipboardTextTk(s)
+
+def getRandomString(max=100 * 1000, hex=False):
+    import random
+    if hex:
+        return genGuid().split('-')[0]
+    else:
+        return '%s' % random.randrange(max)
+
+def genGuid(asBase64=False):
+    import uuid
+    u = uuid.uuid4()
+    if asBase64:
+        import base64
+        b = base64.urlsafe_b64encode(u.bytes_le)
+        return b.decode('utf8')
+    else:
+        return str(u)
+
 
 class PersistedDict(object):
     data = None
