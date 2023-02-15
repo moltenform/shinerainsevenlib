@@ -1,5 +1,5 @@
 # BenPythonCommon,
-# 2020 Ben Fisher, released under the GPLv3 license.
+# 2020 Ben Fisher, released under the LGPLv3 license.
 
 import pytest
 from .. import common_jslike as jslike

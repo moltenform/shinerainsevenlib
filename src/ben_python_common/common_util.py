@@ -1,5 +1,5 @@
 # BenPythonCommon,
-# 2015 Ben Fisher, released under the GPLv3 license.
+# 2015 Ben Fisher, released under the LGPLv3 license.
 
 import sys
 
@@ -190,6 +190,17 @@ def addOrAppendToArrayInDict(d, key, val):
         got.append(val)
     else:
         d[key] = [val]
+
+def waitUntilTrue(iter, fnWaitUntil):
+    if isinstance(iter, list):
+        iter = (item for item in iter)
+        
+    hasSeen = False
+    for value in iter:
+        if not hasSeen and fnWaitUntil(value):
+            hasSeen = True
+        if hasSeen:
+            yield value
 
 def takeBatchOnArbitraryIterable(iterable, size):
     import itertools
