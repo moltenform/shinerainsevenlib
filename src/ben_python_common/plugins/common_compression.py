@@ -188,6 +188,8 @@ def checkArchiveIntegrityVia7z(inPath, pword=None):
         return False
     elif b'ERROR: CRC Failed' in stderr:
         return False
+    elif b'ERROR: Data Error' in stderr:
+        return False
     else:
         assertTrue(False, 'failed to test archive', inPath, stderr)
     
@@ -196,11 +198,11 @@ def checkArchiveIntegrityVia7z(inPath, pword=None):
 
 
 
-def getContents(archive, verbose=True):
+def getContents(archive, verbose=True, silenceWarnings=False):
     if archive.lower().endswith('.rar') and files.exists(getRarPath().binRar):
-        return _getContentsViaRar(archive, verbose)
+        return _getContentsViaRar(archive, verbose, silenceWarnings)
     else:
-        return _getContentsVia7z(archive, verbose)
+        return _getContentsVia7z(archive, verbose, silenceWarnings)
         
 def _processAttributesRar(item):
     return dict(
@@ -226,7 +228,7 @@ def _processAttributes7z(item):
 
 
 
-def _getContentsViaRar(archive, verbose):
+def _getContentsViaRar(archive, verbose, silenceWarnings):
     assertTrue(files.isfile(archive))
     assertTrue(verbose, 'we only support verbose listing')
     args = [getRarPath().binRar, 'lt', archive]
@@ -250,7 +252,7 @@ def _getContentsViaRar(archive, verbose):
             result[title.strip()] = contents.strip()
     return [_processAttributesRar(result) for result in results]
     
-def _getContentsVia7z(archive, verbose):
+def _getContentsVia7z(archive, verbose, silenceWarnings):
     assertTrue(files.isfile(archive))
     assertTrue(verbose, 'we only support verbose listing')
     args = ['7z', '-slt', 'l', archive]
@@ -263,16 +265,13 @@ def _getContentsVia7z(archive, verbose):
         lines = part.split('\n')
         lines = [line for line in lines if line.strip()]
         if len(lines)==1 and lines[0].strip().startswith('Warnings:'):
-            trace(lines[0], archive)
+            if not silenceWarnings:
+                trace(lines[0], archive)
             continue
             
         result = {}
         results.append(result)
         for line in lines:
-            if line.startswith('Warnings: '):
-                trace(line, archive)
-                continue
-                
             if not ' = ' in line:
                 assertTrue(False, 'could not parse line', line, stdout)
             title, contents = line.split(' = ', 1)

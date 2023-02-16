@@ -443,7 +443,8 @@ def assertException(fn, excType, excTypeExpectedString=None, msg='', regexp=Fals
         assertTrue(passed, 'exception string check failed ' + msg +
             '\ngot exception string:\n' + str(e))
 
-def get_traceback(e):
+def getTraceback(e):
+    assertTrue(isPy3OrNewer)
     import traceback
     lines = traceback.format_exception(type(e), e, e.__traceback__)
     return ''.join(lines)

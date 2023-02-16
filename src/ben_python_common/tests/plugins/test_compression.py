@@ -5,6 +5,7 @@ import pytest
 import tempfile
 import os
 import sys
+import shutil
 import zipfile
 from os.path import join
 from ...common_util import isPy3OrNewer, ustr
@@ -17,7 +18,7 @@ class TestCompression(object):
 
     def test_addAllToZip(self, fixture_dir):
         # defaults to deflate method
-        outname, lst = self._prepMakeZip(fixture_dir)
+        outPath, lst = self._prepMakeZip(fixture_dir)
         assert 4 == len(lst)
         assert ('a/b.bmp', zipfile.ZIP_DEFLATED, 11) == (lst[0].filename, lst[0].compress_type, lst[0].file_size)
         assert ('a/b/im.png', zipfile.ZIP_DEFLATED, 9) == (lst[1].filename, lst[1].compress_type, lst[1].file_size)
@@ -25,7 +26,7 @@ class TestCompression(object):
         assert ('a/noext', zipfile.ZIP_DEFLATED, 9) == (lst[3].filename, lst[3].compress_type, lst[3].file_size)
 
         # use deflate+store
-        outname, lst = self._prepMakeZip(fixture_dir, method=common_compression.zipMethods.deflate,
+        outPath, lst = self._prepMakeZip(fixture_dir, method=common_compression.zipMethods.deflate,
             alreadyCompressedAsStore=True)
         assert 4 == len(lst)
         assert ('a/b.bmp', zipfile.ZIP_DEFLATED, 11) == (lst[0].filename, lst[0].compress_type, lst[0].file_size)
@@ -45,6 +46,14 @@ class TestCompression(object):
     
     @pytest.mark.skipif('not sys.platform.startswith("win")')
     def test_createArchives(self, fixture_dir):
+        if not files.exists(common_compression.getRarPath().binRar):
+            print('Note::: Skipping test, rar not found')
+            return
+        
+        if not files.exists('7z') and not shutil.which('7z'):
+            print('Note::: Skipping test, 7z not found')
+            return
+        
         tmpdir, dirToArchive = self._prepTempDirectory(fixture_dir)
         
         archive = files.join(tmpdir, 'zip-7z-max.zip')
@@ -123,6 +132,11 @@ class TestCompression(object):
     
         self._checkArchiveListAll(tmpdir)
     
+    @pytest.mark.skipif('not sys.platform.startswith("win")')
+    def test_checkArchiveIntegrityVia7z(self, fixture_dir):
+        outPath, lst = self._prepMakeZip(fixture_dir)
+        common_compression.checkArchiveIntegrityVia7z
+    
     def _prepMakeZip(self, fixture_dir, **zipArgs):
         files.ensureEmptyDirectory(fixture_dir)
         files.makedirs(join(fixture_dir, 'a/b'))
@@ -158,15 +172,16 @@ class TestCompression(object):
     
     def _checkArchiveListAll(self, tmpdir):
         count = 0
-        for f, short in files.recursefiles(tmpdir):
+        for f, short in list(files.recursefiles(tmpdir)):
             if files.getext(short) in ['zip', '7z', 'rar']:
                 count += 1
                 self._checkArchiveList(f)
+                self._checkArchiveIntegrity(f)
                 
         assert count == 24
         
     def _checkArchiveList(self, f):
-        lst = common_compression.getContents(f)
+        lst = common_compression.getContents(f, silenceWarnings='zip-winrar-' in f)
         lst.sort(key=lambda item: item['Path'])
         if 'zip-py-' in files.getname(f):
             assert len(lst) == 3
@@ -198,5 +213,15 @@ class TestCompression(object):
             assert lst[3]['Size'] == "123570"
             assert lst[3]['CRC'] == 'CB5985DD'
 
-
+    def _checkArchiveIntegrity(self, f):
+        assert common_compression.checkArchiveIntegrityVia7z(f)
+        corrupted = f + '.corrupt.' + files.getext(f)
+        allBytes = files.readall(f, 'rb')
+        allBytes = bytearray(allBytes)
+        allBytes[1024 * 51] = (allBytes[1024 * 51] + 1) % 256
+        files.writeall(corrupted, allBytes, 'wb')
+        assert not common_compression.checkArchiveIntegrityVia7z(corrupted)
+        files.delete(corrupted)
+        
+    
 

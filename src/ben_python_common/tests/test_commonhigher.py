@@ -16,19 +16,19 @@ class TestCommonHigher(object):
         assert all((c in '0123456789' for c in s2))
         assert s1 != s2
 
-    # genGuid
-    def test_genGuid(self):
-        s1 = genGuid()
+    # genUuid
+    def test_genUuid(self):
+        s1 = genUuid()
         assert 36 == len(s1)
-        s2 = genGuid()
+        s2 = genUuid()
         assert 36 == len(s2)
         assert s1 != s2
 
-    # genGuid, as base 64
-    def test_genGuidBase64(self):
-        s1 = genGuid(asBase64=True)
+    # genUuid, as base 64
+    def test_genUuidBase64(self):
+        s1 = genUuid(asBase64=True)
         assert 24 == len(s1)
-        s2 = genGuid(asBase64=True)
+        s2 = genUuid(asBase64=True)
         assert 24 == len(s2)
         assert s1 != s2
 

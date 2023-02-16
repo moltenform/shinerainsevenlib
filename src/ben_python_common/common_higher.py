@@ -81,11 +81,11 @@ def setClipboardText(s):
 def getRandomString(max=1000 * 1000, hex=False):
     import random
     if hex:
-        return genGuid().split('-')[0]
+        return genUuid().split('-')[0]
     else:
         return '%s' % random.randrange(max)
 
-def genGuid(asBase64=False):
+def genUuid(asBase64=False):
     import uuid
     u = uuid.uuid4()
     if asBase64:

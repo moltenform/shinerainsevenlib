@@ -1,4 +1,6 @@
 
+import re
+
 from . import common_compression
 from .. import files
 from ..common_util import *
@@ -49,71 +51,50 @@ def getImageType(inPath):
         format = 'JPG'
     return format
 
-def getAudAndVidCodec(inPath, retrieveAllowedStatus=False, expectVidStream=True, ffmpegPath=None):
-    infoRef = Bucket(stderr='')
+def getAudAndVidCodec(inPath, ffmpegPath=None):
+    captureContextForDebugging = Bucket(stderr='')
     try:
-        return getAudAndVidCodecImpl(inPath, infoRef, retrieveAllowedStatus=retrieveAllowedStatus, 
-            expectVidStream=expectVidStream, ffmpegPath=ffmpegPath)
+        return getAudAndVidCodecImpl(inPath, captureContextForDebugging, ffmpegPath=ffmpegPath)
     except Exception as e:
         trace(inPath)
-        trace(infoRef.stderr)
+        trace(captureContextForDebugging.stderr)
         raise
     
-def getAudAndVidCodecImpl(inPath, infoRef, retrieveAllowedStatus=False, expectVidStream=True, ffmpegPath=None):
+def getAudAndVidCodecImpl(inPath, captureContextForDebugging, ffmpegPath=None):
     ffmpegPath = ffmpegPath or 'ffmpeg'
     args = [ffmpegPath, '-nostdin', '-i', inPath]
     ret, stdout, stderr = files.run(args, throwOnFailure=None)
     stderr = stderr.decode('utf-8').replace('\r\n', '\n')
     stderr = stderr.replace('At least one output file must be specified', '(Intentional err)')
-    infoRef.stderr = stderr
+    captureContextForDebugging.stderr = stderr
     audFormat = None
     vidFormat = None
     attempts = [
-        '\n  Stream #$$:$(eng): ',
-        '\n  Stream #$$:$(und): ',
-        '\n  Stream #$$:$(rus): ',
-        '\n  Stream #$$:$: ',
-        '\n  Stream #$$:$[0x1c0]: ',
-        '\n  Stream #$$:$[0x1e0]: ',
-        '\n  Stream #$$:$[0x1](und): ',
-        '\n  Stream #$$:$[0x1](eng): ',
-        '\n  Stream #$$:$[0x$$$](und): ',
-        '\n  Stream #$$:$[0x$$$](eng): ',
-        '\n  Stream #$$:$[0x$$$](rus): ',
-        '\n  Stream #$$:$[0x10$]: ',
-        '\n  Stream #$$(eng): ',
-        '\n  Stream #$$(und): ',
-        '\n  Stream #$$(rus): ',
-        '\n  Stream #$$: ']
+        r'\n  Stream #[0-9]\((?:eng|und|rus)\): ',
+        r'\n  Stream #[0-9]:[0-9]\[0x[0-9a-f]+\]\((?:eng|und|rus)\): ',
+        r'\n  Stream #[0-9]:[0-9]\[0x[0-9a-f]+\]: ',
+        r'\n  Stream #[0-9]:[0-9]\((?:eng|und|rus)\): ',
+        r'\n  Stream #[0-9]:[0-9]: ',
+        r'\n  Stream #[0-9]: ',
+    ]
     
-    checked = {}
-    for streamnum in range(3):
-        for streamnumpart in range(3):
-            for baseattempt in attempts:
-                attempt = baseattempt
-                attempt = attempt.replace('$$$', str(streamnum + 1))
-                attempt = attempt.replace('$$', str(streamnumpart))
-                attempt = attempt.replace('$', str(streamnumpart))
-                if checked.get(attempt):
-                    continue
-                checked[attempt] = True
-                if attempt in stderr:
-                    s = stderr.split(attempt)[1]
-                    if s.startswith('Audio: '):
-                        assertTrue(audFormat is None, 'two audio tracks?', inPath)
-                        audFormat = getAFormat(s[len('Audio: '):], retrieveAllowedStatus=retrieveAllowedStatus)
-                    elif s.startswith('Video: '):
-                        assertTrue(vidFormat is None, 'two video tracks?', inPath)
-                        vidFormat =  getVFormat(s[len('Video: '):], retrieveAllowedStatus=retrieveAllowedStatus)
-                    elif s.startswith('Data: '):
-                        pass
-                    else:
-                        assertTrue(False, 'unknown stream type', inPath)
-    
-    if expectVidStream:
-        if not vidFormat and inPath.lower().endswith('.mp4'):
-            assertTrue(False, 'please put mp4 audio into a m4a extension')
-        assertTrue(vidFormat, 'no video stream?', inPath)
+    for attempt in attempts:
+        pts = re.split(attempt, stderr)
+        trace(attempt, pts)
+        pts.pop(0)
+        for line in pts:
+            s = line.split('\n')[0]
+            if s.startswith('Audio: '):
+                assertTrue(audFormat is None, 'two audio tracks?', inPath)
+                audFormat = _getAFormat(s[len('Audio: '):])
+            elif s.startswith('Video: '):
+                assertTrue(vidFormat is None, 'two video tracks?', inPath)
+                vidFormat =  _getVFormat(s[len('Video: '):])
+            elif s.startswith('Data: '):
+                pass
+            else:
+                assertTrue(False, 'unknown stream type', s, inPath)
+
     return vidFormat, audFormat
 
 
@@ -155,27 +136,25 @@ vFormatsFfmpeg = dict(
     svq1='applequicktime_svq1',
 )
 
-def getVFormat(s, retrieveAllowedStatus=False):
+def _getAFormat(s):
     s = s.replace(',', ' ')
-    firstword = s.split(' ')[0]
-    if firstword not in vFormatsFfmpeg:
-        assertTrue(False, 'unknown or unwanted vid format', s)
-    if retrieveAllowedStatus:
-        return vFormatsFfmpeg[firstword]
-    else:
-        return vFormatsFfmpeg[firstword][0]
+    firstWord = s.split(' ')[0]
+    if firstWord not in aFormatsFfmpeg:
+        assertTrue(False, 'unknown audio format', s, firstWord)
     
-def getAFormat(s, retrieveAllowedStatus=False):
-    s = s.replace(',', ' ')
-    firstword = s.split(' ')[0]
-    if firstword not in aFormatsFfmpeg:
-        assertTrue(False, 'unknown or unwanted audio format', s)
-    if retrieveAllowedStatus:
-        return aFormatsFfmpeg[firstword]
-    else:
-        return aFormatsFfmpeg[firstword][0]
+    return aFormatsFfmpeg[firstWord]
 
-def getMediaHash(inPath, excludeVideo=False, ffmpegPath=None, hashType='md5'):
+def _getVFormat(s):
+    s = s.replace(',', ' ')
+    firstWord = s.split(' ')[0]
+    if firstWord not in vFormatsFfmpeg:
+        assertTrue(False, 'unknown vid format', s, firstWord)
+    
+    return vFormatsFfmpeg[firstWord]
+    
+
+
+def getMediaHash(inPath, excludeVideo=False, hashType='md5', ffmpegPath=None):
     ffmpegPath = ffmpegPath or 'ffmpeg'
     args = ['ffmpeg', '-nostdin', '-i', inPath]
     if excludeVideo:
@@ -186,5 +165,8 @@ def getMediaHash(inPath, excludeVideo=False, ffmpegPath=None, hashType='md5'):
     # By default audio frames are converted to signed 16-bit raw audio and video frames to raw video before computing the hash
     # (so don't use -c)
     retcode, stdout, stderr = files.run(args)
+    stdout = stdout.decode('utf-8')
+    stdout = stdout.replace('\r\n', '\n').replace('\n', ';')
+    return stdout
 
 
