@@ -78,7 +78,7 @@ def setClipboardText(s):
     except ImportError:
         _setClipboardTextTk(s)
 
-def getRandomString(max=100 * 1000, hex=False):
+def getRandomString(max=1000 * 1000, hex=False):
     import random
     if hex:
         return genGuid().split('-')[0]

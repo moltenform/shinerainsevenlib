@@ -1,15 +1,17 @@
 
 from .. import files
+from ..common_ui import getSoftDeleteDestination, getSoftDeleteDir
 from ..common_util import *
 from .file_extensions import alreadyCompressedExt
 import zipfile
 import shutil
 
 zipMethods = Bucket(
-    deflate=zipfile.ZIP_DEFLATED,
     store=zipfile.ZIP_STORED,
-    lzma=zipfile.ZIP_LZMA if 'ZIP_LZMA' in dir(zipfile) else None
+    deflate=zipfile.ZIP_DEFLATED,
+    lzma=zipfile.ZIP_LZMA if ('ZIP_LZMA' in dir(zipfile)) else None
 )
+
 
 optsCompression = Bucket(
     optsMax='optsMax',
@@ -83,7 +85,6 @@ internalOpts7z = dict(
 def addAllToZip(inPath, zipPath, method=zipMethods.deflate, alreadyCompressedAsStore=False,
         creatingNewArchive=True, pathPrefix='', recurse=True, **kwargs):
     
-    assertTrue(method, 'invalid method (note that ZIP_LZMA is not always available)')
     if creatingNewArchive:
         assertTrue(not files.exists(zipPath))
 
@@ -91,6 +92,7 @@ def addAllToZip(inPath, zipPath, method=zipMethods.deflate, alreadyCompressedAsS
         if alreadyCompressedAsStore and files.getext(path, False) in alreadyCompressedExt:
             return zipfile.ZIP_STORED
         else:
+            assertTrue(method is not None, 'invalid method (note that ZIP_LZMA is not always available)')
             assertTrue(isinstance(method, int), 'please specify zipMethods.deflate instead of "deflate"')
             return method
 
@@ -128,25 +130,32 @@ def addAllTo7z(inPathStrOrList, outPath, effort=optsCompression.optsDefault, mul
     if not solid and not outPath.lower().endswith('.zip'):
         args.extend(['-ms=off'])
         
-    args.extend([outPath])
+    args.extend(['%output%'])
     args.extend(['%input%'])
     sendToShellCommon(args, inPathStrOrList, outPath)
 
 
-def addAllToRar(inPathStrOrList, outPath, formatVersion='4', dictSize='8192', solid=True):
+def addAllToRar(inPathStrOrList, outPath, effort=optsCompression.optsDefault, formatVersion='4', dictSize=None, solid=True):
+    if not dictSize:
+        dictSize = '512m' if formatVersion == '5' else '4096k'
+    assertTrue(outPath.lower().endswith('.rar') or outPath.lower().endswith('.zip'))
     args = [getRarPath().binRar, 'a']
     if solid:
         args.extend(['-s'])
-    args.extend(['-m', '5']) # effort=max 
-    args.extend(['-ma', formatVersion])
-    args.extend(['-md', dictSize])
-    assertTrue(outPath.lower().endswith('.rar'))
-    args.extend([outPath])
+    
+    # 5 is still quite fast
+    strEffort = '0' if effort == optsCompression.optsStore else '5'
+    if outPath.lower().endswith('.rar'):
+        args.extend(['-m' + strEffort]) # effort=max 
+        args.extend(['-ma' + formatVersion])
+        args.extend(['-md' + dictSize])
+    
+    args.extend(['%output%'])
     args.extend(['%input%'])
     sendToShellCommon(args, inPathStrOrList, outPath)
     
 def addAllToRarSimple(inPathStrOrList, outPath):
-    args = [getRarPath().binWinRar, 'a', outPath, '%input%']
+    args = [getRarPath().binWinRar, 'a', '%output%', '%input%']
     sendToShellCommon(args, inPathStrOrList, outPath)
 
 
@@ -264,8 +273,13 @@ def getRarPath():
         binWinRar = binWinRar
     )
 
+# features:
+# writes to a temporary directory first, so no risk of getting a half-made file
+# accepts input as one input or a list of inputs
+# confirms output path is not 0 bytes
 def sendToShellCommon(args, inPathStrOrList, outPath, inputInArgs=True):
     assertTrue(not files.exists(outPath), 'output already there')
+    tmpOutPath = getSoftDeleteDestination(outPath, getSoftDeleteDir(outPath)) + '.' + files.getext(outPath)
     if isinstance(inPathStrOrList, str):
         inPathList = [inPathStrOrList]
     elif isinstance(inPathStrOrList, list):
@@ -281,8 +295,13 @@ def sendToShellCommon(args, inPathStrOrList, outPath, inputInArgs=True):
     else:
         newargs = args
     
+    outputIndex = args.index('%output%')
+    newargs[outputIndex] = tmpOutPath
+    
     files.run(newargs)
-    assertTrue(files.getsize(outPath) > 0, 'output must be more than 0 bytes')
-    if files.getsize(outPath) < 128:
-        trace('warning: small outsize', outPath)
-        
+    assertTrue(files.getsize(tmpOutPath) > 0, 'output must be more than 0 bytes')
+    if files.getsize(tmpOutPath) < 128:
+        trace('warning: small outsize', tmpOutPath)
+    
+    files.move(tmpOutPath, outPath, False)
+    

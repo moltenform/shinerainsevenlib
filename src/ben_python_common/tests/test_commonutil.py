@@ -429,94 +429,93 @@ class TestDataStructures(object):
         d2['b'] = 3
         assert d1 != d2
 
+def dateParserAvailable():
+    try:
+        import dateparser
+        return True
+    except ImportError:
+        return False
 
-try:
-    import dateparser
-    hasDateparser = True
-except ImportError:
-    hasDateparser = False
+@pytest.mark.skipif('not dateParserAvailable()')
+class TestDateParsing(object):
+    def test_spanish_dates_should_not_parsed():
+        uu = EnglishDateParserWrapper()
+        assert uu.parse(u'Martes 21 de Octubre de 2014') is None
 
-if hasDateparser:
-    class TestDateParsing(object):
-        def test_cannotYetSupportGetTotalSpanIfOpenBraces(self):
-            def test_spanish_dates_should_not_parsed():
-                uu = EnglishDateParserWrapper()
-                assert uu.parse(u'Martes 21 de Octubre de 2014') is None
+    def test_spanish_dates_will_parse_if_we_hack_it_and_give_it_a_different_parser():
+        uu = EnglishDateParserWrapper()
+        uu.p = dateparser.date.DateDataParser()
+        parsed = uu.parse(u'Martes 21 de Octubre de 2014')
+        assert 2014 == parsed.year
 
-            def test_spanish_dates_will_parse_if_we_hack_it_and_give_it_a_different_parser():
-                uu = EnglishDateParserWrapper()
-                uu.p = dateparser.date.DateDataParser()
-                parsed = uu.parse(u'Martes 21 de Octubre de 2014')
-                assert 2014 == parsed.year
+    def test_incomplete_dates_should_not_parsed():
+        uu = EnglishDateParserWrapper()
+        assert uu.parse(u'December 2015') is None
 
-            def test_incomplete_dates_should_not_parsed():
-                uu = EnglishDateParserWrapper()
-                assert uu.parse(u'December 2015') is None
+    def test_incomplete_dates_will_parse_if_we_hack_it_and_give_it_a_different_parser():
+        uuu = EnglishDateParserWrapper()
+        uuu.p = dateparser.date.DateDataParser()
+        parsed = uuu.parse(u'December 2015')
+        assert 2015 == parsed.year
 
-            def test_incomplete_dates_will_parse_if_we_hack_it_and_give_it_a_different_parser():
-                uuu = EnglishDateParserWrapper()
-                uuu.p = dateparser.date.DateDataParser()
-                parsed = uuu.parse(u'December 2015')
-                assert 2015 == parsed.year
+    def test_dates_can_get_this():
+        uu = EnglishDateParserWrapper()
+        got = uu.parse('30 Jan 2018')
+        assert 30 == got.day
+        assert 1 == got.month
+        assert 2018 == got.year
 
-            def test_dates_can_get_this():
-                uu = EnglishDateParserWrapper()
-                got = uu.parse('30 Jan 2018')
-                assert 30 == got.day
-                assert 1 == got.month
-                assert 2018 == got.year
+    def test_and_confirm_MDY():
+        uu = EnglishDateParserWrapper()
+        got = uu.parse('4/5/2016')
+        assert 5 == got.day
+        assert 4 == got.month
+        assert 2016 == got.year
 
-            def test_and_confirm_MDY():
-                uu = EnglishDateParserWrapper()
-                got = uu.parse('4/5/2016')
-                assert 5 == got.day
-                assert 4 == got.month
-                assert 2016 == got.year
+        got = uu.parse('18 feb 12')
+        assert 18 == got.day
+        assert 2 == got.month
+        assert 2012 == got.year
 
-                got = uu.parse('18 feb 12')
-                assert 18 == got.day
-                assert 2 == got.month
-                assert 2012 == got.year
+        got = uu.parse('August 24 2018')
+        assert 24 == got.day
+        assert 8 == got.month
+        assert 2018 == got.year
 
-                got = uu.parse('August 24 2018')
-                assert 24 == got.day
-                assert 8 == got.month
-                assert 2018 == got.year
+        got = uu.parse('2016-04-11 21:07:47.763957')
+        assert 11 == got.day
+        assert 4 == got.month
+        assert 2016 == got.year
 
-                got = uu.parse('2016-04-11 21:07:47.763957')
-                assert 11 == got.day
-                assert 4 == got.month
-                assert 2016 == got.year
+        got = uu.parse('Mar 31, 2011 17:41:41 GMT')
+        assert 31 == got.day
+        assert 3 == got.month
+        assert 2011 == got.year
 
-                got = uu.parse('Mar 31, 2011 17:41:41 GMT')
-                assert 31 == got.day
-                assert 3 == got.month
-                assert 2011 == got.year
+    def test_twitter_api_format_we_needed_to_tweak_it_a_bit():
+        uu = EnglishDateParserWrapper()
+        assert "Wed Nov 07 04:01:10 2018 +0000" == uu.fromFullWithTimezone("Wed Nov 07 04:01:10 +0000 2018")
+        got = uu.parse(uu.fromFullWithTimezone("Wed Nov 07 04:01:10 +0000 2018"))
+        assert 7 == got.day
+        assert 11 == got.month
+        assert 2018 == got.year
 
-            def test_twitter_api_format_we_needed_to_tweak_it_a_bit():
-                uu = EnglishDateParserWrapper()
-                assert "Wed Nov 07 04:01:10 2018 +0000" == uu.fromFullWithTimezone("Wed Nov 07 04:01:10 +0000 2018")
-                got = uu.parse(uu.fromFullWithTimezone("Wed Nov 07 04:01:10 +0000 2018"))
-                assert 7 == got.day
-                assert 11 == got.month
-                assert 2018 == got.year
+        assert "Wed Nov 07 04:01:10 2018" == uu.fromFullWithTimezone("Wed Nov 07 04:01:10 2018")
+        got = uu.parse(uu.fromFullWithTimezone("Wed Nov 07 04:01:10 2018"))
+        assert 7 == got.day
+        assert 11 == got.month
+        assert 2018 == got.year
 
-                assert "Wed Nov 07 04:01:10 2018" == uu.fromFullWithTimezone("Wed Nov 07 04:01:10 2018")
-                got = uu.parse(uu.fromFullWithTimezone("Wed Nov 07 04:01:10 2018"))
-                assert 7 == got.day
-                assert 11 == got.month
-                assert 2018 == got.year
-
-            def test_ensure_month_day_year():
-                # 1362456244 is 3(month)/5(day)/2013
-                fhhfghfghfgh
-                uu = EnglishDateParserWrapper()
-                test1 = uu.getDaysBeforeInMilliseconds('3/5/2013 4:04:04 GMT', 0)
-                assert 1362456244000 == test1
-                test2 = uu.getDaysBeforeInMilliseconds('3/5/2013 4:04:04 GMT', 1)
-                assert 1362456244000 - 86400000 == test2
-                test3 = uu.getDaysBeforeInMilliseconds('3/5/2013 4:04:04 GMT', 100)
-                assert 1362456244000 - 100 * 86400000 == test3
+    def test_ensure_month_day_year():
+        # 1362456244 is 3(month)/5(day)/2013
+        fhhfghfghfgh
+        uu = EnglishDateParserWrapper()
+        test1 = uu.getDaysBeforeInMilliseconds('3/5/2013 4:04:04 GMT', 0)
+        assert 1362456244000 == test1
+        test2 = uu.getDaysBeforeInMilliseconds('3/5/2013 4:04:04 GMT', 1)
+        assert 1362456244000 - 86400000 == test2
+        test3 = uu.getDaysBeforeInMilliseconds('3/5/2013 4:04:04 GMT', 100)
+        assert 1362456244000 - 100 * 86400000 == test3
 
 class TestCustomAsserts(object):
     def raisevalueerr(self):
