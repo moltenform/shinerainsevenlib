@@ -44,9 +44,9 @@ class TestCompression(object):
             assert ('a/noext', zipfile.ZIP_LZMA, 9) == (lst[3].filename, lst[3].compress_type, lst[3].file_size)
     
     
-    @pytest.mark.skipif('not sys.platform.startswith("win")')
+    @pytest.mark.skipif('not isPy3OrNewer or not sys.platform.startswith("win")')
     def test_createArchives(self, fixture_dir):
-        if not files.exists(common_compression.getRarPath().binRar):
+        if not files.exists(common_compression.getRarPath()):
             print('Note::: Skipping test, rar not found')
             return
         
@@ -159,7 +159,8 @@ class TestCompression(object):
         # unicodes.bmp -- compressible and has unicode filename
         # beach-redundant-1.jpg -- not compressible
         # beach-redundant-2.jpg -- same as other jpg, so solid mode will be much smaller
-        zipPath = files.join(files.getparent(__file__), 'collat/testarchive.zip')
+        myParent = files.getparent(os.path.abspath(__file__))
+        zipPath = files.join(myParent, 'collat/testarchive.zip')
         with zipfile.ZipFile(zipPath, 'r') as zip:
             zip.extractall(path=out, members=None, pwd=None)
         
@@ -185,15 +186,15 @@ class TestCompression(object):
         lst.sort(key=lambda item: item['Path'])
         if 'zip-py-' in files.getname(f):
             assert len(lst) == 3
-            assert lst[0]['Path'].endswith('\\beach-redundant-1.jpg')
+            assert lst[0]['Path'].endswith('beach-redundant-1.jpg')
             assert lst[0]['Size'] == "22686"
             assert lst[0]['CRC'] == '9B47D08F'
             
-            assert lst[1]['Path'].endswith('\\beach-redundant-2.jpg')
+            assert lst[1]['Path'].endswith('beach-redundant-2.jpg')
             assert lst[1]['Size'] == "22686"
             assert lst[1]['CRC'] == '9B47D08F'
             
-            assert '\\st-helens-' in lst[2]['Path']
+            assert 'st-helens-' in lst[2]['Path']
             assert lst[2]['Size'] == "123570"
             assert lst[2]['CRC'] == 'CB5985DD'
         else:
@@ -201,15 +202,15 @@ class TestCompression(object):
             assert lst[0]['Path'].endswith('dir-within-archive')
             assert lst[0]['Type'] == 'Directory'
             
-            assert lst[1]['Path'].endswith('\\beach-redundant-1.jpg')
+            assert lst[1]['Path'].endswith('beach-redundant-1.jpg')
             assert lst[1]['Size'] == "22686"
             assert lst[1]['CRC'] == '9B47D08F'
             
-            assert lst[2]['Path'].endswith('\\beach-redundant-2.jpg')
+            assert lst[2]['Path'].endswith('beach-redundant-2.jpg')
             assert lst[2]['Size'] == "22686"
             assert lst[2]['CRC'] == '9B47D08F'
             
-            assert '\\st-helens-' in lst[3]['Path']
+            assert 'st-helens-' in lst[3]['Path']
             assert lst[3]['Size'] == "123570"
             assert lst[3]['CRC'] == 'CB5985DD'
 

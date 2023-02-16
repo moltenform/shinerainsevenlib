@@ -141,16 +141,17 @@ def addAllTo7z(inPathStrOrList, outPath, effort=optsCompression.optsDefault, mul
 
 def addAllToRar(inPathStrOrList, outPath, effort=optsCompression.optsDefault, formatVersion='4', dictSize=None, solid=True):
     if not dictSize:
-        dictSize = '512m' if formatVersion == '5' else '4096k'
+        dictSize = '256m' if formatVersion == '5' else '4096k'
+    
     assertTrue(outPath.lower().endswith('.rar') or outPath.lower().endswith('.zip'))
-    args = [getRarPath().binRar, 'a']
+    args = [getRarPath(), 'a']
     if solid:
         args.extend(['-s'])
     
-    # 5 is still quite fast
+    # 5 ("max") is still quite fast
     strEffort = '0' if effort == optsCompression.optsStore else '5'
     if outPath.lower().endswith('.rar'):
-        args.extend(['-m' + strEffort]) # effort=max 
+        args.extend(['-m' + strEffort])
         args.extend(['-ma' + formatVersion])
         args.extend(['-md' + dictSize])
     
@@ -158,10 +159,6 @@ def addAllToRar(inPathStrOrList, outPath, effort=optsCompression.optsDefault, fo
     args.extend(['%input%'])
     sendToShellCommon(args, inPathStrOrList, outPath)
     
-def addAllToRarSimple(inPathStrOrList, outPath):
-    args = [getRarPath().binWinRar, 'a', '%output%', '%input%']
-    sendToShellCommon(args, inPathStrOrList, outPath)
-
 
 def checkArchivePasswordVia7z(inPath, pword=None):
     # we send in a placeholder password to intentionally get an error, and not block on stdin
@@ -199,7 +196,7 @@ def checkArchiveIntegrityVia7z(inPath, pword=None):
 
 
 def getContents(archive, verbose=True, silenceWarnings=False):
-    if archive.lower().endswith('.rar') and files.exists(getRarPath().binRar):
+    if archive.lower().endswith('.rar') and files.exists(getRarPath()):
         return _getContentsViaRar(archive, verbose, silenceWarnings)
     else:
         return _getContentsVia7z(archive, verbose, silenceWarnings)
@@ -231,7 +228,7 @@ def _processAttributes7z(item):
 def _getContentsViaRar(archive, verbose, silenceWarnings):
     assertTrue(files.isfile(archive))
     assertTrue(verbose, 'we only support verbose listing')
-    args = [getRarPath().binRar, 'lt', archive]
+    args = [getRarPath(), 'lt', archive]
     retcode, stdout, stderr = files.run(args)
     stdout = stdout.decode('latin-1').replace('\r\n', '\n')
     results = []
@@ -279,12 +276,7 @@ def _getContentsVia7z(archive, verbose, silenceWarnings):
     return [_processAttributes7z(result) for result in results]
 
 def getRarPath():
-    binRar = 'rar' if shutil.which('rar') else r"C:\Program Files\WinRAR\Rar.exe"
-    binWinRar = 'winrar' if shutil.which('winrar') else r"C:\Program Files\WinRAR\WinRar.exe"
-    return Bucket(
-        binRar = binRar,
-        binWinRar = binWinRar
-    )
+    return 'rar' if shutil.which('rar') else r"C:\Program Files\WinRAR\Rar.exe"
 
 # features:
 # writes to a temporary directory first, so no risk of getting a half-made file

@@ -11,27 +11,30 @@ def changeWrapperLossless(inPath, outPath, ffmpegPath=None):
     args = [ffmpegPath, '-nostdin', '-i', '%input%', '-acodec', 'copy', '-vcodec', 'copy', '%output%']
     common_compression.sendToShellCommon(args, inPath, outPath)
     
-def separateVideoLossless(inPath, outPath, ffmpegPath=None):
-    ffmpegPath = ffmpegPath or 'ffmpeg'
-    args = [ffmpegPath, '-nostdin', '-i', '%input%', '-an', '-vcodec', 'copy', '%output%']
-    common_compression.sendToShellCommon(args, inPath, outPath)
-
 def separateAudioLossless(inPath, outPath, ffmpegPath=None):
     ffmpegPath = ffmpegPath or 'ffmpeg'
     args = [ffmpegPath, '-nostdin', '-i', '%input%', '-vn', '-acodec', 'copy', '%output%']
     common_compression.sendToShellCommon(args, inPath, outPath)
     
-def combineAudioVideoLossless(inPathA, inputV, outPath, ffmpegPath=None):
-    combineAudioVideo(inPathA, inputV, outPath, codecA='copy', codecV='copy', ffmpegPath=ffmpegPath)
-
-def combineAudioVideoFlac(inPathA, inputV, outPath, ffmpegPath=None):
-    extraParams = dict(compression_level='12')
-    combineAudioVideo(inPathA, inputV, outPath, codecA='flac', codecV='copy', ffmpegPath=ffmpegPath, extraParams=extraParams)
-
-def combineAudioVideo(inPathA, inputV, outPath, codecA='copy', codecV='copy', ffmpegPath=None, extraParams=None):
+def separateVideoLossless(inPath, outPath, ffmpegPath=None):
     ffmpegPath = ffmpegPath or 'ffmpeg'
-    assertTrue(files.exists(inputV))
-    args = [ffmpegPath, '-nostdin', '-i', '%input%', '-i', inputV, '-c:a', codecA, '-c:v', codecV]
+    args = [ffmpegPath, '-nostdin', '-i', '%input%', '-an', '-vcodec', 'copy', '%output%']
+    common_compression.sendToShellCommon(args, inPath, outPath)
+
+def combineAudioVideoLossless(inPathA, inPathV, outPath, ffmpegPath=None):
+    combineAudioVideo(inPathA, inPathV, outPath, codecA='copy', codecV='copy', ffmpegPath=ffmpegPath)
+
+def combineAudioVideoFlac(inPathA, inPathV, outPath, ffmpegPath=None):
+    extraParams = dict(compression_level='12')
+    combineAudioVideo(inPathA, inPathV, outPath, codecA='flac', codecV='copy',
+        ffmpegPath=ffmpegPath, extraParams=extraParams)
+
+def combineAudioVideo(inPathA, inPathV, outPath, codecA='copy', codecV='copy',
+        ffmpegPath=None, extraParams=None):
+    ffmpegPath = ffmpegPath or 'ffmpeg'
+    assertTrue(files.exists(inPathA))
+    assertTrue(files.exists(inPathV))
+    args = [ffmpegPath, '-nostdin', '-i', '%input%', '-i', inPathV, '-c:a', codecA, '-c:v', codecV]
     for param in (extraParams or {}):
         args.append('-' + param)
         if extraParams[param] is not None:
@@ -40,27 +43,17 @@ def combineAudioVideo(inPathA, inputV, outPath, codecA='copy', codecV='copy', ff
     args.append('%output%')
     common_compression.sendToShellCommon(args, inPathA, outPath)
  
-def getCodec(inPath):
-    args = [ffmpegPath, '-nostdin', '-i', inPath]
     
-def getImageType(inPath):
-    from PIL import Image
-    im = Image.open(inPath)
-    format = im.format
-    if format == 'MPO':
-        format = 'JPG'
-    return format
-
 def getAudAndVidCodec(inPath, ffmpegPath=None):
     captureContextForDebugging = Bucket(stderr='')
     try:
-        return getAudAndVidCodecImpl(inPath, captureContextForDebugging, ffmpegPath=ffmpegPath)
+        return _getAudAndVidCodecImpl(inPath, captureContextForDebugging, ffmpegPath=ffmpegPath)
     except Exception as e:
         trace(inPath)
         trace(captureContextForDebugging.stderr)
         raise
     
-def getAudAndVidCodecImpl(inPath, captureContextForDebugging, ffmpegPath=None):
+def _getAudAndVidCodecImpl(inPath, captureContextForDebugging, ffmpegPath=None):
     ffmpegPath = ffmpegPath or 'ffmpeg'
     args = [ffmpegPath, '-nostdin', '-i', inPath]
     ret, stdout, stderr = files.run(args, throwOnFailure=None)
@@ -80,7 +73,6 @@ def getAudAndVidCodecImpl(inPath, captureContextForDebugging, ffmpegPath=None):
     
     for attempt in attempts:
         pts = re.split(attempt, stderr)
-        trace(attempt, pts)
         pts.pop(0)
         for line in pts:
             s = line.split('\n')[0]
@@ -95,7 +87,7 @@ def getAudAndVidCodecImpl(inPath, captureContextForDebugging, ffmpegPath=None):
             else:
                 assertTrue(False, 'unknown stream type', s, inPath)
 
-    return vidFormat, audFormat
+    return audFormat, vidFormat
 
 
 aFormatsFfmpeg = dict(
@@ -158,7 +150,7 @@ def getMediaHash(inPath, excludeVideo=False, hashType='md5', ffmpegPath=None):
     ffmpegPath = ffmpegPath or 'ffmpeg'
     args = ['ffmpeg', '-nostdin', '-i', inPath]
     if excludeVideo:
-        # prevent ffmpeg from doing creative things like getting id3image as a videostream
+        # prevent ffmpeg from doing overly creative things like getting id3image as a videostream
         args.extend(['-vn'])
     
     args.extend(['-f', 'streamhash', '-hash', hashType, '-'])

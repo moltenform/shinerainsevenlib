@@ -317,6 +317,7 @@ def getSoftDeleteDir(s):
     else:
         destination = files.join(tempfile.gettempdir(), 'ben_python_common_trash')
         files.makedirs(destination)
+        
     return destination
 
 def getSoftDeleteDestination(s, destination):
