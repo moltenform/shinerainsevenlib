@@ -187,6 +187,8 @@ class TestJslikeStringMethods(object):
         assert 'ab123ef' == jslike.splice('abcdef', 2, 2, '123')
         assert 'ab123def' == jslike.splice('abcdef', 2, 1, '123')
         assert 'ab123cdef' == jslike.splice('abcdef', 2, 0, '123')
+        
+        assert 'ab12ef' == jslike.spliceSpan('abcdef', [2, 4], '12')
 
 class TestJslikeDictMethods(object):
     def test_compareDict(self):
@@ -220,3 +222,15 @@ class TestJslikeDictMethods(object):
         assert a == dict(a=1, b=2, c=1)
         assert b == dict(a=3, b=2)
         assert out == dict(a=3, b=2, c=1)
+
+class TestJslikeSimpleMethods(object):
+    def test_simple(self):
+        assert jslike.floatOrNone('1.2') == float('1.2')
+        assert jslike.floatOrNone('-1.2') == float('-1.2')
+        assert jslike.floatOrNone('ab') is None
+        
+        assert jslike.intOrNone('12') == 12
+        assert jslike.intOrNone('-12') == -12
+        assert jslike.intOrNone('ab') is None
+        
+        

@@ -52,6 +52,12 @@ class TestCommonHigher(object):
             assert u'\u1E31\u1E77\u1E53\u006E' == getClipboardText()
         finally:
             setClipboardText(prev)
+    
+    def test_downloadUrl(self):
+        contents = downloadUrl('https://example.com', asText=True)
+        contents = contents.replace(' ', '').replace('\r', '').replace('\n', '')
+        hash = files.computeHashBytes(contents.encode('utf-8'), 'sha1')
+        assert hash == 'e24287384b2d7cfddf8bc5d83443ee90b4f61c24'
 
 @pytest.mark.skipif('not isPy3OrNewer')
 class TestPersistedDict(object):

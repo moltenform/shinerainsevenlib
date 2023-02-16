@@ -141,6 +141,11 @@ def replaceMustExist(s, search, replace):
     assertTrue(search in s, "not found", search)
     return s.replace(search, replace)
 
+def reSearchWholeWord(needle, haystack):
+    import re
+    reNeedle = '\\b' + re.escape(needle) + '\\b'
+    return re.search(reNeedle, haystack)
+    
 def reReplaceWholeWord(starget, sin, srep):
     import re
     sin = '\\b' + re.escape(sin) + '\\b'
@@ -302,6 +307,16 @@ def renderMillisTimeStandard(millisTime):
     t = millisTime / 1000.0
     import time
     return time.strftime("%Y-%m-%d %I:%M:%S", time.localtime(t))
+
+def strToList(s, replaceComments=True):
+    lines = s.replace('\r\n', '\n').split('\n')
+    if replaceComments:
+        lines = [line for line in lines if not line.startswith('#')]
+    return [line.strip() for line in lines if line.strip()]
+    
+def strToSet(s, replaceComments=True):
+    lst = strToList(s, replaceComments=replaceComments)
+    return set(lst)
 
 class EnglishDateParserWrapper(object):
     def __init__(self, dateOrder='MDY'):

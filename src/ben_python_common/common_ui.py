@@ -319,7 +319,7 @@ def getSoftDeleteDir(s):
         files.makedirs(destination)
     return destination
 
-def getSoftDeleteFullPath(s, destination):
+def getSoftDeleteDestination(s, destination):
     # as a prefix, the first 2 chars of the parent directory
     prefix = files.getname(files.getparent(s))[0:2] + '_'
     newname = destination + files.sep + prefix + files.split(s)[1] + getRandomString()
@@ -328,8 +328,8 @@ def getSoftDeleteFullPath(s, destination):
             '. is this directory full of files, or was the random seed reused?')
     return newname
 
-def softDeleteFileFull(s, destination, allowDirs=False, doTrace=False):
-    newname = getSoftDeleteFullPath(s, destination)
+def softDeleteFileToDestination(s, destination, allowDirs=False, doTrace=False):
+    newname = getSoftDeleteDestination(s, destination)
     if doTrace:
         trace('softDeleteFile()', s, '|to|', newname)
 
@@ -339,4 +339,6 @@ def softDeleteFileFull(s, destination, allowDirs=False, doTrace=False):
 
 def softDeleteFile(s, allowDirs=False, doTrace=False):
     destination = getSoftDeleteDir(s)
-    return softDeleteFileFull(s, destination, allowDirs=allowDirs, doTrace=doTrace)
+    return softDeleteFileToDestination(s, destination, allowDirs=allowDirs, doTrace=doTrace)
+
+

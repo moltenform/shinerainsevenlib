@@ -149,7 +149,7 @@ class StoreWithCrudHelpers(Store):
                 if tblschema[fld].get('index'):
                     modifier = ''
                     if tblschema[fld].get('index') == 'unique':
-                        modifier = 'unique'
+                        modifier = 'UNIQUE'
                     elif tblschema[fld].get('index') is True:
                         modifier = ''
                     else:

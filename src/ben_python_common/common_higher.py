@@ -25,7 +25,7 @@ def DBG(obj=None):
     else:
         pprint.pprint(obj)
 
-def getClipboardTextTk():
+def _getClipboardTextTk():
     try:
         from tkinter import Tk
     except ImportError:
@@ -43,7 +43,7 @@ def getClipboardTextTk():
         r.destroy()
     return s
 
-def setClipboardTextTk(s):
+def _setClipboardTextTk(s):
     try:
         from tkinter import Tk
     except ImportError:
@@ -58,25 +58,25 @@ def setClipboardTextTk(s):
     finally:
         r.destroy()
 
-def getClipboardTextPyperclip():
+def _getClipboardTextPyperclip():
     import pyperclip
     return pyperclip.paste()
 
-def setClipboardTextPyperclip(s):
+def _setClipboardTextPyperclip(s):
     import pyperclip
     pyperclip.copy(s)
 
 def getClipboardText():
     try:
-        return getClipboardTextPyperclip()
+        return _getClipboardTextPyperclip()
     except ImportError:
-        return getClipboardTextTk()
+        return _getClipboardTextTk()
 
 def setClipboardText(s):
     try:
-        setClipboardTextPyperclip(s)
+        _setClipboardTextPyperclip(s)
     except ImportError:
-        setClipboardTextTk(s)
+        _setClipboardTextTk(s)
 
 def getRandomString(max=100 * 1000, hex=False):
     import random
