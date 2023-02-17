@@ -13,8 +13,9 @@ from ..files import (readall, writeall, copy, move, sep, run, isemptydir, listch
     computeHash, runWithoutWaitUnicode, ensureEmptyDirectory, ustr, makedirs,
     isfile, isdir, rmdir, extensionPossiblyExecutable, getext, exists, deletesure,
     windowsUrlFileGet, windowsUrlFileWrite, runRsync, runRsyncErrMap,
-    setFileLastModifiedTime, getsize, getModTimeNs, setModTimeNs,
-    findBinaryOnPath)
+    getFileLastModifiedTime, setFileLastModifiedTime, getsize, getModTimeNs, setModTimeNs,
+    findBinaryOnPath, fileContentsEqual, getwithdifferentext, listdirs, getSizeRecurse,
+    fileContentsEqual)
 
 class TestWrappers(object):
     def test_getparent(self):
@@ -42,6 +43,22 @@ class TestWrappers(object):
         assert 'txt' == getext('/path/to/file.TXT')
         assert 'txt' == getext('/path/to/file.TxT')
         assert 'txt' == getext('/path/to/file.tXt')
+
+    def test_getwithdifferentext(self):
+        assert '/path/to/file.new' == getwithdifferentext('/path/to/file.tXt', '.new')
+        assert './path/to/file.new' == getwithdifferentext('./path/to/file.tXt', '.new')
+        assert 'file.new' == getwithdifferentext('file.tXt', '.new')
+
+    def test_getwithdifferentextRequiresExtension(self):
+        with pytest.raises(AssertionError):
+            getwithdifferentext('/path/to/file_no_ext', '.new')
+            
+        with pytest.raises(AssertionError):
+            getwithdifferentext('./file_no_ext', '.new')
+            
+        with pytest.raises(AssertionError):
+            getwithdifferentext('file_no_ext', '.new')
+        
 
     def test_listDeletesure(self, fixture_dir):
         # typical use
@@ -191,25 +208,32 @@ class TestMovingFiles(object):
 class TestFiletimes(object):
     @pytest.mark.skipif('not isPy3OrNewer')
     def test_modtimeIsUpdated(self, fixture_dir):
-        writeall(join(fixture_dir, 'a.txt'), 'contents')
-        curtime1 = getModTimeNs(join(fixture_dir, 'a.txt'))
-        curtime2 = getModTimeNs(join(fixture_dir, 'a.txt'))
-        assert curtime1 == curtime2
+        tests = [
+            [getFileLastModifiedTime, setFileLastModifiedTime],
+            [getModTimeNs, setModTimeNs],
+        ]
+        
+        for fnGet, fnSet in tests:
+            # getting the time from the file twice
+            writeall(join(fixture_dir, 'a.txt'), 'contents')
+            curtime1 = fnGet(join(fixture_dir, 'a.txt'))
+            curtime2 = fnGet(join(fixture_dir, 'a.txt'))
+            assert curtime1 == curtime2
 
-        # update the time by changing the file
-        import time
-        time.sleep(2)
-        with open(join(fixture_dir, 'a.txt'), 'a') as f:
-            f.write('changed')
-        curtime3 = getModTimeNs(join(fixture_dir, 'a.txt'))
-        curtime4 = getModTimeNs(join(fixture_dir, 'a.txt'))
-        assert curtime3 == curtime4
-        assert curtime3 > curtime2
+            # update the time by changing the file
+            import time
+            time.sleep(2)
+            with open(join(fixture_dir, 'a.txt'), 'a') as f:
+                f.write('changed')
+            curtime3 = fnGet(join(fixture_dir, 'a.txt'))
+            curtime4 = fnGet(join(fixture_dir, 'a.txt'))
+            assert curtime3 == curtime4
+            assert curtime3 > curtime2
 
-        # update the time manually
-        setModTimeNs(join(fixture_dir, 'a.txt'), curtime3 // 100)
-        curtime5 = getModTimeNs(join(fixture_dir, 'a.txt'))
-        assert curtime5 < curtime4
+            # update the time manually
+            fnSet(join(fixture_dir, 'a.txt'), curtime3 // 100)
+            curtime5 = fnGet(join(fixture_dir, 'a.txt'))
+            assert curtime5 < curtime4
 
 class TestWriteFiles(object):
     def test_readAndWriteSimple(self, fixture_dir):
@@ -275,6 +299,11 @@ class TestWriteFiles(object):
         assert 'abc' == readall(path)
 
 class TestDirectoryList(object):
+    def test_listDirs(self, fixture_fulldir):
+        expected = ['s1', 's2']
+        expectedTuples = [(join(fixture_fulldir, s), s) for s in expected]
+        assert expectedTuples == sorted(list(listdirs(fixture_fulldir)))
+    
     def test_listChildren(self, fixture_fulldir):
         expected = ['P1.PNG', 'a1.txt', 'a2png', 's1', 's2']
         expectedTuples = [(join(fixture_fulldir, s), s) for s in expected]
@@ -407,6 +436,22 @@ class TestDirectoryList(object):
         with pytest.raises(ValueError) as exc:
             list(listchildren(fixture_dir, True))
         exc.match('please name parameters')
+
+class TestOtherUtilsActingOnFiles(object):
+    def test_getSizeRecurse(self, fixture_fulldir):
+        assert getSizeRecurse(fixture_fulldir) == 79
+        
+    def test_fileContentsEqual_Equal(self, fixture_fulldir):
+        f1 = join(fixture_fulldir, 'P1.PNG')
+        f2 = join(fixture_fulldir, 'P1-copy.PNG')
+        copy(f1, f2, True)
+        assert fileContentsEqual(f1, f2)
+        deletesure(f2)
+        
+    def test_fileContentsEqual_NotEqual(self, fixture_fulldir):
+        f1 = join(fixture_fulldir, 'P1.PNG')
+        f2 = join(fixture_fulldir, 'a1.txt')
+        assert not fileContentsEqual(f1, f2)
 
 class TestFilesUtils(object):
     def test_extensionPossiblyExecutableNoExt(self, fixture_dir):

@@ -29,9 +29,6 @@ def getparent(s):
 def getname(s):
     return _os.path.split(s)[1]
 
-def modtime(s):
-    return _os.stat(s).st_mtime
-
 def createdtime(s):
     return _os.stat(s).st_ctime
 
@@ -45,7 +42,13 @@ def getext(s, removeDot=True):
 def getwithdifferentext(s, ext_with_dot):
     parent, short = os.path.split(s)
     short_before_ext, short_ext = os.path.splitext(short)
-    return os.path.join(parent, short_before_ext + ext_with_dot)
+    assertTrue(short_ext, s)
+    if parent:
+        with_trailing_slash = s[0:len(parent)+1]
+        assertTrue(with_trailing_slash == parent+'/' or with_trailing_slash == parent+'\\')
+        return with_trailing_slash + short_before_ext + ext_with_dot
+    else:
+        return short_before_ext + ext_with_dot
 
 def delete(s, traceToStdout=False):
     if traceToStdout:
@@ -112,7 +115,7 @@ def copy(srcfile, destfile, overwrite, traceToStdout=False,
         if overwrite:
             _shutil.copy(srcfile, destfile)
         else:
-            copyFilePosixWithoutOverwrite(srcfile, destfile)
+            _copyFilePosixWithoutOverwrite(srcfile, destfile)
 
     assertTrue(exists(destfile))
     if toSetModTime:
@@ -165,7 +168,7 @@ def move(srcfile, destfile, overwrite, warnBetweenDrives=False,
     if toSetModTime:
         setModTimeNs(destfile, toSetModTime)
 
-def copyFilePosixWithoutOverwrite(srcfile, destfile):
+def _copyFilePosixWithoutOverwrite(srcfile, destfile):
     # fails if destination already exist. O_EXCL prevents other files from writing to location.
     # raises OSError on failure.
     flags = _os.O_CREAT | _os.O_EXCL | _os.O_WRONLY
@@ -259,7 +262,7 @@ def _checkNamedParameters(obj):
         raise ValueError('please name parameters for this function or method')
 
 # allowedexts in the form ['png', 'gif']
-def listchildrenUnsorted(dir, _ind=_enforceExplicitlyNamedParameters, filenamesOnly=False, allowedexts=None):
+def _listchildrenUnsorted(dir, _ind=_enforceExplicitlyNamedParameters, filenamesOnly=False, allowedexts=None):
     _checkNamedParameters(_ind)
     for filename in _os.listdir(dir):
         if not allowedexts or getext(filename) in allowedexts:
@@ -268,12 +271,12 @@ def listchildrenUnsorted(dir, _ind=_enforceExplicitlyNamedParameters, filenamesO
 
 if sys.platform.startswith('win'):
     exeSuffix = '.exe'
-    listchildren = listchildrenUnsorted
+    listchildren = _listchildrenUnsorted
 else:
     exeSuffix = ''
 
     def listchildren(*args, **kwargs):
-        return sorted(listchildrenUnsorted(*args, **kwargs))
+        return sorted(_listchildrenUnsorted(*args, **kwargs))
 
 def listdirs(dir, _ind=_enforceExplicitlyNamedParameters, filenamesOnly=False, allowedexts=None):
     _checkNamedParameters(_ind)
@@ -531,13 +534,13 @@ def hasherFromString(s):
 def computeHashBytes(b, hasher='sha1', buffersize=0x40000):
     import io
     with io.BytesIO(b) as f:
-        return computeHashImpl(f, hasher, buffersize)
+        return _computeHashImpl(f, hasher, buffersize)
 
 def computeHash(path, hasher='sha1', buffersize=0x40000):
     with open(path, 'rb') as f:
-        return computeHashImpl(f, hasher, buffersize)
+        return _computeHashImpl(f, hasher, buffersize)
 
-def computeHashImpl(f, hasher, buffersize=0x40000):
+def _computeHashImpl(f, hasher, buffersize=0x40000):
     if hasher == 'crc32':
         import zlib
         crc = zlib.crc32(bytes(), 0)
@@ -706,7 +709,7 @@ def run(listArgs, _ind=_enforceExplicitlyNamedParameters, shell=False, createNoW
         wait=True):
     import subprocess
     _checkNamedParameters(_ind)
-    assertTrue(isfile(listArgs[0]) or _shutil.which(listArgs[0]) or shell, 'file not found?', listArgs[0])
+    assertTrue(isfile(listArgs[0]) or 'which' not in dir(_shutil) or _shutil.which(listArgs[0]) or shell, 'file not found?', listArgs[0])
     kwargs = {}
 
     if sys.platform.startswith('win') and createNoWindow:

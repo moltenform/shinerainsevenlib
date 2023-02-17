@@ -9,8 +9,9 @@ class TestChecker:
     def goAll(self, srcDir, testDir):
         alreadyTested = self.getAlreadyTested(testDir)
         for f, short in files.recursefiles(srcDir):
-            if not short.startswith('test') and short.endswith('.py'):
-                self.goFile(f, alreadyTested)
+            if not short.startswith('nocpy'):
+                if not short.startswith('test') and short.endswith('.py'):
+                    self.goFile(f, alreadyTested)
         
     def getAlreadyTested(self, testDir):
         alreadyTested = ''

@@ -565,6 +565,23 @@ class TestCustomAsserts(object):
     def test_assertEqFailsIfNotEqual(self):
         with pytest.raises(AssertionError):
             assertEq(1, 2, 'msg here')
+    
+    # assertEqArray
+    def test_assertEqArray(self):
+        assertEqArray([], [])
+        assertEqArray([1], [1])
+        assertEqArray([1, 2, 3], [1, 2, 3])
+        assertEqArray('1|2|3', [1, 2, 3])
+
+    def test_assertEqArrayFailsIfNotEqual(self):
+        with pytest.raises(AssertionError):
+            assertEqArray([1, 2, 3], [1, 2, 4])
+            
+        with pytest.raises(AssertionError):
+            assertEqArray([1, 2, 3], [1, 2, 3, 4])
+        
+        with pytest.raises(AssertionError):
+            assertEqArray('1|2|3', [1, 2, 4])
 
     # test assertFloatEq
     def test_assertFloatEqEqual(self):
