@@ -137,23 +137,23 @@ def stripHtmlTags(s, removeRepeatedWhitespace=True):
 
 # see also: html.escape, html.unescape
 
-def replaceMustExist(s, search, replace):
-    assertTrue(search in s, "not found", search)
-    return s.replace(search, replace)
+def replaceMustExist(haystack, needle, replace):
+    assertTrue(needle in haystack, "not found", needle)
+    return haystack.replace(needle, replace)
 
-def reSearchWholeWord(needle, haystack):
+def reSearchWholeWord(haystack, needle):
     import re
     reNeedle = '\\b' + re.escape(needle) + '\\b'
     return re.search(reNeedle, haystack)
     
-def reReplaceWholeWord(starget, sin, srep):
+def reReplaceWholeWord(haystack, sNeedle, replace):
     import re
-    sin = '\\b' + re.escape(sin) + '\\b'
-    return re.sub(sin, srep, starget)
+    sNeedle = '\\b' + re.escape(sNeedle) + '\\b'
+    return re.sub(sNeedle, replace, haystack)
 
-def reReplace(starget, sre, srep):
+def reReplace(haystack, reNeedle, replace):
     import re
-    return re.sub(sre, srep, starget)
+    return re.sub(reNeedle, replace, haystack)
 
 
 '''
@@ -365,11 +365,11 @@ class EnglishDateParserWrapper(object):
 
 def runAndCatchException(fn):
     try:
-        fn()
+        result = fn()
+        return Bucket(result=result, err=None)
     except:
         import sys
-        return sys.exc_info()[1]
-    return None
+        return Bucket(result=None, err=sys.exc_info()[1])
 
 def assertTrue(condition, *messageArgs):
     if not condition:

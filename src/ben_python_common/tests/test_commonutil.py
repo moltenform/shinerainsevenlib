@@ -178,6 +178,20 @@ class TestStringHelpersSimple(object):
 
     def test_replaceWholeWordWithCasing(self):
         assert 'and A fad pineapple A da' == reReplaceWholeWord('and a fad pineapple a da', 'a', 'A')
+    
+    # searchWholeWord
+    def test_searchWholeWordFound(self):
+        assert 11 == reSearchWholeWord('wantother, want other', 'want').span()[0]
+
+    def test_searchWholeWordWithPunctationFound(self):
+        assert 11 == reSearchWholeWord('w()wother, w()w other', 'w()w').span()[0]
+    
+    def test_searchWholeWordNotFound(self):
+        assert None == reSearchWholeWord('otherwantother', 'want')
+
+    def test_searchWholeWordWithPunctationNotFound(self):
+        assert None == reSearchWholeWord('otherw()wother', 'w()w')
+
 
     # truncateWithEllipsis
     def test_truncateWithEllipsisEmptyString(self):
@@ -267,6 +281,63 @@ class TestStringHelpersSimple(object):
         addOrAppendToArrayInDict(d, 'a', 'a')
         addOrAppendToArrayInDict(d, 'b', 'b')
         assert d == dict(a=['a', 'a'], b=['b', 'b'], c=['c'])
+
+    def test_strToList(self):
+        lst = strToList('''a\nbb\nc''')
+        assert lst == ['a', 'bb', 'c']
+        
+        lst = strToList('''a\r\nbb\r\nc''')
+        assert lst == ['a', 'bb', 'c']
+        
+        lst = strToList('''\r\na\r\n  bb  \r\nc\r\n''')
+        assert lst == ['a', 'bb', 'c']
+        
+    def test_strToListWithComments(self):
+        lst = strToList('''a\n#comment\nbb\nc''')
+        assert lst == ['a', 'bb', 'c']
+        
+        lst = strToList('''a\r\n#comment\r\nbb\r\nc''')
+        assert lst == ['a', 'bb', 'c']
+        
+        lst = strToList('''\r\n#comment\r\na\r\n  bb  \r\nc\r\n''')
+        assert lst == ['a', 'bb', 'c']
+        
+    def test_strToSetWithComments(self):
+        lst = strToSet('''a\n#comment\nbb\nc''')
+        assert lst == set(['a', 'bb', 'c'])
+        
+        lst = strToSet('''a\r\n#comment\r\nbb\r\nc''')
+        assert lst == set(['a', 'bb', 'c'])
+        
+        lst = strToSet('''\r\n#comment\r\na\r\n  bb  \r\nc\r\n''')
+        assert lst == set(['a', 'bb', 'c'])
+
+class TestOtherSimpleHelpers(object):
+    def test_waitUntilTrueArr(self):
+        arr = [0, 1, 2, 3, 4, 5]
+        results = [item for item in waitUntilTrue(arr, lambda x: x==3)]
+        assert results == [3, 4, 5]
+        
+    def test_waitUntilTrueIter(self):
+        def exampleIter():
+            for i in range(6):
+                yield i
+                
+        results = [item for item in waitUntilTrue(exampleIter(), lambda x: x==3)]
+        assert results == [3, 4, 5]
+        
+    def test_waitUntilTrueArr_NeverSeen(self):
+        arr = [0, 1, 2, 3, 4, 5]
+        results = [item for item in waitUntilTrue(arr, lambda x: x==9)]
+        assert results == []
+        
+    def test_waitUntilTrueIter_NeverSeen(self):
+        def exampleIter():
+            for i in range(6):
+                yield i
+                
+        results = [item for item in waitUntilTrue(exampleIter(), lambda x: x==9)]
+        assert results == []
 
 class TestDataStructures(object):
     # takeBatch
@@ -438,34 +509,36 @@ def dateParserAvailable():
 
 @pytest.mark.skipif('not dateParserAvailable()')
 class TestDateParsing(object):
-    def test_spanish_dates_should_not_parsed():
+    def test_spanish_dates_should_not_parsed(self):
         uu = EnglishDateParserWrapper()
         assert uu.parse(u'Martes 21 de Octubre de 2014') is None
 
-    def test_spanish_dates_will_parse_if_we_hack_it_and_give_it_a_different_parser():
+    def test_spanish_dates_will_parse_if_we_hack_it_and_give_it_a_different_parser(self):
+        import dateparser
         uu = EnglishDateParserWrapper()
         uu.p = dateparser.date.DateDataParser()
         parsed = uu.parse(u'Martes 21 de Octubre de 2014')
         assert 2014 == parsed.year
 
-    def test_incomplete_dates_should_not_parsed():
+    def test_incomplete_dates_should_not_parsed(self):
         uu = EnglishDateParserWrapper()
         assert uu.parse(u'December 2015') is None
 
-    def test_incomplete_dates_will_parse_if_we_hack_it_and_give_it_a_different_parser():
+    def test_incomplete_dates_will_parse_if_we_hack_it_and_give_it_a_different_parser(self):
+        import dateparser
         uuu = EnglishDateParserWrapper()
         uuu.p = dateparser.date.DateDataParser()
         parsed = uuu.parse(u'December 2015')
         assert 2015 == parsed.year
 
-    def test_dates_can_get_this():
+    def test_dates_can_get_this(self):
         uu = EnglishDateParserWrapper()
         got = uu.parse('30 Jan 2018')
         assert 30 == got.day
         assert 1 == got.month
         assert 2018 == got.year
 
-    def test_and_confirm_MDY():
+    def test_and_confirm_MDY(self):
         uu = EnglishDateParserWrapper()
         got = uu.parse('4/5/2016')
         assert 5 == got.day
@@ -492,7 +565,7 @@ class TestDateParsing(object):
         assert 3 == got.month
         assert 2011 == got.year
 
-    def test_twitter_api_format_we_needed_to_tweak_it_a_bit():
+    def test_twitter_api_format_we_needed_to_tweak_it_a_bit(self):
         uu = EnglishDateParserWrapper()
         assert "Wed Nov 07 04:01:10 2018 +0000" == uu.fromFullWithTimezone("Wed Nov 07 04:01:10 +0000 2018")
         got = uu.parse(uu.fromFullWithTimezone("Wed Nov 07 04:01:10 +0000 2018"))
@@ -506,9 +579,8 @@ class TestDateParsing(object):
         assert 11 == got.month
         assert 2018 == got.year
 
-    def test_ensure_month_day_year():
+    def test_ensure_month_day_year(self):
         # 1362456244 is 3(month)/5(day)/2013
-        fhhfghfghfgh
         uu = EnglishDateParserWrapper()
         test1 = uu.getDaysBeforeInMilliseconds('3/5/2013 4:04:04 GMT', 0)
         assert 1362456244000 == test1
@@ -516,6 +588,11 @@ class TestDateParsing(object):
         assert 1362456244000 - 86400000 == test2
         test3 = uu.getDaysBeforeInMilliseconds('3/5/2013 4:04:04 GMT', 100)
         assert 1362456244000 - 100 * 86400000 == test3
+    
+    def test_render_time(self):
+        sampleMillisTime = 1676603866779
+        assert '02/16/2023 07:17:46 PM' == renderMillisTime(sampleMillisTime)
+        assert '2023-02-16 07:17:46' == renderMillisTimeStandard(sampleMillisTime)
 
 class TestCustomAsserts(object):
     def raisevalueerr(self):
@@ -571,7 +648,7 @@ class TestCustomAsserts(object):
         assertEqArray([], [])
         assertEqArray([1], [1])
         assertEqArray([1, 2, 3], [1, 2, 3])
-        assertEqArray('1|2|3', [1, 2, 3])
+        assertEqArray('1|2|3', ['1', '2', '3'])
 
     def test_assertEqArrayFailsIfNotEqual(self):
         with pytest.raises(AssertionError):
@@ -581,7 +658,7 @@ class TestCustomAsserts(object):
             assertEqArray([1, 2, 3], [1, 2, 3, 4])
         
         with pytest.raises(AssertionError):
-            assertEqArray('1|2|3', [1, 2, 4])
+            assertEqArray('1|2|3', ['1', '2', '4'])
 
     # test assertFloatEq
     def test_assertFloatEqEqual(self):
@@ -611,3 +688,20 @@ class TestCustomAsserts(object):
     def test_assertFloatNotEqualNegative(self):
         with pytest.raises(AssertionError):
             assertFloatEq(0.1234, -0.1234)
+    
+    def test_runAndCatchException_Raises(self):
+        def fn():
+            raise Exception('abc')
+        
+        result = runAndCatchException(fn)
+        assertEq(None, result.result)
+        assertTrue(isinstance(result.err, Exception))
+        
+    def test_runAndCatchException_NotRaises(self):
+        def fn():
+            return 'abc'
+            
+        result = runAndCatchException(fn)
+        assertEq('abc', result.result)
+        assertEq(None, result.err)
+

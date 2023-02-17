@@ -12,6 +12,7 @@ class TestChecker:
             if not short.startswith('nocpy'):
                 if not short.startswith('test') and short.endswith('.py'):
                     self.goFile(f, alreadyTested)
+        trace('Complete')
         
     def getAlreadyTested(self, testDir):
         alreadyTested = ''
@@ -38,7 +39,7 @@ class TestChecker:
                 self.goSymbol(f, symbol, alreadyTested)
 
     def goSymbol(self, f, symbol, alreadyTested):
-        if not reSearchWholeWord(symbol, alreadyTested):
+        if not reSearchWholeWord(alreadyTested, symbol):
             trace(f'Did not see tests for {files.getname(f)}\'s {symbol}')
 
 if __name__ == '__main__':
