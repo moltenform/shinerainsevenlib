@@ -2,12 +2,12 @@
 import subprocess
 
 # returns tuple (returncode, stdout, stderr)
-def run(listArgs, _ind=_enforceExplicitlyNamedParameters, shell=False, createNoWindow=True,
+def run(listArgs, *, shell=False, createNoWindow=True,
         throwOnFailure=RuntimeError, stripText=True, captureOutput=True, silenceOutput=False,
         wait=True):
+    
     import subprocess
-    _checkNamedParameters(_ind)
-    assertTrue(isfile(listArgs[0]) or 'which' not in dir(_shutil) or _shutil.which(listArgs[0]) or shell, 'file not found?', listArgs[0])
+    assertTrue(isfile(listArgs[0]) or 'which' not in dir(shutil) or shutil.which(listArgs[0]) or shell, 'file not found?', listArgs[0])
     kwargs = {}
 
     if sys.platform.startswith('win') and createNoWindow:
@@ -37,8 +37,8 @@ def run(listArgs, _ind=_enforceExplicitlyNamedParameters, shell=False, createNoW
 
     else:
         if silenceOutput:
-            stdoutArg = open(_os.devnull, 'wb')
-            stderrArg = open(_os.devnull, 'wb')
+            stdoutArg = open(os.devnull, 'wb')
+            stderrArg = open(os.devnull, 'wb')
         else:
             stdoutArg = None
             stderrArg = None
@@ -61,7 +61,7 @@ def run(listArgs, _ind=_enforceExplicitlyNamedParameters, shell=False, createNoW
     return retcode, stdout, stderr
 
 
-def runWithTimeout(args, _ind=_enforceExplicitlyNamedParameters, shell=False, createNoWindow=True,
+def runWithTimeout(args, *, shell=False, createNoWindow=True,
                   throwOnFailure=True, captureOutput=True, timeout=None, addArgs=None):
     addArgs = addArgs if addArgs else {}
     

@@ -1,9 +1,9 @@
 
 # allowedexts in the form ['png', 'gif']
 def _listchildrenUnsorted(dir, *, filenamesOnly=False, allowedexts=None):
-    for filename in _os.listdir(dir):
+    for filename in os.listdir(dir):
         if not allowedexts or getext(filename) in allowedexts:
-            yield filename if filenamesOnly else (dir + _os.path.sep + filename, filename)
+            yield filename if filenamesOnly else (dir + os.path.sep + filename, filename)
 
 
 if sys.platform.startswith('win'):
@@ -16,19 +16,19 @@ else:
 
 def listdirs(dir, *, filenamesOnly=False, allowedexts=None):
     for full, name in listchildren(dir, allowedexts=allowedexts):
-        if _os.path.isdir(full):
+        if os.path.isdir(full):
             yield name if filenamesOnly else (full, name)
 
 def listfiles(dir, *, filenamesOnly=False, allowedexts=None):
     for full, name in listchildren(dir, allowedexts=allowedexts):
-        if not _os.path.isdir(full):
+        if not os.path.isdir(full):
             yield name if filenamesOnly else (full, name)
 
 def recursefiles(root, *, filenamesOnly=False, allowedexts=None,
         fnFilterDirs=None, includeFiles=True, includeDirs=False, topdown=True, followSymlinks=False):
     assert isdir(root)
 
-    for (dirpath, dirnames, filenames) in _os.walk(root, topdown=topdown, followlinks=followSymlinks):
+    for (dirpath, dirnames, filenames) in os.walk(root, topdown=topdown, followlinks=followSymlinks):
         if fnFilterDirs:
             newdirs = [dir for dir in dirnames if fnFilterDirs(join(dirpath, dir))]
             dirnames[:] = newdirs
@@ -36,7 +36,7 @@ def recursefiles(root, *, filenamesOnly=False, allowedexts=None,
         if includeFiles:
             for filename in (filenames if sys.platform.startswith('win') else sorted(filenames)):
                 if not allowedexts or getext(filename) in allowedexts:
-                    yield filename if filenamesOnly else (dirpath + _os.path.sep + filename, filename)
+                    yield filename if filenamesOnly else (dirpath + os.path.sep + filename, filename)
 
         if includeDirs:
             yield getname(dirpath) if filenamesOnly else (dirpath, getname(dirpath))
@@ -58,7 +58,7 @@ class FileInfoEntryWrapper(object):
         return self.obj.is_file(*args)
 
     def short(self):
-        return _os.path.split(self.path)[1]
+        return os.path.split(self.path)[1]
 
     def size(self):
         return self.obj.stat().st_size
@@ -80,7 +80,7 @@ def recursefileinfo(root, recurse=True, followSymlinks=False, filesOnly=True,
 
     # scandir's resources are released in destructor,
     # do not create circular references holding it
-    for entry in _os.scandir(root):
+    for entry in os.scandir(root):
         if entry.is_dir(follow_symlinks=followSymlinks):
             if not filesOnly:
                 yield FileInfoEntryWrapper(entry)

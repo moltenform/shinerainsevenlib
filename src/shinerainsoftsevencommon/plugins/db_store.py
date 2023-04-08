@@ -1,5 +1,4 @@
-# BenPythonCommon,
-# 2015 Ben Fisher, released under the LGPLv3 license.
+
 # db_store, a simple database abstraction layer
 #
 # raison d'etre
@@ -19,8 +18,8 @@
 #    --global-option=fetch --global-option=--version --global-option=3.16.2 --global-option=--all
 #    --global-option=build --global-option=--enable-all-extensions
 
-from ..common_util import *
-from .. import files
+#~ from ..common_util import *
+#~ from .. import files
 import apsw
 import sys
 import re

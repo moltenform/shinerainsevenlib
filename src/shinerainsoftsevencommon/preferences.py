@@ -17,7 +17,7 @@ scratchLocation:
 
 
 
-class BenPythonCommonConfigParser(object):
+class SimpleConfigParser(object):
     def __init__(self, addDefaultSection='main'):
         self.prefs_dict = {}
         self.addDefaultSection = addDefaultSection
@@ -50,7 +50,7 @@ class BenPythonCommonPreferences(object):
     
     def load(self):
         userHome = os.path.expanduser('~')
-        userPrefsFile = userHome + '/' + '.ben_python_common'
+        userPrefsFile = userHome + '/' + '.shinerainsoftsevencommon'
         
         def go(f):
     
@@ -89,7 +89,9 @@ runOnModuleLoad(cachedPrefs)
 def getTempDirectoryForPath(path):
     result = getDirectoryBasedOnPath(path, 'temp_directory')
     if not result:
-        tempfile.gettempdir()
+        tempdir = tempfile.gettempdir() + '/shinerainsoftsevencommon'
+        os.makedirs(tempdir)
+        return tempdir
     
 def getSoftDeleteDirectoryForPath(path):
     return getDirectoryBasedOnPath(path, 'soft_delete_directory')

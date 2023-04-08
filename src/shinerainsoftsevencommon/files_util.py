@@ -1,35 +1,33 @@
-# BenPythonCommon,
-# 2015 Ben Fisher, released under the LGPLv3 license.
 
 import sys
-import os as _os
-import shutil as _shutil
+import os as os
+import shutil as shutil
 from .common_higher import *
 from .common_util import *
 
-rename = _os.rename
-exists = _os.path.exists
-join = _os.path.join
-split = _os.path.split
-splitext = _os.path.splitext
-isdir = _os.path.isdir
-isfile = _os.path.isfile
-getsize = _os.path.getsize
-rmdir = _os.rmdir
-chdir = _os.chdir
-sep = _os.path.sep
-linesep = _os.linesep
-abspath = _os.path.abspath
-rmtree = _shutil.rmtree
+rename = os.rename
+exists = os.path.exists
+join = os.path.join
+split = os.path.split
+splitext = os.path.splitext
+isdir = os.path.isdir
+isfile = os.path.isfile
+getsize = os.path.getsize
+rmdir = os.rmdir
+chdir = os.chdir
+sep = os.path.sep
+linesep = os.linesep
+abspath = os.path.abspath
+rmtree = shutil.rmtree
 
 def getparent(s):
-    return _os.path.split(s)[0]
+    return os.path.split(s)[0]
 
 def getname(s):
-    return _os.path.split(s)[1]
+    return os.path.split(s)[1]
 
 def createdtime(s):
-    return _os.stat(s).st_ctime
+    return os.stat(s).st_ctime
 
 def getext(s, removeDot=True):
     a, b = splitext(s)
@@ -53,7 +51,7 @@ def delete(s, traceToStdout=False):
     if traceToStdout:
         trace('delete()', s)
 
-    _os.unlink(s)
+    os.unlink(s)
 
 def deletesure(s, traceToStdout=False):
     if exists(s):
@@ -63,7 +61,7 @@ def deletesure(s, traceToStdout=False):
 
 def makedirs(s):
     try:
-        _os.makedirs(s)
+        os.makedirs(s)
     except OSError:
         if isdir(s):
             return
@@ -76,15 +74,15 @@ def ensureEmptyDirectory(d):
 
     if isdir(d):
         # delete all existing files in the directory
-        for s in _os.listdir(d):
-            if _os.path.isdir(join(d, s)):
-                _shutil.rmtree(join(d, s))
+        for s in os.listdir(d):
+            if os.path.isdir(join(d, s)):
+                shutil.rmtree(join(d, s))
             else:
-                _os.unlink(join(d, s))
+                os.unlink(join(d, s))
 
         assertTrue(isemptydir(d))
     else:
-        _os.makedirs(d)
+        os.makedirs(d)
 
 def copy(srcfile, destfile, overwrite, traceToStdout=False,
         useDestModifiedTime=False, createParent=False):
@@ -114,7 +112,7 @@ def copy(srcfile, destfile, overwrite, traceToStdout=False,
                 getPrintable(srcfile + '->' + destfile))
     else:
         if overwrite:
-            _shutil.copy(srcfile, destfile)
+            shutil.copy(srcfile, destfile)
         else:
             _copyFilePosixWithoutOverwrite(srcfile, destfile)
 
@@ -143,38 +141,42 @@ def move(srcfile, destfile, overwrite, warnBetweenDrives=False,
     if srcfile == destfile:
         pass
     elif sys.platform.startswith('win'):
-        from ctypes import windll, c_wchar_p, c_int, GetLastError
-        ERROR_NOT_SAME_DEVICE = 17
-        flags = 0
-        flags |= 1 if overwrite else 0
-        flags |= 0 if warnBetweenDrives else 2
-        res = windll.kernel32.MoveFileExW(c_wchar_p(srcfile), c_wchar_p(destfile), c_int(flags))
-        if not res:
-            err = GetLastError()
-            if err == ERROR_NOT_SAME_DEVICE and warnBetweenDrives:
-                rinput('Note: moving file from one drive to another. ' +
-                    '%s %s Press Enter to continue.\r\n'%(srcfile, destfile))
-                return move(srcfile, destfile, overwrite, warnBetweenDrives=False)
-
-            raise IOError('MoveFileExW failed (maybe dest already exists?) err=%d' % err +
-                getPrintable(srcfile + '->' + destfile))
+        _moveFileWin(srcfile, destfile)
 
     elif sys.platform.startswith('linux') and overwrite:
-        _os.rename(srcfile, destfile)
+        os.rename(srcfile, destfile)
     else:
         copy(srcfile, destfile, overwrite)
-        _os.unlink(srcfile)
+        os.unlink(srcfile)
 
     assertTrue(exists(destfile))
     if toSetModTime:
         setModTimeNs(destfile, toSetModTime)
 
+def _moveFileWin():
+    from ctypes import windll, c_wchar_p, c_int, GetLastError
+    ERROR_NOT_SAME_DEVICE = 17
+    flags = 0
+    flags |= 1 if overwrite else 0
+    flags |= 0 if warnBetweenDrives else 2
+    res = windll.kernel32.MoveFileExW(c_wchar_p(srcfile), c_wchar_p(destfile), c_int(flags))
+    
+    if not res:
+        err = GetLastError()
+        if err == ERROR_NOT_SAME_DEVICE and warnBetweenDrives:
+            rinput('Note: moving file from one drive to another. ' +
+                '%s %s Press Enter to continue.\r\n'%(srcfile, destfile))
+            return move(srcfile, destfile, overwrite, warnBetweenDrives=False)
+
+        raise IOError('MoveFileExW failed (maybe dest already exists?) err=%d' % err +
+            getPrintable(srcfile + '->' + destfile))
+
 def _copyFilePosixWithoutOverwrite(srcfile, destfile):
     # fails if destination already exist. O_EXCL prevents other files from writing to location.
     # raises OSError on failure.
-    flags = _os.O_CREAT | _os.O_EXCL | _os.O_WRONLY
-    file_handle = _os.open(destfile, flags)
-    with _os.fdopen(file_handle, 'wb') as fdest:
+    flags = os.O_CREAT | os.O_EXCL | os.O_WRONLY
+    file_handle = os.open(destfile, flags)
+    with os.fdopen(file_handle, 'wb') as fdest:
         with open(srcfile, 'rb') as fsrc:
             while True:
                 buffer = fsrc.read(64 * 1024)
@@ -185,19 +187,19 @@ def _copyFilePosixWithoutOverwrite(srcfile, destfile):
 # "millistime" is number of milliseconds past epoch (unix time * 1000)
 
 def getModTimeNs(path, asMillisTime=False):
-    t = _os.stat(path).st_mtime_ns
+    t = os.stat(path).st_mtime_ns
     if asMillisTime:
         t = int(t / 1.0e6)
     return t
 
 def getCTimeNs(path, asMillisTime=False):
-    t = _os.stat(path).st_ctime_ns
+    t = os.stat(path).st_ctime_ns
     if asMillisTime:
         t = int(t / 1.0e6)
     return t
 
 def getATimeNs(path, asMillisTime=False):
-    t = _os.stat(path).st_atime_ns
+    t = os.stat(path).st_atime_ns
     if asMillisTime:
         t = int(t / 1.0e6)
     return t
@@ -206,22 +208,22 @@ def setModTimeNs(path, mtime, asMillisTime=False):
     if asMillisTime:
         mtime *= 1e6
     atime = getATimeNs(path)
-    _os.utime(path, ns=(atime, mtime))
+    os.utime(path, ns=(atime, mtime))
 
 def setATimeNs(path, atime, asMillisTime=False):
     if asMillisTime:
         atime *= 1e6
     mtime = getModTimeNs(path)
-    _os.utime(path, ns=(atime, mtime))
+    os.utime(path, ns=(atime, mtime))
 
 def getFileLastModifiedTime(filepath):
-    return _os.path.getmtime(filepath)
+    return os.path.getmtime(filepath)
 
 def setFileLastModifiedTime(filepath, lmt):
-    curtimes = _os.stat(filepath)
+    curtimes = os.stat(filepath)
     newtimes = (curtimes.st_atime, lmt)
     with open(filepath, 'ab'):
-        _os.utime(filepath, newtimes)
+        os.utime(filepath, newtimes)
 
 def _openSupportingUnicode(s, mode, encoding):
     if encoding:
@@ -250,7 +252,7 @@ def writeall(s, txt, mode='w', unicodetype=None, encoding=None, skipIfSameConten
         return True
 
 def isemptydir(dir):
-    return len(_os.listdir(dir)) == 0
+    return len(os.listdir(dir)) == 0
     
 def getSizeRecurse(dir, followSymlinks=False, fnFilterDirs=None, fnDirectExceptionsTo=None):
     total = 0
@@ -261,6 +263,7 @@ def getSizeRecurse(dir, followSymlinks=False, fnFilterDirs=None, fnDirectExcepti
 
 def fileContentsEqual(f1, f2):
     import filecmp
+    
     return filecmp.cmp(f1, f2, shallow=False)
 
 

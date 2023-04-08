@@ -1,5 +1,3 @@
-# BenPythonCommon,
-# 2015 Ben Fisher, released under the LGPLv3 license.
 
 import sys
 import unicodedata
@@ -115,15 +113,15 @@ def toValidFilename(sOrig, dirsepOk=False, maxLen=None):
         .replace(u'\r\n', u' ').replace(u'\r', u' ').replace(u'\n', u' ')
 
     if maxLen and len(result) > maxLen:
-        import os as _os
+        import os as os
         assertTrue(maxLen > 1)
-        ext = _os.path.splitext(s)[1]
+        ext = os.path.splitext(s)[1]
         beforeExt = s[0:-len(ext)]
         while len(result) > maxLen:
             result = beforeExt + ext
             beforeExt = beforeExt[0:-1]
         # if it ate into the directory, though, through an error
-        assertTrue(_os.path.split(sOrig)[0] == _os.path.split(result)[0])
+        assertTrue(os.path.split(sOrig)[0] == os.path.split(result)[0])
 
     return result
 

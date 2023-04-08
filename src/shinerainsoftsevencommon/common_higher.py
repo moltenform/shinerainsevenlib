@@ -1,8 +1,5 @@
-# BenPythonCommon,
-# 2015 Ben Fisher, released under the LGPLv3 license.
 
 import os
-from .common_util import *
 
 def getClipboardText():
     try:
@@ -59,8 +56,9 @@ def _setClipboardTextPyperclip(s):
 
 def DBG(obj=None):
     import pprint
+    import inspect
+    
     if obj is None:
-        import inspect
         fback = inspect.currentframe().f_back
         framelocals = fback.f_locals
         newDict = {}
@@ -75,6 +73,7 @@ def DBG(obj=None):
 
 def getRandomString(max=1000 * 1000, hex=False):
     import random
+    
     if hex:
         return genUuid().split('-')[0]
     else:
@@ -82,9 +81,10 @@ def getRandomString(max=1000 * 1000, hex=False):
 
 def genUuid(asBase64=False):
     import uuid
+    import base64
+    
     u = uuid.uuid4()
     if asBase64:
-        import base64
         b = base64.urlsafe_b64encode(u.bytes_le)
         return b.decode('utf8')
     else:
@@ -93,6 +93,7 @@ def genUuid(asBase64=False):
 
 def downloadUrl(url, toFile=None, timeout=30, asText=False):
     import requests
+    
     resp = requests.get(url, timeout=timeout)
     if toFile:
         with open(toFile, 'wb') as fout:
@@ -104,6 +105,7 @@ def downloadUrl(url, toFile=None, timeout=30, asText=False):
 
 def startThread(fn, args=None):
     import threading
+    
     if args is None:
         args = tuple()
     t = threading.Thread(target=fn, args=args)

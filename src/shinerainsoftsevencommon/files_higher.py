@@ -42,25 +42,25 @@ def findBinaryOnPath(name):
     # like `which`
     def existsAsExe(dir, name):
         f = join(dir, name)
-        if _os.path.isfile(f):
+        if os.path.isfile(f):
             return f
         if sys.platform.startswith('win'):
-            if _os.path.isfile(f + '.exe'):
+            if os.path.isfile(f + '.exe'):
                 return f + '.exe'
-            if _os.path.isfile(f + '.cmd'):
+            if os.path.isfile(f + '.cmd'):
                 return f + '.cmd'
-            if _os.path.isfile(f + '.com'):
+            if os.path.isfile(f + '.com'):
                 return f + '.com'
-            if _os.path.isfile(f + '.bat'):
+            if os.path.isfile(f + '.bat'):
                 return f + '.bat'
         return None
 
     # handle "./binaryname"
-    if _os.sep in name:
+    if os.sep in name:
         return existsAsExe('.', name) if existsAsExe('.', name) else None
 
     # handle "binaryname"
-    for path in _os.environ["PATH"].split(_os.pathsep):
+    for path in os.environ["PATH"].split(os.pathsep):
         if path and existsAsExe(path, name):
             return existsAsExe(path, name)
 
@@ -150,7 +150,7 @@ def _computeHashImpl(f, hasher, buffersize=0x40000):
         return hasher.hexdigest()
 
 def windowsUrlFileGet(path):
-    assertEq('.url', _os.path.splitext(path)[1].lower())
+    assertEq('.url', os.path.splitext(path)[1].lower())
     s = readall(path, mode='r')
     lines = s.split('\n')
     for line in lines:
