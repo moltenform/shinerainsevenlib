@@ -8,7 +8,7 @@ except ImportError:
 
 from .common_util import *
 
-# array methods
+# array methods --------------------------------------------------
 
 def concat(ar1, ar2):
     # like extend, but operates on a copy
@@ -65,17 +65,17 @@ def times(n, fn):
     return [fn() for _ in range(n)]
 
 
-notProvided = object()
+_symbolNotProvided = object()
 
-def reduce(lst, fn, initialVal=notProvided):
+def reduce(lst, fn, initialVal=_symbolNotProvided):
     # callback should have 2 parameters
     import functools
-    if initialVal == notProvided:
+    if initialVal is _symbolNotProvided:
         return functools.reduce(fn, lst)
     else:
         return functools.reduce(fn, lst, initialVal)
 
-# string manipulation
+# string manipulation --------------------------------------------------
 
 def splice(s, insertionPoint, lenToDelete=0, newText=''):
     # like javascript's splice

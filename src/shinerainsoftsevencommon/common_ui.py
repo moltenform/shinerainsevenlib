@@ -5,15 +5,6 @@ import tempfile
 from .common_higher import *
 from . import files
 
-# get better arrowkey history in macos
-try:
-    import gnureadline
-except:
-    try:
-        import readline
-    except:
-        pass
-
 def getInputBool(prompt, flushOutput=True):
     prompt += ' '
     while True:
@@ -169,6 +160,7 @@ def getInputFromChoicesGui(prompt, arOptions):
         import tkinter as Tkinter
     else:
         import Tkinter
+    
     assert len(arOptions) > 0
     retval = [None]
 
@@ -295,51 +287,11 @@ def getSaveFileGui(initialdir=None, types=None, title='Save As'):
         import tkFileDialog
     return _getFileDialogGui(tkFileDialog.asksaveasfilename, initialdir, types, title)
 
-def _dbgHookCallback(exctype, value, traceback):
-    DBG()
-    alert('unhandled exception ' + value)
-    sys.__excepthook__(exctype, value, traceback)
-
-def registerDebughook(b=True):
-    if b:
-        sys.excepthook = _dbgHookCallback
-    else:
-        sys.excepthook = sys.__excepthook__
-
-def getSoftDeleteDir(s):
+# get better arrowkey history in macos
+try:
+    import gnureadline
+except:
     try:
-        from . import nocpy_get_delete_location
-    except ImportError:
-        nocpy_get_delete_location = None
-
-    if nocpy_get_delete_location:
-        destination = nocpy_get_delete_location.get_delete_location(s)
-    else:
-        destination = files.join(tempfile.gettempdir(), 'ben_python_common_trash')
-        files.makedirs(destination)
-        
-    return destination
-
-def getSoftDeleteDestination(s, destination):
-    # as a prefix, the first 2 chars of the parent directory
-    prefix = files.getname(files.getparent(s))[0:2] + '_'
-    newname = destination + files.sep + prefix + files.split(s)[1] + getRandomString()
-    if files.exists(newname):
-        raise Exception('already exists ' + newname +
-            '. is this directory full of files, or was the random seed reused?')
-    return newname
-
-def softDeleteFileToDestination(s, destination, allowDirs=False, doTrace=False):
-    newname = getSoftDeleteDestination(s, destination)
-    if doTrace:
-        trace('softDeleteFile()', s, '|to|', newname)
-
-    files.move(s, newname, overwrite=False,
-        warnBetweenDrives=True, allowDirs=allowDirs)
-    return newname
-
-def softDeleteFile(s, allowDirs=False, doTrace=False):
-    destination = getSoftDeleteDir(s)
-    return softDeleteFileToDestination(s, destination, allowDirs=allowDirs, doTrace=doTrace)
-
-
+        import readline
+    except:
+        pass

@@ -1,0 +1,175 @@
+
+def openDirectoryInExplorer(dir):
+    assert isdir(dir), 'not a dir? ' + dir
+    if sys.platform.startswith('win'):
+        assert '^' not in dir and '"' not in dir, 'dir cannot contain ^ or "'
+        runWithoutWaitUnicode([u'cmd', u'/c', u'start', u'explorer.exe', dir])
+    else:
+        for candidate in ['xdg-open', 'nautilus']:
+            path = findBinaryOnPath(candidate)
+            if path:
+                args = [path, dir]
+                run(args, shell=False, createNoWindow=False, throwOnFailure=False, captureOutput=False, wait=False)
+                return
+        raise RuntimeError('unable to open directory.')
+
+def openUrl(s, filter=True):
+    import webbrowser
+    if s.startswith('http://'):
+        prefix = 'http://'
+    elif s.startswith('https://'):
+        prefix = 'https://'
+    else:
+        assertTrue(False, 'url did not start with http')
+
+    if filter:
+        s = s[len(prefix):]
+        s = s.replace('%', '%25')
+        s = s.replace('&', '%26')
+        s = s.replace('|', '%7C')
+        s = s.replace('\\', '%5C')
+        s = s.replace('^', '%5E')
+        s = s.replace('"', '%22')
+        s = s.replace("'", '%27')
+        s = s.replace('>', '%3E')
+        s = s.replace('<', '%3C')
+        s = s.replace(' ', '%20')
+        s = prefix + s
+    webbrowser.open(s, new=2)
+
+
+def findBinaryOnPath(name):
+    # like `which`
+    def existsAsExe(dir, name):
+        f = join(dir, name)
+        if _os.path.isfile(f):
+            return f
+        if sys.platform.startswith('win'):
+            if _os.path.isfile(f + '.exe'):
+                return f + '.exe'
+            if _os.path.isfile(f + '.cmd'):
+                return f + '.cmd'
+            if _os.path.isfile(f + '.com'):
+                return f + '.com'
+            if _os.path.isfile(f + '.bat'):
+                return f + '.bat'
+        return None
+
+    # handle "./binaryname"
+    if _os.sep in name:
+        return existsAsExe('.', name) if existsAsExe('.', name) else None
+
+    # handle "binaryname"
+    for path in _os.environ["PATH"].split(_os.pathsep):
+        if path and existsAsExe(path, name):
+            return existsAsExe(path, name)
+
+    return None
+
+def hasherFromString(s):
+    import hashlib
+    if s == 'sha1':
+        return hashlib.sha1()
+    elif s == 'sha224':
+        return hashlib.sha224()
+    elif s == 'sha256':
+        return hashlib.sha256()
+    elif s == 'sha384':
+        return hashlib.sha384()
+    elif s == 'sha512':
+        return hashlib.sha512()
+    elif s == 'blake2b':
+        return hashlib.blake2b()
+    elif s == 'blake2s':
+        return hashlib.blake2s()
+    elif s == 'md5':
+        return hashlib.md5()
+    elif s == 'sha3_224':
+        return hashlib.sha3_224()
+    elif s == 'sha3_256':
+        return hashlib.sha3_256()
+    elif s == 'sha3_384':
+        return hashlib.sha3_384()
+    elif s == 'sha3_512':
+        return hashlib.sha3_512()
+    elif s == 'shake_128':
+        return hashlib.shake_128()
+    elif s == 'shake_256':
+        return hashlib.shake_256()
+    elif s == 'xxhash_32':
+        import xxhash
+        return xxhash.xxh32()
+    elif s == 'xxhash_64':
+        import xxhash
+        return xxhash.xxh64()
+    else:
+        raise ValueError('Unknown hash type ' + s)
+
+# default to 256kb buffer.
+def computeHashBytes(b, hasher='sha1', buffersize=0x40000):
+    import io
+    with io.BytesIO(b) as f:
+        return _computeHashImpl(f, hasher, buffersize)
+
+def computeHash(path, hasher='sha1', buffersize=0x40000):
+    with open(path, 'rb') as f:
+        return _computeHashImpl(f, hasher, buffersize)
+
+def _computeHashImpl(f, hasher, buffersize=0x40000):
+    if hasher == 'crc32':
+        import zlib
+        crc = zlib.crc32(bytes(), 0)
+        while True:
+            # update the hash with the contents of the file
+            buffer = f.read(buffersize)
+            if not buffer:
+                break
+            crc = zlib.crc32(buffer, crc)
+        crc = crc & 0xffffffff
+        return '%08x' % crc
+    elif hasher == 'crc64':
+        from crc64iso.crc64iso import crc64_pair, format_crc64_pair
+        cur = None
+        while True:
+            # update the hash with the contents of the file
+            buffer = f.read(buffersize)
+            if not buffer:
+                break
+            cur = crc64_pair(buffer, cur)
+        return format_crc64_pair(cur)
+    else:
+        if isinstance(hasher, str):
+            hasher = hasherFromString(hasher)
+
+        while True:
+            # update the hash with the contents of the file
+            buffer = f.read(buffersize)
+            if not buffer:
+                break
+            hasher.update(buffer)
+        return hasher.hexdigest()
+
+def windowsUrlFileGet(path):
+    assertEq('.url', _os.path.splitext(path)[1].lower())
+    s = readall(path, mode='r')
+    lines = s.split('\n')
+    for line in lines:
+        if line.startswith('URL='):
+            return line[len('URL='):]
+    raise RuntimeError('no url seen in ' + path)
+
+def windowsUrlFileWrite(path, url):
+    assertTrue(len(url) > 0)
+    assertTrue(not exists(path), 'file already exists at', path)
+    try:
+        url.encode('ascii')
+    except e:
+        if isinstance(e, UnicodeEncodeError):
+            raise RuntimeError('can\'t support a non-ascii url' + url + ' ' + path)
+        else:
+            raise
+
+    s = '[InternetShortcut]\n'
+    s += 'URL=%s\n' % url
+    writeall(path, s)
+

@@ -1,31 +1,30 @@
 # BenPythonCommon,
 # 2015 Ben Fisher, released under the LGPLv3 license.
-# store.py, a simple database abstraction layer
+# db_store, a simple database abstraction layer
 #
 # raison d'etre
-# 1) store.py should be roughly as simple as using plain pickle/jsonpickle, but scaling better
-# 2) store.py should handle common tasks like checking latest schema
-# 3) store.py should avoid pysqlite's unexpected transaction semantics
-# 4) eventually, store.py can be an abstract layer supporting different backends
+# 1) db_store.py should be roughly as simple as using plain pickle/jsonpickle, but scaling better
+# 2) db_store.py handles common tasks like checking latest schema
+# 3) db_store.py doesn't have pysqlite's unexpected transaction semantics
+# 4) sqlite is better than jsonpickle because of indexes and reduced writing-to-disk
+# 5) eventually, db_store.py can be an abstract layer supporting different backends
 
 # Update Nov 2022: 
 # to install apsw, run
 #    python -m pip install apsw
 # Older instructions:
+#    install a apsw release from the rogerbinns website, or run a command like this,
 #    python -m pip install --user
 #    https://github.com/rogerbinns/apsw/releases/download/3.16.2-r1/apsw-3.16.2-r1.zip
 #    --global-option=fetch --global-option=--version --global-option=3.16.2 --global-option=--all
 #    --global-option=build --global-option=--enable-all-extensions
 
-from .common_util import *
-from . import files
+from ..common_util import *
+from .. import files
 import apsw
 import sys
 import re
 
-class StoreException(Exception):
-    def __str__(self):
-        return 'StoreException: ' + Exception.__str__(self)
 
 class Store(object):
     conn = None
@@ -231,7 +230,11 @@ class StoreWithCrudHelpers(Store):
     def _check(self, s):
         if not self.re_check.match(s):
             raise Exception('invalid identifier (only alphanumeric reqd) ' + s)
+            
         return s
 
+class StoreException(Exception):
+    def __str__(self):
+        return 'StoreException: ' + Exception.__str__(self)
 
 
