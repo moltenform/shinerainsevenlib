@@ -1,2 +1,2 @@
 
-Useful utility functions for powerful Python programming.
+Useful unadorned utilities for powerful Python programming.
