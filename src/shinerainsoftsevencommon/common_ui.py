@@ -1,7 +1,7 @@
 
 import tempfile
+import os
 from .common_higher import *
-from . import files
 
 def getInputBool(prompt, flushOutput=True):
     prompt += ' '
@@ -265,7 +265,7 @@ def _getFileDialogGui(fn, initialdir, types, title):
 
     result = fn(initialdir=initialdir, title=title, **kwargs)
     if result:
-        gDirectoryHistory[repr(types)] = files.split(result)[0]
+        gDirectoryHistory[repr(types)] = os.path.split(result)[0]
 
     return result
 

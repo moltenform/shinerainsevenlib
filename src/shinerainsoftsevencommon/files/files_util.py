@@ -2,8 +2,7 @@
 import sys
 import os as os
 import shutil as shutil
-from .common_higher import *
-from .common_util import *
+
 
 rename = os.rename
 exists = os.path.exists
@@ -20,14 +19,14 @@ linesep = os.linesep
 abspath = os.path.abspath
 rmtree = shutil.rmtree
 
-def getparent(s):
-    return os.path.split(s)[0]
+def getparent(path):
+    return os.path.split(path)[0]
 
-def getname(s):
-    return os.path.split(s)[1]
+def getname(path):
+    return os.path.split(path)[1]
 
-def createdtime(s):
-    return os.stat(s).st_ctime
+def createdtime(path):
+    return os.stat(path).st_ctime
 
 def getext(s, removeDot=True):
     a, b = splitext(s)

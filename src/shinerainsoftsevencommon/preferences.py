@@ -5,13 +5,13 @@ import tempfile
 from configparser import ConfigParser
 
 softDeleteFile:
-	if no location is set, send to recycle bin (Send2Trash module) (and log what was deleted to ~/.ben_python_common.log)
-	otherwise send it to that location
-	or if location is set per-drive, send to that place.
+if no location is set, send to recycle bin (Send2Trash module) (and log what was deleted to ~/.ben_python_common.log)
+otherwise send it to that location
+or if location is set per-drive, send to that place.
 
 scratchLocation:
-	if no location is set, use a temporary location in c:\temp
-	or if location is set per-drive, send to that place.
+if no location is set, use a temporary location in c:\temp
+or if location is set per-drive, send to that place.
 
 
 
@@ -87,14 +87,34 @@ cachedPrefs = BenPythonCommonConfigParser()
 runOnModuleLoad(cachedPrefs)
 
 def getTempDirectoryForPath(path):
+    # always returns a valid directory
     result = getDirectoryBasedOnPath(path, 'temp_directory')
     if not result:
-        tempdir = tempfile.gettempdir() + '/shinerainsoftsevencommon'
-        os.makedirs(tempdir)
-        return tempdir
+        result = tempfile.gettempdir() + '/shinerainsoftsevencommon'
+        
+    try:
+        os.makedirs(result)
+    except Exception as e:
+        raise Exception(f'getTempDirectoryForPath error creating {result} {e}')
+    
+    if not os.path.isdir(result):
+        raise Exception('getTempDirectoryForPath does not exist {result}')
+    
+    return result
     
 def getSoftDeleteDirectoryForPath(path):
-    return getDirectoryBasedOnPath(path, 'soft_delete_directory')
-
+    # returns a directory, or None
+    result = getDirectoryBasedOnPath(path, 'soft_delete_directory')
+    if result:
+        try:
+            os.makedirs(result)
+        except Exception as e:
+            raise Exception(f'getSoftDeleteDirectoryForPath creating {result} {e}')
+        
+        if not os.path.isdir(result):
+            raise Exception('getSoftDeleteDirectoryForPath does not exist {result}')
+    
+    return result
+    
 
 
