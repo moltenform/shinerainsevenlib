@@ -2,6 +2,7 @@
 import sys
 import traceback
 import pprint
+import re
 
 def assertTrue(condition, *messageArgs):
     if not condition:
@@ -18,13 +19,13 @@ def assertEq(expected, received, *messageArgs):
         raise AssertionError(msg)
 
 def assertWarn(condition, *messageArgs):
-    from .common_ui import warn
+    from . import common_ui
     if not condition:
         msg = ' '.join(map(getPrintable, messageArgs)) if messageArgs else ''
-        warn(msg)
+        common_ui.warn(msg)
 
 def assertWarnEq(expected, received, *messageArgs):
-    from .common_ui import warn
+    from . import common_ui
     if expected != received:
         import pprint
         msg = ' '.join(map(getPrintable, messageArgs)) if messageArgs else ''
@@ -32,7 +33,7 @@ def assertWarnEq(expected, received, *messageArgs):
         msg += getPrintable(pprint.pformat(expected))
         msg += '\nbut got:\n'
         msg += getPrintable(pprint.pformat(received))
-        warn(msg)
+        common_ui.warn(msg)
 
 def assertFloatEq(expected, received, *messageArgs):
     import math
@@ -53,8 +54,6 @@ def assertEqArray(expected, received):
         assertEq(repr(expected[i]), repr(received[i]))
 
 def assertException(fn, excType, excTypeExpectedString=None, msg='', regexp=False):
-    import pprint
-    import sys
     e = None
     try:
         fn()
@@ -67,7 +66,6 @@ def assertException(fn, excType, excTypeExpectedString=None, msg='', regexp=Fals
             ' \ngot \n' + pprint.pformat(e) + '\n not \n' + pprint.pformat(excType))
     if excTypeExpectedString:
         if regexp:
-            import re
             passed = re.search(excTypeExpectedString, str(e))
         else:
             passed = excTypeExpectedString in str(e)

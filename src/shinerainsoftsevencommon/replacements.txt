@@ -22,7 +22,7 @@ recursefileinfo recurseFileInfo
 listfileinfo listFileInfo
 
 
-sys.exc_info()[1] getCurrentException()
+
 
 need to refactor these
 -----------------------
@@ -36,7 +36,11 @@ setATimeNs
 
 also
 --------------------------
+sys.exc_info()[1] getCurrentException()
 waitUntilTrue skipForwardUntilTrue
+from ben_python_common import *|from shinerainsoftsevencommon import *
+
+
 
 
 

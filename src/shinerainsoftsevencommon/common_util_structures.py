@@ -106,7 +106,7 @@ class RecentlyUsedList:
                 self.list.pop()
 
 # inspired by http://code.activestate.com/recipes/496879-memoize-decorator-function-with-cache-size-limit/
-def BoundedMemoize(fn):
+def BoundedMemoize(fn, limit=20):
     from collections import OrderedDict
     cache = OrderedDict()
 
@@ -125,11 +125,12 @@ def BoundedMemoize(fn):
                 cache.popitem(False)  # the false means remove as FIFO
             return result
 
-    memoize_wrapper._limit = 20
+    memoize_wrapper._limit = limit
     memoize_wrapper._cache = cache
-    if sys.version_info[0] <= 2:
-        memoize_wrapper.func_name = fn.func_name
-    else:
+    if isPy3OrNewer:
         memoize_wrapper.__name__ = fn.__name__
+    else:
+        memoize_wrapper.func_name = fn.func_name
+    
     return memoize_wrapper
 

@@ -1,5 +1,6 @@
 
 import os
+import pprint
 
 def getClipboardText():
     try:
@@ -55,7 +56,6 @@ def _setClipboardTextPyperclip(s):
     pyperclip.copy(s)
 
 def DBG(obj=None):
-    import pprint
     import inspect
     
     if obj is None:

@@ -4,16 +4,13 @@ import time
 # "millistime" is number of milliseconds past epoch (unix time * 1000)
 def renderMillisTime(millisTime):
     t = millisTime / 1000.0
-    import time
     return time.strftime("%m/%d/%Y %I:%M:%S %p", time.localtime(t))
 
 def renderMillisTimeStandard(millisTime):
     t = millisTime / 1000.0
-    import time
     return time.strftime("%Y-%m-%d %I:%M:%S", time.localtime(t))
 
 def getNowAsMillisTime():
-    import time
     t = time.time()
     return int(t * 1000)
 

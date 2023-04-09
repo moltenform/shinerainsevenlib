@@ -1,7 +1,6 @@
 
-import tempfile
+import sys
 import os
-from .common_higher import *
 
 def getInputBool(prompt, flushOutput=True):
     prompt += ' '
@@ -76,7 +75,6 @@ def getInputFromChoices(prompt, arrChoices, fnOtherCommands=None,
                 return (-1, breakLoop)
 
 def getRawInput(prompt, flushOutput=True):
-    import sys
     print(getPrintable(prompt))
     if flushOutput:
         sys.stdout.flush()

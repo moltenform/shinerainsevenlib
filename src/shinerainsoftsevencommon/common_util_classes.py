@@ -7,14 +7,14 @@ class PersistedDict:
 
     def __init__(self, filename, warnIfCreatingNew=True,
             keepHandle=False, persistEveryNWrites=5):
-        from .files import exists, writeall
-        from .common_ui import alert
+        from . import files
+        from . import common_ui
         self.filename = filename
         self.persistEveryNWrites = persistEveryNWrites
-        if not exists(filename):
+        if not files.exists(filename):
             if warnIfCreatingNew:
-                alert("creating new cache at " + filename)
-            writeall(filename, '{}')
+                common_ui.alert("creating new cache at " + filename)
+            files.writeall(filename, '{}')
         self.load()
         if keepHandle:
             self.handle = open(filename, 'w')
@@ -22,8 +22,8 @@ class PersistedDict:
 
     def load(self):
         import json
-        from .files import readall
-        txt = readall(self.filename, encoding='utf-8')
+        from . import files
+        txt = files.readall(self.filename, encoding='utf-8')
         self.data = json.loads(txt)
 
     def close(self):
@@ -33,14 +33,14 @@ class PersistedDict:
 
     def persist(self):
         import json
-        from .files import writeall
+        from . import files
         txt = json.dumps(self.data)
         if self.handle:
             self.handle.seek(0, os.SEEK_SET)
             self.handle.write(txt)
             self.handle.truncate()
         else:
-            writeall(self.filename, txt, encoding='utf-8')
+            files.writeall(self.filename, txt, encoding='utf-8')
 
     def afterUpdate(self):
         self.counter += 1
@@ -81,7 +81,7 @@ class ParsePlus:
         try:
             import parse
         except:
-            raise ImportError('needs "parse", https://pypi.org/project/parse/')
+            raise ImportError('needs "parse", can install from pip, https://pypi.org/project/parse/')
         self.pattern = pattern
         self.case_sensitive = case_sensitive
         self.extra_types = extra_types if extra_types else {}

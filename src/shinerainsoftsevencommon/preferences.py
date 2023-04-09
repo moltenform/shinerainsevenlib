@@ -4,14 +4,14 @@ import re
 import tempfile
 from configparser import ConfigParser
 
-softDeleteFile:
-if no location is set, send to recycle bin (Send2Trash module) (and log what was deleted to ~/.ben_python_common.log)
-otherwise send it to that location
-or if location is set per-drive, send to that place.
+#~ softDeleteFile:
+#~ if no location is set, send to recycle bin (Send2Trash module) (and log what was deleted to ~/.ben_python_common.log)
+#~ otherwise send it to that location
+#~ or if location is set per-drive, send to that place.
 
-scratchLocation:
-if no location is set, use a temporary location in c:\temp
-or if location is set per-drive, send to that place.
+#~ scratchLocation:
+#~ if no location is set, use a temporary location in c:\temp
+#~ or if location is set per-drive, send to that place.
 
 
 

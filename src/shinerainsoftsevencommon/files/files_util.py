@@ -1,7 +1,7 @@
 
 import sys
-import os as os
-import shutil as shutil
+import os
+import shutil
 
 
 rename = os.rename
@@ -11,7 +11,7 @@ split = os.path.split
 splitExt = os.path.splitext
 isdir = os.path.isdir
 isfile = os.path.isfile
-getsize = os.path.getsize
+getSize = os.path.getsize
 rmdir = os.rmdir
 chdir = os.chdir
 sep = os.path.sep
@@ -226,9 +226,6 @@ def setLastModifiedTime(path, newVal, units=TimeUnits.Seconds):
         
     atimeNs = getATime(path, units=TimeUnits.Nanoseconds)
     os.utime(path, ns=(atimeNs, newVal))
-
-
-
 
 # unicodetype can be utf-8, utf-8-sig, etc.
 def readall(path, mode='r', encoding='utf-8'):

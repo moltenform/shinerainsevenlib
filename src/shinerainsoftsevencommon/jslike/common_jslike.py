@@ -4,7 +4,6 @@ try:
 except ImportError:
     import __builtin__ as builtins
 
-from .common_util import *
 
 # array methods --------------------------------------------------
 
