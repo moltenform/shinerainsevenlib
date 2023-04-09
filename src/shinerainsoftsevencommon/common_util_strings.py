@@ -1,7 +1,7 @@
 
 import sys
-import unicodedata
-
+import os
+import re
 
 
 def replaceMustExist(haystack, needle, replace):
@@ -9,27 +9,26 @@ def replaceMustExist(haystack, needle, replace):
     return haystack.replace(needle, replace)
 
 def reSearchWholeWord(haystack, needle):
-    import re
     reNeedle = '\\b' + re.escape(needle) + '\\b'
     return re.search(reNeedle, haystack)
     
 def reReplaceWholeWord(haystack, sNeedle, replace):
-    import re
     sNeedle = '\\b' + re.escape(sNeedle) + '\\b'
     return re.sub(sNeedle, replace, haystack)
 
 def reReplace(haystack, reNeedle, replace):
-    import re
     return re.sub(reNeedle, replace, haystack)
-
 
 '''
 re.search(pattern, string, flags=0)
     look for at most one match starting anywhere
+
 re.match(pattern, string, flags=0)
     look for match starting only at beginning of string
+
 re.findall(pattern, string, flags=0)
     returns list of strings
+
 re.finditer(pattern, string, flags=0)
     returns iterator of match objects
 
@@ -60,6 +59,7 @@ def strToList(s, replaceComments=True):
     lines = s.replace('\r\n', '\n').split('\n')
     if replaceComments:
         lines = [line for line in lines if not line.startswith('#')]
+    
     return [line.strip() for line in lines if line.strip()]
     
 def strToSet(s, replaceComments=True):
@@ -69,6 +69,12 @@ def strToSet(s, replaceComments=True):
 def parseIntOrFallback(s, fallBack=None):
     try:
         return int(s)
+    except:
+        return fallBack
+        
+def parseFloatOrFallback(s, fallBack=None):
+    try:
+        return float(s)
     except:
         return fallBack
 
@@ -89,23 +95,22 @@ def runAndCatchException(fn):
         return Bucket(result=result, err=None)
     except:
         import sys
-        return Bucket(result=None, err=sys.exc_info()[1])
+        return Bucket(result=None, err=getCurrentException())
 
 
-def toValidFilename(sOrig, dirsepOk=False, maxLen=None):
-    s = sOrig
+def toValidFilename(pathOrig, dirsepOk=False, maxLen=None):
+    path = pathOrig
     if dirsepOk:
         # sometimes we want to leave directory-separator characters in the string.
-        import os
         if os.path.sep == '/':
-            s = s.replace(u'\\ ', u', ').replace(u'\\', u'-')
+            path = path.replace(u'\\ ', u', ').replace(u'\\', u'-')
         else:
-            s = s.replace(u'/ ', u', ').replace(u'/', u'-')
+            path = path.replace(u'/ ', u', ').replace(u'/', u'-')
     else:
-        s = s.replace(u'\\ ', u', ').replace(u'\\', u'-')
-        s = s.replace(u'/ ', u', ').replace(u'/', u'-')
+        path = path.replace(u'\\ ', u', ').replace(u'\\', u'-')
+        path = path.replace(u'/ ', u', ').replace(u'/', u'-')
 
-    result = s.replace(u'\u2019', u"'").replace(u'?', u'').replace(u'!', u'') \
+    result = path.replace(u'\u2019', u"'").replace(u'?', u'').replace(u'!', u'') \
         .replace(u': ', u', ').replace(u':', u'-') \
         .replace(u'| ', u', ').replace(u'|', u'-') \
         .replace(u'*', u'') \
@@ -113,21 +118,21 @@ def toValidFilename(sOrig, dirsepOk=False, maxLen=None):
         .replace(u'\r\n', u' ').replace(u'\r', u' ').replace(u'\n', u' ')
 
     if maxLen and len(result) > maxLen:
-        import os as os
         assertTrue(maxLen > 1)
-        ext = os.path.splitext(s)[1]
-        beforeExt = s[0:-len(ext)]
+        ext = os.path.splitext(path)[1]
+        beforeExt = path[0:-len(ext)]
         while len(result) > maxLen:
             result = beforeExt + ext
             beforeExt = beforeExt[0:-1]
-        # if it ate into the directory, though, through an error
-        assertTrue(os.path.split(sOrig)[0] == os.path.split(result)[0])
+        
+        # if it ate into the directory, though, throw an error
+        assertTrue(os.path.split(pathOrig)[0] == os.path.split(result)[0])
 
     return result
 
 def stripHtmlTags(s, removeRepeatedWhitespace=True):
-    import re
     # a (?:) is a non-capturing group
+    # see also: html.escape, html.unescape
     reTags = re.compile(r'<[^>]+(?:>|$)', re.DOTALL)
     s = reTags.sub(' ', s)
     if removeRepeatedWhitespace:
@@ -135,11 +140,10 @@ def stripHtmlTags(s, removeRepeatedWhitespace=True):
         s = regNoDblSpace.sub(' ', s)
         s = s.strip()
 
-    # malformed tags like "<a<" with no close, replace with ?
+    # for malformed tags like "<a<" with no close, replace with ?
     s = s.replace('<', '?').replace('>', '?')
     return s
 
-# see also: html.escape, html.unescape
 
 if sys.version_info[0] >= 2:
     from io import StringIO

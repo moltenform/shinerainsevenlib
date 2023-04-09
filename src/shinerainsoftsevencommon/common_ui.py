@@ -166,7 +166,7 @@ def getInputFromChoicesGui(prompt, arOptions):
         retval[0] = v
 
     # http://effbot.org/tkinterbook/tkinter-dialog-windows.htm
-    class ChoiceDialog(object):
+    class ChoiceDialog:
         def __init__(self, parent):
             top = self.top = Tkinter.Toplevel(parent)
             Tkinter.Label(top, text=prompt).pack()

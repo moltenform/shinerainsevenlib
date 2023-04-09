@@ -1,9 +1,10 @@
 
-# allowedexts in the form ['png', 'gif']
-def _listchildrenUnsorted(dir, *, filenamesOnly=False, allowedexts=None):
-    for filename in os.listdir(dir):
-        if not allowedexts or getext(filename) in allowedexts:
-            yield filename if filenamesOnly else (dir + os.path.sep + filename, filename)
+
+# allowedExts in the form ['png', 'gif']
+def _listchildrenUnsorted(path, *, filenamesOnly=False, allowedExts=None):
+    for filename in os.listdir(path):
+        if not allowedExts or getext(filename) in allowedExts:
+            yield filename if filenamesOnly else (path + os.path.sep + filename, filename)
 
 
 if sys.platform.startswith('win'):
@@ -14,28 +15,28 @@ else:
     def listchildren(*args, **kwargs):
         return sorted(_listchildrenUnsorted(*args, **kwargs))
 
-def listdirs(dir, *, filenamesOnly=False, allowedexts=None):
-    for full, name in listchildren(dir, allowedexts=allowedexts):
+def listdirs(path, *, filenamesOnly=False, allowedExts=None):
+    for full, name in listchildren(path, allowedExts=allowedExts):
         if os.path.isdir(full):
             yield name if filenamesOnly else (full, name)
 
-def listfiles(dir, *, filenamesOnly=False, allowedexts=None):
-    for full, name in listchildren(dir, allowedexts=allowedexts):
+def listfiles(path, *, filenamesOnly=False, allowedExts=None):
+    for full, name in listchildren(path, allowedExts=allowedExts):
         if not os.path.isdir(full):
             yield name if filenamesOnly else (full, name)
 
-def recursefiles(root, *, filenamesOnly=False, allowedexts=None,
-        fnFilterDirs=None, includeFiles=True, includeDirs=False, topdown=True, followSymlinks=False):
+def recursefiles(root, *, filenamesOnly=False, allowedExts=None,
+        fnFilterDirs=None, includeFiles=True, includeDirs=False, topDown=True, followSymlinks=False):
     assert isdir(root)
 
-    for (dirpath, dirnames, filenames) in os.walk(root, topdown=topdown, followlinks=followSymlinks):
+    for (dirpath, dirnames, filenames) in os.walk(root, topdown=topDown, followlinks=followSymlinks):
         if fnFilterDirs:
             newdirs = [dir for dir in dirnames if fnFilterDirs(join(dirpath, dir))]
             dirnames[:] = newdirs
 
         if includeFiles:
             for filename in (filenames if sys.platform.startswith('win') else sorted(filenames)):
-                if not allowedexts or getext(filename) in allowedexts:
+                if not allowedExts or getext(filename) in allowedExts:
                     yield filename if filenamesOnly else (dirpath + os.path.sep + filename, filename)
 
         if includeDirs:
@@ -46,7 +47,7 @@ def recursedirs(root, *, filenamesOnly=False, fnFilterDirs=None,
     return recursefiles(root, filenamesOnly=filenamesOnly, fnFilterDirs=fnFilterDirs, includeFiles=False,
         includeDirs=True, topdown=topdown, followSymlinks=followSymlinks)
 
-class FileInfoEntryWrapper(object):
+class FileInfoEntryWrapper:
     def __init__(self, obj):
         self.obj = obj
         self.path = obj.path
@@ -65,12 +66,24 @@ class FileInfoEntryWrapper(object):
 
     def mtime(self):
         return self.obj.stat().st_mtime
+    
+    def getLastModifiedTime(self, units=TimeUnits.Seconds):
+        mtime = self.obj.stat().st_mtime
+        
+        if units == TimeUnits.Nanoseconds:
+            return int(mtime * 1.0e6)
+        elif units == TimeUnits.Milliseconds:
+            return int(mtime * 1000)
+        elif units == TimeUnits.Seconds:
+            return int(mtime)
+        else:
+            raise ValueError('unknown unit')
 
-    def metadatachangetime(self):
+    def getMetadataChangeTime(self):
         assertTrue(not sys.platform.startswith('win'))
         return self.obj.stat().st_ctime
 
-    def createtime(self):
+    def getCreateTime(self):
         assertTrue(sys.platform.startswith('win'))
         return self.obj.stat().st_ctime
 
@@ -91,7 +104,7 @@ def recursefileinfo(root, recurse=True, followSymlinks=False, filesOnly=True,
                             fnFilterDirs=fnFilterDirs, fnDirectExceptionsTo=fnDirectExceptionsTo):
                         yield subentry
                 except:
-                    e = sys.exc_info()[1]
+                    e = getCurrentException()
                     if fnDirectExceptionsTo and isinstance(e, OSError):
                         fnDirectExceptionsTo(entry.path, e)
                     else:

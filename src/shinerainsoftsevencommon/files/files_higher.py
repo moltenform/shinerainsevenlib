@@ -1,41 +1,42 @@
 
-def openDirectoryInExplorer(dir):
-    assert isdir(dir), 'not a dir? ' + dir
+def openDirectoryInExplorer(path):
+    assert isdir(path), 'not a path? ' + path
     if sys.platform.startswith('win'):
-        assert '^' not in dir and '"' not in dir, 'dir cannot contain ^ or "'
-        runWithoutWaitUnicode([u'cmd', u'/c', u'start', u'explorer.exe', dir])
+        assert '^' not in path and '"' not in path, 'path cannot contain ^ or "'
+        runWithoutWaitUnicode([u'cmd', u'/c', u'start', u'explorer.exe', path])
     else:
         for candidate in ['xdg-open', 'nautilus']:
-            path = findBinaryOnPath(candidate)
-            if path:
-                args = [path, dir]
+            pathBin = findBinaryOnPath(candidate)
+            if pathBin:
+                args = [pathBin, path]
                 run(args, shell=False, createNoWindow=False, throwOnFailure=False, captureOutput=False, wait=False)
                 return
         raise RuntimeError('unable to open directory.')
 
-def openUrl(s, filter=True):
+def openUrl(url, filter=True):
     import webbrowser
-    if s.startswith('http://'):
+    if url.startswith('http://'):
         prefix = 'http://'
-    elif s.startswith('https://'):
+    elif url.startswith('https://'):
         prefix = 'https://'
     else:
         assertTrue(False, 'url did not start with http')
 
     if filter:
-        s = s[len(prefix):]
-        s = s.replace('%', '%25')
-        s = s.replace('&', '%26')
-        s = s.replace('|', '%7C')
-        s = s.replace('\\', '%5C')
-        s = s.replace('^', '%5E')
-        s = s.replace('"', '%22')
-        s = s.replace("'", '%27')
-        s = s.replace('>', '%3E')
-        s = s.replace('<', '%3C')
-        s = s.replace(' ', '%20')
-        s = prefix + s
-    webbrowser.open(s, new=2)
+        url = url[len(prefix):]
+        url = url.replace('%', '%25')
+        url = url.replace('&', '%26')
+        url = url.replace('|', '%7C')
+        url = url.replace('\\', '%5C')
+        url = url.replace('^', '%5E')
+        url = url.replace('"', '%22')
+        url = url.replace("'", '%27')
+        url = url.replace('>', '%3E')
+        url = url.replace('<', '%3C')
+        url = url.replace(' ', '%20')
+        url = prefix + url
+        
+    webbrowser.open(url, new=2)
 
 
 def findBinaryOnPath(name):

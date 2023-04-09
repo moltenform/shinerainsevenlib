@@ -1,12 +1,39 @@
 
 import subprocess
 
+def runWithoutWait(listArgs):
+    p = subprocess.Popen(listArgs, shell=False)
+    return p.pid
+
+# returns tuple (returncode, stdout, stderr)
+def runWithTimeout(args, *, shell=False, createNoWindow=True,
+                  throwOnFailure=True, captureOutput=True, timeoutSeconds=None, addArgs=None):
+    addArgs = addArgs if addArgs else {}
+    
+    assertTrue(throwOnFailure is True or throwOnFailure is False or throwOnFailure is None,
+        "we don't yet support custom exception types set here, you can use CalledProcessError")
+
+    retcode = -1
+    stdout = None
+    stderr = None
+    if sys.platform.startswith('win') and createNoWindow:
+        addArgs['creationflags'] = 0x08000000
+
+    ret = subprocess.run(args, capture_output=captureOutput, shell=shell, timeout=timeoutSeconds,
+        check=throwOnFailure, **addArgs)
+
+    retcode = ret.returncode
+    if captureOutput:
+        stdout = ret.stdout
+        stderr = ret.stderr
+    
+    return retcode, stdout, stderr
+
 # returns tuple (returncode, stdout, stderr)
 def run(listArgs, *, shell=False, createNoWindow=True,
         throwOnFailure=RuntimeError, stripText=True, captureOutput=True, silenceOutput=False,
         wait=True):
     
-    import subprocess
     assertTrue(isfile(listArgs[0]) or 'which' not in dir(shutil) or shutil.which(listArgs[0]) or shell, 'file not found?', listArgs[0])
     kwargs = {}
 
@@ -61,30 +88,3 @@ def run(listArgs, *, shell=False, createNoWindow=True,
     return retcode, stdout, stderr
 
 
-def runWithTimeout(args, *, shell=False, createNoWindow=True,
-                  throwOnFailure=True, captureOutput=True, timeout=None, addArgs=None):
-    addArgs = addArgs if addArgs else {}
-    
-    assertTrue(throwOnFailure is True or throwOnFailure is False or throwOnFailure is None,
-        "we don't yet support custom exception types set here, you can use CalledProcessError")
-
-    retcode = -1
-    stdout = None
-    stderr = None
-    if sys.platform.startswith('win') and createNoWindow:
-        addArgs['creationflags'] = 0x08000000
-
-    import subprocess
-    ret = subprocess.run(args, capture_output=captureOutput, shell=shell, timeout=timeout,
-        check=throwOnFailure, **addArgs)
-
-    retcode = ret.returncode
-    if captureOutput:
-        stdout = ret.stdout
-        stderr = ret.stderr
-    
-    return retcode, stdout, stderr
-
-def runWithoutWait(listArgs):
-    p = subprocess.Popen(listArgs, shell=False)
-    return p.pid

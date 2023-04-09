@@ -1,5 +1,5 @@
 
-class Bucket(object):
+class Bucket:
     "simple named-tuple; o.field looks nicer than o['field']. "
     def __init__(self, **kwargs):
         for key in kwargs:
@@ -8,7 +8,7 @@ class Bucket(object):
     def __repr__(self):
         return '\n\n\n'.join(('%s=%s'%(ustr(key), ustr(self.__dict__[key])) for key in sorted(self.__dict__)))
 
-class SimpleEnum(object):
+class SimpleEnum:
     "simple enum; prevents modification after creation."
     _set = None
 
@@ -33,6 +33,8 @@ class SimpleEnum(object):
     def __delattr__(self, name):
         raise RuntimeError
 
+TimeUnits = SimpleEnum(('Milliseconds', 'Seconds', 'Nanoseconds'))
+
 def addOrAppendToArrayInDict(d, key, val):
     # easier to read than setdefault
     got = d.get(key, None)
@@ -53,7 +55,7 @@ def takeBatch(itr, n):
     """ Yield successive n-sized chunks from l."""
     return list(takeBatchOnArbitraryIterable(itr, n))
 
-class TakeBatch(object):
+class TakeBatch:
     def __init__(self, batchSize, callback):
         self.batch = []
         self.batchSize = batchSize
@@ -74,7 +76,7 @@ class TakeBatch(object):
             if len(self.batch):
                 self.callback(self.batch)
 
-class RecentlyUsedList(object):
+class RecentlyUsedList:
     '''Keep a list of items without storing duplicates'''
     def __init__(self, maxSize=None, startList=None):
         self.list = startList or []

@@ -1,4 +1,5 @@
 
+import sys
 import traceback
 import pprint
 
@@ -58,7 +59,7 @@ def assertException(fn, excType, excTypeExpectedString=None, msg='', regexp=Fals
     try:
         fn()
     except:
-        e = sys.exc_info()[1]
+        e = getCurrentException()
 
     assertTrue(e is not None, 'did not throw ' + msg)
     if excType:
@@ -77,6 +78,8 @@ def getTraceback(e):
     lines = traceback.format_exception(type(e), e, e.__traceback__)
     return ''.join(lines)
 
+def getCurrentException():
+    return sys.exc_info()[1]
 
 def getPrintable(s, okToIgnore=False):
     if isinstance(s, bytes):

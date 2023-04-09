@@ -25,7 +25,7 @@ import sys
 import re
 
 
-class Store(object):
+class Store:
     conn = None
     in_txn = False
 
@@ -60,7 +60,7 @@ class Store(object):
                 raise StoreException('DB is empty or comes from a different version. Expected schema version %s, got %s' %
                     (int(self.current_schema_version_number()), got))
         except:
-            if 'SQLError: no such table:' in str(sys.exc_info()[1]):
+            if 'SQLError: no such table:' in str(getCurrentException()):
                 raise StoreException(
                     '\n\nSchema version table not found, maybe this is a 0kb empty db. Please delete the db and try again.')
             else:

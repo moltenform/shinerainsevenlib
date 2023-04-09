@@ -1,5 +1,5 @@
 
-class PersistedDict(object):
+class PersistedDict:
     data = None
     handle = None
     counter = 0
@@ -63,7 +63,7 @@ class PersistedDict(object):
         self.data[subdictname][key1][key2] = value
         self.afterUpdate()
 
-class ParsePlus(object):
+class ParsePlus:
     '''
     ParsePlus, by Ben Fisher 2019
 

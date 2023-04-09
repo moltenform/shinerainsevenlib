@@ -62,9 +62,7 @@ def times(n, fn):
     # return a list with n items, values from calling fn
     return [fn() for _ in range(n)]
 
-
 _symbolNotProvided = object()
-
 def reduce(lst, fn, initialVal=_symbolNotProvided):
     # callback should have 2 parameters
     import functools
@@ -85,7 +83,7 @@ def spliceSpan(s, span, newText):
     assertTrue(span[1] >= span[0])
     return splice(s, span[0], span[1] - span[0], newText)
 
-# object/dict methods
+# object/dict methods --------------------------------------------------
 
 def merged(d1, d2):
     # like update, but does not operate in-place
@@ -93,16 +91,4 @@ def merged(d1, d2):
     d1copy.update(d2)
     return d1copy
 
-# type conversions
 
-def floatOrNone(s):
-    try:
-        return float(s)
-    except:
-        return None
-
-def intOrNone(s):
-    try:
-        return int(s)
-    except:
-        return None

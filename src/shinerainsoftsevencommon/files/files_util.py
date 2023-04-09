@@ -8,7 +8,7 @@ rename = os.rename
 exists = os.path.exists
 join = os.path.join
 split = os.path.split
-splitext = os.path.splitext
+splitExt = os.path.splitext
 isdir = os.path.isdir
 isfile = os.path.isfile
 getsize = os.path.getsize
@@ -184,69 +184,68 @@ def _copyFilePosixWithoutOverwrite(srcfile, destfile):
                 fdest.write(buffer)
 
 # "millistime" is number of milliseconds past epoch (unix time * 1000)
+# I recomend using this as a a way to store times.
 
-def getModTimeNs(path, asMillisTime=False):
-    t = os.stat(path).st_mtime_ns
-    if asMillisTime:
-        t = int(t / 1.0e6)
-    return t
-
-def getCTimeNs(path, asMillisTime=False):
-    t = os.stat(path).st_ctime_ns
-    if asMillisTime:
-        t = int(t / 1.0e6)
-    return t
-
-def getATimeNs(path, asMillisTime=False):
-    t = os.stat(path).st_atime_ns
-    if asMillisTime:
-        t = int(t / 1.0e6)
-    return t
-
-def setModTimeNs(path, mtime, asMillisTime=False):
-    if asMillisTime:
-        mtime *= 1e6
-    atime = getATimeNs(path)
-    os.utime(path, ns=(atime, mtime))
-
-def setATimeNs(path, atime, asMillisTime=False):
-    if asMillisTime:
-        atime *= 1e6
-    mtime = getModTimeNs(path)
-    os.utime(path, ns=(atime, mtime))
-
-def getFileLastModifiedTime(filepath):
-    return os.path.getmtime(filepath)
-
-def setFileLastModifiedTime(filepath, lmt):
-    curtimes = os.stat(filepath)
-    newtimes = (curtimes.st_atime, lmt)
-    with open(filepath, 'ab'):
-        os.utime(filepath, newtimes)
-
-def _openSupportingUnicode(s, mode, encoding):
-    if encoding:
-        # python 3-style
-        return lambda: open(s, mode, encoding=encoding)
+def _getStatTime(path, key_ns, key_s, units):
+    st = os.stat(path)
+    if key_ns in dir(st):
+        timeNs = getattr(st, key_ns)
     else:
-        return lambda: open(s, mode)
+        # fall back to seconds in case it is not available (like some py2)
+        timeNs = getattr(st, key_s) * 1000 * 1000
+    
+    if units == TimeUnits.Nanoseconds:
+        return int(timeNs)
+    elif units == TimeUnits.Milliseconds:
+        return int(timeNs / 1.0e6)
+    elif units == TimeUnits.Seconds:
+        return int(timeNs / 1.0e9)
+    else:
+        raise ValueError('unknown unit')
+
+
+def getLastModifiedTime(path, units=TimeUnits.Seconds):
+    return _getStatTime(path, 'st_mtime_ns', 'st_mtime')
+
+def getCTime(path, units=TimeUnits.Seconds):
+    return _getStatTime(path, 'st_ctime_ns', 'st_ctime')
+    
+def getATime(path, units=TimeUnits.Seconds):
+    return _getStatTime(path, 'st_atime_ns', 'st_atime')
+
+
+def setLastModifiedTime(path, newVal, units=TimeUnits.Seconds):
+    if units == TimeUnits.Nanoseconds:
+        newVal = int(newVal)
+    elif units == TimeUnits.Milliseconds:
+        newVal = int(newVal * 1.0e6)
+    elif units == TimeUnits.Seconds:
+        newVal = int(newVal * 1.0e9)
+    else:
+        raise ValueError('unknown unit')
+        
+    atimeNs = getATime(path, units=TimeUnits.Nanoseconds)
+    os.utime(path, ns=(atimeNs, newVal))
+
+
+
 
 # unicodetype can be utf-8, utf-8-sig, etc.
-def readall(s, mode='r', encoding=None):
-    with _openSupportingUnicode(s, mode, encoding)() as f:
+def readall(path, mode='r', encoding='utf-8'):
+    with open(path, mode, encoding=encoding) as f:
         return f.read()
 
 # unicodetype can be utf-8, utf-8-sig, etc.
-def writeall(s, txt, mode='w', unicodetype=None, encoding=None, skipIfSameContent=False, updateTimeIfSameContent=True):
-    if skipIfSameContent and isfile(s):
+def writeall(path, txt, mode='w', unicodetype=None, encoding=None, skipIfSameContent=False, updateTimeIfSameContent=True):
+    if skipIfSameContent and isfile(path):
         assertTrue(mode == 'w' or mode == 'wb')
-        currentContent = readall(s, mode.replace('w', 'r'), unicodetype, encoding)
+        currentContent = readall(path, mode.replace('w', 'r'), unicodetype, encoding)
         if currentContent == txt:
             if updateTimeIfSameContent:
-                setFileLastModifiedTime(s, getNowAsMillisTime() / 1000.0)
+                setFileLastModifiedTime(path, getNowAsMillisTime(), units=TimeUnits.Milliseconds)
             return False
 
-    with _openSupportingUnicode(s, mode, unicodetype, encoding)() as f:
+    with open(path, mode, encoding=encoding) as f:
         f.write(txt)
         return True
 
@@ -262,7 +261,6 @@ def getSizeRecurse(dir, followSymlinks=False, fnFilterDirs=None, fnDirectExcepti
 
 def fileContentsEqual(f1, f2):
     import filecmp
-    
     return filecmp.cmp(f1, f2, shallow=False)
 
 

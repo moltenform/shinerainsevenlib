@@ -17,7 +17,7 @@ def getNowAsMillisTime():
     t = time.time()
     return int(t * 1000)
 
-class EnglishDateParserWrapper(object):
+class EnglishDateParserWrapper:
     def __init__(self, dateOrder='MDY'):
         # default to month-day-year
         # restrict to English, less possibility of accidentally parsing a non-date string

@@ -17,7 +17,7 @@ or if location is set per-drive, send to that place.
 
 
 
-class SimpleConfigParser(object):
+class SimpleConfigParser:
     def __init__(self, addDefaultSection='main'):
         self.prefs_dict = {}
         self.addDefaultSection = addDefaultSection
@@ -44,7 +44,7 @@ class SimpleConfigParser(object):
         return self.prefs_dict
         
 
-class BenPythonCommonPreferences(object):
+class BenPythonCommonPreferences:
     def __init__(self):
         self.prefs_dict = {}
     
@@ -93,7 +93,8 @@ def getTempDirectoryForPath(path):
         result = tempfile.gettempdir() + '/shinerainsoftsevencommon'
         
     try:
-        os.makedirs(result)
+        if not os.path.isdir(result):
+            os.makedirs(result)
     except Exception as e:
         raise Exception(f'getTempDirectoryForPath error creating {result} {e}')
     
@@ -107,7 +108,8 @@ def getSoftDeleteDirectoryForPath(path):
     result = getDirectoryBasedOnPath(path, 'soft_delete_directory')
     if result:
         try:
-            os.makedirs(result)
+            if not os.path.isdir(result):
+                os.makedirs(result)
         except Exception as e:
             raise Exception(f'getSoftDeleteDirectoryForPath creating {result} {e}')
         
