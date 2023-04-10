@@ -1,4 +1,7 @@
 
+# shinerainsoftsevencommon
+# Released under the LGPLv3 License
+
 import os
 import re
 import tempfile

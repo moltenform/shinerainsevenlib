@@ -1,4 +1,8 @@
 
+# shinerainsoftsevencommon
+# Released under the LGPLv3 License
+from .common_util_classes import *
+
 import os
 import pprint
 

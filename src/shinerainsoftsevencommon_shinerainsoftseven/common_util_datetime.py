@@ -1,4 +1,8 @@
 
+# shinerainsoftsevencommon
+# Released under the LGPLv3 License
+from .common_util_strings import *
+
 import time
 
 # "millistime" is number of milliseconds past epoch (unix time * 1000)

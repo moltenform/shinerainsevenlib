@@ -1,4 +1,7 @@
 
+# shinerainsoftsevencommon
+# Released under the LGPLv3 License
+
 try:
     import builtins
 except ImportError:

@@ -1,23 +1,26 @@
 
+# shinerainsoftsevencommon
+# Released under the LGPLv3 License
+
 import sys
 import os
 import shutil
-
+from ..common_util_classes import *
 
 rename = os.rename
 exists = os.path.exists
 join = os.path.join
 split = os.path.split
 splitExt = os.path.splitext
-isdir = os.path.isdir
-isfile = os.path.isfile
+isDir = os.path.isdir
+isFile = os.path.isfile
 getSize = os.path.getsize
-rmdir = os.rmdir
-chdir = os.chdir
+rmDir = os.rmdir
+chDir = os.chdir
 sep = os.path.sep
-linesep = os.linesep
-abspath = os.path.abspath
-rmtree = shutil.rmtree
+lineSep = os.linesep
+absPath = os.path.abspath
+rmTree = shutil.rmtree
 
 def getparent(path):
     return os.path.split(path)[0]

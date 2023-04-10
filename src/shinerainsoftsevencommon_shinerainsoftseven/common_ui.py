@@ -1,4 +1,8 @@
 
+# shinerainsoftsevencommon
+# Released under the LGPLv3 License
+from .common_higher import *
+
 import sys
 import os
 

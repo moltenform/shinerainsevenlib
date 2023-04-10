@@ -1,18 +1,21 @@
 
+# shinerainsoftsevencommon
+# Released under the LGPLv3 License
+
 class BenPythonCommonPreferences:
     def __init__(self):
         self.prefs_dict = {}
     
-    def load(self):
-        userHome = os.path.expanduser('~')
-        userPrefsFile = userHome + '/' + '.shinerainsoftsevencommon'
+    #~ def load(self):
+        #~ userHome = os.path.expanduser('~')
+        #~ userPrefsFile = userHome + '/' + '.shinerainsoftsevencommon'
         
-        def go(f):
+        #~ def go(f):
     
     
-    dir = cfg['main']
+    #~ dir = cfg['main']
 
-def runOnModuleLoad(cachedPrefs):
+#~ def runOnModuleLoad(cachedPrefs):
     
 
 def _getDirRoot(path):
@@ -37,9 +40,9 @@ def getDirectoryBasedOnPath(path, prefix):
         return dict[key]
     
 
-# run this on module load
-cachedPrefs = BenPythonCommonConfigParser()
-runOnModuleLoad(cachedPrefs)
+#~ # run this on module load
+#~ cachedPrefs = BenPythonCommonConfigParser()
+#~ runOnModuleLoad(cachedPrefs)
 
 def getTempDirectoryForPath(path):
     # always returns a valid directory

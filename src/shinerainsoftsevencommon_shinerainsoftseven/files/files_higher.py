@@ -1,4 +1,8 @@
 
+# shinerainsoftsevencommon
+# Released under the LGPLv3 License
+from .files_listing import *
+
 def openDirectoryInExplorer(path):
     assert isdir(path), 'not a path? ' + path
     if sys.platform.startswith('win'):

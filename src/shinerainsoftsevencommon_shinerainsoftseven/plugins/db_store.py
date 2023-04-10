@@ -37,8 +37,8 @@ class Store:
         if self.current_schema_version_number() is None:
             return
 
-        cursor.execute('CREATE TABLE ben_python_common_store_properties(schema_version INT)')
-        cursor.execute('INSERT INTO ben_python_common_store_properties(schema_version) VALUES(?)',
+        cursor.execute('CREATE TABLE shinerainsoftsevencommon_store_properties(schema_version INT)')
+        cursor.execute('INSERT INTO shinerainsoftsevencommon_store_properties(schema_version) VALUES(?)',
             [self.current_schema_version_number()])
 
     def verify_schema_version(self):
@@ -49,7 +49,7 @@ class Store:
         try:
             valid = False
             got = None
-            for version in cursor.execute('SELECT schema_version FROM ben_python_common_store_properties'):
+            for version in cursor.execute('SELECT schema_version FROM shinerainsoftsevencommon_store_properties'):
                 got = int(version[0])
                 if got == int(self.current_schema_version_number()):
                     valid = True

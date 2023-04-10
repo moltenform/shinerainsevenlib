@@ -1,4 +1,11 @@
 
+# shinerainsoftsevencommon
+# Released under the LGPLv3 License
+
+# a meta-tool to 1) add gpl headers to files
+# and 2) add ordering; I layer my modules sequentially
+
+from ben_python_common import *
 import os
 import re
 
@@ -14,8 +21,8 @@ def getSpecFile(pathDir, prefix):
         listFiles = f.read().split('\n')
     
     # remove whitespace
-    listFiles = [path.strip() for path in listFiles if path.strip()]
-        
+    listFiles = [path.strip() for path in listFiles if path.strip() and not path.startswith('#')]
+
     listFiles = [{'path': path, 'opts': {}} for path in listFiles]
     for item in listFiles:
         if '(prefix only)' in item['path']:
@@ -34,45 +41,51 @@ def ensureCovered(listFiles, pathDir, prefix):
     # nothing should exist not in ordering.txt
     for child in os.listdir(pathDir):
         if child.lower().endswith('.py'):
-            found = [item for item in listFiles if item['path'] == child]
-            if not found:
-                raise Exception('not found in ordering.txt ' + child)
+            if not ignoreOrdering(child):
+                found = [item for item in listFiles if item['path'] == child]
+                if not found:
+                    raise Exception('not found in ordering.txt ' + child)
 
-def addHeaderToPyFiles(pathDir, prefix, importStar):
+def ignoreOrdering(filename):
+    return filename == '__init__.py' or filename.startswith('nocpy_')
+
+def addHeaderToPyFiles(pathDir, prefix, importStar, isPackage):
     listFiles = getSpecFile(pathDir, prefix)
+    print(listFiles)
     ensureCovered(listFiles, pathDir, prefix)
     
-    listRelevantFiles = [item for item in listFiles if not item['opts']['prefixOnly']]
+    listRelevantFiles = [item for item in listFiles if not item['opts'].get('prefixOnly')]
+    listRelevantFiles.reverse()
     for i in range(len(listRelevantFiles)):
         fullPath = pathDir + '/' + listRelevantFiles[i]['path']
-        _removeHeaderFromPyFile(fullPath, prefix)
+        _removeHeaderFromPyFile(fullPath, prefix, verbose=False)
         
         nextLine = ''
         if i > 0:
             stepBelow = listRelevantFiles[i-1]['path'].replace('.py', '')
-            nextLine = 'from {stepBelow} import *' if importStar else 'import {stepBelow}'
+            if isPackage and importStar:
+                # a relative-import within current package
+                stepBelow = '.' + stepBelow
+                
+            nextLine = f'from {stepBelow} import *\n' if importStar else f'import {stepBelow}\n'
         
         toAdd = '\n' + prefix + '\n' + nextLine + '\n'
         _addHeaderToPyFile(fullPath, toAdd)
     
-    listHeaderOnlyFiles = [item for item in listFiles if item['opts']['prefixOnly']]
+    listHeaderOnlyFiles = [item for item in listFiles if item['opts'].get('prefixOnly')]
     for i in range(len(listHeaderOnlyFiles)):
-        fullPath = pathDir + '/' + listRelevantFiles[i]['path']
+        fullPath = pathDir + '/' + listHeaderOnlyFiles[i]['path']
         _removeHeaderFromPyFile(fullPath, prefix)
         toAdd = '\n' + prefix + '\n\n'
         _addHeaderToPyFile(fullPath, toAdd)
 
-def _addHeaderToPyFile(fullPath, toAdd):
-    from .. import files
-    
-    reHeader = re.escape(prefix)
-    reHeader += r'\n[^\n]*\n'
-    
-    contents = files.readAll(f)
-    newContents = re.sub(reHeader, '\n', contents)
+def _addHeaderToPyFile(fullPath, toAdd, verbose=True):
+    contents = files.readall(fullPath)
+    newContents = toAdd + contents.lstrip()
     if newContents != contents:
-        print('removed header in ' + f)
-        files.writeAll(f, newContents)
+        files.writeall(fullPath, newContents)
+        if verbose:
+            print('updated the header in ' + fullPath)
     
     
 def removeHeaderFromPyFiles(pathDir, prefix, recurse=True):
@@ -83,17 +96,16 @@ def removeHeaderFromPyFiles(pathDir, prefix, recurse=True):
     
     print('complete.')
 
-def _removeHeaderFromPyFile(f, prefix):
-    from .. import files
+def _removeHeaderFromPyFile(fullPath, prefix, verbose=True):
+    reHeader = '\n' + re.escape(prefix)
+    reHeader += r'\n(|from [^\n]+)\n'
     
-    reHeader = re.escape(prefix)
-    reHeader += r'\n[^\n]*\n'
-    
-    contents = files.readAll(f)
+    contents = files.readall(fullPath)
     newContents = re.sub(reHeader, '\n', contents)
     if newContents != contents:
-        print('removed header in ' + f)
-        files.writeAll(f, newContents)
+        files.writeall(fullPath, newContents)
+        if verbose:
+            print('removed the header in ' + fullPath)
     
 
     
