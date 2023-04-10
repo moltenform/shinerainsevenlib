@@ -1,7 +1,7 @@
 
 
 # allowedExts in the form ['png', 'gif']
-def _listchildrenUnsorted(path, *, filenamesOnly=False, allowedExts=None):
+def _listChildrenUnsorted(path, *, filenamesOnly=False, allowedExts=None):
     for filename in os.listdir(path):
         if not allowedExts or getext(filename) in allowedExts:
             yield filename if filenamesOnly else (path + os.path.sep + filename, filename)
@@ -9,19 +9,25 @@ def _listchildrenUnsorted(path, *, filenamesOnly=False, allowedExts=None):
 
 if sys.platform.startswith('win'):
     exeSuffix = '.exe'
-    listchildren = _listchildrenUnsorted
+    listChildren = _listChildrenUnsorted
 else:
     exeSuffix = ''
-    def listchildren(*args, **kwargs):
-        return sorted(_listchildrenUnsorted(*args, **kwargs))
+    def listChildren(*args, **kwargs):
+        return sorted(_listChildrenUnsorted(*args, **kwargs))
 
-def listdirs(path, *, filenamesOnly=False, allowedExts=None):
-    for full, name in listchildren(path, allowedExts=allowedExts):
+def listdirs(path, *, filenamesOnly=False, allowedExts=None, recurse=False):
+    if recurse:
+        return recursedirs(path, filenamesOnly=filenamesOnly, allowedExts=allowedExts, recurse=recurse)
+        
+    for full, name in listChildren(path, allowedExts=allowedExts):
         if os.path.isdir(full):
             yield name if filenamesOnly else (full, name)
 
-def listfiles(path, *, filenamesOnly=False, allowedExts=None):
-    for full, name in listchildren(path, allowedExts=allowedExts):
+def listfiles(path, *, filenamesOnly=False, allowedExts=None, recurse=False):
+    if recurse:
+        return recursefiles(path, filenamesOnly=filenamesOnly, allowedExts=allowedExts, recurse=recurse)
+        
+    for full, name in listChildren(path, allowedExts=allowedExts):
         if not os.path.isdir(full):
             yield name if filenamesOnly else (full, name)
 

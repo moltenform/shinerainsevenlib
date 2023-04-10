@@ -1,7 +1,8 @@
 
 Useful unadorned utilities for powerful Python programming.
 
-pyperclip
+* Recommended dependencies
+  * module `Send2Trash`, to send files to OS trash location
 
 * Optional dependencies
   * module `crc64iso`, to get the crc64 of a file
@@ -9,4 +10,9 @@ pyperclip
   * module `apsw`, for the `db_store` feature
   * module `dateparser`, for the `EnglishDateParserWrapper` class
   * module `parse`, for the `ParsePlus` class
+  * module `pyperclip`, for accessing the clipboard
+  * module `pytest`, to run tests
+
+
+  
   

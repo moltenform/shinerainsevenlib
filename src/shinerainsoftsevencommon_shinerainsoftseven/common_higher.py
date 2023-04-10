@@ -71,6 +71,18 @@ def DBG(obj=None):
     else:
         pprint.pprint(obj)
 
+def _dbgHookCallback(exctype, value, traceback):
+    DBG()
+    alert('unhandled exception ' + value)
+    sys.__excepthook__(exctype, value, traceback)
+
+def registerDebughook(b=True):
+    if b:
+        sys.excepthook = _dbgHookCallback
+    else:
+        sys.excepthook = sys.__excepthook__
+
+
 def getRandomString(max=1000 * 1000, hex=False):
     import random
     
@@ -111,4 +123,46 @@ def startThread(fn, args=None):
     t = threading.Thread(target=fn, args=args)
     t.start()
 
+def getSoftDeleteDir(path):
+    return shinerainsoftsevencommon_preferences.getSoftDeleteDirectoryForPath(path)
 
+softDeleteFileRng = IndependentRNG()
+def getSoftDeleteFullPath(path):
+    from . import files
+    
+    dirPath = getSoftDeleteDir(path)
+    if not dirPath:
+        return None
+    
+    with softDeleteFileRng:
+        randomString = getRandomString()
+    
+    # as a prefix, the first 2 chars of the parent directory
+    prefix = files.getname(files.getparent(path))[0:2] + '_'
+    newPath = destination + files.sep + prefix + files.getName(path) + randomString
+    assertTrue(not files.exists(newPath), 'already exists', newPath)
+    
+    return newPath
+    
+def softDeleteFile(path, allowDirs=False, doTrace=False):
+    from . import files
+    assertTrue(files.exists(path), 'file not found', path)
+    assertTrue(allowDirs or not files.isDir(path), 'typically you cannot softDelete a dir', path)
+    newPath = getSoftDeleteFullPath(path)
+    diagnostics = shinerainsoftsevencommon_preferences.diagnosticsEnabled()
+    
+    if not newPath:
+        if diagnostics:
+            trace(f'when deleting {path}, softDeleteDir not set, so falling back to send-to-os-recycle-bin')
+        
+        if doTrace:
+            trace(f'softDeleteFile |on| {path}')
+        
+        from send2trash import send2trash
+        send2trash(path)
+    else:
+        if doTrace:
+            trace(f'softDeleteFile |on| {path} |to| {newPath}')
+        
+        files.move(path, newPath, overwrite=False, warnBetweenDrives=diagnostics, allowDirs=allowDirs)
+        return newPath

@@ -1,49 +1,4 @@
 
-import os
-import re
-import tempfile
-from configparser import ConfigParser
-
-#~ softDeleteFile:
-#~ if no location is set, send to recycle bin (Send2Trash module) (and log what was deleted to ~/.ben_python_common.log)
-#~ otherwise send it to that location
-#~ or if location is set per-drive, send to that place.
-
-#~ scratchLocation:
-#~ if no location is set, use a temporary location in c:\temp
-#~ or if location is set per-drive, send to that place.
-
-
-
-
-
-class SimpleConfigParser:
-    def __init__(self, addDefaultSection='main'):
-        self.prefs_dict = {}
-        self.addDefaultSection = addDefaultSection
-    
-    def load(self, path):
-        with open(path, encoding='utf-8') as f:
-            prefs_contents = f.read()
-            
-            if self.addDefaultSection:
-                expect = '[' + self.addDefaultSection + ']\n'
-                if expect not in prefs_contents:
-                    prefs_contents = expect + '\n' + prefs_contents
-            
-            self.cfg = configparser.ConfigParser(delimiters='=')
-            
-            # make it case-sensitive
-            self.cfg.optionxform = str
-            self.cfg.read_string(prefs_contents)
-            
-            for key in self.cfg:
-                self.prefs_dict[key] = self.cfg[key]
-    
-    def getDict(self):
-        return self.prefs_dict
-        
-
 class BenPythonCommonPreferences:
     def __init__(self):
         self.prefs_dict = {}
@@ -117,6 +72,20 @@ def getSoftDeleteDirectoryForPath(path):
             raise Exception('getSoftDeleteDirectoryForPath does not exist {result}')
     
     return result
-    
+
+def diagnosticsEnabled():
+    global cachedPrefs
+    dict = cachedPrefs.getDict()
+    return dict.get('diagnostics_enabled') and dict.get('diagnostics_enabled').strip() != '0'
+
+#~ softDeleteFile:
+#~ if no location is set, send to recycle bin (Send2Trash module) (and log what was deleted to a log)
+#~ otherwise send it to that location
+#~ or if location is set per-drive, send to that place.
+
+#~ scratchLocation:
+#~ if no location is set, use a temporary location in c:\temp
+#~ or if location is set per-drive, send to that place.
+
 
 

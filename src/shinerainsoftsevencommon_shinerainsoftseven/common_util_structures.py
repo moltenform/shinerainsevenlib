@@ -105,6 +105,33 @@ class RecentlyUsedList:
             while len(self.list) > self.maxSize:
                 self.list.pop()
 
+# keep a separate random stream that won't get affected by someone else calling seed()
+class IndependentRNG:
+    def __init__(self, seed=None):
+        import random
+        if seed is not None:
+            random.seed(seed)
+            
+        self.state = random.getstate()
+        self.keep_outside_state = None
+        self.entered = False
+    
+    def __enter__(self):
+        if self.entered:
+            return
+        
+        self.entered = True
+        self.keep_outside_state = random.getstate()
+        random.setstate(self.state)
+    
+    def __exit__(self ,type, value, traceback):
+        if not self.entered:
+            return
+                
+        self.entered = False
+        random.setstate(self.keep_outside_state)
+        
+
 # inspired by http://code.activestate.com/recipes/496879-memoize-decorator-function-with-cache-size-limit/
 def BoundedMemoize(fn, limit=20):
     from collections import OrderedDict

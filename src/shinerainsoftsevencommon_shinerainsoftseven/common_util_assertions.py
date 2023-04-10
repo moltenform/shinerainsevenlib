@@ -4,6 +4,8 @@ import traceback
 import pprint
 import re
 
+from .infrastructure import *
+
 def assertTrue(condition, *messageArgs):
     if not condition:
         msg = ' '.join(map(getPrintable, messageArgs)) if messageArgs else ''
