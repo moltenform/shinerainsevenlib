@@ -80,10 +80,10 @@ def addHeaderToPyFiles(pathDir, prefix, importStar, isPackage):
         _addHeaderToPyFile(fullPath, toAdd)
 
 def _addHeaderToPyFile(fullPath, toAdd, verbose=True):
-    contents = files.readall(fullPath)
+    contents = files.readAll(fullPath)
     newContents = toAdd + contents.lstrip()
     if newContents != contents:
-        files.writeall(fullPath, newContents)
+        files.writeAll(fullPath, newContents)
         if verbose:
             print('updated the header in ' + fullPath)
     
@@ -100,10 +100,10 @@ def _removeHeaderFromPyFile(fullPath, prefix, verbose=True):
     reHeader = '\n' + re.escape(prefix)
     reHeader += r'\n(|from [^\n]+)\n'
     
-    contents = files.readall(fullPath)
+    contents = files.readAll(fullPath)
     newContents = re.sub(reHeader, '\n', contents)
     if newContents != contents:
-        files.writeall(fullPath, newContents)
+        files.writeAll(fullPath, newContents)
         if verbose:
             print('removed the header in ' + fullPath)
     

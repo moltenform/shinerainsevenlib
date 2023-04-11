@@ -28,7 +28,7 @@ def extensionPossiblyExecutable(s):
     '''Returns 'exe' if it looks executable,
     Returns 'warn' if it is a document type that can include embedded scripts,
     Returns False otherwise'''
-    ext = getext(s, False)
+    ext = getExt(s, False)
     if ext in exeExt:
         return 'exe'
     elif ext in warnExt:

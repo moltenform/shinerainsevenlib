@@ -155,8 +155,8 @@ def _computeHashImpl(f, hasher, buffersize=0x40000):
         return hasher.hexdigest()
 
 def windowsUrlFileGet(path):
-    assertEq('.url', os.path.splitext(path)[1].lower())
-    s = readall(path, mode='r')
+    assertEq('.url', os.path.splitExt(path)[1].lower())
+    s = readAll(path, mode='r')
     lines = s.split('\n')
     for line in lines:
         if line.startswith('URL='):
@@ -176,5 +176,5 @@ def windowsUrlFileWrite(path, url):
 
     s = '[InternetShortcut]\n'
     s += 'URL=%s\n' % url
-    writeall(path, s)
+    writeAll(path, s)
 

@@ -142,7 +142,7 @@ def getSoftDeleteFullPath(path):
         randomString = getRandomString()
     
     # as a prefix, the first 2 chars of the parent directory
-    prefix = files.getname(files.getparent(path))[0:2] + '_'
+    prefix = files.getName(files.getParent(path))[0:2] + '_'
     newPath = destination + files.sep + prefix + files.getName(path) + randomString
     assertTrue(not files.exists(newPath), 'already exists', newPath)
     

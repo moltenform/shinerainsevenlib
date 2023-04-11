@@ -18,7 +18,7 @@ class PersistedDict:
         if not files.exists(filename):
             if warnIfCreatingNew:
                 common_ui.alert("creating new cache at " + filename)
-            files.writeall(filename, '{}')
+            files.writeAll(filename, '{}')
         self.load()
         if keepHandle:
             self.handle = open(filename, 'w')
@@ -27,7 +27,7 @@ class PersistedDict:
     def load(self):
         import json
         from . import files
-        txt = files.readall(self.filename, encoding='utf-8')
+        txt = files.readAll(self.filename, encoding='utf-8')
         self.data = json.loads(txt)
 
     def close(self):
@@ -44,7 +44,7 @@ class PersistedDict:
             self.handle.write(txt)
             self.handle.truncate()
         else:
-            files.writeall(self.filename, txt, encoding='utf-8')
+            files.writeAll(self.filename, txt, encoding='utf-8')
 
     def afterUpdate(self):
         self.counter += 1
@@ -220,12 +220,12 @@ class ParsePlus:
 
     def replaceFieldWithTextIntoFile(self, path, key, newValue,
             appendIfNotFound=None, allowOnlyOnce=False, encoding=None):
-        from .files import readall, writeall
-        s = readall(path, encoding=encoding)
+        from .files import readAll, writeAll
+        s = readAll(path, encoding=encoding)
 
         newS = self.replaceFieldWithText(s, key, newValue,
             appendIfNotFound=appendIfNotFound,
             allowOnlyOnce=allowOnlyOnce)
 
-        writeall(path, newS, 'w', encoding=encoding, skipIfSameContent=True)
+        writeAll(path, newS, 'w', encoding=encoding, skipIfSameContent=True)
 

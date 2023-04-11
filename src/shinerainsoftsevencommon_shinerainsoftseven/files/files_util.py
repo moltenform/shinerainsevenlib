@@ -11,10 +11,10 @@ rename = os.rename
 exists = os.path.exists
 join = os.path.join
 split = os.path.split
-splitExt = os.path.splitext
+splitExt = os.path.splitExt
 isDir = os.path.isdir
 isFile = os.path.isfile
-getSize = os.path.getsize
+getSize = os.path.getSize
 rmDir = os.rmdir
 chDir = os.chdir
 sep = os.path.sep
@@ -22,25 +22,25 @@ lineSep = os.linesep
 absPath = os.path.abspath
 rmTree = shutil.rmtree
 
-def getparent(path):
+def getParent(path):
     return os.path.split(path)[0]
 
-def getname(path):
+def getName(path):
     return os.path.split(path)[1]
 
-def createdtime(path):
+def createdTime(path):
     return os.stat(path).st_ctime
 
-def getext(s, removeDot=True):
-    a, b = splitext(s)
+def getExt(s, removeDot=True):
+    a, b = splitExt(s)
     if removeDot and len(b) > 0 and b[0] == '.':
         return b[1:].lower()
     else:
         return b.lower()
 
-def getwithdifferentext(s, ext_with_dot):
+def getWithDifferentExt(s, ext_with_dot):
     parent, short = os.path.split(s)
-    short_before_ext, short_ext = os.path.splitext(short)
+    short_before_ext, short_ext = os.path.splitExt(short)
     assertTrue(short_ext, s)
     if parent:
         with_trailing_slash = s[0:len(parent)+1]
@@ -55,15 +55,15 @@ def delete(s, traceToStdout=False):
 
     os.unlink(s)
 
-def deletesure(s, traceToStdout=False):
+def deleteSure(s, traceToStdout=False):
     if exists(s):
         delete(s, traceToStdout)
 
     assertTrue(not exists(s))
 
-def makedirs(s):
+def makeDirs(s):
     try:
-        os.makedirs(s)
+        os.makeDirs(s)
     except OSError:
         if isdir(s):
             return
@@ -82,9 +82,9 @@ def ensureEmptyDirectory(d):
             else:
                 os.unlink(join(d, s))
 
-        assertTrue(isemptydir(d))
+        assertTrue(isEmptyDir(d))
     else:
-        os.makedirs(d)
+        os.makeDirs(d)
 
 def copy(srcfile, destfile, overwrite, traceToStdout=False,
         useDestModifiedTime=False, createParent=False):
@@ -99,8 +99,8 @@ def copy(srcfile, destfile, overwrite, traceToStdout=False,
     if traceToStdout:
         trace('copy()', srcfile, destfile)
 
-    if createParent and not exists(getparent(destfile)):
-        makedirs(getparent(destfile))
+    if createParent and not exists(getParent(destfile)):
+        makeDirs(getParent(destfile))
 
     if srcfile == destfile:
         pass
@@ -137,8 +137,8 @@ def move(srcfile, destfile, overwrite, warnBetweenDrives=False,
     if traceToStdout:
         trace('move()', srcfile, destfile)
 
-    if createParent and not exists(getparent(destfile)):
-        makedirs(getparent(destfile))
+    if createParent and not exists(getParent(destfile)):
+        makeDirs(getParent(destfile))
 
     if srcfile == destfile:
         pass
@@ -231,15 +231,15 @@ def setLastModifiedTime(path, newVal, units=TimeUnits.Seconds):
     os.utime(path, ns=(atimeNs, newVal))
 
 # unicodetype can be utf-8, utf-8-sig, etc.
-def readall(path, mode='r', encoding='utf-8'):
+def readAll(path, mode='r', encoding='utf-8'):
     with open(path, mode, encoding=encoding) as f:
         return f.read()
 
 # unicodetype can be utf-8, utf-8-sig, etc.
-def writeall(path, txt, mode='w', unicodetype=None, encoding=None, skipIfSameContent=False, updateTimeIfSameContent=True):
+def writeAll(path, txt, mode='w', unicodetype=None, encoding=None, skipIfSameContent=False, updateTimeIfSameContent=True):
     if skipIfSameContent and isfile(path):
         assertTrue(mode == 'w' or mode == 'wb')
-        currentContent = readall(path, mode.replace('w', 'r'), unicodetype, encoding)
+        currentContent = readAll(path, mode.replace('w', 'r'), unicodetype, encoding)
         if currentContent == txt:
             if updateTimeIfSameContent:
                 setFileLastModifiedTime(path, getNowAsMillisTime(), units=TimeUnits.Milliseconds)
@@ -249,12 +249,12 @@ def writeall(path, txt, mode='w', unicodetype=None, encoding=None, skipIfSameCon
         f.write(txt)
         return True
 
-def isemptydir(dir):
+def isEmptyDir(dir):
     return len(os.listdir(dir)) == 0
     
 def getSizeRecurse(dir, followSymlinks=False, fnFilterDirs=None, fnDirectExceptionsTo=None):
     total = 0
-    for obj in recursefileinfo(dir, followSymlinks=followSymlinks,
+    for obj in recurseFileInfo(dir, followSymlinks=followSymlinks,
             fnFilterDirs=fnFilterDirs, fnDirectExceptionsTo=fnDirectExceptionsTo):
         total += obj.size()
     return total

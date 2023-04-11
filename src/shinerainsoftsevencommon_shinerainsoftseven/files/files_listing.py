@@ -6,7 +6,7 @@ from .files_processes import *
 # allowedExts in the form ['png', 'gif']
 def _listChildrenUnsorted(path, *, filenamesOnly=False, allowedExts=None):
     for filename in os.listdir(path):
-        if not allowedExts or getext(filename) in allowedExts:
+        if not allowedExts or getExt(filename) in allowedExts:
             yield filename if filenamesOnly else (path + os.path.sep + filename, filename)
 
 
@@ -18,23 +18,23 @@ else:
     def listChildren(*args, **kwargs):
         return sorted(_listChildrenUnsorted(*args, **kwargs))
 
-def listdirs(path, *, filenamesOnly=False, allowedExts=None, recurse=False):
+def listDirs(path, *, filenamesOnly=False, allowedExts=None, recurse=False):
     if recurse:
-        return recursedirs(path, filenamesOnly=filenamesOnly, allowedExts=allowedExts, recurse=recurse)
+        return recurseDirs(path, filenamesOnly=filenamesOnly, allowedExts=allowedExts, recurse=recurse)
         
     for full, name in listChildren(path, allowedExts=allowedExts):
         if os.path.isdir(full):
             yield name if filenamesOnly else (full, name)
 
-def listfiles(path, *, filenamesOnly=False, allowedExts=None, recurse=False):
+def listFiles(path, *, filenamesOnly=False, allowedExts=None, recurse=False):
     if recurse:
-        return recursefiles(path, filenamesOnly=filenamesOnly, allowedExts=allowedExts, recurse=recurse)
+        return recurseFiles(path, filenamesOnly=filenamesOnly, allowedExts=allowedExts, recurse=recurse)
         
     for full, name in listChildren(path, allowedExts=allowedExts):
         if not os.path.isdir(full):
             yield name if filenamesOnly else (full, name)
 
-def recursefiles(root, *, filenamesOnly=False, allowedExts=None,
+def recurseFiles(root, *, filenamesOnly=False, allowedExts=None,
         fnFilterDirs=None, includeFiles=True, includeDirs=False, topDown=True, followSymlinks=False):
     assert isdir(root)
 
@@ -45,15 +45,15 @@ def recursefiles(root, *, filenamesOnly=False, allowedExts=None,
 
         if includeFiles:
             for filename in (filenames if sys.platform.startswith('win') else sorted(filenames)):
-                if not allowedExts or getext(filename) in allowedExts:
+                if not allowedExts or getExt(filename) in allowedExts:
                     yield filename if filenamesOnly else (dirpath + os.path.sep + filename, filename)
 
         if includeDirs:
-            yield getname(dirpath) if filenamesOnly else (dirpath, getname(dirpath))
+            yield getName(dirpath) if filenamesOnly else (dirpath, getName(dirpath))
 
-def recursedirs(root, *, filenamesOnly=False, fnFilterDirs=None,
+def recurseDirs(root, *, filenamesOnly=False, fnFilterDirs=None,
         topdown=True, followSymlinks=False):
-    return recursefiles(root, filenamesOnly=filenamesOnly, fnFilterDirs=fnFilterDirs, includeFiles=False,
+    return recurseFiles(root, filenamesOnly=filenamesOnly, fnFilterDirs=fnFilterDirs, includeFiles=False,
         includeDirs=True, topdown=topdown, followSymlinks=followSymlinks)
 
 class FileInfoEntryWrapper:
@@ -96,7 +96,7 @@ class FileInfoEntryWrapper:
         assertTrue(sys.platform.startswith('win'))
         return self.obj.stat().st_ctime
 
-def recursefileinfo(root, recurse=True, followSymlinks=False, filesOnly=True,
+def recurseFileInfo(root, recurse=True, followSymlinks=False, filesOnly=True,
         fnFilterDirs=None, fnDirectExceptionsTo=None):
     assertTrue(isPy3OrNewer)
 
@@ -108,7 +108,7 @@ def recursefileinfo(root, recurse=True, followSymlinks=False, filesOnly=True,
                 yield FileInfoEntryWrapper(entry)
             if recurse and (not fnFilterDirs or fnFilterDirs(entry.path)):
                 try:
-                    for subentry in recursefileinfo(entry.path, recurse=recurse,
+                    for subentry in recurseFileInfo(entry.path, recurse=recurse,
                             followSymlinks=followSymlinks, filesOnly=filesOnly,
                             fnFilterDirs=fnFilterDirs, fnDirectExceptionsTo=fnDirectExceptionsTo):
                         yield subentry
@@ -122,6 +122,6 @@ def recursefileinfo(root, recurse=True, followSymlinks=False, filesOnly=True,
         if entry.is_file():
             yield FileInfoEntryWrapper(entry)
 
-def listfileinfo(root, followSymlinks=False, filesOnly=True):
-    return recursefileinfo(root, recurse=False,
+def listFileInfo(root, followSymlinks=False, filesOnly=True):
+    return recurseFileInfo(root, recurse=False,
         followSymlinks=followSymlinks, filesOnly=filesOnly)

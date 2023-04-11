@@ -82,7 +82,7 @@ def parseFloatOrFallback(s, fallBack=None):
     except:
         return fallBack
 
-def waitUntilTrue(iter, fnWaitUntil):
+def skipForwardUntilTrue(iter, fnWaitUntil):
     if isinstance(iter, list):
         iter = (item for item in iter)
         
@@ -123,7 +123,7 @@ def toValidFilename(pathOrig, dirsepOk=False, maxLen=None):
 
     if maxLen and len(result) > maxLen:
         assertTrue(maxLen > 1)
-        ext = os.path.splitext(path)[1]
+        ext = os.path.splitExt(path)[1]
         beforeExt = path[0:-len(ext)]
         while len(result) > maxLen:
             result = beforeExt + ext
