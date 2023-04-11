@@ -7,7 +7,7 @@
 .vs
 
 *nocpy_*
-gen_tests.cfg
+*gen_tests*.cfg
 
 # Build results
 

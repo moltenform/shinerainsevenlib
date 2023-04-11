@@ -13,3 +13,4 @@ class Test%name%:
         xxx
 '''
 
+
