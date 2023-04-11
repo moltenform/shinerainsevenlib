@@ -27,22 +27,22 @@ class Store:
     conn = None
     in_txn = False
 
-    def add_schema(self, cursor):
+    def addSchema(self, cursor):
         raise NotImplementedError('please inherit from Store and implement this method')
 
-    def current_schema_version_number(self):
+    def currentSchemaVersionNumber(self):
         raise NotImplementedError('please inherit from Store and implement this method')
 
-    def stamp_schema_version(self, cursor):
-        if self.current_schema_version_number() is None:
+    def stampSchemaVersion(self, cursor):
+        if self.currentSchemaVersionNumber() is None:
             return
 
         cursor.execute('CREATE TABLE shinerainsoftsevencommon_store_properties(schema_version INT)')
         cursor.execute('INSERT INTO shinerainsoftsevencommon_store_properties(schema_version) VALUES(?)',
-            [self.current_schema_version_number()])
+            [self.currentSchemaVersionNumber()])
 
-    def verify_schema_version(self):
-        if self.current_schema_version_number() is None:
+    def verifySchemaVersion(self):
+        if self.currentSchemaVersionNumber() is None:
             return
 
         cursor = self.conn.cursor()
@@ -51,12 +51,12 @@ class Store:
             got = None
             for version in cursor.execute('SELECT schema_version FROM shinerainsoftsevencommon_store_properties'):
                 got = int(version[0])
-                if got == int(self.current_schema_version_number()):
+                if got == int(self.currentSchemaVersionNumber()):
                     valid = True
 
             if not valid:
                 raise StoreException('DB is empty or comes from a different version. Expected schema version %s, got %s' %
-                    (int(self.current_schema_version_number()), got))
+                    (int(self.currentSchemaVersionNumber()), got))
         except:
             if 'SQLError: no such table:' in str(getCurrentException()):
                 raise StoreException(
@@ -67,12 +67,12 @@ class Store:
     def cursor(self):
         return self.conn.cursor()
 
-    def row_exists(self, cursor, *args):
+    def rowExists(self, cursor, *args):
         for row in cursor.execute(*args):
             return True
         return False
 
-    def connect_or_create(self, dbpath, flags=None):
+    def connectOrCreate(self, dbpath, flags=None):
         if flags is None:
             flags = apsw.SQLITE_OPEN_NOMUTEX | apsw.SQLITE_OPEN_READWRITE | apsw.SQLITE_OPEN_CREATE
         did_exist = files.isfile(dbpath)
@@ -82,32 +82,32 @@ class Store:
         cursor.execute('PRAGMA page_size = 16384')
         cursor.execute('PRAGMA cache_size = 1000')
         if not did_exist:
-            self.txn_begin()
+            self.txnBegin()
             cursor = self.conn.cursor()
-            self.add_schema(cursor)
-            self.stamp_schema_version(cursor)
-            self.txn_commit()
+            self.addSchema(cursor)
+            self.stampSchemaVersion(cursor)
+            self.txnCommit()
 
-        self.verify_schema_version()
+        self.verifySchemaVersion()
 
-    def txn_begin(self):
-        assertTrue(not self.in_txn, 'txn_begin when in')
+    def txnBegin(self):
+        assertTrue(not self.in_txn, 'txnBegin when in')
         self.cursor().execute('BEGIN TRANSACTION')
         self.in_txn = True
 
-    def txn_rollback(self):
-        assertTrue(self.in_txn, 'txn_rollback when not in')
+    def txnRollback(self):
+        assertTrue(self.in_txn, 'txnRollback when not in')
         self.cursor().execute('ROLLBACK TRANSACTION')
         self.in_txn = False
 
-    def txn_commit(self):
-        assertTrue(self.in_txn, 'txn_commit when not in')
+    def txnCommit(self):
+        assertTrue(self.in_txn, 'txnCommit when not in')
         self.cursor().execute('COMMIT TRANSACTION')
         self.in_txn = False
 
     def close(self):
         if self.in_txn:
-            self.txn_rollback()
+            self.txnRollback()
         
         if self.conn:
             self.conn.close()
@@ -119,16 +119,16 @@ class StoreWithCrudHelpers(Store):
         super().__init__()
 
         self.re_check = re.compile('^[a-zA-Z0-9]+$')
-        self.schema = self.get_field_names_and_attributes()
+        self.schema = self.getFieldNamesAndAttributes()
         self.default_tbl = [tbl for tbl in self.schema][0]
         if autoConnect:
-            self.connect_or_create(dbpath, flags)
+            self.connectOrCreate(dbpath, flags)
     
-    def get_field_names_and_attributes(self):
+    def getFieldNamesAndAttributes(self):
         # example return {'tblName': {'fld1': {'initprops': 'not null'}, 'fld2': {'index': True}, 'fld3': {}}}
         raise NotImplementedError('please inherit from Store and implement this method')
     
-    def add_schema(self, cursor):
+    def addSchema(self, cursor):
         for tbl in self.schema:
             # add fields
             tblschema = self.schema[tbl]
@@ -204,18 +204,18 @@ class StoreWithCrudHelpers(Store):
         if raw_results:
             results = []
             for record in raw_results:
-                results.append(self._tuple_to_dict(self.schema[table], record))
+                results.append(self.tupleToDict(self.schema[table], record))
             return results
         else:
             return []
     
-    def query_one(self, conditions, table=None):
+    def queryOne(self, conditions, table=None):
         results = self.query(conditions, table, limit=1)
         return results[0] if results else None
 
-    def _tuple_to_dict(self, tableschema, tpl):
-        assertEq(len(tpl), len(tableschema), 'different lengths')
-        fldnames = (fld for fld in tableschema)
+    def tupleToDict(self, tableSchema, tpl):
+        assertEq(len(tpl), len(tableSchema), 'different lengths')
+        fldnames = (fld for fld in tableSchema)
         return dict(zip(fldnames, tpl))
     
     def __enter__(self):

@@ -164,7 +164,7 @@ def getInputFromChoicesGui(prompt, arOptions):
     assert len(arOptions) > 0
     retval = [None]
 
-    def setresult(v):
+    def setResult(v):
         retval[0] = v
 
     # http://effbot.org/tkinterbook/tkinter-dialog-windows.htm
@@ -180,14 +180,14 @@ def getInputFromChoicesGui(prompt, arOptions):
                 opts = dict()
                 opts['text'] = text
                 opts['width'] = 10
-                opts['command'] = lambda which=i: self.onbtn(which)
+                opts['command'] = lambda which=i: self.onBtn(which)
 
                 whichToUnderline = findUnusedLetter(lettersUsed, text)
                 if whichToUnderline is not None:
                     opts['underline'] = whichToUnderline
 
                     # if the label is has t underlined, t is keyboard shortcut
-                    top.bind(text[whichToUnderline].lower(), lambda _, which=i: self.onbtn(which))
+                    top.bind(text[whichToUnderline].lower(), lambda _, which=i: self.onBtn(which))
 
                 if i == 0:
                     opts['default'] = Tkinter.ACTIVE
@@ -195,7 +195,7 @@ def getInputFromChoicesGui(prompt, arOptions):
                 w = Tkinter.Button(box, **opts)
                 w.pack(side=Tkinter.LEFT, padx=5, pady=5)
 
-            top.bind("<Return>", lambda unused: self.onbtn(0))
+            top.bind("<Return>", lambda unused: self.onBtn(0))
             top.bind("<Escape>", lambda unused: self.cancel())
             box.pack(pady=5)
             parent.update()
@@ -203,8 +203,8 @@ def getInputFromChoicesGui(prompt, arOptions):
         def cancel(self):
             self.top.destroy()
 
-        def onbtn(self, nWhich):
-            setresult(nWhich)
+        def onBtn(self, nWhich):
+            setResult(nWhich)
             self.top.destroy()
 
     root = Tkinter.Tk()

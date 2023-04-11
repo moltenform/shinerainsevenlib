@@ -155,7 +155,7 @@ if sys.version_info[0] >= 2:
     from io import BytesIO
     cBytesIO = BytesIO
 
-    def endswith(a, b):
+    def endsWith(a, b):
         # use with either str or bytes
         if isinstance(a, str):
             if not isinstance(b, str):
@@ -165,7 +165,7 @@ if sys.version_info[0] >= 2:
                 b = b.encode("ascii")
         return a.endswith(b)
 
-    def startswith(a, b):
+    def startsWith(a, b):
         # use with either str or bytes
         if isinstance(a, str):
             if not isinstance(b, str):
@@ -175,13 +175,13 @@ if sys.version_info[0] >= 2:
                 b = b.encode("ascii")
         return a.startswith(b)
 
-    def iterbytes(b):
+    def iterBytes(b):
         return (bytes([v]) for v in b)
 
-    def bytes_to_string(b):
+    def bytesToString(b):
         return b.decode('utf-8')
 
-    def asbytes(s, encoding='ascii'):
+    def asBytes(s, encoding='ascii'):
         return bytes(s, encoding)
 
     rinput = input

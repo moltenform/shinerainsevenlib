@@ -141,7 +141,7 @@ def BoundedMemoize(fn, limit=20):
     from collections import OrderedDict
     cache = OrderedDict()
 
-    def memoize_wrapper(*args, **kwargs):
+    def memoizeWrapper(*args, **kwargs):
         try:
             import cPickle as pickle
         except ImportError:
@@ -152,16 +152,16 @@ def BoundedMemoize(fn, limit=20):
         except KeyError:
             result = fn(*args, **kwargs)
             cache[key] = result
-            if len(cache) > memoize_wrapper._limit:
+            if len(cache) > memoizeWrapper._limit:
                 cache.popitem(False)  # the false means remove as FIFO
             return result
 
-    memoize_wrapper._limit = limit
-    memoize_wrapper._cache = cache
+    memoizeWrapper._limit = limit
+    memoizeWrapper._cache = cache
     if isPy3OrNewer:
-        memoize_wrapper.__name__ = fn.__name__
+        memoizeWrapper.__name__ = fn.__name__
     else:
-        memoize_wrapper.func_name = fn.func_name
+        memoizeWrapper.func_name = fn.func_name
     
-    return memoize_wrapper
+    return memoizeWrapper
 

@@ -194,7 +194,7 @@ class ParsePlus:
             extra_types=self.extra_types, case_sensitive=self.case_sensitive)
         return self._resultToMyResult(parseResult, s)
 
-    def findall(self, s):
+    def findAll(self, s):
         import parse
         sTransformed = self._createEscapeSequencesMap(s)
         parseResults = parse.findall(self.pattern, sTransformed,

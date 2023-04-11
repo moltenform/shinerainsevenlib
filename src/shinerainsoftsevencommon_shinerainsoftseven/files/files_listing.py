@@ -60,11 +60,11 @@ class FileInfoEntryWrapper:
     def __init__(self, obj):
         self.obj = obj
         self.path = obj.path
-
-    def is_dir(self, *args):
+        
+    def isDir(self, *args):
         return self.obj.is_dir(*args)
 
-    def is_file(self, *args):
+    def isFile(self, *args):
         return self.obj.is_file(*args)
 
     def short(self):
