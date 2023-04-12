@@ -165,3 +165,29 @@ def BoundedMemoize(fn, limit=20):
     
     return memoizeWrapper
 
+def compareTwoListsAsSets(l1, l2, transformFn1=None, transformFn2=None):
+    l1Transformed = l1 if not transformFn1 else [transformFn1(item) for item in l1]
+    l2Transformed = l2 if not transformFn2 else [transformFn2(item) for item in l2]
+    set1 = set(l1Transformed)
+    set2 = set(l2Transformed)
+    if len(set1) != len(l1Transformed):
+        raise ValueError('Duplicate item(s) seen in list 1.' + str(l1Transformed))
+    if len(set2) != len(l2Transformed):
+        raise ValueError('Duplicate item(s) seen in list 2.' + str(l2Transformed))
+    
+    extraItems = list(set1 - set2)
+    missingItems = list(set2 - set1)
+    return Bucket(extraItems=extraItems, missingItems=missingItems)
+
+def expectEqualityTwoListsAsSets(l1, l2, transformFn1=None, transformFn2=None):
+    result = compareTwoListsAsSets(l1, l2, transformFn1=None, transformFn2=None)
+    if len(result.extraItems):
+        trace('Extra items seen in list 1:', result.extraItems)
+        return False
+    
+    if len(result.missingItems):
+        trace('Missing items not present in list 1:', result.missingItems)
+        return False
+    
+    return True
+

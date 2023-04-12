@@ -2,21 +2,20 @@
 # shinerainsoftsevencommon
 # Released under the LGPLv3 License
 
+import os
+
 class BenPythonCommonPreferences:
     def __init__(self):
         self.prefs_dict = {}
     
-    #~ def load(self):
-        #~ userHome = os.path.expanduser('~')
-        #~ userPrefsFile = userHome + '/' + '.shinerainsoftsevencommon'
-        
-        #~ def go(f):
-    
-    
-    #~ dir = cfg['main']
 
 #~ def runOnModuleLoad(cachedPrefs):
     
+
+def getShineRainSoftSevenCommonPrefsFilePath():
+    userHome = os.path.expanduser('~')
+    return userHome + '/' + '.shinerainsoftsevencommon'
+        
 
 def _getDirRoot(path):
     path = os.path.abspath(path)
@@ -29,11 +28,12 @@ def getDirectoryBasedOnPath(path, prefix):
     global cachedPrefs
     dict = cachedPrefs.getDict()
     
-    root = _getDirRoot(path)
-    if root:
-        key = f'{prefix}_{root}_drive'
-        if key in dict and dict[key]:
-            return dict[key]
+    if path:
+        root = _getDirRoot(path)
+        if root:
+            key = f'{prefix}_{root}_drive'
+            if key in dict and dict[key]:
+                return dict[key]
     
     key = f'{prefix}_general'
     if key in dict and dict[key]:
@@ -44,7 +44,7 @@ def getDirectoryBasedOnPath(path, prefix):
 #~ cachedPrefs = BenPythonCommonConfigParser()
 #~ runOnModuleLoad(cachedPrefs)
 
-def getTempDirectoryForPath(path):
+def getTempDirectoryForPath(path=None):
     # always returns a valid directory
     result = getDirectoryBasedOnPath(path, 'temp_directory')
     if not result:

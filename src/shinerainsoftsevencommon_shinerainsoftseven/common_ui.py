@@ -104,10 +104,7 @@ def warn(s, s2=None, s3=None, flushOutput=True):
 
 def getInputBoolGui(prompt):
     "Ask yes or no. Returns True on yes and False on no."
-    if isPy3OrNewer:
-        from tkinter import messagebox as tkMessageBox
-    else:
-        import tkMessageBox
+    from tkinter import messagebox as tkMessageBox
     return tkMessageBox.askyesno(title=' ', message=prompt)
 
 def getInputYesNoCancelGui(prompt):
@@ -122,12 +119,8 @@ def getInputYesNoCancelGui(prompt):
         return 'Cancel'
 
 def createTkSimpleDialog():
-    if isPy3OrNewer:
-        import tkinter as Tkinter
-        from tkinter import simpledialog as tkSimpleDialog
-    else:
-        import Tkinter
-        import tkSimpleDialog
+    import tkinter as Tkinter
+    from tkinter import simpledialog as tkSimpleDialog
     # need to create a root window or we'll fail on simpledialog.py", line 137
     # "if parent.winfo_viewable():" because parent is none.
     root = Tkinter.Tk()
@@ -156,11 +149,7 @@ def findUnusedLetter(dictUsed, newWord):
 
 # returns -1, 'Cancel' on cancel
 def getInputFromChoicesGui(prompt, arOptions):
-    if isPy3OrNewer:
-        import tkinter as Tkinter
-    else:
-        import Tkinter
-    
+    import tkinter as Tkinter
     assert len(arOptions) > 0
     retval = [None]
 
@@ -219,27 +208,18 @@ def getInputFromChoicesGui(prompt, arOptions):
 
 def errGui(s='', s2=None, s3=None):
     s = _combinePrintableStrings(s, s2, s3)
-    if isPy3OrNewer:
-        from tkinter import messagebox as tkMessageBox
-    else:
-        import tkMessageBox
+    from tkinter import messagebox as tkMessageBox
     tkMessageBox.showerror(title='Error', message=getPrintable(s))
     raise RuntimeError('fatal error\n' + getPrintable(s))
 
 def alertGui(s, s2=None, s3=None):
     s = _combinePrintableStrings(s, s2, s3)
-    if isPy3OrNewer:
-        from tkinter import messagebox as tkMessageBox
-    else:
-        import tkMessageBox
+    from tkinter import messagebox as tkMessageBox
     tkMessageBox.showinfo(title=' ', message=getPrintable(s))
 
 def warnGui(s, s2=None, s3=None):
     s = _combinePrintableStrings(s, s2, s3)
-    if isPy3OrNewer:
-        from tkinter import messagebox as tkMessageBox
-    else:
-        import tkMessageBox
+    from tkinter import messagebox as tkMessageBox
     if not tkMessageBox.askyesno(title='Warning', message=getPrintable(s) + '\nContinue?', icon='warning'):
         raise RuntimeError('user chose not to continue after warning')
 
@@ -273,18 +253,12 @@ def _getFileDialogGui(fn, initialdir, types, title):
 
 def getOpenFileGui(initialdir=None, types=None, title='Open'):
     "Specify types in the format ['.png|Png image','.gif|Gif image'] and so on."
-    if isPy3OrNewer:
-        import tkinter.filedialog as tkFileDialog
-    else:
-        import tkFileDialog
+    import tkinter.filedialog as tkFileDialog
     return _getFileDialogGui(tkFileDialog.askopenfilename, initialdir, types, title)
 
 def getSaveFileGui(initialdir=None, types=None, title='Save As'):
     "Specify types in the format ['.png|Png image','.gif|Gif image'] and so on."
-    if isPy3OrNewer:
-        import tkinter.filedialog as tkFileDialog
-    else:
-        import tkFileDialog
+    import tkinter.filedialog as tkFileDialog
     return _getFileDialogGui(tkFileDialog.asksaveasfilename, initialdir, types, title)
 
 # get better arrowkey history in macos

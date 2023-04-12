@@ -11,10 +11,10 @@ rename = os.rename
 exists = os.path.exists
 join = os.path.join
 split = os.path.split
-splitExt = os.path.splitExt
+splitExt = os.path.splitext
 isDir = os.path.isdir
 isFile = os.path.isfile
-getSize = os.path.getSize
+getSize = os.path.getsize
 rmDir = os.rmdir
 chDir = os.chdir
 sep = os.path.sep
@@ -94,7 +94,7 @@ def copy(srcfile, destfile, overwrite, traceToStdout=False,
     toSetModTime = None
     if useDestModifiedTime and exists(destfile):
         assertTrue(isfile(destfile), 'not supported for directories')
-        toSetModTime = getModTimeNs(destfile)
+        toSetModTime = getLastModifiedTime(destfile, units=TimeUnits.Nanoseconds)
 
     if traceToStdout:
         trace('copy()', srcfile, destfile)
@@ -120,7 +120,7 @@ def copy(srcfile, destfile, overwrite, traceToStdout=False,
 
     assertTrue(exists(destfile))
     if toSetModTime:
-        setModTimeNs(destfile, toSetModTime)
+        setLastModifiedTime(destfile, toSetModTime, units=TimeUnits.Nanoseconds)
 
 def move(srcfile, destfile, overwrite, warnBetweenDrives=False,
         traceToStdout=False, allowDirs=False, useDestModifiedTime=False, createParent=False):
@@ -132,7 +132,7 @@ def move(srcfile, destfile, overwrite, warnBetweenDrives=False,
     toSetModTime = None
     if useDestModifiedTime and exists(destfile):
         assertTrue(isfile(destfile), 'not supported for directories')
-        toSetModTime = getModTimeNs(destfile)
+        toSetModTime = getLastModifiedTime(destfile, units=TimeUnits.Nanoseconds)
 
     if traceToStdout:
         trace('move()', srcfile, destfile)
@@ -153,7 +153,7 @@ def move(srcfile, destfile, overwrite, warnBetweenDrives=False,
 
     assertTrue(exists(destfile))
     if toSetModTime:
-        setModTimeNs(destfile, toSetModTime)
+        setLastModifiedTime(destfile, toSetModTime, units=TimeUnits.Nanoseconds)
 
 def _moveFileWin():
     from ctypes import windll, c_wchar_p, c_int, GetLastError
@@ -242,7 +242,7 @@ def writeAll(path, txt, mode='w', unicodetype=None, encoding=None, skipIfSameCon
         currentContent = readAll(path, mode.replace('w', 'r'), unicodetype, encoding)
         if currentContent == txt:
             if updateTimeIfSameContent:
-                setFileLastModifiedTime(path, getNowAsMillisTime(), units=TimeUnits.Milliseconds)
+                setLastModifiedTime(path, getNowAsMillisTime(), units=TimeUnits.Milliseconds)
             return False
 
     with open(path, mode, encoding=encoding) as f:

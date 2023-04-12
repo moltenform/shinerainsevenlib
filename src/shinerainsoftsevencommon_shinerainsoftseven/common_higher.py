@@ -3,8 +3,8 @@
 # Released under the LGPLv3 License
 from .common_util_classes import *
 
-import os
 import pprint
+import re
 
 def getClipboardText():
     try:
@@ -19,10 +19,7 @@ def setClipboardText(s):
         _setClipboardTextTk(s)
 
 def _getClipboardTextTk():
-    try:
-        from tkinter import Tk
-    except ImportError:
-        from Tkinter import Tk
+    from tkinter import Tk
     try:
         r = Tk()
         r.withdraw()
@@ -37,10 +34,7 @@ def _getClipboardTextTk():
     return s
 
 def _setClipboardTextTk(s):
-    try:
-        from tkinter import Tk
-    except ImportError:
-        from Tkinter import Tk
+    from tkinter import Tk
     if not isPy3OrNewer:
         s = unicode(s)
     try:
@@ -127,6 +121,9 @@ def startThread(fn, args=None):
     t = threading.Thread(target=fn, args=args)
     t.start()
 
+def getSoftTempDir(startingPath=None):
+    return shinerainsoftsevencommon_preferences.getTempDirectoryForPath(startingPath=None)
+
 def getSoftDeleteDir(path):
     return shinerainsoftsevencommon_preferences.getSoftDeleteDirectoryForPath(path)
 
@@ -143,7 +140,7 @@ def getSoftDeleteFullPath(path):
     
     # as a prefix, the first 2 chars of the parent directory
     prefix = files.getName(files.getParent(path))[0:2] + '_'
-    newPath = destination + files.sep + prefix + files.getName(path) + randomString
+    newPath = dirPath + files.sep + prefix + files.getName(path) + randomString
     assertTrue(not files.exists(newPath), 'already exists', newPath)
     
     return newPath
@@ -156,13 +153,13 @@ def softDeleteFile(path, allowDirs=False, doTrace=False):
     diagnostics = shinerainsoftsevencommon_preferences.diagnosticsEnabled()
     
     if not newPath:
+        from send2trash import send2trash
         if diagnostics:
             trace(f'when deleting {path}, softDeleteDir not set, so falling back to send-to-os-recycle-bin')
         
         if doTrace:
             trace(f'softDeleteFile |on| {path}')
         
-        from send2trash import send2trash
         send2trash(path)
     else:
         if doTrace:
@@ -170,3 +167,53 @@ def softDeleteFile(path, allowDirs=False, doTrace=False):
         
         files.move(path, newPath, overwrite=False, warnBetweenDrives=diagnostics, allowDirs=allowDirs)
         return newPath
+
+
+# why the asciiOnlyIfOnWindows option?
+#     old windows tools might be compiled without unicode support, or without long-path support.
+#     one way to get them to work would be to use win32api.GetShortPathName() but this needs the
+#     win32api package, and also can fail on some filesystems.
+#     temporarily moving the file risks leaving it there if there is a crash.
+#     let's instead copy the file to a temp directory and run the tool on the copy there.
+#     (if you have an ssd and want to limit writes you can create a ram drive with a tool like ImDisk,
+#     then edit the .shinerainsoftsevencommon file on your machine to point there.)
+def getSoftTempFullPath(extension, startingPath=None, asciiOnlyIfOnWindows=False):
+    from . import files
+    dir = getSoftTempDir(startingPath=startingPath)
+    with softDeleteFileRng:
+        randomString = getRandomString()
+    
+    fullPath = dir + files.dirSep + 'file' + randomString + '.' + extension
+    if asciiOnlyIfOnWindows and sys.platform.startswith('win'):
+        # check for the case where the user profile dir has an ascii character
+        if containsNonAscii(fullPath):
+            trace(f'''
+            The temporary path has a unicode character... Please edit the file
+            {getShineRainSoftSevenCommonPrefsFilePath()}
+            and specify the path to another temporary directory that does not have a
+            unicode character.''')
+            raise Exception('Temporary path contains unicode character')
+    
+    return fullPath
+
+    
+class DeleteFileWhenCompleted:
+    def __init__(self, path, softDelete=True, skipDelete=False):
+        self.path = path
+        self.softDelete = softDelete
+        self.skipDelete = skipDelete
+    
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if not self.skipDelete:
+            if files.exists(self.path):
+                if self.softDelete:
+                    softDeleteFile(self.path)
+                else:
+                    os.path.unlink(self.path)
+
+
+    
+    

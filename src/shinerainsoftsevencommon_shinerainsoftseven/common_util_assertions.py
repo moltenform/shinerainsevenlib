@@ -51,7 +51,7 @@ def assertFloatEq(expected, received, *messageArgs):
         assertTrue(False, *messageArgs)
 
 def assertEqArray(expected, received):
-    if isinstance(expected, anystringtype):
+    if isinstance(expected, str):
         expected = expected.split('|')
 
     assertEq(len(expected), len(received))
@@ -85,6 +85,7 @@ def getCurrentException():
     return sys.exc_info()[1]
 
 def getPrintable(s, okToIgnore=False):
+    import unicodedata
     if isinstance(s, bytes):
         return s.decode('ascii')
     if not isinstance(s, str):

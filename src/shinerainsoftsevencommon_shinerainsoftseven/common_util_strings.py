@@ -148,6 +148,12 @@ def stripHtmlTags(s, removeRepeatedWhitespace=True):
     s = s.replace('<', '?').replace('>', '?')
     return s
 
+def replaceNonAsciiWith(s, replaceWith):
+    return re.sub(r'[^\x00-\x7f]', replaceWith, s)
+
+def containsNonAscii(s):
+    withoutAscii = replaceNonAsciiWith(s, '')
+    return len(s) != len(withoutAscii)
 
 if sys.version_info[0] >= 2:
     from io import StringIO
