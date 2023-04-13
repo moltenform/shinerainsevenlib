@@ -3,14 +3,7 @@
 # Released under the LGPLv3 License
 
 
-template = r'''
-class Test%name%:
-    def test_typical_cases(self):
-        xxx
 
-    def test_edge_cases(self):
-        xxx
-'''
 
 
 # can also do that 
@@ -107,3 +100,74 @@ statemachine:
 
 '''
 
+def _isLineATestClass(line):
+    return line.startswith('class Test')
+
+def _isLineIndented(line):
+    return line.startswith(' ') or line.startswith('\t') or not line.strip()
+
+# we'll define a header as being the file up until the last comments or docstrings before a class
+def extractTestFileHeader(contents):
+    reCommentOrStartDocstring = r'\n[#"' + "']" + '[^\n]*'
+    reClass = r'\nclass Test[^\n]*'
+    reParseHeader = rf'^(.*?)({reCommentOrStartDocstring})*{reClass}'
+    found = re.match(reParseHeader, contents)
+    if not found:
+        return None
+    else:
+        return contents[len(found.group(1):]
+    
+# define a footer as being the last lines after a class returns to normal indentation
+def extractTextFooter(contents):
+    testClasses = contents.split('\nclass Test')
+    if len(testClasses) <= 1:
+        return None
+    else:
+        lines = testClasses[-1].split('\n')
+        for i, line in enumerate(lines):
+            if not _isLineIndented(line):
+                break
+        
+        allFooter = '\n'.join(lines[i:])
+        return allFooter
+
+def divideIntoSections(contents):
+    lines = contents.split('\n')
+    sections = []
+    currentSection = Bucket(name=None, lines=[])
+    hasEnteredClassYet = False
+    for line in lines:
+        if hasEnteredClassYet and not _isLineIndented(line):
+            sections.append(currentSection)
+            currentSection = Bucket(name=None, lines=[])
+            hasEnteredClassYet = False
+        if _isLineATestClass(line):
+            currentSection.name = line.split('class Test')[1].split('#')[0].strip()
+            hasEnteredClassYet= True
+        currentSection.lines.append(line)
+    
+    sections.append(currentSection)
+    return sections
+
+def divideTestFile(contents):
+    result = Bucket(header='', footer='', mapTestNameToSection={})
+    header = extractTestFileHeader(contents)
+    if not header:
+        # no tests found, so consider the entire file the header
+        result.header = contents
+        return result
+    
+    result.header = header
+    contents = contents[len(header):]
+    listSections = divideIntoSections(contents)
+    if not listSections[-1].name:
+        lastSection = listSections.pop()
+        result.footer = '\n'.join(lastSection.lines)
+    
+    for section in listSections:
+        assertTrue(section.name, 'section with no name?', section)
+        assertTrue(not section.name in result.mapTestNameToSection, 'dupe name?', section.name)
+        result.mapTestNameToSection[section.name] = '\n'.join(section.lines)
+    
+    return result
+    

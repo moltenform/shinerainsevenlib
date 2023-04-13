@@ -1,7 +1,5 @@
 
-#~ from ..src import shinerainsoftsevencommon_shinerainsoftseven
-#~ import sys
-#~ sys.path.append('../src')
+
 from shinerainsoftsevencommon import *
 
 class TestConcat:
