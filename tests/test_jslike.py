@@ -2,6 +2,8 @@
 
 from shinerainsoftsevencommon import *
 
+# begin tests
+
 class TestConcat:
     def test_typicalCases(self):
         assert jslike.concat([1, 2], []) == [1, 2]
@@ -21,3 +23,5 @@ class TestConcat:
         assert a == [1]
         assert b == [2]
         
+# end tests
+

@@ -40,27 +40,7 @@ make list of what to test:
 ignore spec can have wildcards like AbcFoo*
         keep track of what spec has been used so that in the end we'll warn about unused spec
 
-then make map of testname->test code
-    go through test file line by line
-    currentSection=None
-    if we have been in an indent and we leave an indent, start a new section (not yet named)
-    if line starts with class, name the current section
-    if file ends and section not named, name it closingJunk
-    at first we are in a section called openingJunk that stops on first classTestF
-    
-    if line starts with spaces, fine
-    if line starts with def, it gets tagged on to current section
-    if line starts with #, or ', or ", it gets tagged on to current section
-    if line starts with class Other, it gets tagged on to current section
-    if line starts with class TestF, start a new section and say currentIndentedInTestClass
-    as soon as that indentation ends, start new section
 
-
-openinng junk ends on last import at the top of the file--- strip this out first 
-that way a comment after last import correctly gets attached to first test
-also that way opening code can contain globalscope code, string literals, etc
-so can simplify by first removing openingJunk
-    its ok if helpers get attached to a test, that is fine!
 
 and then strip out closing junk - which can contain globalscope code, string literals, etc
 
@@ -82,22 +62,6 @@ class TestB:
 ```
 we want comment 2 to be attached to TestB
 
-statemachine:
-    amInIndentFromATest
-    
-    if line starts with spaces, append to current section
-    if line not starts with spaces
-    if amInIndentFromATest
-        amInIndentFromATest = False
-        start a new section
-        
-        if line starts with def, append to current section
-        if line starts with #, or ', or ", append  to current section
-        if line starts with @ or from or import, append  to current section
-        if line starts with class Other, it gets tagged on to current section
-        if line starts with class TestF, name the current section this
-        but if line starts with other text, throw an error-could be a multiline string literal or globalscope code which we don't like
-
 '''
 
 def _isLineATestClass(line):
@@ -115,7 +79,7 @@ def extractTestFileHeader(contents):
     if not found:
         return None
     else:
-        return contents[len(found.group(1):]
+        return contents[len(found.group(1)):]
     
 # define a footer as being the last lines after a class returns to normal indentation
 def extractTextFooter(contents):
@@ -147,7 +111,27 @@ def divideIntoSections(contents):
         currentSection.lines.append(line)
     
     sections.append(currentSection)
+    for i, section in enumerate(sections):
+        checkSectionValid(section)
     return sections
+
+def checkSectionValid(section):
+    # we check for multiline strings, because a class like this would currently break us,
+    # class TestF:
+    #     def test(self):
+    #         my_string = '''
+    # a very long string'''
+    # if the text starts with a python keyword like def, it's probably real Python code, though, so that's ok.
+    
+    okStartWiths = 'import /pass /class /for /try /def /from /nonlocal /while /assert /global /with /if /@/#/\'/"'.split('/')
+    if len(section.lines) and not any(section.lines[0].startswith(okStartWith) for okStartWith in okStartWiths):
+        trace(f'context: {"\n".join(section.lines)}')
+        trace(f'It looks like there is text or code outside of a class.')
+        trace(f'If this is a multiline string, please add some indentation to each line of the multiline string.')
+        trace(f'If this code outside of a class, please move it to the end of the file or into a class.')
+        raise Exception("Saw text or code outside of a class.")
+            
+    return False
 
 def divideTestFile(contents):
     result = Bucket(header='', footer='', mapTestNameToSection={})
