@@ -85,7 +85,10 @@ def getCurrentException():
     return sys.exc_info()[1]
 
 class ShineRainSoftSevenCommonError(RuntimeError):
-    pass
+    # feature, you can pass in many strings like ShineRainSoftSevenCommonError('a', 'b', 'c')
+    def __init__(self, *args):
+        combined = ' '.join((str(arg) for arg in args)
+        super().__init__(combined)
 
 def getPrintable(s, okToIgnore=False):
     import unicodedata

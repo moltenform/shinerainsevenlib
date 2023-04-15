@@ -4,16 +4,9 @@
 
 from shinerainsoftsevencommon import *
 
-
-
 #~ expectEqualityTwoListsAsSets
 
-        
-
 '''
-ignore spec can have wildcards like AbcFoo*
-        keep track of what spec has been used so that in the end we'll warn about unused spec
-
 
 if there is test code like this:
 # comment 1

@@ -196,6 +196,6 @@ def throwIfDuplicates(l1, transformFn1=None, context=''):
     seen = {}
     for item in l1Transformed:
         if item in seen:
-            raise ShineRainSoftSevenCommonError(+ context)
+            raise ShineRainSoftSevenCommonError('duplicate seen:', item, context)
     
     
