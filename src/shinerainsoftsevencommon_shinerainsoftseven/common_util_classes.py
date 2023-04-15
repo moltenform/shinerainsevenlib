@@ -229,3 +229,6 @@ class ParsePlus:
 
         writeAll(path, newS, 'w', encoding=encoding, skipIfSameContent=True)
 
+def dirFields(obj):
+    return [fld for fld in dir(obj) if not fld.startswith('_')]
+    

@@ -191,3 +191,11 @@ def expectEqualityTwoListsAsSets(l1, l2, transformFn1=None, transformFn2=None):
     
     return True
 
+def throwIfDuplicates(l1, transformFn1=None, context=''):
+    l1Transformed = l1 if not transformFn1 else [transformFn1(item) for item in l1]
+    seen = {}
+    for item in l1Transformed:
+        if item in seen:
+            raise ShineRainSoftSevenCommonError(+ context)
+    
+    

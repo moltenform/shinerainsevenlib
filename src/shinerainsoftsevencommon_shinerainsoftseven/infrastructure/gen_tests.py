@@ -1,157 +1,102 @@
 
-# shinerainsoftsevencommon
-# Released under the LGPLv3 License
+from gen_tests_divide import *
+from preferences import *
+import ast
 
+# possible future feature: configs could have wildcards
 
-
-
-
-# can also do that 
-
-
-'''
-cfgs:
-noneedtests
-
-'''
-
-
-
-#~ from preferences import SimpleConfigParser
-
-#~ cfg = SimpleConfigParser()
-#~ cfg.load('shinerainsoftsevencommon_gen_tests.cfg')
-
-#~ prefs_dict
-
-
-#~ expectEqualityTwoListsAsSets
-
-
-'''
-make list of what to test:
-    go through src files
-    in currentClass=None or currentClass=abc
-    if see a `def abc` (and not in ignore spec)
-        add it and currentClass to list
-    if see a `class Foo` (and not in ignore spec)
-        if spec says to get its methods, get its methods,
-        otherwise create one test for the whole class
-ignore spec can have wildcards like AbcFoo*
-        keep track of what spec has been used so that in the end we'll warn about unused spec
-
-
-
-and then strip out closing junk - which can contain globalscope code, string literals, etc
-
-why the complexity?
-if there is code like
-```
-# comment 1
-
-class TestA:
-    def testa:
-        pass
-
-# comment 2
-
-class TestB:
-    def testb:
-        pass
-
-```
-we want comment 2 to be attached to TestB
-
-'''
-
-def _isLineATestClass(line):
-    return line.startswith('class Test')
-
-def _isLineIndented(line):
-    return line.startswith(' ') or line.startswith('\t') or not line.strip()
-
-# we'll define a header as being the file up until the last comments or docstrings before a class
-def extractTestFileHeader(contents):
-    reCommentOrStartDocstring = r'\n[#"' + "']" + '[^\n]*'
-    reClass = r'\nclass Test[^\n]*'
-    reParseHeader = rf'^(.*?)({reCommentOrStartDocstring})*{reClass}'
-    found = re.match(reParseHeader, contents)
-    if not found:
-        return None
-    else:
-        return contents[len(found.group(1)):]
+def getParsedTests(dirSrcModules, dirTests, previewOnly=False):
+    mapFilenameToParsedTest = {}
+    for f, short in files.recurseFiles(dirTests):
+        relativePath = f.replace(dirTests, '')
+        if short.startswith('test') and short.endswith('.py'):
+            mapFilenameToParsedTest[relativePath] = divideTestFileByPath(f)
     
-# define a footer as being the last lines after a class returns to normal indentation
-def extractTextFooter(contents):
-    testClasses = contents.split('\nclass Test')
-    if len(testClasses) <= 1:
-        return None
-    else:
-        lines = testClasses[-1].split('\n')
-        for i, line in enumerate(lines):
-            if not _isLineIndented(line):
-                break
-        
-        allFooter = '\n'.join(lines[i:])
-        return allFooter
-
-def divideIntoSections(contents):
-    lines = contents.split('\n')
-    sections = []
-    currentSection = Bucket(name=None, lines=[])
-    hasEnteredClassYet = False
-    for line in lines:
-        if hasEnteredClassYet and not _isLineIndented(line):
-            sections.append(currentSection)
-            currentSection = Bucket(name=None, lines=[])
-            hasEnteredClassYet = False
-        if _isLineATestClass(line):
-            currentSection.name = line.split('class Test')[1].split('#')[0].strip()
-            hasEnteredClassYet= True
-        currentSection.lines.append(line)
-    
-    sections.append(currentSection)
-    for i, section in enumerate(sections):
-        checkSectionValid(section)
-    return sections
-
-def checkSectionValid(section):
-    # we check for multiline strings, because a class like this would currently break us,
-    # class TestF:
-    #     def test(self):
-    #         my_string = '''
-    # a very long string'''
-    # if the text starts with a python keyword like def, it's probably real Python code, though, so that's ok.
-    
-    okStartWiths = 'import /pass /class /for /try /def /from /nonlocal /while /assert /global /with /if /@/#/\'/"'.split('/')
-    if len(section.lines) and not any(section.lines[0].startswith(okStartWith) for okStartWith in okStartWiths):
-        trace(f'context: {"\n".join(section.lines)}')
-        trace(f'It looks like there is text or code outside of a class.')
-        trace(f'If this is a multiline string, please add some indentation to each line of the multiline string.')
-        trace(f'If this code outside of a class, please move it to the end of the file or into a class.')
-        raise Exception("Saw text or code outside of a class.")
+    # make this just about the function name. that way if you move a function from one file to another,
+    # the tests will automatically pick up that change and move the test too!
+    mapFunctionNameToTestContent = {}
+    for testFile in mapFilenameToParsedTest:
+        for testName in testFile.mapTestNameToSection:
+            if testName in mapFunctionNameToTestContent:
+                assertTrue(False, 'test name seen twice', testName, testFile)
             
-    return False
+            mapFunctionNameToTestContent[testName] = testFile.mapTestNameToSection[testName]
+    
+    
+    
+    
+    
+def parsePythonModuleIntoListOfFunctionsAndClasses(contents):
+    # use real ast parsing. otherwise it is hard to know where classes end.
+    # and we can get tripped up by multiline strings.
+    def _getMethods(node):
+        return [item.name for item in node if isinstance(item, ast.FunctionDef)]
 
-def divideTestFile(contents):
-    result = Bucket(header='', footer='', mapTestNameToSection={})
-    header = extractTestFileHeader(contents)
-    if not header:
-        # no tests found, so consider the entire file the header
-        result.header = contents
-        return result
+    results = []
+    parsed = ast.parse(contents)
     
-    result.header = header
-    contents = contents[len(header):]
-    listSections = divideIntoSections(contents)
-    if not listSections[-1].name:
-        lastSection = listSections.pop()
-        result.footer = '\n'.join(lastSection.lines)
+    # do not use walk/iterate because we only want top level, not nested, functions
+    for item in parsed.body:
+        if isinstance(item, ast.FunctionDef):
+            results.append(Bucket(type='fn', name=item.name))
+        elif isinstance(item, ast.ClassDef):
+            results.append(Bucket(type='cls', name=item.name, methods=_getMethods(item.body)))
     
-    for section in listSections:
-        assertTrue(section.name, 'section with no name?', section)
-        assertTrue(not section.name in result.mapTestNameToSection, 'dupe name?', section.name)
-        result.mapTestNameToSection[section.name] = '\n'.join(section.lines)
+    return results
+
+def _determineTestName(fnName, clsName=''):
+    result = fnName[0].upper() + fnName[1:]
+    if clsName:
+        result = clsName[0].upper() + clsName[1:] + result
+    return 'Test' + result
+
+def getListOfRelevantTestsNeeded(path, cfg):
+    contents = files.readAll(path)
+    getListOfRelevantTestsNeededImpl(path, contents, cfg)
     
-    return result
     
+def getListOfRelevantTestsNeededImpl(path, contents, cfg):
+    if 'tests_not_needed' not in cfg:
+        cfg['tests_not_needed'] = {}
+    if 'test_all_methods_in_class' not in cfg:
+        cfg['test_all_methods_in_class'] = {}
+    
+    if cfg['test_not_needed'].get(files.getname(path)) or files.getname(path).startswith('_'):
+        return []
+    
+    results = []
+    parsed = parsePythonModuleIntoListOfFunctionsAndClasses(contents)
+    for item in parsed:
+        if item.type == 'fn':
+            if not item.name.startswith('_') and not cfg['tests_not_needed'].get(item.name):
+                results.append(_determineTestName(item.name))
+        elif item.type == 'cls':
+            if not item.name.startswith('_') and not cfg['tests_not_needed'].get(item.name):
+                if cfg['test_all_methods_in_class'].get(item.name):
+                    for methodName in item.methods:
+                        results.append(_determineTestName(clsName=item.name, fnName=methodName))
+                else:
+                    results.append(_determineTestName(item.name))
+                    
+    return results
+    
+    
+#~ cc = SimpleConfigParser()
+#~ cc.load('shinerainsoftsevencommon_gen_tests.cfg')
+#~ trace(cc.prefs_dict)
+#~ trace(cc.prefs_dict['test_methods'].get('abc'))
+#~ trace(cc.prefs_dict['test_methods'].get('abcd'))
+#~ for k in cc.prefs_dict['test_methods']:
+    #~ trace(k)
+
+#~ code = files.readAll('preferences.py')
+#~ parsed = ast.parse(code)
+#~ for k in parsed.body:
+    #~ if isinstance(k, ast.FunctionDef):
+        #~ trace(k, k.name)
+    #~ if isinstance(k, ast.ClassDef):
+        #~ trace(k, k.name)
+        #~ for classPart in k.body:
+            #~ trace('within', classPart, dirFields(classPart))
+
+trace(getListOfRelevantTestsNeeded('preferences.py', {}),)

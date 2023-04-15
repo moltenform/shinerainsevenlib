@@ -84,6 +84,9 @@ def getTraceback(e):
 def getCurrentException():
     return sys.exc_info()[1]
 
+class ShineRainSoftSevenCommonError(RuntimeError):
+    pass
+
 def getPrintable(s, okToIgnore=False):
     import unicodedata
     if isinstance(s, bytes):

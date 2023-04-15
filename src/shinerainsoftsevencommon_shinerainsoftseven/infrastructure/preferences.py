@@ -22,7 +22,7 @@ class SimpleConfigParser:
             if expect not in prefs_contents:
                 prefs_contents = expect + '\n' + prefs_contents
         
-        self.cfg = configparser.ConfigParser(delimiters='=')
+        self.cfg = ConfigParser(delimiters='=')
         
         # make it case-sensitive
         self.cfg.optionxform = str
@@ -37,4 +37,5 @@ class SimpleConfigParser:
         return self.prefs_dict
         
 
-
+def abc():
+    return 1
