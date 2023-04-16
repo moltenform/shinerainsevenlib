@@ -19,7 +19,11 @@ import pytest
 # moving a function in source moves it in the tests, even between files
 # offer to make new test, class without methods
 # offer to make new test, class and all methods
+# empty cfg should not throw errors
+
+# full example
+# (use both a local file and one in a subdirectory)
 
 
 
-#~ trace, alert, warn
+    shineRainSoftSevenCommonPreferences.silenceTraceAndAlert = True

@@ -4,25 +4,18 @@
 
 from shinerainsoftsevencommon import *
 
-#~ expectEqualityTwoListsAsSets
-
 '''
-
-if there is test code like this:
+for code like this,
 # comment 1
-
 class TestA:
-    def testa:
+    def testa(self):
         pass
-
 # comment 2
-
 class TestB:
-    def testb:
+    def testb(self):
         pass
 
 we want comment 2 to be attached to TestB
-
 '''
 
 gMarkerStart = '# begin auto tests'
