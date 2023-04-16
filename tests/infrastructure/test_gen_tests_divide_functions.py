@@ -1,5 +1,5 @@
 
-from shinerainsoftsevencommon.infrastructure import gen_tests
+from shinerainsoftsevencommon.infrastructure import gen_tests_divide
 from shinerainsoftsevencommon import *
 import pytest
 
@@ -10,7 +10,7 @@ import foo
 import bar
 # commentE
 code1 = 1
-# begin tests
+# begin auto tests
 import other_later
 
 class TestE:
@@ -43,7 +43,7 @@ class TestI: # with comment
     def test_typicalCases(self):
         pass
 
-# end tests
+# end auto tests
 
 # commentFooterAfterEnd
 
@@ -51,7 +51,7 @@ footerCodeHere = 1
 '''
 
 exampleEmptyHeader = '''
-# begin tests
+# begin auto tests
 
 class TestF:
     def test_typicalCases(self):
@@ -61,7 +61,7 @@ class TestG:
     def test_typicalCases(self):
         pass
 
-# end tests
+# end auto tests
 
 extraCodeHere = 1
 '''
@@ -69,7 +69,7 @@ extraCodeHere = 1
 exampleEmptyFooter = '''
 import foo
 
-# begin tests
+# begin auto tests
 
 class TestF:
     def test_typicalCases(self):
@@ -79,11 +79,11 @@ class TestG:
     def test_typicalCases(self):
         pass
         
-# end tests
+# end auto tests
 '''
 
 exampleFirstSectionCanStartWithCode = '''
-# begin tests
+# begin auto tests
 testCode = 1
 class TestF:
     def test_typicalCases(self):
@@ -93,35 +93,35 @@ class TestG:
     def test_typicalCases(self):
         pass
 
-# end tests
+# end auto tests
 '''
 
 exampleLastSectionCannotHaveLooseCommments_ShouldError = '''
-# begin tests
+# begin auto tests
 testCode = 1
 class TestF:
     def test_typicalCases(self):
         pass
 
 # extra comment
-# end tests
+# end auto tests
 '''
 
 exampleLastSectionCannotHaveLooseCode_ShouldError = '''
-# begin tests
+# begin auto tests
 testCode = 1
 class TestF:
     def test_typicalCases(self):
         pass
 
 code = 1
-# end tests
+# end auto tests
 
 extraCodeHere = 1
 '''
 
 exampleIndentedBlocksThatArentATestClass = '''
-# begin tests
+# begin auto tests
 def fn1():
     pass
 
@@ -132,11 +132,11 @@ otherLines = 1
 
 class TestIsATest:
     pass
-# end tests
+# end auto tests
 '''
 
 exampleSpaceShouldBeOKBetweenTests = '''
-# begin tests
+# begin auto tests
 class TestFoo:
     def test1(self):
         emptyLineAfterThis
@@ -154,7 +154,7 @@ class TestFoo:
         indentedCommentAfterThis
     # a comment
     
-# end tests
+# end auto tests
 '''
 
 
@@ -165,38 +165,38 @@ class TestFoo:
 '''
 
 exampleNonIndentedMultilineString_ShouldError = '''
-# begin tests
+# begin auto tests
 class TestFoo:
     def test1(self):
         a = """this
 is a long
 string"""
-# end tests
+# end auto tests
 '''
 
 exampleIndentedMultilineStringIsFine = '''
-# begin tests
+# begin auto tests
 class TestFoo:
     def test1(self):
         a = """this
  is a long
  string"""
-# end tests
+# end auto tests
 '''
 
 exampleRandomCodeBetweenTests_ShouldError = '''
-# begin tests
+# begin auto tests
 class TestFoo:
     def test1(self):
         pass
 code = 1
     def test2(self):
         pass
-# end tests
+# end auto tests
 '''
 
 exampleRandomCodeBetweenTestsIsOKIfFirstLineIsKeywordOrComment = '''
-# begin tests
+# begin auto tests
 class TestFoo:
     def test1(self):
         pass
@@ -210,11 +210,11 @@ code = 1
 class TestBaz:
     def test3(self):
         pass
-# end tests
+# end auto tests
 '''
 
 exampleRandomCodeBetweenTestsIsOKIfStructuredDecorated = '''
-# begin tests
+# begin auto tests
 class TestFoo:
     def test1(self):
         pass
@@ -222,34 +222,34 @@ class TestFoo:
 class TestBar:
     def test2(self):
         pass
-# end tests
+# end auto tests
 '''
 
 exampleForgettingToIndentComment_ShouldErrorBecauseLastHasNoName = '''
-# begin tests
+# begin auto tests
 class TestFoo:
     def test1(self):
         pass
 # a comment
     def test2(self):
         pass
-# end tests
+# end auto tests
 '''
 
 exampleDupeName_ShouldError = '''
-# begin tests
+# begin auto tests
 class TestFoo:
     def test1(self):
         pass
 class TestFoo:
     def test2(self):
         pass
-# end tests
+# end auto tests
 '''
 
 class TestDivideTestFile:
     def testTypical(self):
-        got = gen_tests.divideTestFile('', exampleTypical, verbose=False)
+        got = gen_tests_divide.divideTestFile('', exampleTypical)
         assertEq(got.header, '''
 # commentHeader1
 import foo
@@ -297,7 +297,7 @@ class TestI: # with comment
 '''})
 
     def testEmptyHeader(self):
-        got = gen_tests.divideTestFile('', exampleEmptyHeader, verbose=False)
+        got = gen_tests_divide.divideTestFile('', exampleEmptyHeader)
         assertEq(got.header, '')
         assertEq(got.footer, '''
 extraCodeHere = 1
@@ -314,7 +314,7 @@ class TestF:
 '''})
 
     def testEmptyFooter(self):
-        got = gen_tests.divideTestFile('', exampleEmptyFooter, verbose=False)
+        got = gen_tests_divide.divideTestFile('', exampleEmptyFooter)
         assertEq(got.header, '''
 import foo
 ''')
@@ -331,7 +331,7 @@ class TestF:
         '''})
 
     def testFirstSectionCanStartWithCode(self):
-        got = gen_tests.divideTestFile('', exampleFirstSectionCanStartWithCode, verbose=False)
+        got = gen_tests_divide.divideTestFile('', exampleFirstSectionCanStartWithCode)
         assertEq(got.header, '')
         assertEq(got.footer, '')
         assertEq(got.mapTestNameToSection, {
@@ -347,16 +347,16 @@ class TestF:
 
     def testLastSectionCannotHaveLooseCommments_ShouldError(self):
         with pytest.raises(Exception) as e:
-            gen_tests.divideTestFile('', exampleLastSectionCannotHaveLooseCommments_ShouldError, verbose=False)
+            gen_tests_divide.divideTestFile('', exampleLastSectionCannotHaveLooseCommments_ShouldError)
         
-        assert isinstance(e.value, ShineRainSevenCommonError)
+        assert isinstance(e.value, ShineRainSoftSevenCommonError)
         assert 'not see a test name' in str(e.value)
 
     def testLastSectionCannotHaveLooseCode_ShouldError(self):
         with pytest.raises(Exception) as e:
-            gen_tests.divideTestFile('', exampleLastSectionCannotHaveLooseCode_ShouldError, verbose=False)
+            gen_tests_divide.divideTestFile('', exampleLastSectionCannotHaveLooseCode_ShouldError)
         
-        assert isinstance(e.value, ShineRainSevenCommonError)
+        assert isinstance(e.value, ShineRainSoftSevenCommonError)
         assert 'text or code outside' in str(e.value)
 
     def testIndentedBlocksThatArentATestClass(self):
@@ -365,7 +365,7 @@ class TestF:
         #    assertTrue(False, 'make sure everything in a test class is indented', context)
         # because it would misfire on helper classes.
 
-        got = gen_tests.divideTestFile('', exampleIndentedBlocksThatArentATestClass, verbose=False)
+        got = gen_tests_divide.divideTestFile('', exampleIndentedBlocksThatArentATestClass)
         assertEq(got.header, '')
         assertEq(got.footer, '')
         assertEq(got.mapTestNameToSection, {
@@ -381,7 +381,7 @@ class TestIsATest:
     pass'''})
 
     def testSpaceShouldBeOKBetweenTests(self):
-        got = gen_tests.divideTestFile('', exampleSpaceShouldBeOKBetweenTests, verbose=False)
+        got = gen_tests_divide.divideTestFile('', exampleSpaceShouldBeOKBetweenTests)
         assertEq(got.header, '')
         assertEq(got.footer, '')
         assertEq(got.mapTestNameToSection, {
@@ -405,20 +405,20 @@ class TestIsATest:
 
     def testForgettingMarkers_ShouldError(self):
         with pytest.raises(Exception) as e:
-            gen_tests.divideTestFile('', exampleForgettingMarkers_ShouldError, verbose=False)
+            gen_tests_divide.divideTestFile('', exampleForgettingMarkers_ShouldError)
         
         assert isinstance(e.value, AssertionError)
         assert 'add the string' in str(e.value)
         
     def testNonIndentedMultilineString_ShouldError(self):
         with pytest.raises(Exception) as e:
-            gen_tests.divideTestFile('', exampleNonIndentedMultilineString_ShouldError, verbose=False)
+            gen_tests_divide.divideTestFile('', exampleNonIndentedMultilineString_ShouldError)
         
-        assert isinstance(e.value, ShineRainSevenCommonError)
+        assert isinstance(e.value, ShineRainSoftSevenCommonError)
         assert 'text or code outside' in str(e.value)
         
     def testIndentedMultilineStringIsFine(self):
-        got = gen_tests.divideTestFile('', exampleIndentedMultilineStringIsFine, verbose=False)
+        got = gen_tests_divide.divideTestFile('', exampleIndentedMultilineStringIsFine)
         assertEq(got.header, '')
         assertEq(got.footer, '')
         assertEq(got.mapTestNameToSection, {
@@ -430,13 +430,13 @@ class TestIsATest:
 
     def testRandomCodeBetweenTests_ShouldError(self):
         with pytest.raises(Exception) as e:
-            gen_tests.divideTestFile('', exampleRandomCodeBetweenTests_ShouldError, verbose=False)
+            gen_tests_divide.divideTestFile('', exampleRandomCodeBetweenTests_ShouldError)
         
-        assert isinstance(e.value, ShineRainSevenCommonError)
+        assert isinstance(e.value, ShineRainSoftSevenCommonError)
         assert 'text or code outside' in str(e.value)
     
     def testRandomCodeBetweenTestsIsOKIfFirstLineIsKeywordOrComment(self):
-        got = gen_tests.divideTestFile('', exampleRandomCodeBetweenTestsIsOKIfFirstLineIsKeywordOrComment, verbose=False)
+        got = gen_tests_divide.divideTestFile('', exampleRandomCodeBetweenTestsIsOKIfFirstLineIsKeywordOrComment)
         assertEq(got.header, '')
         assertEq(got.footer, '')
         assertEq(got.mapTestNameToSection, {
@@ -455,7 +455,7 @@ class TestBaz:
         pass'''})
 
     def testRandomCodeBetweenTestsIsOKIfStructuredDecorated(self):
-        got = gen_tests.divideTestFile('', exampleRandomCodeBetweenTestsIsOKIfStructuredDecorated, verbose=False)
+        got = gen_tests_divide.divideTestFile('', exampleRandomCodeBetweenTestsIsOKIfStructuredDecorated)
         assertEq(got.header, '')
         assertEq(got.footer, '')
         assertEq(got.mapTestNameToSection, {
@@ -469,20 +469,19 @@ class TestBar:
 
     def testForgettingToIndentComment_ShouldErrorBecauseLastHasNoName(self):
         with pytest.raises(Exception) as e:
-            gen_tests.divideTestFile('', exampleForgettingToIndentComment_ShouldErrorBecauseLastHasNoName, verbose=False)
+            gen_tests_divide.divideTestFile('', exampleForgettingToIndentComment_ShouldErrorBecauseLastHasNoName)
         
-        assert isinstance(e.value, ShineRainSevenCommonError)
+        assert isinstance(e.value, ShineRainSoftSevenCommonError)
         assert 'not see a test name' in str(e.value)
     
     def testDupeName_ShouldError(self):
         with pytest.raises(Exception) as e:
-            gen_tests.divideTestFile('', exampleDupeName_ShouldError, verbose=False)
+            gen_tests_divide.divideTestFile('', exampleDupeName_ShouldError)
         
         assert isinstance(e.value, AssertionError)
         assert 'dupe name' in str(e.value)
 
 showExpectedResultStrings = False
-#~ showExpectedResultStrings = True
 if showExpectedResultStrings:
     tests = [['exampleTypical', exampleTypical],
 ['exampleEmptyHeader', exampleEmptyHeader],
@@ -507,13 +506,13 @@ if showExpectedResultStrings:
             template = f'''
     def test{testNameUpper}(self):
         with pytest.raises(Exception) as e:
-            gen_tests.divideTestFile('', {testName}, verbose=False)
+            gen_tests_divide.divideTestFile('', {testName})
             
-        assert isinstance(e.value, ShineRainSevenCommonError)
+        assert isinstance(e.value, ShineRainSoftSevenCommonError)
         assert 'ffffff' in str(e.value)
     '''
         else:        
-            expected = gen_tests.divideTestFile('', 'test'+testName, testContent)
+            expected = gen_tests_divide.divideTestFile('', 'test'+testName, testContent)
             strExpected = '{'
             for key in expected.mapTestNameToSection:
                 strExpected += f"\n'{key}': '''{expected.mapTestNameToSection[key]}''',"
@@ -521,7 +520,7 @@ if showExpectedResultStrings:
             
             template = f'''
     def test{testNameUpper}(self):
-        got = gen_tests.divideTestFile('', {testName}, verbose=False)
+        got = gen_tests_divide.divideTestFile('', {testName})
         assertEq(got.header, ''{repr(expected.header)}'')
         assertEq(got.footer, ''{repr(expected.footer)}'')
         assertEq(got.mapTestNameToSection, {strExpected})
@@ -534,4 +533,7 @@ if showExpectedResultStrings:
         template = template.replace("def testExample", "def test")
         
         trace('    ' + template.strip() + '\n')
+else:
+    shineRainSoftSevenCommonPreferences.silenceTraceAndAlert = True
+    
 

@@ -25,8 +25,8 @@ we want comment 2 to be attached to TestB
 
 '''
 
-gMarkerStart = '# begin tests'
-gMarkerEnd = '# end tests'
+gMarkerStart = '# begin auto tests'
+gMarkerEnd = '# end auto tests'
 
 def _isLineATestClass(line):
     return line.startswith('class Test')
@@ -34,7 +34,7 @@ def _isLineATestClass(line):
 def _isLineIndented(line):
     return line.startswith(' ') or line.startswith('\t') or not line.strip()
 
-def _divideIntoSections(context, contents, verbose):
+def _divideIntoSections(context, contents):
     lines = contents.split('\n')
     sections = []
     currentSection = Bucket(name=None, lines=[])
@@ -54,7 +54,7 @@ def _divideIntoSections(context, contents, verbose):
     
     sections.append(currentSection)
     for i, section in enumerate(sections):
-        _checkSectionValid(context, section, i, verbose)
+        _checkSectionValid(context, section, i)
     
     return sections
 
@@ -66,7 +66,7 @@ def getClassOrFnName(line):
     line = line.split('#')[0].split('(')[0].strip()
     return line
 
-def _checkSectionValid(context, section, i, verbose):
+def _checkSectionValid(context, section, i):
     # we check for multiline strings, because a class like this would currently break us,
     # class TestF:
     #     def test(self):
@@ -79,25 +79,21 @@ def _checkSectionValid(context, section, i, verbose):
     isFirst = i == 0
     if len(section.lines) and not isFirst and not any(section.lines[0].startswith(okStartWith) for okStartWith in okStartWiths):
         joinedLines = "\n".join(section.lines)
-        if verbose:
-            trace(f'context: {context}\n{joinedLines}')
-            trace(f'It looks like there is text or code outside of a class.')
-            trace(f'If this is a multiline string, please add some indentation to each line of the multiline string.')
-            trace(f'If this code outside of a class, please move it to the end of the file or into a class.')
-        
-        raise ShineRainSevenCommonError("Saw text or code outside of a class.")
+        trace(f'context: {context}\n{joinedLines}')
+        trace(f'It looks like there is text or code outside of a class.')
+        trace(f'If this is a multiline string, please add some indentation to each line of the multiline string.')
+        trace(f'If this code outside of a class, please move it to the end of the file or into a class.')
+        raise ShineRainSoftSevenCommonError("Saw text or code outside of a class.")
     
     if not section.name:
         joinedLines = "\n".join(section.lines)
-        if verbose:
-            trace(f'context: {context}\n{joinedLines}')
-            trace(f'Did not see a test name. Consider placing this code after {gMarkerEnd}')
-        
-        raise ShineRainSevenCommonError("Did not see a test name.")
+        trace(f'context: {context}\n{joinedLines}')
+        trace(f'Did not see a test name. Consider placing this code after {gMarkerEnd}')
+        raise ShineRainSoftSevenCommonError("Did not see a test name.")
             
     return False
 
-def divideTestFile(context, contents, verbose=True):
+def divideTestFile(context, contents):
     spl = contents.split('\n' + gMarkerStart + '\n')
     assertEq(2, len(spl), f'Please add the string {gMarkerStart} exactly once to the test file', context)
     header, contents = spl
@@ -107,7 +103,7 @@ def divideTestFile(context, contents, verbose=True):
     contents, footer = spl
     
     result = Bucket(header=header, footer=footer, mapTestNameToSection={})
-    listSections = _divideIntoSections(context, contents, verbose=verbose)
+    listSections = _divideIntoSections(context, contents)
     
     for section in listSections:
         assertTrue(not section.name in result.mapTestNameToSection, 'dupe name?', context, section.name)

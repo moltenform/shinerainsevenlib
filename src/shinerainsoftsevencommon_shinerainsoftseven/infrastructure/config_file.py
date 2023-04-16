@@ -8,6 +8,7 @@ import tempfile
 from configparser import ConfigParser
 
 
+
 class SimpleConfigParser:
     def __init__(self, addDefaultSection='main'):
         self.prefs_dict = {}
@@ -36,6 +37,3 @@ class SimpleConfigParser:
     def getDict(self):
         return self.prefs_dict
         
-
-def abc():
-    return 1

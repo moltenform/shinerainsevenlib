@@ -91,16 +91,18 @@ def err(s='', s2=None, s3=None):
     s = _combinePrintableStrings(s, s2, s3)
     raise RuntimeError('fatal error\n' + getPrintable(s))
 
-def alert(s, s2=None, s3=None, flushOutput=True):
-    s = _combinePrintableStrings(s, s2, s3)
-    trace(s)
-    getRawInput('press Enter to continue', flushOutput)
+def alert(s, s2=None, s3=None, flushOutput=True, always=False):
+    if always or not shineRainSoftSevenCommonPreferences.silenceTraceAndAlert:
+        s = _combinePrintableStrings(s, s2, s3)
+        trace(s)
+        getRawInput('press Enter to continue', flushOutput)
 
-def warn(s, s2=None, s3=None, flushOutput=True):
-    s = _combinePrintableStrings(s, s2, s3)
-    trace('warning\n' + getPrintable(s))
-    if not getInputBool('continue?', flushOutput):
-        raise RuntimeError('user chose not to continue after warning')
+def warn(s, s2=None, s3=None, flushOutput=True, always=False):
+    if always or not shineRainSoftSevenCommonPreferences.silenceTraceAndAlert:
+        s = _combinePrintableStrings(s, s2, s3)
+        trace('warning\n' + getPrintable(s))
+        if not getInputBool('continue?', flushOutput):
+            raise RuntimeError('user chose not to continue after warning')
 
 def getInputBoolGui(prompt):
     "Ask yes or no. Returns True on yes and False on no."

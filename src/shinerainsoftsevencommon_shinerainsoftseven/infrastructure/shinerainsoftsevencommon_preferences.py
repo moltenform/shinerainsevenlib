@@ -4,10 +4,6 @@
 
 import os
 
-class BenPythonCommonPreferences:
-    def __init__(self):
-        self.prefs_dict = {}
-    
 
 #~ def runOnModuleLoad(cachedPrefs):
     

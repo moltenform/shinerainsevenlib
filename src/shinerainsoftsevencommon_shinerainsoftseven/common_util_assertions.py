@@ -87,7 +87,7 @@ def getCurrentException():
 class ShineRainSoftSevenCommonError(RuntimeError):
     # feature, you can pass in many strings like ShineRainSoftSevenCommonError('a', 'b', 'c')
     def __init__(self, *args):
-        combined = ' '.join((str(arg) for arg in args)
+        combined = ' '.join((str(arg) for arg in args))
         super().__init__(combined)
 
 def getPrintable(s, okToIgnore=False):
@@ -103,7 +103,11 @@ def getPrintable(s, okToIgnore=False):
     else:
         return s.encode('ascii', 'replace').decode('ascii')
 
-def trace(*args):
-    print(' '.join(map(getPrintable, args)))
-    
-    
+def trace(*args, always=False):
+    if always or not shineRainSoftSevenCommonPreferences.silenceTraceAndAlert:
+        print(' '.join(map(getPrintable, args)))
+
+class _Preferences:
+    silenceTraceAndAlert = 0
+
+shineRainSoftSevenCommonPreferences = _Preferences()

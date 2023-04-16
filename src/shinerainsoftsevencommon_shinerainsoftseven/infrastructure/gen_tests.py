@@ -1,9 +1,16 @@
 
 from gen_tests_divide import *
-from preferences import *
+from config_file import *
 import ast
 
 # possible future feature: configs could have wildcards
+
+def goGenTests(dirSrcModules, dirTests, cfg, recurse=False):
+    pairs = getFilePairs(dirSrcModules, dirTests, cfg, recurse)
+    pairs, allSymbolsSeen = getParsedTests(pairs, cfg)
+    checkForDuplicatesAndExtraTests(pairs, cfg, allSymbolsSeen, dirTests, recurse)
+    reconstructTestFiles(pairs, cfg)
+
 
 def getFilePairs(dirSrcModules, dirTests, cfg, recurse):
     def withTestPrefix(path):
@@ -13,13 +20,14 @@ def getFilePairs(dirSrcModules, dirTests, cfg, recurse):
             return 'test_' + path
     
     pairsSourceAndTest = []
-    for f, short in files.listFiles(dirSrcModules, recurse=recurse):
+    for f, short in list(files.listFiles(dirSrcModules, recurse=recurse)):
         if not short.startswith('test') and not short.startswith('_') and short.endswith('.py'):
             if not cfg['test_not_needed'].get(short):
-                relativePath = f.replace(dirTests, '')
+                relativePath = f.replace(dirSrcModules, '')
                 correspondingTestFile = dirTests + files.dirSep + withTestPrefix(relativePath)
                 if not files.exists(correspondingTestFile):
-                    raise ShineRainSoftSevenCommonError('corresponding test file not found', correspondingTestFile)
+                    warn('corresponding test file not found ' + correspondingTestFile + ' . we will generate one.')
+                    generateTestFile(correspondingTestFile)
                 
                 pairsSourceAndTest.append(Bucket(sourcesPath=f, testsPath=correspondingTestFile))
     
@@ -33,68 +41,83 @@ def getParsedTests(pairsSourceAndTest, cfg):
     
     return pairsSourceAndTest, allSymbolsSeen
 
-
-def go():
-    pairs = getFilePairs(dirSrcModules, dirTests, cfg, recurse)
-    pairsSourceAndTest, allSymbolsSeen = getParsedTests(pairs, cfg)
-    checkForDuplicates
-
-
-def checkForDuplicates():
+def checkForDuplicatesAndExtraTests(pairs, cfg, allSymbolsSeen, dirTests, recurse):
     listAllInSources = [testName for testName in pair.sources for pair in pairs]
     listAllInTests = [testName for testName in pair.tests.mapTestNameToSection for pair in pairs]
     throwIfDuplicates(listAllInSources)
     throwIfDuplicates(listAllInTests)
     
+    # were there any test files that don't correspond with a source file?
+    allTestFiles = set((item.testPath for item in pairs))
+    for f, short in files.listFiles(dirTests):
+        if short.startswith('test') and short.endswith('.py') and ('\n' + gMarkerStart) in files.readAll(f):
+            if f not in allTestFiles:
+                alert(f, f'tests containing {gMarkerEnd} must match 1-1 with a source file, renamed source file?', f)
+    
     # were there any in config that aren't real?
     for symbol in cfg['test_not_needed']:
         if not symbol.endswith('.py') and symbol not in allSymbolsSeen:
-            warn('this is in the cfg file but not in sources', symbol)
+            alert('this is in the cfg file but not in sources', symbol)
     
+    # were there any tests that aren't real?
+    compared = compareTwoListsAsSets(listAllInSources, listAllInTests)
+    testsNeededForThis = compared.missingItems
+    testsHasNoCorrespondingInTheSource = compared.extraItems
+    if testsHasNoCorrespondingInTheSource:
+        # could override these in cfg, but then hard to get the order right
+        assertTrue(False, f'cannot continue. these tests do not correspond to anything in sources. move them after the {gMarkerEnd} marker if intentional.', testsHasNoCorrespondingInTheSource)
+    
+    # give a preview of what we'll add
+    if testsNeededForThis:
+        alert("We are about to add a test template for these", testsNeededForThis)
 
+def reconstructTestFiles(pairs, cfg):
+    # do it by fn name not file name, so that if we move a function from one file to another, the tests automatically update themselves!
+    mapSymbolToTest = {}
+    for pair in pairs:
+        for symbol in pair.tests.mapTestNameToSection:
+            mapSymbolToTest[symbol] = pair.tests.mapTestNameToSection[symbol]
+    
+    for pair in pairs:
+        reconstructTestFile(pair, mapSymbolToTest, cfg)
 
-def getParsedTests(dirSrcModules, dirTests, cfg, previewOnly=False):
-    mapFilenameToParsedTest = {}
-    for f, short in files.recurseFiles(dirTests):
-        relativePath = f.replace(dirTests, '')
-        if short.startswith('test') and short.endswith('.py'):
-            mapFilenameToParsedTest[relativePath] = divideTestFileByPath(f)
-    
-    # make this just about the function name. that way if you move a function from one file to another,
-    # the tests will automatically pick up that change and move the test too!
-    mapFunctionNameToTestContent = {}
-    for testFile in mapFilenameToParsedTest:
-        for testName in testFile.mapTestNameToSection:
-            if testName in mapFunctionNameToTestContent:
-                assertTrue(False, 'test name seen twice', testName, testFile)
-            
-            mapFunctionNameToTestContent[testName] = testFile.mapTestNameToSection[testName]
-    
-    mapSrcNameToListOfTestsNeeded = {}
-    allTestsNeeded = []
-    for f, short in files.recurseFiles(dirSrcModules):
-        if not short.startswith('test') and short.endswith('.py'):
-            relativePath = f.replace(dirSrcModules, '')
-            if not cfg['test_not_needed'].get(files.getname(path)) and not files.getname(path).startswith('_'):
-                testsNeeded = getListOfRelevantTestsNeeded(path, cfg)
-                mapSrcNameToListOfTestsNeeded[relativePath] = testsNeeded
-                allTestsNeeded.extend(testsNeeded)
-    
-    throwIfDuplicates(allTestsNeeded, lambda item: item.replace('Test', ''), context=path)
-    
-    pairs = []
-    for relativePath in mapSrcNameToListOfTestsNeeded:
-        if files.dirsep in relativePath:
-            correspondingFile = files.getparent(relativePath) + files.dirSep + 'test_' + files.getname(relativePath)
-        else:
-            correspondingFile = 'test_' + files.getname(relativePath)
+def reconstructTestFile(pair, mapSymbolToTest, cfg):
+    with open(pair.testPath, 'w', encoding='utf-8') as f:
+        f.write(pair.test.header + '\n')
+        f.write(gMarkerStart + '\n')
+        for symbol in pair.source:
+            if symbol in mapSymbolToTest:
+                f.write(mapSymbolToTest[symbol])
+            else:
+                f.write(createTestFromTemplate(symbol, cfg))
         
-        existsOnDisk = files.exists(dirTests + files.dirSep + correspondingFile)
-        foundInMap = mapFilenameToParsedTest.get(correspondingFile)
-        assertTrue(foundInMap, f'Not found {correspondingFile}, existsOnDisk={existsOnDisk}')
-        pairs.append(Bucket(sourceFile=relativePath, testFile=foundInMap))
+        f.write(gMarkerEnd + '\n')
+        f.write(pair.test.footer)
     
-    
+def createTestFromTemplate(symbol, cfg):
+    defaultTemplate = ''''
+class %testName%:
+    def typicalCases(self):
+        pass
+        
+    def edgeCases(self):
+        pass
+    '''
+    template = cfg['main'].get('test_template', defaultTemplate)
+    template = template.replace('\\n', '\n').replace('\\t', '\t')
+    template = template.replace('%testName%', symbol)
+    return template
+
+def generateTestFile(f):
+    template = f'''
+import pytest
+from shinerainsoftcommon import *
+
+{gMarkerStart}
+
+{gMarkerEnd}
+'''
+    files.writeAll(f, template)
     
 def parsePythonModuleIntoListOfFunctionsAndClasses(contents):
     # use real ast parsing. otherwise it is hard to know where classes end.
@@ -105,7 +128,7 @@ def parsePythonModuleIntoListOfFunctionsAndClasses(contents):
     results = []
     parsed = ast.parse(contents)
     
-    # do not use walk/iterate because we only want top level, not nested, functions
+    # do not use walk because we only want top level, not nested, functions
     for item in parsed.body:
         if isinstance(item, ast.FunctionDef):
             results.append(Bucket(type='fn', name=item.name))
@@ -154,26 +177,9 @@ def loadCfg(pathCfg):
         cfg['tests_not_needed'] = {}
     if 'test_all_methods_in_class' not in cfg:
         cfg['test_all_methods_in_class'] = {}
+    if 'main' not in cfg:
+        cfg['main'] = {}
     
     return cfg
     
     
-#~ cc = SimpleConfigParser()
-#~ cc.load('shinerainsoftsevencommon_gen_tests.cfg')
-#~ trace(cc.prefs_dict)
-#~ trace(cc.prefs_dict['test_methods'].get('abc'))
-#~ trace(cc.prefs_dict['test_methods'].get('abcd'))
-#~ for k in cc.prefs_dict['test_methods']:
-    #~ trace(k)
-
-#~ code = files.readAll('preferences.py')
-#~ parsed = ast.parse(code)
-#~ for k in parsed.body:
-    #~ if isinstance(k, ast.FunctionDef):
-        #~ trace(k, k.name)
-    #~ if isinstance(k, ast.ClassDef):
-        #~ trace(k, k.name)
-        #~ for classPart in k.body:
-            #~ trace('within', classPart, dirFields(classPart))
-
-trace(getListOfRelevantTestsNeeded('preferences.py', {}),)
