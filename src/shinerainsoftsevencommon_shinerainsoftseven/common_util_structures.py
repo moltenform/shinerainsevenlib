@@ -37,7 +37,6 @@ class SimpleEnum:
     def __delattr__(self, name):
         raise RuntimeError
 
-TimeUnits = SimpleEnum(('Milliseconds', 'Seconds', 'Nanoseconds'))
 
 def addOrAppendToArrayInDict(d, key, val):
     # easier to read than setdefault
@@ -164,6 +163,9 @@ def BoundedMemoize(fn, limit=20):
         memoizeWrapper.func_name = fn.func_name
     
     return memoizeWrapper
+    
+def getClassNameFromInstance(obj):
+    return obj.__class__.__name__
 
 def compareTwoListsAsSets(l1, l2, transformFn1=None, transformFn2=None):
     l1Transformed = l1 if not transformFn1 else [transformFn1(item) for item in l1]
@@ -198,4 +200,11 @@ def throwIfDuplicates(l1, transformFn1=None, context=''):
         if item in seen:
             raise ShineRainSoftSevenCommonError('duplicate seen:', item, context)
     
+def mergeParamsIntoBucket(bucketConfigs, dictParams):
+    for key in params:
+        if key in dir(self.configs) and not key.startswith('_'):
+            setattr(self.configs, key, params[key])
+        else:
+            raise Exception('not a supported config:', key)
+
     

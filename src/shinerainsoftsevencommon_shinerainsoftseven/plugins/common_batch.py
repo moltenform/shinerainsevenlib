@@ -1,50 +1,52 @@
+
 from ..common_util import *
 from .. import files
 import os
 
 
 class FileIteratorHelper(object):
-    def __init__(self, roots, allowedExtsWithoutDot=None, fnIncludeThese=None, followSymlinks=False, filesOnly=True,
-        resumeFrom=None, allowRelativePaths=False, excludeNodeModules=True, cacheList=True):
+    def getDefaultConfigs(self):
+        configs = Bucket()
+        configs.allowedExtsWithDot = None
+        configs.fnIncludeThese = None
+        configs.followSymlinks = False
+        configs.filesOnly = True
+        configs.resumeFrom = None
+        configs.allowRelativePaths = False
+        configs.excludeNodeModules = True
+        configs.recurse = True
+        return configs
 
+    def __init__(self, roots, **params):
+        self.configs = mergeParamsIntoBucket(self.getDefaultConfigs(), params)
         self.roots = roots
-        self.allowedExtsWithoutDot = allowedExtsWithoutDot
-        self.fnIncludeThese = fnIncludeThese
-        self.followSymlinks = followSymlinks
-        self.filesOnly = filesOnly
-        self.resumeFrom = resumeFrom
-        self.excludeNodeModules = excludeNodeModules
-        self.cacheList = cacheList
-        self.cachedList = None
         for root in roots:
-            assertTrue(allowRelativePaths or os.path.isabs(root), root)
-    
-    def getIterator(self):
-        if self.cacheList:
-            if self.cachedList is None:
-                self.cachedList = self._getIteratorIgnoringCache()
-            
-            return self.cachedList
-        else:
-            return self._getIteratorIgnoringCache()
+            assertTrue(allowRelativePaths or os.path.isabs(root), 'relative paths not allowed', root)
         
-    def _getIteratorIgnoringCache(self):
-        def iterateImpl():
+    def getIterator(self):
+        def _getIterator():
             for root in self.roots:
-                for obj in files.recursefileinfo(root, followSymlinks=self.followSymlinks, filesOnly=self.filesOnly, fnFilterDirs=None, 
-                                allowedExts=allowedExtsWithoutDot, fnDirectExceptionsTo=None):
-                    if self.excludeNodeModules and ('/node_modules/' in obj.path or '\\node_modules\\' in obj.path):
+                for obj in files.recursefileinfo(root,
+                        followSymlinks=self.configs.followSymlinks, filesOnly=self.configs.filesOnly, fnFilterDirs=None, 
+                        fnDirectExceptionsTo=None, recurse=self.configs.recurse):
+                    
+                    if self.configs.allowedExtsWithDot:
+                        ext = files.getExt(obj.path)[1].lower()
+                        if ext not in self.configs.allowedExtsWithDot:
+                            continue
+                    
+                    if self.configs.fnIncludeThese and not self.configs.fnIncludeThese(obj.path):
                         continue
-                    if self.fnIncludeThese and not self.fnIncludeThese(obj.path):
+                        
+                    if self.configs.excludeNodeModules and ('/node_modules/' in obj.path or '\\node_modules\\' in obj.path):
                         continue
-                        filesgetext
                         
                     yield obj
         
         if self.resumeFrom:
-            return files.waitUntilTrue(iterateImpl(), lambda obj: obj.path==self.resumeFrom)
+            return files.waitUntilTrue(_getIterator(), lambda obj: obj.path==self.resumeFrom)
         else:
-            return iterateImpl()
+            return _getIterator()
     
     def getCount(self):
         return len(self.getIterator())
@@ -161,5 +163,4 @@ class TrackTotalSaved:
                 assertTrue(False, 'unknown whatIfResultIsBigger')
 
 
-#~ class GenericConverter:
 

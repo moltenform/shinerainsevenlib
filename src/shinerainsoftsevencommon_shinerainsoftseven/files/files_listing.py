@@ -98,7 +98,6 @@ class FileInfoEntryWrapper:
 
 def recurseFileInfo(root, recurse=True, followSymlinks=False, filesOnly=True,
         fnFilterDirs=None, fnDirectExceptionsTo=None):
-    assertTrue(isPy3OrNewer)
 
     # scandir's resources are released in destructor,
     # do not create circular references holding it

@@ -3,7 +3,7 @@
 # Released under the LGPLv3 License
 
 import os
-
+import tempfile
 
 #~ def runOnModuleLoad(cachedPrefs):
     

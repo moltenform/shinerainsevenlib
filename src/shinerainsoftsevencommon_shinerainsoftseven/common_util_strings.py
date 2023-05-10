@@ -149,7 +149,9 @@ def stripHtmlTags(s, removeRepeatedWhitespace=True):
     return s
 
 def replaceNonAsciiWith(s, replaceWith):
-    return re.sub(r'[^\x00-\x7f]', replaceWith, s)
+    # total range 0-127
+    # printable 32-126
+    return re.sub(r'[^\x20-\x7e]', replaceWith, s)
 
 def containsNonAscii(s):
     withoutAscii = replaceNonAsciiWith(s, '')

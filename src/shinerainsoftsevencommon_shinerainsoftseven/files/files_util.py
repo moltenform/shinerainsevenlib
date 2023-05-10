@@ -22,6 +22,8 @@ lineSep = os.linesep
 absPath = os.path.abspath
 rmTree = shutil.rmtree
 
+TimeUnits = SimpleEnum(('Milliseconds', 'Seconds', 'Nanoseconds'))
+
 def getParent(path):
     return os.path.split(path)[0]
 
@@ -262,5 +264,6 @@ def getSizeRecurse(dir, followSymlinks=False, fnFilterDirs=None, fnDirectExcepti
 def fileContentsEqual(f1, f2):
     import filecmp
     return filecmp.cmp(f1, f2, shallow=False)
+
 
 

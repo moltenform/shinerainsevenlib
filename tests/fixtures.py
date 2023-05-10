@@ -1,4 +1,6 @@
 
+import tempfile
+
 def restoreDirectoryContents(basedir):
     files.ensureEmptyDirectory(basedir)
 
