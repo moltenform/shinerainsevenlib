@@ -48,7 +48,7 @@ def getTempDirectoryForPath(path=None):
         
     try:
         if not os.path.isdir(result):
-            os.makeDirs(result)
+            os.makedirs(result)
     except Exception as e:
         raise Exception(f'getTempDirectoryForPath error creating {result} {e}')
     
@@ -63,7 +63,7 @@ def getSoftDeleteDirectoryForPath(path):
     if result:
         try:
             if not os.path.isdir(result):
-                os.makeDirs(result)
+                os.makedirs(result)
         except Exception as e:
             raise Exception(f'getSoftDeleteDirectoryForPath creating {result} {e}')
         

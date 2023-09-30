@@ -38,7 +38,7 @@ def run(listArgs, *, shell=False, createNoWindow=True,
         throwOnFailure=RuntimeError, stripText=True, captureOutput=True, silenceOutput=False,
         wait=True):
     
-    assertTrue(isfile(listArgs[0]) or 'which' not in dir(shutil) or shutil.which(listArgs[0]) or shell, 'file not found?', listArgs[0])
+    assertTrue(isFile(listArgs[0]) or 'which' not in dir(shutil) or shutil.which(listArgs[0]) or shell, 'file not found?', listArgs[0])
     kwargs = {}
 
     if sys.platform.startswith('win') and createNoWindow:

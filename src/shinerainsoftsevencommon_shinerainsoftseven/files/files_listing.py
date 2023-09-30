@@ -36,7 +36,7 @@ def listFiles(path, *, filenamesOnly=False, allowedExts=None, recurse=False):
 
 def recurseFiles(root, *, filenamesOnly=False, allowedExts=None,
         fnFilterDirs=None, includeFiles=True, includeDirs=False, topDown=True, followSymlinks=False):
-    assert isdir(root)
+    assert isDir(root)
 
     for (dirpath, dirnames, filenames) in os.walk(root, topdown=topDown, followlinks=followSymlinks):
         if fnFilterDirs:

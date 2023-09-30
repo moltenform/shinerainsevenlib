@@ -65,7 +65,7 @@ def deleteSure(s, traceToStdout=False):
 
 def makeDirs(s):
     try:
-        os.makeDirs(s)
+        os.makedirs(s)
     except OSError:
         if isdir(s):
             return
@@ -86,7 +86,7 @@ def ensureEmptyDirectory(d):
 
         assertTrue(isEmptyDir(d))
     else:
-        os.makeDirs(d)
+        os.makedirs(d)
 
 def copy(srcfile, destfile, overwrite, traceToStdout=False,
         useDestModifiedTime=False, createParent=False):
@@ -233,12 +233,17 @@ def setLastModifiedTime(path, newVal, units=TimeUnits.Seconds):
     os.utime(path, ns=(atimeNs, newVal))
 
 # unicodetype can be utf-8, utf-8-sig, etc.
-def readAll(path, mode='r', encoding='utf-8'):
+def readAll(path, mode='r', encoding=None):
+    if 'b' not in mode and encoding==None:
+        encoding = 'utf-8'
     with open(path, mode, encoding=encoding) as f:
         return f.read()
 
 # unicodetype can be utf-8, utf-8-sig, etc.
 def writeAll(path, txt, mode='w', unicodetype=None, encoding=None, skipIfSameContent=False, updateTimeIfSameContent=True):
+    if 'b' not in mode and encoding==None:
+        encoding = 'utf-8'
+    
     if skipIfSameContent and isfile(path):
         assertTrue(mode == 'w' or mode == 'wb')
         currentContent = readAll(path, mode.replace('w', 'r'), unicodetype, encoding)

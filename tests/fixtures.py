@@ -1,5 +1,6 @@
 
 import tempfile
+import os
 
 def restoreDirectoryContents(basedir):
     files.ensureEmptyDirectory(basedir)
@@ -11,7 +12,7 @@ def restoreDirectoryContents(basedir):
     # full/s1/ss2 			contains no files or dirs
     dirsToCreate = ['s1', 's2', 's1/ss1', 's1/ss2']
     for dir in dirsToCreate:
-        os.files.makedirs(join(basedir, dir).replace('/', files.sep))
+        os.makedirs(join(basedir, dir).replace('/', files.sep))
 
     filesToCreate = ['P1.PNG', 'a1.txt', 'a2png', 's1/ss1/file.txt', 's2/other.txt']
     for file in filesToCreate:
@@ -77,8 +78,8 @@ def fixture_dir_with_many():
     ]
     for item in lst:
         fullpath = os.path.join(basedir, item)
-        files.makedirs(files.getparent(fullpath))
-        files.writeall(fullpath, 'test')
+        files.makeDirs(files.getparent(fullpath))
+        files.writeAll(fullpath, 'test')
 
     yield basedir
     files.ensureEmptyDirectory(basedir)
