@@ -1,10 +1,13 @@
 
 # shinerainsoftsevencommon
 # Released under the LGPLv3 License
-from .common_util_classes import *
 
 import pprint
 import re
+
+from m020_core_data_structures import *
+
+# ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ clipboard state ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃
 
 def getClipboardText():
     try:
@@ -52,6 +55,8 @@ def _getClipboardTextPyperclip():
 def _setClipboardTextPyperclip(s):
     import pyperclip
     pyperclip.copy(s)
+    
+# ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ debugging ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃
 
 def DBG(obj=None):
     import inspect
@@ -80,6 +85,7 @@ def registerDebughook(b=True):
     else:
         sys.excepthook = sys.__excepthook__
 
+# ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ rng helpers ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃
 
 def getRandomString(max=1000 * 1000, hex=False):
     import random
@@ -100,26 +106,7 @@ def genUuid(asBase64=False):
     else:
         return str(u)
 
-
-def downloadUrl(url, toFile=None, timeout=30, asText=False):
-    import requests
-    
-    resp = requests.get(url, timeout=timeout)
-    if toFile:
-        with open(toFile, 'wb') as fout:
-            fout.write(resp.content)
-    if asText:
-        return resp.text
-    else:
-        return resp.content
-
-def startThread(fn, args=None):
-    import threading
-    
-    if args is None:
-        args = tuple()
-    t = threading.Thread(target=fn, args=args)
-    t.start()
+# ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ temp file helpers ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃
 
 def getSoftTempDir(startingPath=None):
     return shinerainsoftsevencommon_preferences.getTempDirectoryForPath(startingPath=None)
@@ -168,52 +155,25 @@ def softDeleteFile(path, allowDirs=False, doTrace=False):
         files.move(path, newPath, overwrite=False, warnBetweenDrives=diagnostics, allowDirs=allowDirs)
         return newPath
 
+# ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ other helpers ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃    
 
-# why the asciiOnlyIfOnWindows option?
-#     old windows tools might be compiled without unicode support, or without long-path support.
-#     one way to get them to work would be to use win32api.GetShortPathName() but this needs the
-#     win32api package, and also can fail on some filesystems.
-#     temporarily moving the file risks leaving it there if there is a crash.
-#     let's instead copy the file to a temp directory and run the tool on the copy there.
-#     (if you have an ssd and want to limit writes you can create a ram drive with a tool like ImDisk,
-#     then edit the .shinerainsoftsevencommon file on your machine to point there.)
-def getSoftTempFullPath(extension, startingPath=None, asciiOnlyIfOnWindows=False):
-    from . import files
-    dir = getSoftTempDir(startingPath=startingPath)
-    with softDeleteFileRng:
-        randomString = getRandomString()
+def downloadUrl(url, toFile=None, timeout=30, asText=False):
+    import requests
     
-    fullPath = dir + files.dirSep + 'file' + randomString + '.' + extension
-    if asciiOnlyIfOnWindows and sys.platform.startswith('win'):
-        # check for the case where the user profile dir has an ascii character
-        if containsNonAscii(fullPath):
-            trace(f'''
-            The temporary path has a unicode character... Please edit the file
-            {getShineRainSoftSevenCommonPrefsFilePath()}
-            and specify the path to another temporary directory that does not have a
-            unicode character.''')
-            raise Exception('Temporary path contains unicode character')
-    
-    return fullPath
+    resp = requests.get(url, timeout=timeout)
+    if toFile:
+        with open(toFile, 'wb') as fout:
+            fout.write(resp.content)
+    if asText:
+        return resp.text
+    else:
+        return resp.content
 
+def startThread(fn, args=None):
+    import threading
     
-class DeleteFileWhenCompleted:
-    def __init__(self, path, softDelete=True, skipDelete=False):
-        self.path = path
-        self.softDelete = softDelete
-        self.skipDelete = skipDelete
-    
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        if not self.skipDelete:
-            if files.exists(self.path):
-                if self.softDelete:
-                    softDeleteFile(self.path)
-                else:
-                    os.path.unlink(self.path)
-
-
-    
+    if args is None:
+        args = tuple()
+    t = threading.Thread(target=fn, args=args)
+    t.start()
     

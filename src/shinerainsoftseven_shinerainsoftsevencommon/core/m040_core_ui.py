@@ -1,10 +1,13 @@
 
 # shinerainsoftsevencommon
 # Released under the LGPLv3 License
-from .common_higher import *
 
 import sys
 import os
+
+from m030_common_nonpure import *
+
+# ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ user prompts ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃
 
 def getInputBool(prompt, flushOutput=True):
     prompt += ' '
@@ -87,6 +90,8 @@ def getRawInput(prompt, flushOutput=True):
     else:
         return input(getPrintable(''))
 
+# ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ user messages ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃
+
 def err(s='', s2=None, s3=None):
     s = _combinePrintableStrings(s, s2, s3)
     raise RuntimeError('fatal error\n' + getPrintable(s))
@@ -103,6 +108,8 @@ def warn(s, s2=None, s3=None, flushOutput=True, always=False):
         trace('warning\n' + getPrintable(s))
         if not getInputBool('continue?', flushOutput):
             raise RuntimeError('user chose not to continue after warning')
+
+# ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ using tk gui ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃
 
 def getInputBoolGui(prompt):
     "Ask yes or no. Returns True on yes and False on no."
@@ -142,13 +149,6 @@ def getInputStringGui(prompt, initialvalue=None, title=' '):
     s = tkSimpleDialog.askstring(title, prompt, **options)
     return '' if s is None else s
 
-def findUnusedLetter(dictUsed, newWord):
-    for i, c in enumerate(newWord):
-        if c.isalnum() and c.lower() not in dictUsed:
-            dictUsed[c] = True
-            return i
-    return None
-
 # returns -1, 'Cancel' on cancel
 def getInputFromChoicesGui(prompt, arOptions):
     import tkinter as Tkinter
@@ -157,6 +157,14 @@ def getInputFromChoicesGui(prompt, arOptions):
 
     def setResult(v):
         retval[0] = v
+        
+    def findUnusedLetter(dictUsed, newWord):
+        for i, c in enumerate(newWord):
+            if c.isalnum() and c.lower() not in dictUsed:
+                dictUsed[c] = True
+                return i
+                
+        return None
 
     # http://effbot.org/tkinterbook/tkinter-dialog-windows.htm
     class ChoiceDialog:
@@ -225,8 +233,20 @@ def warnGui(s, s2=None, s3=None):
     if not tkMessageBox.askyesno(title='Warning', message=getPrintable(s) + '\nContinue?', icon='warning'):
         raise RuntimeError('user chose not to continue after warning')
 
-def _combinePrintableStrings(s, s2, s3):
-    s = str(s)
+def getOpenFileGui(initialdir=None, types=None, title='Open'):
+    "Specify types in the format ['.png|Png image','.gif|Gif image'] and so on."
+    import tkinter.filedialog as tkFileDialog
+    return _getFileDialogGui(tkFileDialog.askopenfilename, initialdir, types, title)
+
+def getSaveFileGui(initialdir=None, types=None, title='Save As'):
+    "Specify types in the format ['.png|Png image','.gif|Gif image'] and so on."
+    import tkinter.filedialog as tkFileDialog
+    return _getFileDialogGui(tkFileDialog.asksaveasfilename, initialdir, types, title)
+
+# ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ helpers ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃
+
+def _combinePrintableStrings(s1, s2, s3):
+    s1 = str(s1)
     if s2:
         s += ' ' + str(s2)
     if s3:
@@ -234,11 +254,10 @@ def _combinePrintableStrings(s, s2, s3):
 
     return s
 
-
-gDirectoryHistory = dict()
-def _getFileDialogGui(fn, initialdir, types, title):
+def _getFileDialogGui(fn, initialdir, types, title, directoryHistory=None):
     if initialdir is None:
-        initialdir = gDirectoryHistory.get(repr(types), '.')
+        if directoryHistory:
+            initialdir = gDirectoryHistory.get(repr(types), '.')
 
     kwargs = dict()
     if types is not None:
@@ -249,19 +268,10 @@ def _getFileDialogGui(fn, initialdir, types, title):
 
     result = fn(initialdir=initialdir, title=title, **kwargs)
     if result:
-        gDirectoryHistory[repr(types)] = os.path.split(result)[0]
+        if directoryHistory:
+            directoryHistory[repr(types)] = os.path.split(result)[0]
 
     return result
-
-def getOpenFileGui(initialdir=None, types=None, title='Open'):
-    "Specify types in the format ['.png|Png image','.gif|Gif image'] and so on."
-    import tkinter.filedialog as tkFileDialog
-    return _getFileDialogGui(tkFileDialog.askopenfilename, initialdir, types, title)
-
-def getSaveFileGui(initialdir=None, types=None, title='Save As'):
-    "Specify types in the format ['.png|Png image','.gif|Gif image'] and so on."
-    import tkinter.filedialog as tkFileDialog
-    return _getFileDialogGui(tkFileDialog.asksaveasfilename, initialdir, types, title)
 
 # get better arrowkey history in macos
 try:

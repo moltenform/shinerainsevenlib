@@ -1,7 +1,10 @@
 
 # shinerainsoftsevencommon
 # Released under the LGPLv3 License
-from .common_util_structures import *
+
+from m010_core_util import *
+
+# ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ simple persistence ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃
 
 class PersistedDict:
     data = None
@@ -19,6 +22,7 @@ class PersistedDict:
             if warnIfCreatingNew:
                 common_ui.alert("creating new cache at " + filename)
             files.writeAll(filename, '{}')
+            
         self.load()
         if keepHandle:
             self.handle = open(filename, 'w')
@@ -55,17 +59,19 @@ class PersistedDict:
         self.data[key] = value
         self.afterUpdate()
 
-    def setSubdict(self, subdictname, key, value):
+    def setSubDict(self, subdictname, key, value):
         if subdictname not in self.data:
             self.data[subdictname] = {}
         self.data[subdictname][key] = value
         self.afterUpdate()
 
-    def setSubsubdict(self, subdictname, key1, key2, value):
+    def setSubSubDict(self, subdictname, key1, key2, value):
         if subdictname not in self.data:
             self.data[subdictname] = {}
         self.data[subdictname][key1][key2] = value
         self.afterUpdate()
+
+# ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ retrieve text from strings ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃
 
 class ParsePlus:
     '''
@@ -95,6 +101,7 @@ class ParsePlus:
             def parse_NoNewlines(s):
                 return str(s)
             self.extra_types['NoNewlines'] = parse_NoNewlines
+            
         if 'NoSpaces' in pattern:
             @parse.with_pattern(r'[^\r\n\t ]+')
             def parse_NoSpaces(s):
@@ -111,9 +118,10 @@ class ParsePlus:
             assertTrue(len(seq) > 1, "an escape-sequence only makes sense if " +
                 "it is at least two characters")
 
-            # use rarely-occurring ascii chars like
+            # use a rarely-occurring ascii char like
             # \x01 (start of heading)
             rareChar = chr(i + 1)
+            
             # raise error if there's any occurance of rareChar, not repl,
             # otherwise we would have incorrect expansions
             if rareChar in s:
@@ -121,6 +129,7 @@ class ParsePlus:
                 "if the input string contains rare ascii characters. the " +
                 "input string contains " + rareChar + ' (ascii ' +
                 str(ord(rareChar)) + ')')
+                
             # replacement string is the same length, so offsets aren't affected
             repl = rareChar * len(seq)
             self._escapeSequencesMap[repl] = seq
@@ -229,8 +238,7 @@ class ParsePlus:
 
         writeAll(path, newS, 'w', encoding=encoding, skipIfSameContent=True)
 
-def dirFields(obj):
-    return [fld for fld in dir(obj) if not fld.startswith('_')]
+# ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ enum helpers ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃
 
 class Bucket:
     "simple named-tuple; o.field looks nicer than o['field']. "
@@ -242,7 +250,7 @@ class Bucket:
         return '\n\n\n'.join(('%s=%s'%(ustr(key), ustr(self.__dict__[key])) for key in sorted(self.__dict__)))
 
 class SimpleEnum:
-    "simple enum; prevents modification after creation."
+    "simple enum; also blocks modification after creation."
     _set = None
 
     def __init__(self, listStart):
@@ -266,8 +274,9 @@ class SimpleEnum:
     def __delattr__(self, name):
         raise RuntimeError
 
+# ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ data structure helpers ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃
 
-def addOrAppendToArrayInDict(d, key, val):
+def appendToListInDictOrStartNewList(d, key, val):
     # easier to read than setdefault
     got = d.get(key, None)
     if got:
@@ -337,8 +346,10 @@ class RecentlyUsedList:
             while len(self.list) > self.maxSize:
                 self.list.pop()
 
-# keep a separate random stream that won't get affected by someone else calling seed()
+# ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ rng state helper ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃
+
 class IndependentRNG:
+    "keep a separate random stream that won't get affected by someone else calling seed()"
     def __init__(self, seed=None):
         import random
         if seed is not None:
@@ -356,16 +367,17 @@ class IndependentRNG:
         self.keep_outside_state = random.getstate()
         random.setstate(self.state)
     
-    def __exit__(self ,type, value, traceback):
+    def __exit__(self, type, value, traceback):
         if not self.entered:
             return
                 
         self.entered = False
         random.setstate(self.keep_outside_state)
-        
+    
+# ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ automatically memo-ize ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃
 
-# inspired by http://code.activestate.com/recipes/496879-memoize-decorator-function-with-cache-size-limit/
 def BoundedMemoize(fn, limit=20):
+    "inspired by http://code.activestate.com/recipes/496879-memoize-decorator-function-with-cache-size-limit/"
     from collections import OrderedDict
     cache = OrderedDict()
 
@@ -392,9 +404,9 @@ def BoundedMemoize(fn, limit=20):
         memoizeWrapper.func_name = fn.func_name
     
     return memoizeWrapper
-    
-def getClassNameFromInstance(obj):
-    return obj.__class__.__name__
+
+
+# ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ set helpers ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃
 
 def compareTwoListsAsSets(l1, l2, transformFn1=None, transformFn2=None):
     l1Transformed = l1 if not transformFn1 else [transformFn1(item) for item in l1]

@@ -4,7 +4,8 @@
 import sys
 import os
 import shutil
-from ..common_util_classes import *
+
+from ..core import *
 
 rename = os.rename
 exists = os.path.exists

@@ -7,8 +7,9 @@ try:
 except ImportError:
     import __builtin__ as builtins
 
+from m040_core_ui import *
 
-# array methods --------------------------------------------------
+# ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ array methods ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃
 
 def concat(ar1, ar2):
     # like extend, but operates on a copy
@@ -73,7 +74,7 @@ def reduce(lst, fn, initialVal=_symbolNotProvided):
     else:
         return functools.reduce(fn, lst, initialVal)
 
-# string manipulation --------------------------------------------------
+# ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ string manipulation ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃
 
 def splice(s, insertionPoint, lenToDelete=0, newText=''):
     # like javascript's splice
@@ -85,7 +86,7 @@ def spliceSpan(s, span, newText):
     assertTrue(span[1] >= span[0])
     return splice(s, span[0], span[1] - span[0], newText)
 
-# object/dict methods --------------------------------------------------
+# ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ object/dict methods ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃
 
 def merged(d1, d2):
     # like update, but does not operate in-place

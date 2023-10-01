@@ -1,6 +1,7 @@
 # shinerainsoftsevencommon
 # Released under the LGPLv3 License
-from .files_processes import *
+
+from .m010files_wrappers import *
 
 # allowedExts in the form ['png', 'gif']
 def _listChildrenUnsorted(path, *, filenamesOnly=False, allowedExts=None):
