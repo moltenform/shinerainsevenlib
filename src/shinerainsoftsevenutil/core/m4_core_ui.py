@@ -58,11 +58,12 @@ def getInputString(prompt, bConfirm=True, flushOutput=True):
 
 # returns -1, 'Cancel' on cancel
 def getInputFromChoices(prompt, arrChoices, fnOtherCommands=None,
-        otherCommandsContext=None, flushOutput=True, cancelString='0) cancel'):
+        otherCommandsContext=None, flushOutput=True, cancelString='0) cancel', zeroBased=False):
     if cancelString:
         trace(cancelString)
     for i, choice in enumerate(arrChoices):
-        trace('%d) %s'%(i + 1, choice))
+        num = i if zeroBased else i+1
+        trace('%d) %s'%(num, choice))
     while True:
         s = getRawInput(prompt, flushOutput).strip()
         if s == '0' and cancelString:
@@ -70,7 +71,7 @@ def getInputFromChoices(prompt, arrChoices, fnOtherCommands=None,
         if s == 'BRK':
             raise KeyboardInterrupt()
         if s.isdigit():
-            n = int(s) - 1
+            n = int(s) if zeroBased else (int(s) - 1)
             if n >= 0 and n < len(arrChoices):
                 return n, arrChoices[n]
             else:

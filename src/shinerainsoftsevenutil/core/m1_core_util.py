@@ -175,6 +175,7 @@ class EnglishDateParserWrapper:
     def toUnixMilliseconds(self, s):
         assertTrue(isPy3OrNewer, 'requires python 3 or newer')
         dt = self.parse(s)
+        assertTrue(dt, 'not parse dt', s)
         return int(dt.timestamp() * 1000)
 
 # ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ string helpers ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃    

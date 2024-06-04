@@ -117,6 +117,7 @@ def getSoftDeleteDir(path):
 softDeleteFileRng = IndependentRNG()
 def getSoftDeleteFullPath(path):
     from . import files
+    assertTrue(files.exists(path), 'file not found', path)
     
     dirPath = getSoftDeleteDir(path)
     if not dirPath:
