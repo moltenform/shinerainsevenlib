@@ -25,5 +25,19 @@ There are tasks for:
 * Linting the project
 * Autoformatting the project
 * Running tests
-* 
+
+## Configuration
+
+Place a file named `shinerainsoftsevenutil.cfg` into the `core` directory.
+
+Example contents,
+
+```
+[main]
+tempEphemeralDirectory=G:\data\local\temp
+tempDirectory=D:\data\local\temp
+softDeleteDirectoryAll=D:\data\local\trash
+
+```
+
 

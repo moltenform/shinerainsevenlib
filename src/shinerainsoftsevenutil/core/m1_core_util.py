@@ -8,6 +8,9 @@ import pprint as _pprint
 import re as _re
 import time as _time
 import types as _types
+import unicodedata as _unicodedata
+import datetime as _datetime
+import math as _math
 
 # region assertions
 # in other platforms, assertions might be configured to silently log,
@@ -50,9 +53,8 @@ def assertWarnEq(expected, received, *messageArgs):
 
 def assertFloatEq(expected, received, *messageArgs):
     "throw if values are not very close, use this if comparing floats"
-    import math
     precision = 0.000001
-    difference = math.fabs(expected - received)
+    difference = _math.fabs(expected - received)
     if difference > precision:
         messageArgs = list(messageArgs) or []
         messageArgs.append('expected %f, got %f, difference of %f' % (
@@ -109,13 +111,12 @@ class ShineRainSoftSevenCommonError(RuntimeError):
 
 def getPrintable(s, okToIgnore=False):
     "from a-with-accent to plain a, get closest visual ascii equivalent"
-    import unicodedata
     if isinstance(s, bytes):
         return s.decode('ascii')
     if not isinstance(s, str):
         return str(s)
 
-    s = unicodedata.normalize('NFKD', s)
+    s = _unicodedata.normalize('NFKD', s)
     if okToIgnore:
         return s.encode('ascii', 'ignore').decode('ascii')
     else:
@@ -190,16 +191,14 @@ class EnglishDateParserWrapper:
 
     def getDaysBefore(self, baseDate, nDaysBefore):
         "subtract n days (simple), return datetime object"
-        import datetime
         assertTrue(isinstance(nDaysBefore, int))
-        diff = datetime.timedelta(days=nDaysBefore)
+        diff = _datetime.timedelta(days=nDaysBefore)
         return baseDate - diff
 
     def getDaysBeforeInMilliseconds(self, sBaseDate, nDaysBefore):
         "subtract n days (simple), return number of milliseconds past epoch"
-        import datetime
         dObj = self.parse(sBaseDate)
-        diff = datetime.timedelta(days=nDaysBefore)
+        diff = _datetime.timedelta(days=nDaysBefore)
         dBefore = dObj - diff
         return int(dBefore.timestamp() * 1000)
 

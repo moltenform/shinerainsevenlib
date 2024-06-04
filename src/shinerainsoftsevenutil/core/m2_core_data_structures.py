@@ -4,11 +4,13 @@
 
 import os as _os
 import random as _random
+import json as _json
 from .m1_core_util import *
 
 # region simple persistence
 
 class PersistedDict:
+    "store a dict (or dict of dicts) on disk."
     data = None
     handle = None
     counter = 0
@@ -16,13 +18,14 @@ class PersistedDict:
 
     def __init__(self, filename, warnIfCreatingNew=True,
             keepHandle=False, persistEveryNWrites=5):
-        from . import files
-        from . import common_ui
+        from .. import files
+        from .m4_core_ui import alert
         self.filename = filename
         self.persistEveryNWrites = persistEveryNWrites
         if not files.exists(filename):
             if warnIfCreatingNew:
-                common_ui.alert("creating new cache at " + filename)
+                alert("creating new cache at " + filename)
+                
             files.writeAll(filename, '{}')
         
         self.load()
@@ -31,10 +34,9 @@ class PersistedDict:
             self.persist()
 
     def load(self, encoding='utf-8'):
-        import json
         from .. import files
         txt = files.readAll(self.filename, encoding=encoding)
-        self.data = json.loads(txt)
+        self.data = _json.loads(txt)
 
     def close(self):
         if self.handle:
@@ -42,9 +44,8 @@ class PersistedDict:
             self.handle = None
 
     def persist(self):
-        import json
-        from . import files
-        txt = json.dumps(self.data)
+        from .. import files
+        txt = _json.dumps(self.data)
         if self.handle:
             self.handle.seek(0, _os.SEEK_SET)
             self.handle.write(txt)
@@ -78,8 +79,6 @@ class PersistedDict:
 
 class ParsePlus:
     """
-    ParsePlus, by Ben Fisher, 2019
-
     Adds the following features to the "parse" module:
         {s:NoNewlines} field type
         {s:NoSpaces} works like {s:S}
@@ -94,7 +93,7 @@ class ParsePlus:
         try:
             import parse
         except:
-            raise ImportError('needs "parse", can install from pip, https://pypi.org/project/parse/')
+            raise ImportError('needs "parse" module from pip, https://pypi.org/project/parse/')
         
         self.pattern = pattern
         self.case_sensitive = case_sensitive
@@ -150,6 +149,7 @@ class ParsePlus:
     def _resultToMyResult(self, parseResult, s):
         if not parseResult:
             return parseResult
+        
         ret = Bucket()
         lenS = len(s)
         for name in parseResult.named:
@@ -219,13 +219,13 @@ class ParsePlus:
     def replaceFieldWithText(self, s, key, newValue,
             appendIfNotFound=None, allowOnlyOnce=False):
         "example: <title>{title}</title>"
-        from . import jslike
+        from . import m5_jslike
         results = list(self.findall(s))
         if allowOnlyOnce and len(results) > 1:
             raise RuntimeError('we were told to allow pattern only once.')
         if len(results):
             span = results[0].spans[key]
-            return jslike.spliceSpan(s, span, newValue)
+            return m5_jslike.spliceSpan(s, span, newValue)
         else:
             if appendIfNotFound is None:
                 raise RuntimeError("pattern not found.")
@@ -234,20 +234,22 @@ class ParsePlus:
 
     def replaceFieldWithTextIntoFile(self, path, key, newValue,
             appendIfNotFound=None, allowOnlyOnce=False, encoding='utf-8'):
-        from ..files import readAll, writeAll
-        s = readAll(path, encoding=encoding)
+        "convenience method to write the results to a file"
+        from .. import files
+        s = files.readAll(path, encoding=encoding)
 
         newS = self.replaceFieldWithText(s, key, newValue,
             appendIfNotFound=appendIfNotFound,
             allowOnlyOnce=allowOnlyOnce)
 
-        writeAll(path, newS, 'w', encoding=encoding, skipIfSameContent=True)
+        files.writeAll(path, newS, 'w', encoding=encoding, skipIfSameContent=True)
 
 # endregion
 # region enum helpers
 
 class Bucket:
-    "simple named-tuple; o.field looks nicer than o['field']. "
+    """simple named-tuple; o.field looks nicer than o['field'].
+    these days types.SimpleNamespace does nearly the same thing."""
     def __init__(self, **kwargs):
         for key in kwargs:
             object.__setattr__(self, key, kwargs[key])
@@ -280,6 +282,10 @@ class SimpleEnum:
     def __delattr__(self, name):
         raise RuntimeError
 
+class UniqueSentinelForMissingParameter():
+    "use as a default parameter where None is a valid input, see pep 661"
+    pass
+
 # endregion
 # region data structure helpers
 
@@ -292,6 +298,7 @@ def appendToListInDictOrStartNewList(d, key, val):
         d[key] = [val]
 
 def takeBatchOnArbitraryIterable(iterable, size):
+    "Yield successive n-sized chunks from a list."
     import itertools
     it = iter(iterable)
     item = list(itertools.islice(it, size))
@@ -300,10 +307,12 @@ def takeBatchOnArbitraryIterable(iterable, size):
         item = list(itertools.islice(it, size))
 
 def takeBatch(itr, n):
-    "Yield successive n-sized chunks from l."
+    "Get successive n-sized chunks from a list, like javascript's _.chunk."
     return list(takeBatchOnArbitraryIterable(itr, n))
 
 class TakeBatch:
+    """Run a callback on n-sized chunks from a list, like javascript's _.chunk.
+    the convenient part is that any leftover pieces will be automatically processed."""
     def __init__(self, batchSize, callback):
         self.batch = []
         self.batchSize = batchSize
@@ -325,7 +334,7 @@ class TakeBatch:
                 self.callback(self.batch)
 
 class RecentlyUsedList:
-    'Keep a list of items without storing duplicates'
+    'Keep a list of items. Decided not to store duplicates'
     def __init__(self, maxSize=None, startList=None):
         self.list = startList or []
         self.maxSize = maxSize
@@ -333,15 +342,10 @@ class RecentlyUsedList:
     def getList(self):
         return self.list
 
-    def indexOf(self, s):
-        try:
-            return self.list.index(s)
-        except ValueError:
-            return -1
-
     def add(self, s):
         # if it's also elsewhere in the list, remove that one
-        index = self.indexOf(s)
+        from . import m5_jslike
+        index = m5_jslike.indexOf(self.list, s)
         if index != -1:
             self.list.pop(index)
 
@@ -354,43 +358,15 @@ class RecentlyUsedList:
                 self.list.pop()
 
 # endregion
-# region rng state helper
-
-class IndependentRNG:
-    "keep a separate _random stream that won't get affected by someone else calling seed()"
-    def __init__(self, seed=None):
-        if seed is not None:
-            _random.seed(seed)
-            
-        self.state = _random.getstate()
-        self.keep_outside_state = None
-        self.entered = False
-    
-    def __enter__(self):
-        if self.entered:
-            return
-        
-        self.entered = True
-        self.keep_outside_state = _random.getstate()
-        _random.setstate(self.state)
-    
-    def __exit__(self, type, value, traceback):
-        if not self.entered:
-            return
-                
-        self.entered = False
-        _random.setstate(self.keep_outside_state)
-    
-# endregion
 # region automatically memo-ize
 
 def BoundedMemoize(fn, limit=20):
     "inspired by http://code.activestate.com/recipes/496879-memoize-decorator-function-with-cache-size-limit/"
     from collections import OrderedDict
+    import pickle
     cache = OrderedDict()
 
     def memoizeWrapper(*args, **kwargs):
-        import pickle
         key = pickle.dumps((args, kwargs))
         try:
             return cache[key]
@@ -398,7 +374,7 @@ def BoundedMemoize(fn, limit=20):
             result = fn(*args, **kwargs)
             cache[key] = result
             if len(cache) > memoizeWrapper._limit:
-                cache.popitem(False)  # the false means remove as FIFO
+                cache.popitem(False)  # the false means to remove as FIFO
             return result
 
     memoizeWrapper._limit = limit

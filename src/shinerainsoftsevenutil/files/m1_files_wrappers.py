@@ -51,15 +51,15 @@ def getWithDifferentExt(s, ext_with_dot):
     else:
         return short_before_ext + ext_with_dot
 
-def delete(s, traceToStdout=False):
-    if traceToStdout:
+def delete(s, doTrace=False):
+    if doTrace:
         trace('delete()', s)
 
     os.unlink(s)
 
-def deleteSure(s, traceToStdout=False):
+def deleteSure(s, doTrace=False):
     if exists(s):
-        delete(s, traceToStdout)
+        delete(s, doTrace)
 
     assertTrue(not exists(s))
 
@@ -88,7 +88,7 @@ def ensureEmptyDirectory(d):
     else:
         os.makedirs(d)
 
-def copy(srcfile, destfile, overwrite, traceToStdout=False,
+def copy(srcfile, destfile, overwrite, doTrace=False,
         useDestModifiedTime=False, createParent=False):
     if not isFile(srcfile):
         raise IOError('source path does not exist or is not a file')
@@ -98,7 +98,7 @@ def copy(srcfile, destfile, overwrite, traceToStdout=False,
         assertTrue(isFile(destfile), 'not supported for directories')
         toSetModTime = getLastModifiedTime(destfile, units=TimeUnits.Nanoseconds)
 
-    if traceToStdout:
+    if doTrace:
         trace('copy()', srcfile, destfile)
 
     if createParent and not exists(getParent(destfile)):
@@ -125,18 +125,13 @@ def copy(srcfile, destfile, overwrite, traceToStdout=False,
         setLastModifiedTime(destfile, toSetModTime, units=TimeUnits.Nanoseconds)
 
 def move(srcfile, destfile, overwrite, warnBetweenDrives=False,
-        traceToStdout=False, allowDirs=False, useDestModifiedTime=False, createParent=False):
+        doTrace=False, allowDirs=False, useDestModifiedTime=False, createParent=False):
     if not exists(srcfile):
         raise IOError('source path does not exist')
     if not allowDirs and not isFile(srcfile):
         raise IOError('source path does not exist or is not a file')
 
-    toSetModTime = None
-    if useDestModifiedTime and exists(destfile):
-        assertTrue(isFile(destfile), 'not supported for directories')
-        toSetModTime = getLastModifiedTime(destfile, units=TimeUnits.Nanoseconds)
-
-    if traceToStdout:
+    if doTrace:
         trace('move()', srcfile, destfile)
 
     if createParent and not exists(getParent(destfile)):
@@ -154,8 +149,6 @@ def move(srcfile, destfile, overwrite, warnBetweenDrives=False,
         os.unlink(srcfile)
 
     assertTrue(exists(destfile))
-    if toSetModTime:
-        setLastModifiedTime(destfile, toSetModTime, units=TimeUnits.Nanoseconds)
 
 def _moveFileWin():
     from ctypes import windll, c_wchar_p, c_int, GetLastError

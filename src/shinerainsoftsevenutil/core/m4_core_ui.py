@@ -2,9 +2,9 @@
 # shinerainsoftsevencommon
 # Released under the LGPLv3 License
 
-import sys
-import os
-
+import sys as _sys
+import os as _os
+import types as _types
 from .m3_core_nonpure import *
 
 # region user prompts
@@ -85,8 +85,8 @@ def getInputFromChoices(prompt, arrChoices, fnOtherCommands=None,
 def getRawInput(prompt, flushOutput=True):
     print(getPrintable(prompt))
     if flushOutput:
-        sys.stdout.flush()
-    if sys.version_info[0] <= 2:
+        _sys.stdout.flush()
+    if _sys.version_info[0] <= 2:
         return raw_input(getPrintable(''))
     else:
         return input(getPrintable(''))
@@ -94,19 +94,25 @@ def getRawInput(prompt, flushOutput=True):
 # endregion
 # region user messages
 
-def err(s='', s2=None, s3=None):
-    s = _combinePrintableStrings(s, s2, s3)
+def err(*args):
+    s = ' '.join(map(getPrintable, args))
     raise RuntimeError('fatal error\n' + getPrintable(s))
 
-def alert(s, s2=None, s3=None, flushOutput=True, always=False):
-    if always or not shineRainSoftSevenCommonPreferences.silenceTraceAndAlert:
-        s = _combinePrintableStrings(s, s2, s3)
+gRedirectAlertCalls = _types.SimpleNamespace()
+gRedirectAlertCalls.fnHook = None
+def alert(*args, flushOutput=True, always=False):
+    s = ' '.join(map(getPrintable, args))
+    if gRedirectAlertCalls.fnHook and not always:
+        gRedirectAlertCalls.fnHook(s)
+    else:
         trace(s)
         getRawInput('press Enter to continue', flushOutput)
 
-def warn(s, s2=None, s3=None, flushOutput=True, always=False):
-    if always or not shineRainSoftSevenCommonPreferences.silenceTraceAndAlert:
-        s = _combinePrintableStrings(s, s2, s3)
+def warn(*args, flushOutput=True, always=False):
+    s  = ' '.join(map(getPrintable, args))
+    if gRedirectAlertCalls.fnHook and not always:
+        gRedirectAlertCalls.fnHook(s)
+    else:
         trace('warning\n' + getPrintable(s))
         if not getInputBool('continue?', flushOutput):
             raise RuntimeError('user chose not to continue after warning')
@@ -219,19 +225,19 @@ def getInputFromChoicesGui(prompt, arOptions):
     else:
         return result, arOptions[result]
 
-def errGui(s='', s2=None, s3=None):
-    s = _combinePrintableStrings(s, s2, s3)
+def errGui(*args):
+    s = ' '.join(map(getPrintable, args))
     from tkinter import messagebox as tkMessageBox
     tkMessageBox.showerror(title='Error', message=getPrintable(s))
     raise RuntimeError('fatal error\n' + getPrintable(s))
 
-def alertGui(s, s2=None, s3=None):
-    s = _combinePrintableStrings(s, s2, s3)
+def alertGui(*args):
+    s = ' '.join(map(getPrintable, args))
     from tkinter import messagebox as tkMessageBox
     tkMessageBox.showinfo(title=' ', message=getPrintable(s))
 
-def warnGui(s, s2=None, s3=None):
-    s = _combinePrintableStrings(s, s2, s3)
+def warnGui(*args):
+    s = ' '.join(map(getPrintable, args))
     from tkinter import messagebox as tkMessageBox
     if not tkMessageBox.askyesno(title='Warning', message=getPrintable(s) + '\nContinue?', icon='warning'):
         raise RuntimeError('user chose not to continue after warning')
@@ -249,19 +255,11 @@ def getSaveFileGui(initialdir=None, types=None, title='Save As'):
 # endregion
 # region helpers
 
-def _combinePrintableStrings(s1, s2, s3):
-    s1 = str(s1)
-    if s2:
-        s += ' ' + str(s2)
-    if s3:
-        s += ' ' + str(s3)
-
-    return s
-
+_gDirectoryHistory = {}
 def _getFileDialogGui(fn, initialdir, types, title, directoryHistory=None):
     if initialdir is None:
         if directoryHistory:
-            initialdir = gDirectoryHistory.get(repr(types), '.')
+            initialdir = _gDirectoryHistory.get(repr(types), '.')
 
     kwargs = dict()
     if types is not None:
@@ -273,7 +271,7 @@ def _getFileDialogGui(fn, initialdir, types, title, directoryHistory=None):
     result = fn(initialdir=initialdir, title=title, **kwargs)
     if result:
         if directoryHistory:
-            directoryHistory[repr(types)] = os.path.split(result)[0]
+            directoryHistory[repr(types)] = _os.path.split(result)[0]
 
     return result
 
@@ -285,3 +283,4 @@ except:
         import readline
     except:
         pass
+

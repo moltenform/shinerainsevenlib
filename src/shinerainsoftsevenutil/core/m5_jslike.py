@@ -9,8 +9,6 @@ except ImportError:
 
 from .m4_core_ui import *
 
-# region array methods
-
 def concat(ar1, ar2):
     # like extend, but operates on a copy
     ar = list(ar1)
@@ -65,17 +63,16 @@ def times(n, fn):
     # return a list with n items, values from calling fn
     return [fn() for _ in range(n)]
 
-_symbolNotProvided = object()
-def reduce(lst, fn, initialVal=_symbolNotProvided):
+_notProvided = UniqueSentinelForMissingParameter()
+def reduce(lst, fn, initialVal=_notProvided):
     # callback should have 2 parameters
     import functools
-    if initialVal is _symbolNotProvided:
+    if initialVal is _notProvided:
         return functools.reduce(fn, lst)
     else:
         return functools.reduce(fn, lst, initialVal)
 
-# endregion
-# region string manipulation
+# to merge dictionaries, use the | operator.
 
 def splice(s, insertionPoint, lenToDelete=0, newText=''):
     # like javascript's splice
@@ -87,8 +84,6 @@ def spliceSpan(s, span, newText):
     assertTrue(span[1] >= span[0])
     return splice(s, span[0], span[1] - span[0], newText)
 
-# endregion
-# to merge dictionaries, use the | operator.
 
 
 

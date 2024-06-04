@@ -2,8 +2,9 @@
 # shinerainsoftsevencommon
 # Released under the LGPLv3 License
 
-import pprint
-import re
+import pprint as _pprint
+import random as _random
+import sys as _sys
 
 from .m2_core_data_structures import *
 
@@ -59,6 +60,7 @@ def _setClipboardTextPyperclip(s):
 # region debugging
 
 def DBG(obj=None):
+    "dump values of local variables"
     import inspect
     
     if obj is None:
@@ -70,31 +72,30 @@ def DBG(obj=None):
                     inspect.isclass(framelocals[key]) and not \
                     inspect.ismodule(framelocals[key]):
                 newDict[key] = framelocals[key]
-        pprint.pprint(newDict)
+        _pprint._pprint(newDict)
     else:
-        pprint.pprint(obj)
+        _pprint._pprint(obj)
 
 def _dbgHookCallback(exctype, value, traceback):
     DBG()
+    from .m4_core_ui import alert
     alert('unhandled exception ' + value)
-    sys.__excepthook__(exctype, value, traceback)
+    _sys.__excepthook__(exctype, value, traceback)
 
 def registerDebughook(b=True):
     if b:
-        sys.excepthook = _dbgHookCallback
+        _sys.excepthook = _dbgHookCallback
     else:
-        sys.excepthook = sys.__excepthook__
+        _sys.excepthook = _sys.__excepthook__
 
 # endregion
 # region rng helpers
 
 def getRandomString(max=1000 * 1000, hex=False):
-    import random
-    
     if hex:
         return genUuid().split('-')[0]
     else:
-        return '%s' % random.randrange(max)
+        return '%s' % _random.randrange(max)
 
 def genUuid(asBase64=False):
     import uuid
@@ -107,6 +108,31 @@ def genUuid(asBase64=False):
     else:
         return str(u)
 
+class IndependentRNG:
+    "keep a separate _random stream that won't get affected by someone else calling seed()"
+    def __init__(self, seed=None):
+        if seed is not None:
+            _random.seed(seed)
+            
+        self.state = _random.getstate()
+        self.keep_outside_state = None
+        self.entered = False
+    
+    def __enter__(self):
+        if self.entered:
+            return
+        
+        self.entered = True
+        self.keep_outside_state = _random.getstate()
+        _random.setstate(self.state)
+    
+    def __exit__(self, type, value, traceback):
+        if not self.entered:
+            return
+                
+        self.entered = False
+        _random.setstate(self.keep_outside_state)
+
 # endregion
 # region temp file helpers
 
@@ -116,16 +142,16 @@ def getSoftTempDir(startingPath=None):
 def getSoftDeleteDir(path):
     return shinerainsoftsevencommon_preferences.getSoftDeleteDirectoryForPath(path)
 
-softDeleteFileRng = IndependentRNG()
+_softDeleteFileRng = IndependentRNG()
 def getSoftDeleteFullPath(path):
-    from . import files
+    from .. import files
     assertTrue(files.exists(path), 'file not found', path)
     
     dirPath = getSoftDeleteDir(path)
     if not dirPath:
         return None
     
-    with softDeleteFileRng:
+    with _softDeleteFileRng:
         randomString = getRandomString()
     
     # as a prefix, the first 2 chars of the parent directory
@@ -136,7 +162,8 @@ def getSoftDeleteFullPath(path):
     return newPath
     
 def softDeleteFile(path, allowDirs=False, doTrace=False):
-    from . import files
+    "Delete a file in a recoverable way, either OS Trash or a designated folder"
+    from .. import files
     assertTrue(files.exists(path), 'file not found', path)
     assertTrue(allowDirs or not files.isDir(path), 'typically you cannot softDelete a dir', path)
     newPath = getSoftDeleteFullPath(path)
@@ -163,11 +190,11 @@ def softDeleteFile(path, allowDirs=False, doTrace=False):
 
 def downloadUrl(url, toFile=None, timeout=30, asText=False):
     import requests
-    
     resp = requests.get(url, timeout=timeout)
     if toFile:
         with open(toFile, 'wb') as fout:
             fout.write(resp.content)
+    
     if asText:
         return resp.text
     else:
@@ -175,9 +202,9 @@ def downloadUrl(url, toFile=None, timeout=30, asText=False):
 
 def startThread(fn, args=None):
     import threading
-    
     if args is None:
         args = tuple()
+    
     t = threading.Thread(target=fn, args=args)
     t.start()
     
