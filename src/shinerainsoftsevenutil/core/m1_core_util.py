@@ -7,11 +7,11 @@ import traceback as _traceback
 import pprint as _pprint
 import re as _re
 import time as _time
-
+import types as _types
 
 # region assertions
 # in other platforms, assertions might be configured to silently log,
-# but these ones here are loud. it's safe to assume they always throw on failure.
+# but these ones are loud, they always throw on failure.
 
 def assertTrue(condition, *messageArgs):
     "throw if condition is false"
@@ -40,7 +40,7 @@ def assertWarnEq(expected, received, *messageArgs):
     "show a message to user if values are not equal"
     from . import m4_core_ui
     if expected != received:
-        import _pprint
+        import pprint as _pprint
         msg = ' '.join(map(str, messageArgs)) if messageArgs else ''
         msg += '\nexpected:\n'
         msg += _pprint.pformat(expected)
@@ -108,7 +108,7 @@ class ShineRainSoftSevenCommonError(RuntimeError):
 # region trace helpers
 
 def getPrintable(s, okToIgnore=False):
-    "from a-with-accent to plain a"
+    "from a-with-accent to plain a, get closest visual ascii equivalent"
     import unicodedata
     if isinstance(s, bytes):
         return s.decode('ascii')
@@ -121,16 +121,24 @@ def getPrintable(s, okToIgnore=False):
     else:
         return s.encode('ascii', 'replace').decode('ascii')
 
-gRedirectTraceCalls = None
+gRedirectTraceCalls = _types.SimpleNamespace()
+gRedirectTraceCalls.fnHook = None
 def trace(*args, always=False):
     """similar to print, but
     1) distinguish debugging prints vs intentional production prints
-    2) can be redirected
+    2) can be redirected to fnHook
     3) certain terminals throw exceptions if given unicode characters"""
-    if gRedirectTraceCalls and not always:
-        gRedirectTraceCalls(*args)
+    if gRedirectTraceCalls.fnHook and not always:
+        gRedirectTraceCalls.fnHook(*args)
     else:
         print(' '.join(map(getPrintable, args)))
+
+def tracep(*args, always=False):
+    if gRedirectTraceCalls.fnHook and not always:
+        gRedirectTraceCalls.fnHook(*args)
+    else:
+        print(' '.join(map(_pprint.pformat, args)))
+
 
 # endregion
 # region _time helpers
@@ -165,10 +173,9 @@ class EnglishDateParserWrapper:
         return self.p.get_date_data(s)['date_obj']
 
     def fromFullWithTimezone(self, s):
-        """able to parse ones with a timezone
+        """able to parse timestamps with a timezone
         compensate for +0000
-        Wed Nov 07 04:01:10 +0000 2018
-        """
+        Wed Nov 07 04:01:10 +0000 2018"""
         pts = s.split(' ')
         newpts = []
         isTimeZone = ''
@@ -249,7 +256,9 @@ def truncateWithEllipsis(s, maxLength):
             return s[0:maxLength - len(ellipsis)] + ellipsis
 
 def formatSize(n):
-    if n >= 1024 * 1024 * 1024:
+    if n >= 1024 * 1024 * 1024 * 1024:
+        return '%.2fTB' % (n / (1024.0 * 1024.0 * 1024.0 * 1024.0))
+    elif n >= 1024 * 1024 * 1024:
         return '%.2fGB' % (n / (1024.0 * 1024.0 * 1024.0))
     elif n >= 1024 * 1024:
         return '%.2fMB' % (n / (1024.0 * 1024.0))
@@ -362,7 +371,7 @@ def containsNonAscii(s):
 # endregion
 # region object helpers and wrappers
 
-def dirAttributes(obj):
+def getObjAttributes(obj):
     return [att for att in dir(obj) if not att.startswith('_')]
     
 def getClassNameFromInstance(obj):

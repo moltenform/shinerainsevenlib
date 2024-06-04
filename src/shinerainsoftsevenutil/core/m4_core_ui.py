@@ -5,7 +5,7 @@
 import sys
 import os
 
-from m3_core_nonpure import *
+from .m3_core_nonpure import *
 
 # region user prompts
 

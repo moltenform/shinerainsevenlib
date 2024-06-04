@@ -7,7 +7,7 @@ try:
 except ImportError:
     import __builtin__ as builtins
 
-from m4_core_ui import *
+from .m4_core_ui import *
 
 # region array methods
 

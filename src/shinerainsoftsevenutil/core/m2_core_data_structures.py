@@ -2,9 +2,9 @@
 # shinerainsoftsevencommon
 # Released under the LGPLv3 License
 
-from m1_core_util import *
 import os as _os
 import random as _random
+from .m1_core_util import *
 
 # region simple persistence
 
@@ -24,16 +24,16 @@ class PersistedDict:
             if warnIfCreatingNew:
                 common_ui.alert("creating new cache at " + filename)
             files.writeAll(filename, '{}')
-            
+        
         self.load()
         if keepHandle:
             self.handle = open(filename, 'w')
             self.persist()
 
-    def load(self):
+    def load(self, encoding='utf-8'):
         import json
-        from . import files
-        txt = files.readAll(self.filename, encoding='utf-8')
+        from .. import files
+        txt = files.readAll(self.filename, encoding=encoding)
         self.data = json.loads(txt)
 
     def close(self):
@@ -78,7 +78,7 @@ class PersistedDict:
 
 class ParsePlus:
     """
-    ParsePlus, by Ben Fisher 2019
+    ParsePlus, by Ben Fisher, 2019
 
     Adds the following features to the "parse" module:
         {s:NoNewlines} field type
@@ -95,6 +95,7 @@ class ParsePlus:
             import parse
         except:
             raise ImportError('needs "parse", can install from pip, https://pypi.org/project/parse/')
+        
         self.pattern = pattern
         self.case_sensitive = case_sensitive
         self.extra_types = extra_types if extra_types else {}
@@ -121,7 +122,7 @@ class ParsePlus:
             assertTrue(len(seq) > 1, "an escape-sequence only makes sense if " +
                 "it is at least two characters")
 
-            # use a rarely-occurring ascii char like
+            # use a rarely-occurring ascii char,
             # \x01 (start of heading)
             rareChar = chr(i + 1)
             
@@ -232,7 +233,7 @@ class ParsePlus:
                 return s + appendIfNotFound
 
     def replaceFieldWithTextIntoFile(self, path, key, newValue,
-            appendIfNotFound=None, allowOnlyOnce=False, encoding=None):
+            appendIfNotFound=None, allowOnlyOnce=False, encoding='utf-8'):
         from ..files import readAll, writeAll
         s = readAll(path, encoding=encoding)
 
@@ -317,7 +318,7 @@ class TakeBatch:
     def __enter__(self):
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, exc_type, _exc_val, _exc_tb):
         # if exiting normally (not by exception), run the callback
         if not exc_type:
             if len(self.batch):
@@ -358,7 +359,6 @@ class RecentlyUsedList:
 class IndependentRNG:
     "keep a separate _random stream that won't get affected by someone else calling seed()"
     def __init__(self, seed=None):
-        import _random
         if seed is not None:
             _random.seed(seed)
             
@@ -390,10 +390,7 @@ def BoundedMemoize(fn, limit=20):
     cache = OrderedDict()
 
     def memoizeWrapper(*args, **kwargs):
-        try:
-            import cPickle as pickle
-        except ImportError:
-            import pickle
+        import pickle
         key = pickle.dumps((args, kwargs))
         try:
             return cache[key]
@@ -451,9 +448,9 @@ def throwIfDuplicates(l1, transformFn1=None, context=''):
             raise ShineRainSoftSevenCommonError('duplicate seen:', item, context)
     
 def mergeParamsIntoBucket(bucketConfigs, dictParams):
-    for key in params:
-        if key in dir(self.configs) and not key.startswith('_'):
-            setattr(self.configs, key, params[key])
+    for key in dictParams:
+        if key in dir(bucketConfigs) and not key.startswith('_'):
+            setattr(bucketConfigs, key, dictParams[key])
         else:
             raise Exception('not a supported config:', key)
 

@@ -5,7 +5,7 @@
 import pprint
 import re
 
-from m2_core_data_structures import *
+from .m2_core_data_structures import *
 
 # region clipboard state
 
@@ -38,8 +38,7 @@ def _getClipboardTextTk():
 
 def _setClipboardTextTk(s):
     from tkinter import Tk
-    if not isPy3OrNewer:
-        s = unicode(s)
+    assertTrue(isPy3OrNewer, 'Python 3 required')
     try:
         r = Tk()
         r.withdraw()
