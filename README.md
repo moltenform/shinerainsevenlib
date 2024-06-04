@@ -1,5 +1,7 @@
-Useful unadorned utilities for powerful Python programming.
 
+*welcome to shinerainsoftsevenutil*
+
+Useful unadorned utilities for powerful Python programming.
 
 
 By design, there are no required dependencies for this project. It's designed to be simple to add to your code, either by pip, or just by adding a shinerainsoftesvenutil.zip file next to your code and importing it.
@@ -13,7 +15,15 @@ There are some optional dependencies to enable a few unimportant features,
 * module `dateparser`, for the `EnglishDateParserWrapper` class
 * module `parse`, for the `ParsePlus` class
 * module `pyperclip`, for accessing the clipboard
-* module `pytest`, to run tests
+* module `pytest`, to run this project's tests
 
+## Project information
 
+There are vscode tasks for this project. To run a task, hit `Cmd+Shift+P`, then type "Tasks: run task", then choose a task from the list.
+
+There are tasks for:
+* Linting the project
+* Autoformatting the project
+* Running tests
+* 
 
