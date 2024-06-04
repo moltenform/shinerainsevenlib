@@ -12,8 +12,8 @@ exists = os.path.exists
 join = os.path.join
 split = os.path.split
 splitExt = os.path.splitext
-isDir = os.path.isdir
-isFile = os.path.isfile
+isDir = os.path.isDir
+isFile = os.path.isFile
 getSize = os.path.getsize
 rmDir = os.rmdir
 chDir = os.chdir
@@ -67,19 +67,19 @@ def makeDirs(s):
     try:
         os.makedirs(s)
     except OSError:
-        if isdir(s):
+        if isDir(s):
             return
         else:
             raise
 
 def ensureEmptyDirectory(d):
-    if isfile(d):
+    if isFile(d):
         raise IOError('file exists at this location ' + d)
 
-    if isdir(d):
+    if isDir(d):
         # delete all existing files in the directory
         for s in os.listdir(d):
-            if os.path.isdir(join(d, s)):
+            if os.path.isDir(join(d, s)):
                 shutil.rmtree(join(d, s))
             else:
                 os.unlink(join(d, s))
@@ -90,12 +90,12 @@ def ensureEmptyDirectory(d):
 
 def copy(srcfile, destfile, overwrite, traceToStdout=False,
         useDestModifiedTime=False, createParent=False):
-    if not isfile(srcfile):
+    if not isFile(srcfile):
         raise IOError('source path does not exist or is not a file')
 
     toSetModTime = None
     if useDestModifiedTime and exists(destfile):
-        assertTrue(isfile(destfile), 'not supported for directories')
+        assertTrue(isFile(destfile), 'not supported for directories')
         toSetModTime = getLastModifiedTime(destfile, units=TimeUnits.Nanoseconds)
 
     if traceToStdout:
@@ -128,12 +128,12 @@ def move(srcfile, destfile, overwrite, warnBetweenDrives=False,
         traceToStdout=False, allowDirs=False, useDestModifiedTime=False, createParent=False):
     if not exists(srcfile):
         raise IOError('source path does not exist')
-    if not allowDirs and not isfile(srcfile):
+    if not allowDirs and not isFile(srcfile):
         raise IOError('source path does not exist or is not a file')
 
     toSetModTime = None
     if useDestModifiedTime and exists(destfile):
-        assertTrue(isfile(destfile), 'not supported for directories')
+        assertTrue(isFile(destfile), 'not supported for directories')
         toSetModTime = getLastModifiedTime(destfile, units=TimeUnits.Nanoseconds)
 
     if traceToStdout:
@@ -244,7 +244,7 @@ def writeAll(path, txt, mode='w', unicodetype=None, encoding=None, skipIfSameCon
     if 'b' not in mode and encoding==None:
         encoding = 'utf-8'
     
-    if skipIfSameContent and isfile(path):
+    if skipIfSameContent and isFile(path):
         assertTrue(mode == 'w' or mode == 'wb')
         currentContent = readAll(path, mode.replace('w', 'r'), unicodetype, encoding)
         if currentContent == txt:

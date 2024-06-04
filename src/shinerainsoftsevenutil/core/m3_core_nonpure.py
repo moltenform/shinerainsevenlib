@@ -5,9 +5,9 @@
 import pprint
 import re
 
-from m020_core_data_structures import *
+from m2_core_data_structures import *
 
-# ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ clipboard state ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃
+# region clipboard state
 
 def getClipboardText():
     try:
@@ -56,7 +56,8 @@ def _setClipboardTextPyperclip(s):
     import pyperclip
     pyperclip.copy(s)
     
-# ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ debugging ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃
+# endregion
+# region debugging
 
 def DBG(obj=None):
     import inspect
@@ -85,7 +86,8 @@ def registerDebughook(b=True):
     else:
         sys.excepthook = sys.__excepthook__
 
-# ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ rng helpers ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃
+# endregion
+# region rng helpers
 
 def getRandomString(max=1000 * 1000, hex=False):
     import random
@@ -106,7 +108,8 @@ def genUuid(asBase64=False):
     else:
         return str(u)
 
-# ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ temp file helpers ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃
+# endregion
+# region temp file helpers
 
 def getSoftTempDir(startingPath=None):
     return shinerainsoftsevencommon_preferences.getTempDirectoryForPath(startingPath=None)
@@ -156,7 +159,8 @@ def softDeleteFile(path, allowDirs=False, doTrace=False):
         files.move(path, newPath, overwrite=False, warnBetweenDrives=diagnostics, allowDirs=allowDirs)
         return newPath
 
-# ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ other helpers ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃    
+# endregion
+# region other helpers    
 
 def downloadUrl(url, toFile=None, timeout=30, asText=False):
     import requests

@@ -3,7 +3,7 @@
 import subprocess
 import shutil as _shutil
 
-from .m020files_listing import *
+from .m2_files_listing import *
 
 def openDirectoryInExplorer(path):
     assert isdir(path), 'not a path? ' + path
@@ -135,7 +135,11 @@ def _computeHashImpl(f, hasher, buffersize=0x40000):
         crc = crc & 0xffffffff
         return '%08x' % crc
     elif hasher == 'crc64':
-        from crc64iso.crc64iso import crc64_pair, format_crc64_pair
+        try:
+            from crc64iso.crc64iso import crc64_pair, format_crc64_pair
+        except ImportError:
+            assertTrue(False, 'To use this feature, you must install the crc64iso module.')
+
         cur = None
         while True:
             # update the hash with the contents of the file

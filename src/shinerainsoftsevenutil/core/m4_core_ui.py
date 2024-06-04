@@ -5,9 +5,9 @@
 import sys
 import os
 
-from m030_common_nonpure import *
+from m3_core_nonpure import *
 
-# ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ user prompts ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃
+# region user prompts
 
 def getInputBool(prompt, flushOutput=True):
     prompt += ' '
@@ -91,7 +91,8 @@ def getRawInput(prompt, flushOutput=True):
     else:
         return input(getPrintable(''))
 
-# ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ user messages ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃
+# endregion
+# region user messages
 
 def err(s='', s2=None, s3=None):
     s = _combinePrintableStrings(s, s2, s3)
@@ -110,7 +111,8 @@ def warn(s, s2=None, s3=None, flushOutput=True, always=False):
         if not getInputBool('continue?', flushOutput):
             raise RuntimeError('user chose not to continue after warning')
 
-# ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ using tk gui ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃
+# endregion
+# region using tk gui
 
 def getInputBoolGui(prompt):
     "Ask yes or no. Returns True on yes and False on no."
@@ -244,7 +246,8 @@ def getSaveFileGui(initialdir=None, types=None, title='Save As'):
     import tkinter.filedialog as tkFileDialog
     return _getFileDialogGui(tkFileDialog.asksaveasfilename, initialdir, types, title)
 
-# ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ helpers ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃
+# endregion
+# region helpers
 
 def _combinePrintableStrings(s1, s2, s3):
     s1 = str(s1)

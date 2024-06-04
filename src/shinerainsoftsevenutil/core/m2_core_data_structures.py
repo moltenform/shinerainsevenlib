@@ -2,9 +2,11 @@
 # shinerainsoftsevencommon
 # Released under the LGPLv3 License
 
-from m010_core_util import *
+from m1_core_util import *
+import os as _os
+import random as _random
 
-# ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ simple persistence ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃
+# region simple persistence
 
 class PersistedDict:
     data = None
@@ -44,7 +46,7 @@ class PersistedDict:
         from . import files
         txt = json.dumps(self.data)
         if self.handle:
-            self.handle.seek(0, os.SEEK_SET)
+            self.handle.seek(0, _os.SEEK_SET)
             self.handle.write(txt)
             self.handle.truncate()
         else:
@@ -71,10 +73,11 @@ class PersistedDict:
         self.data[subdictname][key1][key2] = value
         self.afterUpdate()
 
-# ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ retrieve text from strings ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃
+# endregion
+# region retrieve text from strings
 
 class ParsePlus:
-    '''
+    """
     ParsePlus, by Ben Fisher 2019
 
     Adds the following features to the "parse" module:
@@ -85,7 +88,7 @@ class ParsePlus:
         escapeSequences such as backslash-escapes (see examples in tests)
         replaceFieldWithText (see examples in tests)
         getTotalSpan
-    '''
+    """
     def __init__(self, pattern, extra_types=None, escapeSequences=None,
             case_sensitive=True):
         try:
@@ -159,6 +162,7 @@ class ParsePlus:
         if '{{' in self.pattern or '}}' in self.pattern:
             raise RuntimeError("for simplicity, we don't yet support getTotalSpan " +
                 "if the pattern contains {{ or }}")
+        
         locationOfFirstOpen = self.pattern.find('{')
         locationOfLastClose = self.pattern.rfind('}')
         if locationOfFirstOpen == -1 or locationOfLastClose == -1:
@@ -189,7 +193,7 @@ class ParsePlus:
         return (smallestSpanStart, largestSpanEnd)
 
     def match(self, s):
-        # entire string must match
+        "entire string must match"
         import parse
         sTransformed = self._createEscapeSequencesMap(s)
         parseResult = parse.parse(self.pattern, sTransformed,
@@ -213,8 +217,8 @@ class ParsePlus:
 
     def replaceFieldWithText(self, s, key, newValue,
             appendIfNotFound=None, allowOnlyOnce=False):
+        "example: <title>{title}</title>"
         from . import jslike
-        # example: <title>{title}</title>
         results = list(self.findall(s))
         if allowOnlyOnce and len(results) > 1:
             raise RuntimeError('we were told to allow pattern only once.')
@@ -229,7 +233,7 @@ class ParsePlus:
 
     def replaceFieldWithTextIntoFile(self, path, key, newValue,
             appendIfNotFound=None, allowOnlyOnce=False, encoding=None):
-        from .files import readAll, writeAll
+        from ..files import readAll, writeAll
         s = readAll(path, encoding=encoding)
 
         newS = self.replaceFieldWithText(s, key, newValue,
@@ -238,7 +242,8 @@ class ParsePlus:
 
         writeAll(path, newS, 'w', encoding=encoding, skipIfSameContent=True)
 
-# ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ enum helpers ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃
+# endregion
+# region enum helpers
 
 class Bucket:
     "simple named-tuple; o.field looks nicer than o['field']. "
@@ -274,10 +279,11 @@ class SimpleEnum:
     def __delattr__(self, name):
         raise RuntimeError
 
-# ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ data structure helpers ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃
+# endregion
+# region data structure helpers
 
 def appendToListInDictOrStartNewList(d, key, val):
-    # easier to read than setdefault
+    "makes the code easier to read than setdefault imo"
     got = d.get(key, None)
     if got:
         got.append(val)
@@ -293,7 +299,7 @@ def takeBatchOnArbitraryIterable(iterable, size):
         item = list(itertools.islice(it, size))
 
 def takeBatch(itr, n):
-    """ Yield successive n-sized chunks from l."""
+    "Yield successive n-sized chunks from l."
     return list(takeBatchOnArbitraryIterable(itr, n))
 
 class TakeBatch:
@@ -318,7 +324,7 @@ class TakeBatch:
                 self.callback(self.batch)
 
 class RecentlyUsedList:
-    '''Keep a list of items without storing duplicates'''
+    'Keep a list of items without storing duplicates'
     def __init__(self, maxSize=None, startList=None):
         self.list = startList or []
         self.maxSize = maxSize
@@ -346,16 +352,17 @@ class RecentlyUsedList:
             while len(self.list) > self.maxSize:
                 self.list.pop()
 
-# ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ rng state helper ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃
+# endregion
+# region rng state helper
 
 class IndependentRNG:
-    "keep a separate random stream that won't get affected by someone else calling seed()"
+    "keep a separate _random stream that won't get affected by someone else calling seed()"
     def __init__(self, seed=None):
-        import random
+        import _random
         if seed is not None:
-            random.seed(seed)
+            _random.seed(seed)
             
-        self.state = random.getstate()
+        self.state = _random.getstate()
         self.keep_outside_state = None
         self.entered = False
     
@@ -364,17 +371,18 @@ class IndependentRNG:
             return
         
         self.entered = True
-        self.keep_outside_state = random.getstate()
-        random.setstate(self.state)
+        self.keep_outside_state = _random.getstate()
+        _random.setstate(self.state)
     
     def __exit__(self, type, value, traceback):
         if not self.entered:
             return
                 
         self.entered = False
-        random.setstate(self.keep_outside_state)
+        _random.setstate(self.keep_outside_state)
     
-# ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ automatically memo-ize ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃
+# endregion
+# region automatically memo-ize
 
 def BoundedMemoize(fn, limit=20):
     "inspired by http://code.activestate.com/recipes/496879-memoize-decorator-function-with-cache-size-limit/"
@@ -406,7 +414,8 @@ def BoundedMemoize(fn, limit=20):
     return memoizeWrapper
 
 
-# ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃ set helpers ▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃▃
+# endregion
+# region set helpers
 
 def compareTwoListsAsSets(l1, l2, transformFn1=None, transformFn2=None):
     l1Transformed = l1 if not transformFn1 else [transformFn1(item) for item in l1]
