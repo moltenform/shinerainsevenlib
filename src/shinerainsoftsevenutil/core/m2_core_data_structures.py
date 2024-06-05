@@ -219,13 +219,13 @@ class ParsePlus:
     def replaceFieldWithText(self, s, key, newValue,
             appendIfNotFound=None, allowOnlyOnce=False):
         "example: <title>{title}</title>"
-        from . import m5_jslike
+        from . import m6_jslike
         results = list(self.findall(s))
         if allowOnlyOnce and len(results) > 1:
             raise RuntimeError('we were told to allow pattern only once.')
         if len(results):
             span = results[0].spans[key]
-            return m5_jslike.spliceSpan(s, span, newValue)
+            return m6_jslike.spliceSpan(s, span, newValue)
         else:
             if appendIfNotFound is None:
                 raise RuntimeError("pattern not found.")
@@ -282,7 +282,7 @@ class SimpleEnum:
     def __delattr__(self, name):
         raise RuntimeError
 
-class UniqueSentinelForMissingParameter():
+class UniqueSentinelForMissingParameter:
     "use as a default parameter where None is a valid input, see pep 661"
     pass
 
@@ -344,8 +344,8 @@ class RecentlyUsedList:
 
     def add(self, s):
         # if it's also elsewhere in the list, remove that one
-        from . import m5_jslike
-        index = m5_jslike.indexOf(self.list, s)
+        from . import m6_jslike
+        index = m6_jslike.indexOf(self.list, s)
         if index != -1:
             self.list.pop(index)
 

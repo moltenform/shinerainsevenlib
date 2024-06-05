@@ -292,6 +292,9 @@ def parseFloatOrFallback(s, fallBack=None):
     except:
         return fallBack
 
+def clampNumber(value, minValue, maxValue):
+    return max(minValue, min(value, maxValue))
+
 # endregion
 # region flow helpers
 

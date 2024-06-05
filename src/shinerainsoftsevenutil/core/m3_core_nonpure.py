@@ -135,12 +135,25 @@ class IndependentRNG:
 
 # endregion
 # region temp file helpers
+def getSoftTempDir(path=''):
+    from .. import utility
+    prefs = utility.m1_config.getSsrsInternalPrefs()
+    return prefs.parsed.tempDirectory
 
-def getSoftTempDir(startingPath=None):
-    return shinerainsoftsevencommon_preferences.getTempDirectoryForPath(startingPath=None)
-
+cUseOSTrash = UniqueSentinelForMissingParameter()
 def getSoftDeleteDir(path):
-    return shinerainsoftsevencommon_preferences.getSoftDeleteDirectoryForPath(path)
+    from .. import files
+    from .. import utility
+    prefs = utility.m1_config.getSsrsInternalPrefs()
+    k, v = prefs.findKeyForPath(path, 'softDeleteDirectory_')
+    if not v:
+        v = prefs.parsed.main.softDeleteDirectory
+        if not v:
+            return cUseOSTrash
+    assertTrue(files.isDir(v), 'not a directory', v)
+    return v
+
+            #~ if prefs.parsed.main.warnSoftDeleteBetweenDrives:
 
 _softDeleteFileRng = IndependentRNG()
 def getSoftDeleteFullPath(path):
@@ -148,8 +161,8 @@ def getSoftDeleteFullPath(path):
     assertTrue(files.exists(path), 'file not found', path)
     
     dirPath = getSoftDeleteDir(path)
-    if not dirPath:
-        return None
+    if not dirPath or dirPath is cUseOSTrash:
+        return cUseOSTrash
     
     with _softDeleteFileRng:
         randomString = getRandomString()
@@ -164,16 +177,25 @@ def getSoftDeleteFullPath(path):
 def softDeleteFile(path, allowDirs=False, doTrace=False):
     "Delete a file in a recoverable way, either OS Trash or a designated folder"
     from .. import files
+    from .. import utility
+    from .m4_core_ui import warn
+    prefs = utility.m1_config.getSsrsInternalPrefs()
     assertTrue(files.exists(path), 'file not found', path)
-    assertTrue(allowDirs or not files.isDir(path), 'typically you cannot softDelete a dir', path)
+    assertTrue(allowDirs or not files.isDir(path), 'you cannot softDelete a dir', path)
     newPath = getSoftDeleteFullPath(path)
-    diagnostics = shinerainsoftsevencommon_preferences.diagnosticsEnabled()
+    warnIfBetweenDrives = prefs.parsed.main.warnSoftDeleteBetweenDrives
+
+    if warnIfBetweenDrives:
+        if not newPath or newPath is cUseOSTrash:
+            warn('about to send file to OS trash. you may want to put a softDeleteDirectory '
+                 'into shinerainsoftsevenutil.cfg')
     
-    if not newPath:
-        from send2trash import send2trash
-        if diagnostics:
-            trace(f'when deleting {path}, softDeleteDir not set, so falling back to send-to-os-recycle-bin')
-        
+    if not newPath or newPath is cUseOSTrash:
+        try:
+            from send2trash import send2trash
+        except ImportError:
+            assertTrue(False, 'Either put a softDeleteDirectory into shinerainsoftsevenutil.cfg',
+                       ', or install the package send2trash')
         if doTrace:
             trace(f'softDeleteFile |on| {path}')
         
@@ -182,7 +204,8 @@ def softDeleteFile(path, allowDirs=False, doTrace=False):
         if doTrace:
             trace(f'softDeleteFile |on| {path} |to| {newPath}')
         
-        files.move(path, newPath, overwrite=False, warnBetweenDrives=diagnostics, allowDirs=allowDirs)
+        files.move(path, newPath, overwrite=False, warnBetweenDrives=warnIfBetweenDrives,
+                   allowDirs=allowDirs)
         return newPath
 
 # endregion

@@ -36,7 +36,7 @@ Example contents,
 [main]
 tempEphemeralDirectory=G:\data\local\temp
 tempDirectory=D:\data\local\temp
-softDeleteDirectoryAll=D:\data\local\trash
+softDeleteDirectory=D:\data\local\trash
 
 ```
 
