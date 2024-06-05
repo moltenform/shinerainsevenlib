@@ -296,7 +296,6 @@ alreadyCompressedExt = {
     '.sfark': 1,
     '.sfpack': 1,
     '.3g2': 1,
-    '.3gp': 1,
     '.asf': 1,
     '.asx': 1,
     '.avi': 1,
@@ -517,7 +516,6 @@ warnExt = {
     '.mpx': 1,
     '.mrc': 1,
     '.ms': 1,
-    '.ms': 1,
     '.mxe': 1,
     '.nexe': 1,
     '.obs': 1,
@@ -575,7 +573,8 @@ def extensionPossiblyExecutable(s):
     '''Returns 'exe' if it looks executable,
     Returns 'warn' if it is a document type that can include embedded scripts,
     Returns False otherwise'''
-    ext = getExt(s, False)
+    from .. import files
+    ext = files.getExt(s, False)
     if ext in exeExt:
         return 'exe'
     elif ext in warnExt:
@@ -590,7 +589,7 @@ mostCommonImageExt = {
     '.png': 1,
     '.bmp': 1,
     '.tif': 1,
-    '.webp': 1
+    '.webp': 1,
     '.jxl': 1
 }
 

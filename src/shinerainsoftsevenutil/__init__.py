@@ -1,3 +1,4 @@
+# ruff: noqa
 
 from .core import (alert, warn, trace, assertTrue, 
     assertEq, tracep, softDeleteFile, getRandomString)

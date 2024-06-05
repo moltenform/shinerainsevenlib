@@ -1,5 +1,5 @@
 
-# shinerainsoftsevencommon
+# shinerainsoftsevenutil
 # Released under the LGPLv3 License
 
 try:

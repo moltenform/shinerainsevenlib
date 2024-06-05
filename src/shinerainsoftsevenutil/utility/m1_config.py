@@ -176,6 +176,7 @@ class SrssConfigReader:
     
 _cachedInternalPrefs = None
 def getSsrsInternalPrefs():
+    global _cachedInternalPrefs
     if not _cachedInternalPrefs:
         myPath = _os.path.realpath(__file__)
         dir = files.getParent(files.getParent(myPath))

@@ -1,4 +1,4 @@
-# shinerainsoftsevencommon
+# shinerainsoftsevenutil
 # Released under the LGPLv3 License
 
 import os as _os
@@ -100,7 +100,7 @@ def getCurrentException():
     "get current exception"
     return _sys.exc_info()[1]
 
-class ShineRainSoftSevenCommonError(RuntimeError):
+class shinerainsoftsevenutilError(RuntimeError):
     def __init__(self, *args):
         "you can pass in more than one string"
         combined = ' '.join((str(arg) for arg in args))
@@ -221,7 +221,7 @@ def reSearchWholeWord(haystack, needle):
     return _re.search(reNeedle, haystack)
     
 def reReplaceWholeWord(haystack, needle, replace):
-    sNeedle = '\\b' + _re.escape(needle) + '\\b'
+    needle = '\\b'+_re.escape(needle) + '\\b'
     return _re.sub(needle, replace, haystack)
 
 def reReplace(haystack, reNeedle, replace):

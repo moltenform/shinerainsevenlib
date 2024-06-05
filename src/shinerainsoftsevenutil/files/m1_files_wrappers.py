@@ -1,4 +1,4 @@
-# shinerainsoftsevencommon
+# shinerainsoftsevenutil
 # Released under the LGPLv3 License
 
 import sys
@@ -250,7 +250,7 @@ def setLastModifiedTime(path, newVal, units=TimeUnits.Seconds):
 def readAll(path, mode='r', encoding=None):
     """Read entire file into string (mode=='r') or bytes (mode=='rb')
     When reading as text, defaults to utf-8."""
-    if 'b' not in mode and encoding==None:
+    if 'b' not in mode and encoding is None:
         encoding = 'utf-8'
     with open(path, mode, encoding=encoding) as f:
         return f.read()
@@ -258,7 +258,7 @@ def readAll(path, mode='r', encoding=None):
 def writeAll(path, txt, mode='w', encoding=None,
              skipIfSameContent=False, updateTimeIfSameContent=True):
     """Write entire file. Defaults to utf-8."""
-    if 'b' not in mode and encoding==None:
+    if 'b' not in mode and encoding is None:
         encoding = 'utf-8'
     
     if skipIfSameContent and isFile(path):

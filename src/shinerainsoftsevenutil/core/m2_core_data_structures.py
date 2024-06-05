@@ -1,9 +1,8 @@
 
-# shinerainsoftsevencommon
+# shinerainsoftsevenutil
 # Released under the LGPLv3 License
 
 import os as _os
-import random as _random
 import json as _json
 from .m1_core_util import *
 
@@ -426,7 +425,7 @@ def throwIfDuplicates(l1, transformFn1=None, context=''):
     seen = {}
     for item in l1Transformed:
         if item in seen:
-            raise ShineRainSoftSevenCommonError('duplicate seen:', item, context)
+            raise shinerainsoftsevenutilError('duplicate seen:', item, context)
 
 def mergeDict(dict1, dict2):
     return dict1 | dict2

@@ -1,3 +1,6 @@
+# ruff: noqa
+
+
 assertTrue(not srss.SrssFileIterator.pathHasThisDirectory('node_modules', ''))
 assertTrue(not srss.SrssFileIterator.pathHasThisDirectory('node_modules', 'abcd'))
 assertTrue(not srss.SrssFileIterator.pathHasThisDirectory('node_modules', 'ab/cd'))
@@ -53,4 +56,4 @@ if False:
             loop.flagDidNoMeaningfulWork()
         else:
             print('found an odd number', number)
-there must be a _winErrs with 'different drives'
+#~ there must be a _winErrs with 'different drives'

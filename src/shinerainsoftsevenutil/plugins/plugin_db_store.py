@@ -1,3 +1,4 @@
+# ruff: noqa
 
 # db_store, a simple database abstraction layer
 #
@@ -19,7 +20,6 @@
 #    --global-option=build --global-option=--enable-all-extensions
 
 import apsw
-import sys
 import re
 
 
@@ -37,8 +37,8 @@ class Store:
         if self.currentSchemaVersionNumber() is None:
             return
 
-        cursor.execute('CREATE TABLE shinerainsoftsevencommon_store_properties(schema_version INT)')
-        cursor.execute('INSERT INTO shinerainsoftsevencommon_store_properties(schema_version) VALUES(?)',
+        cursor.execute('CREATE TABLE shinerainsoftsevenutil_store_properties(schema_version INT)')
+        cursor.execute('INSERT INTO shinerainsoftsevenutil_store_properties(schema_version) VALUES(?)',
             [self.currentSchemaVersionNumber()])
 
     def verifySchemaVersion(self):
@@ -49,7 +49,7 @@ class Store:
         try:
             valid = False
             got = None
-            for version in cursor.execute('SELECT schema_version FROM shinerainsoftsevencommon_store_properties'):
+            for version in cursor.execute('SELECT schema_version FROM shinerainsoftsevenutil_store_properties'):
                 got = int(version[0])
                 if got == int(self.currentSchemaVersionNumber()):
                     valid = True

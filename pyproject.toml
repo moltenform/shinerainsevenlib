@@ -19,8 +19,8 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/moltenform/shinerainsoftsevencommon"
-Issues = "https://github.com/moltenform/shinerainsoftsevencommon/issues"
+Homepage = "https://github.com/moltenform/shinerainsoftsevenutil"
+Issues = "https://github.com/moltenform/shinerainsoftsevenutil/issues"
 
 [tool.ruff]
 line-length = 150

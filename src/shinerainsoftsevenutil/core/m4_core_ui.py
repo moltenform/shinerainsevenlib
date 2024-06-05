@@ -1,5 +1,5 @@
 
-# shinerainsoftsevencommon
+# shinerainsoftsevenutil
 # Released under the LGPLv3 License
 
 import sys as _sys
@@ -285,9 +285,9 @@ def _getFileDialogGui(fn, initialdir, types, title, directoryHistory=None):
 
 # get better arrowkey history in macos
 try:
-    import gnureadline
+    import gnureadline # noqa
 except:
     try:
-        import readline
+        import readline # noqa
     except:
         pass

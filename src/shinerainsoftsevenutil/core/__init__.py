@@ -1,3 +1,4 @@
+# ruff: noqa
 
 from .m5_batch_util import *
 
