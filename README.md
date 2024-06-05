@@ -40,4 +40,6 @@ softDeleteDirectory=D:\data\local\trash
 
 ```
 
+## Python 2
 
+A Python2 compatible version of this library can be found here, https://github.com/moltenform/scite-with-python/tree/main/src/scite/scite/bin/tools_internal/ben_python_common

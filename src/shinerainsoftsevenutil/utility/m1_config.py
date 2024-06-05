@@ -28,13 +28,12 @@ class SrssConfigReader:
 
     wrapper around ConfigParser that 1) doesn't need main section 2) validates schema 3) has better defaults.
     """
-    def __init__(self, autoInsertDefaultSection='main', checkSchema=True, caseSensitive=True, allowNewLinesInValues=True):
+    def __init__(self, autoInsertDefaultSection='main', checkSchema=True, caseSensitive=True):
         self.parsed = Bucket()
         self._checkSchema = checkSchema
         self._schema = {}
         self._autoInsertMainSection = autoInsertDefaultSection
         self._caseSensitive = caseSensitive
-        self._allowNewLinesInValues = allowNewLinesInValues
     
     def setSchemaForSection(self, sectionName, schemaData):
         self._schema[sectionName] = schemaData

@@ -135,10 +135,7 @@ class IndependentRNG:
 
 # endregion
 # region temp file helpers
-def getSoftTempDir(path=''):
-    from .. import utility
-    prefs = utility.m1_config.getSsrsInternalPrefs()
-    return prefs.parsed.tempDirectory
+
 
 cUseOSTrash = UniqueSentinelForMissingParameter()
 def getSoftDeleteDir(path):
@@ -153,7 +150,10 @@ def getSoftDeleteDir(path):
     assertTrue(files.isDir(v), 'not a directory', v)
     return v
 
-            #~ if prefs.parsed.main.warnSoftDeleteBetweenDrives:
+def getSoftTempDir(path=''):
+    from .. import utility
+    prefs = utility.m1_config.getSsrsInternalPrefs()
+    return prefs.parsed.tempDirectory
 
 _softDeleteFileRng = IndependentRNG()
 def getSoftDeleteFullPath(path):
@@ -164,6 +164,7 @@ def getSoftDeleteFullPath(path):
     if not dirPath or dirPath is cUseOSTrash:
         return cUseOSTrash
     
+    # use an independent rng, so that 
     with _softDeleteFileRng:
         randomString = getRandomString()
     
@@ -215,8 +216,8 @@ def downloadUrl(url, toFile=None, timeout=30, asText=False):
     import requests
     resp = requests.get(url, timeout=timeout)
     if toFile:
-        with open(toFile, 'wb') as fout:
-            fout.write(resp.content)
+        with open(toFile, 'wb') as fOut:
+            fOut.write(resp.content)
     
     if asText:
         return resp.text
@@ -231,3 +232,4 @@ def startThread(fn, args=None):
     t = threading.Thread(target=fn, args=args)
     t.start()
     
+# endregion

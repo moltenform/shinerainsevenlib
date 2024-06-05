@@ -424,10 +424,12 @@ def throwIfDuplicates(l1, transformFn1=None, context=''):
             raise ShineRainSoftSevenCommonError('duplicate seen:', item, context)
     
 def mergeParamsIntoBucket(bucketConfigs, dictParams):
+    validKeys = set(dir(bucketConfigs))
     for key in dictParams:
-        if key in dir(bucketConfigs) and not key.startswith('_'):
+        if key in validKeys and not key.startswith('_'):
             setattr(bucketConfigs, key, dictParams[key])
         else:
             raise Exception('not a supported config:', key)
 
-    
+# endregion
+

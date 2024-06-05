@@ -1,5 +1,6 @@
 
 import time as _time
+import os as _os
 from .m4_core_ui import *
 
 class SrssLooper:
@@ -92,3 +93,61 @@ class SrssLooper:
     def countIterable(iter):
         return sum(1 for item in iter)
     
+
+class SrssFileIterator:
+    def getDefaultPrefs(self):
+        prefs = Bucket()
+        prefs.allowedExtsWithDot = None
+        prefs.fnIncludeTheseFiles = None
+        prefs.fnIncludeTheseDirs = None
+        prefs.followSymlinks = False
+        prefs.filesOnly = True
+        prefs.allowRelativePaths = False
+        prefs.excludeNodeModules = True
+        prefs.recurse = True
+        return prefs
+
+    def __init__(self, rootOrListOfRoots, **params):
+        self.prefs = mergeParamsIntoBucket(self.getDefaultPrefs(), params)
+        roots = [rootOrListOfRoots] if isinstance(self.roots, str) else rootOrListOfRoots
+        self.roots = roots
+        
+        for root in self.roots:
+            assertTrue(self.prefs.allowRelativePaths or _os.path.isabs(root), 'relative paths not allowed', root)
+        
+        # make it a little faster
+        if isinstance(self.prefs.allowedExtsWithDot, list):
+            self.prefs.allowedExtsWithDot = set(self.prefs.allowedExtsWithDot)
+    
+    def getIterator(self):
+        def fnFilterDirs(path):
+            if self.prefs.excludeNodeModules and ('/node_modules/' in path or '\\node_modules\\' in path):
+                return False
+            elif self.prefs.fnIncludeTheseDirs and not self.prefs.fnIncludeTheseDirs(path):
+                return False
+            else:
+                return True
+        
+        def fnIterator():
+            from .. import files
+            
+            for root in self.roots:
+                for obj in files.recurseFileInfo(root,
+                        followSymlinks=self.prefs.followSymlinks, filesOnly=self.prefs.filesOnly, 
+                        fnFilterDirs=fnFilterDirs, 
+                        fnDirectExceptionsTo=None, recurse=self.prefs.recurse):
+                    
+                    if self.prefs.allowedExtsWithDot:
+                        ext = files.splitExt(obj.path)[1].lower()
+                        if ext not in self.prefs.allowedExtsWithDot:
+                            continue
+                    
+                    if self.prefs.fnIncludeTheseFiles and not self.prefs.fnIncludeTheseFiles(obj.path):
+                        continue
+                        
+                    yield obj
+        return fnIterator
+    
+    def getCount(self):
+        return SrssLooper.countIterable(self.getIterator())
+

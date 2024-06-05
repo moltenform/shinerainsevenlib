@@ -182,7 +182,6 @@ def _copyFilePosixWithoutOverwrite(srcfile, destfile):
                 fdest.write(buffer)
 
 # "millistime" is number of milliseconds past epoch (unix time * 1000)
-# I recomend using this as a a way to store times.
 
 def _getStatTime(path, key_ns, key_s, units):
     st = os.stat(path)
@@ -225,21 +224,23 @@ def setLastModifiedTime(path, newVal, units=TimeUnits.Seconds):
     atimeNs = getATime(path, units=TimeUnits.Nanoseconds)
     os.utime(path, ns=(atimeNs, newVal))
 
-# unicodetype can be utf-8, utf-8-sig, etc.
 def readAll(path, mode='r', encoding=None):
+    """Read entire file into string (mode=='r') or bytes (mode=='rb')
+    When reading as text, defaults to utf-8."""
     if 'b' not in mode and encoding==None:
         encoding = 'utf-8'
     with open(path, mode, encoding=encoding) as f:
         return f.read()
 
-# unicodetype can be utf-8, utf-8-sig, etc.
-def writeAll(path, txt, mode='w', unicodetype=None, encoding=None, skipIfSameContent=False, updateTimeIfSameContent=True):
+def writeAll(path, txt, mode='w', encoding=None,
+             skipIfSameContent=False, updateTimeIfSameContent=True):
+    """Write entire file. Defaults to utf-8."""
     if 'b' not in mode and encoding==None:
         encoding = 'utf-8'
     
     if skipIfSameContent and isFile(path):
         assertTrue(mode == 'w' or mode == 'wb')
-        currentContent = readAll(path, mode.replace('w', 'r'), unicodetype, encoding)
+        currentContent = readAll(path, mode=mode.replace('w', 'r'), encoding=encoding)
         if currentContent == txt:
             if updateTimeIfSameContent:
                 setLastModifiedTime(path, getNowAsMillisTime(), units=TimeUnits.Milliseconds)
@@ -252,7 +253,8 @@ def writeAll(path, txt, mode='w', unicodetype=None, encoding=None, skipIfSameCon
 def isEmptyDir(dir):
     return len(os.listdir(dir)) == 0
     
-def getSizeRecurse(dir, followSymlinks=False, fnFilterDirs=None, fnDirectExceptionsTo=None):
+def getDirectorySizeRecurse(dir, followSymlinks=False, fnFilterDirs=None, fnDirectExceptionsTo=None):
+    from .m2_files_listing import recurseFileInfo
     total = 0
     for obj in recurseFileInfo(dir, followSymlinks=followSymlinks,
             fnFilterDirs=fnFilterDirs, fnDirectExceptionsTo=fnDirectExceptionsTo):
