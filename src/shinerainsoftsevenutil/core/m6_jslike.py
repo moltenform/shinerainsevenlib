@@ -72,8 +72,6 @@ def reduce(lst, fn, initialVal=_notProvided):
     else:
         return functools.reduce(fn, lst, initialVal)
 
-# to merge dictionaries, use the | operator.
-
 def splice(s, insertionPoint, lenToDelete=0, newText=''):
     # like javascript's splice
     return s[0:insertionPoint] + newText + s[insertionPoint + lenToDelete:]
@@ -83,7 +81,5 @@ def spliceSpan(s, span, newText):
     assertEq(2, len(span), 'expected [startIndex, stopIndex]')
     assertTrue(span[1] >= span[0])
     return splice(s, span[0], span[1] - span[0], newText)
-
-
 
 

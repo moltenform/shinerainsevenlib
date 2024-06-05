@@ -98,8 +98,8 @@ def getRandomString(max=1000 * 1000, hex=False):
         return '%s' % _random.randrange(max)
 
 def genUuid(asBase64=False):
-    import uuid
     import base64
+    import uuid
     
     u = uuid.uuid4()
     if asBase64:
@@ -109,7 +109,9 @@ def genUuid(asBase64=False):
         return str(u)
 
 class IndependentRNG:
-    "keep a separate _random stream that won't get affected by someone else calling seed()"
+    """keep a separate random stream that won't get affected by someone else.
+    sometimes you want to set rng state to get a repeatable sequence of numbers back,
+    which would get thrown off by other parts of the program also getting rng values."""
     def __init__(self, seed=None):
         if seed is not None:
             _random.seed(seed)
@@ -136,45 +138,6 @@ class IndependentRNG:
 # endregion
 # region temp file helpers
 
-
-cUseOSTrash = UniqueSentinelForMissingParameter()
-def getSoftDeleteDir(path):
-    from .. import files
-    from .. import utility
-    prefs = utility.m1_config.getSsrsInternalPrefs()
-    k, v = prefs.findKeyForPath(path, 'softDeleteDirectory_')
-    if not v:
-        v = prefs.parsed.main.softDeleteDirectory
-        if not v:
-            return cUseOSTrash
-    assertTrue(files.isDir(v), 'not a directory', v)
-    return v
-
-def getSoftTempDir(path=''):
-    from .. import utility
-    prefs = utility.m1_config.getSsrsInternalPrefs()
-    return prefs.parsed.tempDirectory
-
-_softDeleteFileRng = IndependentRNG()
-def getSoftDeleteFullPath(path):
-    from .. import files
-    assertTrue(files.exists(path), 'file not found', path)
-    
-    dirPath = getSoftDeleteDir(path)
-    if not dirPath or dirPath is cUseOSTrash:
-        return cUseOSTrash
-    
-    # use an independent rng, so that 
-    with _softDeleteFileRng:
-        randomString = getRandomString()
-    
-    # as a prefix, the first 2 chars of the parent directory
-    prefix = files.getName(files.getParent(path))[0:2] + '_'
-    newPath = dirPath + files.sep + prefix + files.getName(path) + randomString
-    assertTrue(not files.exists(newPath), 'already exists', newPath)
-    
-    return newPath
-    
 def softDeleteFile(path, allowDirs=False, doTrace=False):
     "Delete a file in a recoverable way, either OS Trash or a designated folder"
     from .. import files
@@ -208,6 +171,63 @@ def softDeleteFile(path, allowDirs=False, doTrace=False):
         files.move(path, newPath, overwrite=False, warnBetweenDrives=warnIfBetweenDrives,
                    allowDirs=allowDirs)
         return newPath
+
+cUseOSTrash = UniqueSentinelForMissingParameter()
+def getSoftDeleteDir(path):
+    """you can set up shinerainsoftsevenutil.cfg so that soft-deleted files go to a specified dir.
+    set `softDeleteDirectory=path`
+    or to be even more precise you can set different softDeletePaths based on the path,
+    which can reduce number of disk writes. edit shinerainsoftsevenutil.cfg with paths like
+    softDeleteDirectory_SlashhomeSlashuserSlasha=path1
+    softDeleteDirectory_SlashhomeSlashuserSlashb=path2
+    (which maps /home/a to path1 and /home/2 to path2)
+    or
+    softDeleteDirectory_cColonBackslash=path1
+    softDeleteDirectory_dColonBackslash=path2
+    (which maps C:\ to path1 and D:\ to path2)
+    (all lowercase except the special keywords Slash, Backslash, and Colon)
+    """
+    from .. import files
+    from .. import utility
+    prefs = utility.m1_config.getSsrsInternalPrefs()
+    k, v = prefs.findKeyForPath(path, 'softDeleteDirectory_')
+    if not v:
+        v = prefs.parsed.main.softDeleteDirectory
+        if not v:
+            return cUseOSTrash
+    
+    assertTrue(files.isDir(v), 'not a directory', v)
+    return v
+
+def getSoftTempDir(path=''):
+    from .. import files
+    from .. import utility
+    prefs = utility.m1_config.getSsrsInternalPrefs()
+    v = prefs.parsed.tempDirectory
+    assertTrue(files.isDir(v), 'not a directory', v)
+    return v
+
+_softDeleteFileRng = IndependentRNG()
+def getSoftDeleteFullPath(path):
+    from .. import files
+    assertTrue(files.exists(path), 'file not found', path)
+    
+    dirPath = getSoftDeleteDir(path)
+    if not dirPath or dirPath is cUseOSTrash:
+        return cUseOSTrash
+    
+    # use an independent rng, so that other random sequences aren't disrupted
+    with _softDeleteFileRng:
+        randomString = getRandomString()
+    
+    # as a prefix, the first 2 chars of the parent directory
+    prefix = files.getName(files.getParent(path))[0:2] + '_'
+    newPath = dirPath + files.sep + prefix + files.getName(path) + randomString
+    assertTrue(not files.exists(newPath), 'already exists', newPath)
+    
+    return newPath
+    
+
 
 # endregion
 # region other helpers    

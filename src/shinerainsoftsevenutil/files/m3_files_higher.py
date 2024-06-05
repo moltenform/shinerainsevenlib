@@ -6,12 +6,15 @@ import shutil as _shutil
 from .m2_files_listing import *
 
 def openDirectoryInExplorer(path):
-    assert isdir(path), 'not a path? ' + path
+    "Open directory in operating system, like finder or windows explorer."
+    assert isDir(path), 'not a path? ' + path
     if sys.platform.startswith('win'):
         assert '^' not in path and '"' not in path, 'path cannot contain ^ or "'
-        runWithoutWaitUnicode([u'cmd', u'/c', u'start', u'explorer.exe', path])
+        args = [u'cmd', u'/c', u'start', u'explorer.exe', path]
+        run(args, shell=True, captureOutput=False, wait=False)
     else:
-        for candidate in ['xdg-open', 'nautilus']:
+        # on macos, open should work.
+        for candidate in ['xdg-open', 'nautilus', 'open']:
             pathBin = findBinaryOnPath(candidate)
             if pathBin:
                 args = [pathBin, path]
@@ -26,6 +29,7 @@ def openUrl(url, filter=True):
     elif url.startswith('https://'):
         prefix = 'https://'
     else:
+        # block potentially risky file:// links
         assertTrue(False, 'url did not start with http')
 
     if filter:
@@ -46,32 +50,8 @@ def openUrl(url, filter=True):
 
 
 def findBinaryOnPath(name):
-    # like `which`
-    def existsAsExe(dir, name):
-        f = join(dir, name)
-        if os.path.isfile(f):
-            return f
-        if sys.platform.startswith('win'):
-            if os.path.isfile(f + '.exe'):
-                return f + '.exe'
-            if os.path.isfile(f + '.cmd'):
-                return f + '.cmd'
-            if os.path.isfile(f + '.com'):
-                return f + '.com'
-            if os.path.isfile(f + '.bat'):
-                return f + '.bat'
-        return None
-
-    # handle "./binaryname"
-    if os.sep in name:
-        return existsAsExe('.', name) if existsAsExe('.', name) else None
-
-    # handle "binaryname"
-    for path in os.environ["PATH"].split(os.pathsep):
-        if path and existsAsExe(path, name):
-            return existsAsExe(path, name)
-
-    return None
+    "this even adds a .exe on windows platforms"
+    return _shutil.which(name)
 
 def hasherFromString(s):
     import hashlib
@@ -112,17 +92,19 @@ def hasherFromString(s):
     else:
         raise ValueError('Unknown hash type ' + s)
 
-# default to 256kb buffer.
-def computeHashBytes(b, hasher='sha1', buffersize=0x40000):
+defaultBufSize = 0x40000 # 256kb
+def computeHashBytes(b, hasher='sha1', buffersize=defaultBufSize):
+    "Get hash of a bytes object, or a crc32"
     import io
     with io.BytesIO(b) as f:
         return _computeHashImpl(f, hasher, buffersize)
 
-def computeHash(path, hasher='sha1', buffersize=0x40000):
+def computeHash(path, hasher='sha1', buffersize=defaultBufSize):
+    "Get hash of file, or a crc32"
     with open(path, 'rb') as f:
         return _computeHashImpl(f, hasher, buffersize)
 
-def _computeHashImpl(f, hasher, buffersize=0x40000):
+def _computeHashImpl(f, hasher, buffersize=defaultBufSize):
     if hasher == 'crc32':
         import zlib
         crc = zlib.crc32(bytes(), 0)
@@ -161,6 +143,7 @@ def _computeHashImpl(f, hasher, buffersize=0x40000):
         return hasher.hexdigest()
 
 def windowsUrlFileGet(path):
+    "extract the url from a windows .url file"
     assertEq('.url', os.path.splitExt(path)[1].lower())
     s = readAll(path, mode='r')
     lines = s.split('\n')
@@ -170,27 +153,24 @@ def windowsUrlFileGet(path):
     raise RuntimeError('no url seen in ' + path)
 
 def windowsUrlFileWrite(path, url):
+    "create a windows .url file"
     assertTrue(len(url) > 0)
     assertTrue(not exists(path), 'file already exists at', path)
-    try:
-        url.encode('ascii')
-    except e:
-        if isinstance(e, UnicodeEncodeError):
-            raise RuntimeError('can\'t support a non-ascii url' + url + ' ' + path)
-        else:
-            raise
-
     s = '[InternetShortcut]\n'
     s += 'URL=%s\n' % url
     writeAll(path, s)
 
 def runWithoutWait(listArgs):
+    "run process without waiting for completion"
     p = subprocess.Popen(listArgs, shell=False)
     return p.pid
 
-# returns tuple (returncode, stdout, stderr)
 def runWithTimeout(args, *, shell=False, createNoWindow=True,
                   throwOnFailure=True, captureOutput=True, timeoutSeconds=None, addArgs=None):
+    """Run a process, with a timeout.
+    on some windows IDEs, starting a process visually shows a black window appearing,
+    so can pass createNoWindow to prevent this.
+    returns tuple (returncode, stdout, stderr)"""
     addArgs = addArgs if addArgs else {}
     
     assertTrue(throwOnFailure is True or throwOnFailure is False or throwOnFailure is None,
@@ -212,13 +192,18 @@ def runWithTimeout(args, *, shell=False, createNoWindow=True,
     
     return retcode, stdout, stderr
 
-# returns tuple (returncode, stdout, stderr)
 def run(listArgs, *, shell=False, createNoWindow=True,
         throwOnFailure=RuntimeError, stripText=True, captureOutput=True, silenceOutput=False,
         wait=True, confirmExists=False):
+    """Run a process.
+    on some windows IDEs, starting a process visually shows a black window appearing,
+    so can pass createNoWindow to prevent this.
+    by default throws if the process fails (return code is nonzero).
+    returns tuple (returncode, stdout, stderr)"""
     
     if confirmExists:
-        assertTrue(isFile(listArgs[0]) or 'which' not in dir(_shutil) or _shutil.which(listArgs[0]) or shell, 'file not found?', listArgs[0])
+        assertTrue(isFile(listArgs[0]) or 'which' not in dir(_shutil)
+                   or _shutil.which(listArgs[0]) or shell, 'file not found?', listArgs[0])
     
     kwargs = {}
 
@@ -271,5 +256,6 @@ def run(listArgs, *, shell=False, createNoWindow=True,
         raise throwOnFailure(getPrintable(exceptionText))
 
     return retcode, stdout, stderr
+
 
 

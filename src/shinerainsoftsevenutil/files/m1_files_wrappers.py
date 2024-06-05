@@ -12,8 +12,8 @@ exists = os.path.exists
 join = os.path.join
 split = os.path.split
 splitExt = os.path.splitext
-isDir = os.path.isDir
-isFile = os.path.isFile
+isDir = os.path.isdir
+isFile = os.path.isfile
 getSize = os.path.getsize
 rmDir = os.rmdir
 chDir = os.chdir
@@ -64,6 +64,7 @@ def deleteSure(s, doTrace=False):
     assertTrue(not exists(s))
 
 def makeDirs(s):
+    "ok if dir already exists. also, creates parent directory(s) if needed."
     try:
         os.makedirs(s)
     except OSError:
@@ -73,6 +74,7 @@ def makeDirs(s):
             raise
 
 def ensureEmptyDirectory(d):
+    "delete all contents, or raise exception if that fails"
     if isFile(d):
         raise IOError('file exists at this location ' + d)
 
@@ -88,100 +90,121 @@ def ensureEmptyDirectory(d):
     else:
         os.makedirs(d)
 
-def copy(srcfile, destfile, overwrite, doTrace=False,
-        useDestModifiedTime=False, createParent=False):
-    if not isFile(srcfile):
+def copy(srcFile, destFile, overwrite, doTrace=False,
+        keepSameModifiedTime=False, allowDirs=False, createParent=False, traceOnly=False):
+    """if overwrite is True, always overwrites if destination already exists.
+    if overwrite is False, always raises exception if destination already exists."""
+    if not isFile(srcFile):
         raise IOError('source path does not exist or is not a file')
+    if not allowDirs and isDir(srcFile):
+        raise IOError('allowDirs is False but given a dir')
 
     toSetModTime = None
-    if useDestModifiedTime and exists(destfile):
-        assertTrue(isFile(destfile), 'not supported for directories')
-        toSetModTime = getLastModifiedTime(destfile, units=TimeUnits.Nanoseconds)
+    if keepSameModifiedTime and exists(destFile):
+        assertTrue(isFile(destFile), 'not supported for directories')
+        toSetModTime = getLastModifiedTime(destFile, units=TimeUnits.Nanoseconds)
 
     if doTrace:
-        trace('copy()', srcfile, destfile)
+        trace('copy()', srcFile, destFile)
+    
+    if traceOnly:
+        # can be useful for temporary debugging
+        return
 
-    if createParent and not exists(getParent(destfile)):
-        makeDirs(getParent(destfile))
+    if createParent and not exists(getParent(destFile)):
+        makeDirs(getParent(destFile))
 
-    if srcfile == destfile:
+    if srcFile == destFile:
         pass
     elif sys.platform.startswith('win'):
-        from ctypes import windll, c_wchar_p, c_int, GetLastError
-        failIfExists = c_int(0) if overwrite else c_int(1)
-        res = windll.kernel32.CopyFileW(c_wchar_p(srcfile), c_wchar_p(destfile), failIfExists)
-        if not res:
-            err = GetLastError()
-            raise IOError('CopyFileW failed (maybe dest already exists?) err=%d' % err +
-                getPrintable(srcfile + '->' + destfile))
+        _copyFileWin(srcFile, destFile, overwrite)
     else:
-        if overwrite:
-            shutil.copy(srcfile, destfile)
-        else:
-            _copyFilePosixWithoutOverwrite(srcfile, destfile)
+        _copyFilePosix(srcFile, destFile, overwrite)
 
-    assertTrue(exists(destfile))
+    assertTrue(exists(destFile))
     if toSetModTime:
-        setLastModifiedTime(destfile, toSetModTime, units=TimeUnits.Nanoseconds)
+        setLastModifiedTime(destFile, toSetModTime, units=TimeUnits.Nanoseconds)
 
-def move(srcfile, destfile, overwrite, warnBetweenDrives=False,
-        doTrace=False, allowDirs=False, useDestModifiedTime=False, createParent=False):
-    if not exists(srcfile):
+def move(srcFile, destFile, overwrite, warnBetweenDrives=False,
+        doTrace=False, allowDirs=False, createParent=False, traceOnly=False):
+    """if overwrite is True, always overwrites if destination already exists.
+    if overwrite is False, always raises exception if destination already exists."""
+    if not exists(srcFile):
         raise IOError('source path does not exist')
-    if not allowDirs and not isFile(srcfile):
-        raise IOError('source path does not exist or is not a file')
+    if not allowDirs and not isFile(srcFile):
+        raise IOError('allowDirs is False but given a dir')
 
     if doTrace:
-        trace('move()', srcfile, destfile)
+        trace('move()', srcFile, destFile)
+    
+    if traceOnly:
+        # can be useful for temporary debugging
+        return
 
-    if createParent and not exists(getParent(destfile)):
-        makeDirs(getParent(destfile))
+    if createParent and not exists(getParent(destFile)):
+        makeDirs(getParent(destFile))
 
-    if srcfile == destfile:
+    if srcFile == destFile:
         pass
     elif sys.platform.startswith('win'):
-        _moveFileWin(srcfile, destfile)
-
+        _moveFileWin(srcFile, destFile, overwrite, warnBetweenDrives)
     elif sys.platform.startswith('linux') and overwrite:
-        os.rename(srcfile, destfile)
+        os.rename(srcFile, destFile)
     else:
-        copy(srcfile, destfile, overwrite)
-        os.unlink(srcfile)
+        copy(srcFile, destFile, overwrite)
+        assertTrue(exists(destFile))
+        os.unlink(srcFile)
 
-    assertTrue(exists(destfile))
+    assertTrue(exists(destFile))
 
-def _moveFileWin():
+_winErrs = {3: 'Path not found', 5: 'Access denied',
+            17: 'Different drives',
+             80: 'Destination already exists' }
+
+def _copyFileWin(srcFile, destFile, overwrite):
     from ctypes import windll, c_wchar_p, c_int, GetLastError
-    ERROR_NOT_SAME_DEVICE = 17
+    failIfExists = c_int(0) if overwrite else c_int(1)
+    res = windll.kernel32.CopyFileW(c_wchar_p(srcFile), c_wchar_p(destFile), failIfExists)
+    if not res:
+        err = GetLastError()
+        raise IOError(f'CopyFileW failed ({_winErrs.get(err, "unknown")}) err={err} ' +
+            getPrintable(srcFile + '->' + destFile))
+
+def _moveFileWin(srcFile, destFile, overwrite, warnBetweenDrives):
+    from ctypes import windll, c_wchar_p, c_int, GetLastError
     flags = 0
     flags |= 1 if overwrite else 0
     flags |= 0 if warnBetweenDrives else 2
-    res = windll.kernel32.MoveFileExW(c_wchar_p(srcfile), c_wchar_p(destfile), c_int(flags))
+    res = windll.kernel32.MoveFileExW(c_wchar_p(srcFile), c_wchar_p(destFile), c_int(flags))
     
     if not res:
         err = GetLastError()
-        if err == ERROR_NOT_SAME_DEVICE and warnBetweenDrives:
-            rinput('Note: moving file from one drive to another. ' +
-                '%s %s Press Enter to continue.\r\n'%(srcfile, destfile))
-            return move(srcfile, destfile, overwrite, warnBetweenDrives=False)
+        if _winErrs.get(err) == 'Different drives' and warnBetweenDrives:
+            alert('Note: moving file from one drive to another. ' +
+                getPrintable(srcFile + '->' + destFile))
+            return _moveFileWin(srcFile, destFile, overwrite, warnBetweenDrives=False)
 
-        raise IOError('MoveFileExW failed (maybe dest already exists?) err=%d' % err +
-            getPrintable(srcfile + '->' + destfile))
+        raise IOError(f'MoveFileExW failed ({_winErrs.get(err, "unknown")}) err={err} ' +
+            getPrintable(srcFile + '->' + destFile))
 
-def _copyFilePosixWithoutOverwrite(srcfile, destfile):
-    # fails if destination already exist. O_EXCL prevents other files from writing to location.
+def _copyFilePosix(srcFile, destFile, overwrite):
+    if overwrite:
+        shutil.copy(srcFile, destFile)
+        return
+
+    # fails if destination already exists. O_EXCL prevents other files from writing to location.
     # raises OSError on failure.
     flags = os.O_CREAT | os.O_EXCL | os.O_WRONLY
-    file_handle = os.open(destfile, flags)
-    with os.fdopen(file_handle, 'wb') as fdest:
-        with open(srcfile, 'rb') as fsrc:
+    fileHandle = os.open(destFile, flags)
+    with os.fdopen(fileHandle, 'wb') as fDest:
+        # confirmed that the context manager will automatically close the handle
+        with open(srcFile, 'rb') as fSrc:
             while True:
-                buffer = fsrc.read(64 * 1024)
+                buffer = fSrc.read(64 * 1024)
                 if not buffer:
                     break
-                fdest.write(buffer)
+                fDest.write(buffer)
 
-# "millistime" is number of milliseconds past epoch (unix time * 1000)
 
 def _getStatTime(path, key_ns, key_s, units):
     st = os.stat(path)
@@ -202,13 +225,13 @@ def _getStatTime(path, key_ns, key_s, units):
 
 
 def getLastModifiedTime(path, units=TimeUnits.Seconds):
-    return _getStatTime(path, 'st_mtime_ns', 'st_mtime')
+    return _getStatTime(path, 'st_mtime_ns', 'st_mtime', units)
 
 def getCTime(path, units=TimeUnits.Seconds):
-    return _getStatTime(path, 'st_ctime_ns', 'st_ctime')
+    return _getStatTime(path, 'st_ctime_ns', 'st_ctime', units)
     
 def getATime(path, units=TimeUnits.Seconds):
-    return _getStatTime(path, 'st_atime_ns', 'st_atime')
+    return _getStatTime(path, 'st_atime_ns', 'st_atime', units)
 
 
 def setLastModifiedTime(path, newVal, units=TimeUnits.Seconds):
@@ -264,6 +287,4 @@ def getDirectorySizeRecurse(dir, followSymlinks=False, fnFilterDirs=None, fnDire
 def fileContentsEqual(f1, f2):
     import filecmp
     return filecmp.cmp(f1, f2, shallow=False)
-
-
 

@@ -1,9 +1,23 @@
 
 import time as _time
 import os as _os
+import re as _re
 from .m4_core_ui import *
 
 class SrssLooper:
+    """Helpful for batch processing, when you want to add pauses every n iterations
+    Example:
+    loop = SrssLooper(list(range(10)))
+    loop.showPercentageEstimates()
+    loop.addPauses(2, seconds=2)
+    loop.waitUntilValueSeen(3)
+    for number in loop:
+        if number % 2 == 0:
+            print('skipping even number', number)
+            loop.flagDidNoMeaningfulWork()
+        else:
+            print('found an odd number', number)
+    """
     def __init__(self, input):
         self._showPercentages = False
         self._pauseEveryNTimes = None
@@ -12,7 +26,7 @@ class SrssLooper:
         self._resetState()
     
     def _resetState(self):
-        self._didNoMeaningfulWork = False
+        self._didMeaningfulWork = True
         self._currentIter = None
         self._counter = 0
         self._countMeaningfulWork = 0
@@ -47,7 +61,7 @@ class SrssLooper:
         self._waitUntilValueSeen = v
 
     def flagDidNoMeaningfulWork(self):
-        self._didNoMeaningfulWork = True
+        self._didMeaningfulWork = False
 
     def __iter__(self):
         self._resetState()
@@ -58,13 +72,14 @@ class SrssLooper:
     def __next__(self):
         self._counter += 1
         self._showPercent()
-        if not self.flagDidNoMeaningfulWork:
+        if self._didMeaningfulWork:
             self._countMeaningfulWork += 1
             if self._countMeaningfulWork % self._pauseEveryNTimes == 0:
                 trace('sleeping')
                 _time.sleep(self._pauseEverySeconds)
                 trace('waking')
         
+        self._didMeaningfulWork = True
         return next(self._currentIter)
     
     def _showPercent(self):
@@ -95,22 +110,27 @@ class SrssLooper:
     
 
 class SrssFileIterator:
+    """
+    helpful for file iteration,
+    adding some extra features to files.recurseFiles.
+    """
     def getDefaultPrefs(self):
-        prefs = Bucket()
-        prefs.allowedExtsWithDot = None
-        prefs.fnIncludeTheseFiles = None
-        prefs.fnIncludeTheseDirs = None
-        prefs.followSymlinks = False
-        prefs.filesOnly = True
-        prefs.allowRelativePaths = False
-        prefs.excludeNodeModules = True
-        prefs.recurse = True
-        return prefs
+        self.prefs.allowedExtsWithDot = None
+        self.prefs.fnIncludeTheseFiles = None
+        self.prefs.fnIncludeTheseDirs = None
+        self.prefs.followSymlinks = False
+        self.prefs.filesOnly = True
+        self.prefs.allowRelativePaths = False
+        self.prefs.excludeNodeModules = True
+        self.prefs.recurse = True
 
     def __init__(self, rootOrListOfRoots, **params):
-        self.prefs = mergeParamsIntoBucket(self.getDefaultPrefs(), params)
-        roots = [rootOrListOfRoots] if isinstance(self.roots, str) else rootOrListOfRoots
+        self.prefs = Bucket()
+        self.getDefaultPrefs()
+        mergeDictIntoBucket(self.prefs, params)
+        roots = [rootOrListOfRoots] if isinstance(rootOrListOfRoots, str) else rootOrListOfRoots
         self.roots = roots
+        self._currentIter = None
         
         for root in self.roots:
             assertTrue(self.prefs.allowRelativePaths or _os.path.isabs(root), 'relative paths not allowed', root)
@@ -119,9 +139,16 @@ class SrssFileIterator:
         if isinstance(self.prefs.allowedExtsWithDot, list):
             self.prefs.allowedExtsWithDot = set(self.prefs.allowedExtsWithDot)
     
-    def getIterator(self):
+    def __iter__(self):
+        self._currentIter = self._getIterator()()
+        return self
+
+    def __next__(self):
+        return next(self._currentIter)
+    
+    def _getIterator(self):
         def fnFilterDirs(path):
-            if self.prefs.excludeNodeModules and ('/node_modules/' in path or '\\node_modules\\' in path):
+            if self.prefs.excludeNodeModules and (SrssFileIterator.pathHasThisDirectory('node_modules', path)):
                 return False
             elif self.prefs.fnIncludeTheseDirs and not self.prefs.fnIncludeTheseDirs(path):
                 return False
@@ -151,3 +178,8 @@ class SrssFileIterator:
     def getCount(self):
         return SrssLooper.countIterable(self.getIterator())
 
+    @staticmethod
+    def pathHasThisDirectory(suffix, path):
+        regexp = _re.compile(r'[/\\]' + suffix + r'([/\\]|$)')
+        return bool(regexp.search(path))
+    

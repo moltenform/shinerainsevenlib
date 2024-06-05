@@ -147,6 +147,7 @@ class ParsePlus:
         return s
 
     def _resultToMyResult(self, parseResult, s):
+        "add some extra information to the results"
         if not parseResult:
             return parseResult
         
@@ -155,6 +156,7 @@ class ParsePlus:
         for name in parseResult.named:
             val = self._unreplaceEscapeSequences(parseResult.named[name])
             setattr(ret, name, val)
+        
         ret.spans = parseResult.spans
         ret.getTotalSpan = lambda: self._getTotalSpan(parseResult, lenS)
         return ret
@@ -298,7 +300,7 @@ def appendToListInDictOrStartNewList(d, key, val):
         d[key] = [val]
 
 def takeBatchOnArbitraryIterable(iterable, size):
-    "Yield successive n-sized chunks from a list."
+    "yield successive n-sized chunks from a list"
     import itertools
     it = iter(iterable)
     item = list(itertools.islice(it, size))
@@ -307,11 +309,11 @@ def takeBatchOnArbitraryIterable(iterable, size):
         item = list(itertools.islice(it, size))
 
 def takeBatch(itr, n):
-    "Get successive n-sized chunks from a list, like javascript's _.chunk."
+    "get successive n-sized chunks from a list, like javascript's _.chunk"
     return list(takeBatchOnArbitraryIterable(itr, n))
 
 class TakeBatch:
-    """Run a callback on n-sized chunks from a list, like javascript's _.chunk.
+    """run a callback on n-sized chunks from a list, like javascript's _.chunk.
     the convenient part is that any leftover pieces will be automatically processed."""
     def __init__(self, batchSize, callback):
         self.batch = []
@@ -334,7 +336,7 @@ class TakeBatch:
                 self.callback(self.batch)
 
 class RecentlyUsedList:
-    'Keep a list of items. Decided not to store duplicates'
+    'keep a list of items. decided not to store duplicates'
     def __init__(self, maxSize=None, startList=None):
         self.list = startList or []
         self.maxSize = maxSize
@@ -391,6 +393,7 @@ def BoundedMemoize(fn, limit=20):
 # region set helpers
 
 def compareTwoListsAsSets(l1, l2, transformFn1=None, transformFn2=None):
+    "compare two lists of strings"
     l1Transformed = l1 if not transformFn1 else [transformFn1(item) for item in l1]
     l2Transformed = l2 if not transformFn2 else [transformFn2(item) for item in l2]
     set1 = set(l1Transformed)
@@ -405,6 +408,7 @@ def compareTwoListsAsSets(l1, l2, transformFn1=None, transformFn2=None):
     return Bucket(extraItems=extraItems, missingItems=missingItems)
 
 def expectEqualityTwoListsAsSets(l1, l2, transformFn1=None, transformFn2=None):
+    "display differences between two lists of strings"
     result = compareTwoListsAsSets(l1, l2, transformFn1=None, transformFn2=None)
     if len(result.extraItems):
         trace('Extra items seen in list 1:', result.extraItems)
@@ -417,19 +421,23 @@ def expectEqualityTwoListsAsSets(l1, l2, transformFn1=None, transformFn2=None):
     return True
 
 def throwIfDuplicates(l1, transformFn1=None, context=''):
+    "detect duplicate items in a list"
     l1Transformed = l1 if not transformFn1 else [transformFn1(item) for item in l1]
     seen = {}
     for item in l1Transformed:
         if item in seen:
             raise ShineRainSoftSevenCommonError('duplicate seen:', item, context)
-    
-def mergeParamsIntoBucket(bucketConfigs, dictParams):
+
+def mergeDict(dict1, dict2):
+    return dict1 | dict2
+
+def mergeDictIntoBucket(bucketConfigs, dictParams, disallowNewKeys=True):
     validKeys = set(dir(bucketConfigs))
     for key in dictParams:
-        if key in validKeys and not key.startswith('_'):
-            setattr(bucketConfigs, key, dictParams[key])
-        else:
+        if disallowNewKeys and not (key in validKeys and not key.startswith('_')):
             raise Exception('not a supported config:', key)
+        else:
+            setattr(bucketConfigs, key, dictParams[key])
 
 # endregion
 

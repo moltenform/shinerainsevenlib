@@ -1,14 +1,14 @@
 # shinerainsoftsevencommon
 # Released under the LGPLv3 License
 
+import os
 from .m1_files_wrappers import *
 
-# allowedExts in the form ['png', 'gif']
 def _listChildrenUnsorted(path, *, filenamesOnly=False, allowedExts=None):
+    "list directory contents. allowedExts in the form ['png', 'gif']"
     for filename in os.listdir(path):
         if not allowedExts or getExt(filename) in allowedExts:
             yield filename if filenamesOnly else (path + os.path.sep + filename, filename)
-
 
 if sys.platform.startswith('win'):
     exeSuffix = '.exe'
@@ -19,6 +19,7 @@ else:
         return sorted(_listChildrenUnsorted(*args, **kwargs))
 
 def listDirs(path, *, filenamesOnly=False, allowedExts=None, recurse=False):
+    "Return directories within a directory"
     if recurse:
         return recurseDirs(path, filenamesOnly=filenamesOnly, allowedExts=allowedExts, recurse=recurse)
         
@@ -27,6 +28,7 @@ def listDirs(path, *, filenamesOnly=False, allowedExts=None, recurse=False):
             yield name if filenamesOnly else (full, name)
 
 def listFiles(path, *, filenamesOnly=False, allowedExts=None, recurse=False):
+    "Return files within a directory"
     if recurse:
         return recurseFiles(path, filenamesOnly=filenamesOnly, allowedExts=allowedExts, recurse=recurse)
         
@@ -36,27 +38,33 @@ def listFiles(path, *, filenamesOnly=False, allowedExts=None, recurse=False):
 
 def recurseFiles(root, *, filenamesOnly=False, allowedExts=None,
         fnFilterDirs=None, includeFiles=True, includeDirs=False, topDown=True, followSymlinks=False):
+    """Return files within a directory (recursively).
+    You can provide a fnFilterDirs to filter out any directories not to traverse into."""
     assert isDir(root)
 
-    for (dirpath, dirnames, filenames) in os.walk(root, topdown=topDown, followlinks=followSymlinks):
+    for (dirPath, dirNames, fileNames) in os.walk(root, topdown=topDown, followlinks=followSymlinks):
         if fnFilterDirs:
-            newdirs = [dir for dir in dirnames if fnFilterDirs(join(dirpath, dir))]
-            dirnames[:] = newdirs
+            filteredDirs = [dir for dir in dirNames if fnFilterDirs(join(dirPath, dir))]
+            dirNames[:] = filteredDirs
 
         if includeFiles:
-            for filename in (filenames if sys.platform.startswith('win') else sorted(filenames)):
+            iterFilenames = fileNames if sys.platform.startswith('win') else sorted(fileNames)
+            for filename in iterFilenames:
                 if not allowedExts or getExt(filename) in allowedExts:
-                    yield filename if filenamesOnly else (dirpath + os.path.sep + filename, filename)
+                    yield filename if filenamesOnly else (dirPath + os.path.sep + filename, filename)
 
         if includeDirs:
-            yield getName(dirpath) if filenamesOnly else (dirpath, getName(dirpath))
+            yield getName(dirPath) if filenamesOnly else (dirPath, getName(dirPath))
 
 def recurseDirs(root, *, filenamesOnly=False, fnFilterDirs=None,
         topdown=True, followSymlinks=False):
+    """Return directories within a directory (recursively).
+    You can provide a fnFilterDirs to filter out any directories not to traverse into."""
     return recurseFiles(root, filenamesOnly=filenamesOnly, fnFilterDirs=fnFilterDirs, includeFiles=False,
         includeDirs=True, topdown=topdown, followSymlinks=followSymlinks)
 
 class FileInfoEntryWrapper:
+    "Helper class to make recurseFileInfo more convenient to use."
     def __init__(self, obj):
         self.obj = obj
         self.path = obj.path
@@ -98,9 +106,13 @@ class FileInfoEntryWrapper:
 
 def recurseFileInfo(root, recurse=True, followSymlinks=False, filesOnly=True,
         fnFilterDirs=None, fnDirectExceptionsTo=None):
+    """Convenient interface to python 3's file iterator.
+    On Windows this can be very fast because calls to get file properties like size
+    don't require an extra system call.
+    You can provide a fnFilterDirs to filter out any directories not to traverse into."""
 
-    # scandir's resources are released in destructor,
-    # do not create circular references holding it
+    # note that scandir's resources are released in a destructor,
+    # so do not create circular references holding it.
     for entry in os.scandir(root):
         if entry.is_dir(follow_symlinks=followSymlinks):
             if not filesOnly:
@@ -122,5 +134,7 @@ def recurseFileInfo(root, recurse=True, followSymlinks=False, filesOnly=True,
             yield FileInfoEntryWrapper(entry)
 
 def listFileInfo(root, followSymlinks=False, filesOnly=True):
+    "Like recurseFileInfo, but does not recurse."
     return recurseFileInfo(root, recurse=False,
         followSymlinks=followSymlinks, filesOnly=filesOnly)
+
