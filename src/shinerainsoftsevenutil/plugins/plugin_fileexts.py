@@ -1,3 +1,8 @@
+
+from .. import files
+from .. import core as srss
+from ..core import alert, warn, trace, assertTrue, assertEq, tracep, softDeleteFile, getRandomString, jslike, Bucket
+
 imageExtensions = {
     'jpg': 1,  # section
     'jpeg': 1,
@@ -557,8 +562,6 @@ def extensionPossiblyExecutable(s):
     """Returns 'exe' if it looks executable,
     Returns 'warn' if it is a document type that can include embedded scripts,
     Returns False otherwise"""
-    # pylint: disable-next=no-name-in-module
-    from .. import files
 
     ext = files.getExt(s, False)
     if ext in exeExt:

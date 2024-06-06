@@ -175,3 +175,16 @@ def recurseFileInfo(
 def listFileInfo(root, followSymlinks=False, filesOnly=True):
     "Like recurseFileInfo, but does not recurse."
     return recurseFileInfo(root, recurse=False, followSymlinks=followSymlinks, filesOnly=filesOnly)
+
+def getDirectorySizeRecurse(
+    dirPath, followSymlinks=False, fnFilterDirs=None, fnDirectExceptionsTo=None
+):
+    total = 0
+    for obj in recurseFileInfo(
+        dirPath,
+        followSymlinks=followSymlinks,
+        fnFilterDirs=fnFilterDirs,
+        fnDirectExceptionsTo=fnDirectExceptionsTo,
+    ):
+        total += obj.size()
+    return total

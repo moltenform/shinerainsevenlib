@@ -57,3 +57,18 @@ if False:
         else:
             print('found an odd number', number)
 #~ there must be a _winErrs with 'different drives'
+
+if False:
+    class SampleContextManager:
+        def __enter__(self):
+            print('entering SampleContextManager')
+            return self
+
+        def __exit__(self, exc_type, _exc_val, _exc_tb):
+            print('exiting SampleContextManager')
+
+
+    with ExitStack() as cleanupTasks:
+        cleanupTasks.push(SampleContextManager())
+        cleanupTasks.callback(lambda: print('second'))
+        cleanupTasks.callback(lambda: print('third'))

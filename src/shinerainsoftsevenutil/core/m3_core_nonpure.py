@@ -3,6 +3,7 @@
 
 import pprint as _pprint
 import random as _random
+import os as _os
 import sys as _sys
 
 from .m2_core_data_structures import *
@@ -204,12 +205,11 @@ def getSoftDeleteDir(path):
     return v
 
 def getSoftTempDir(_path=''):
-    from .. import files
     from .. import srssutil
 
     prefs = srssutil.m1_config.getSsrsInternalPrefs()
     v = prefs.parsed.tempDirectory
-    assertTrue(files.isDir(v), 'not a directory', v)
+    assertTrue(_os.path.isdir(v), 'not a directory', v)
     return v
 
 

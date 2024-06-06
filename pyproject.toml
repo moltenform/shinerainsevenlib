@@ -104,9 +104,10 @@ max-line-length = 999
 # C1802 ok to say if len(lst), R0914 too many locals, R1735 dict literal, R1737 wants yield from
 # W0603 global ok, R1716 chained ok, W0718: broad exception, W0108 unnecessary lambda (gave false positives)
 # R0903 too few methods, C0303 whitespace
-# E1101 no member... unfortunately need this disabled for Bucket()
-# R0401 cyclic import... consider fixing later
+# R0401 cyclic import... too aggressive and fires even when the cycle is within a function call (safe)
 # R1732 use with to autoclose resources... consider fixing later
-# E1101...
-disable = "C0103,W0401,C0116,C0114, W0614,R0911,R0912,C0415,W0611,R0913,C0209,C0305,W0702,C0115,R1705,R0902,R0903,E0401,C0303,C1802,R1720,R1732,R0401,R0914,R1735,R1737,W0603,R1716,W0718,W0108"
+disable = "C0103,W0401,C0116,C0114, W0614,R0911,R0912,C0415,W0611,R0913,C0209,C0305,W0702,C0115,R1705,R0902,R0903,E0401,C0303,C1802,R0401,R1720,R1732,R0914,R1735,R1737,W0603,R1716,W0718,W0108"
+
+# The warning E1101 we want enabled because it's useful to catch missing functions.
+
 

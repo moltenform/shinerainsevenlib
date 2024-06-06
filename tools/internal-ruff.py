@@ -2,7 +2,7 @@
 
 import sys
 sys.path.append('src')
-from shinerainsoftsevenutil import *
+from shinerainsoftsevenutil.standard import *
 import re
 
 def cleanupAfterRuff(path):
@@ -36,12 +36,17 @@ def goPylint():
         "D:\\OnlyHere\\devkits\\Python64_312\\python",
         "-m",
         "pylint",
-        "src\\shinerainsoftsevenutil",
+        #~ "src\\shinerainsoftsevenutil",
+        r"D:\tests\mockdepend",
     ], throwOnFailure=False)
     stdout = stdout.decode('utf-8')
     lines = stdout.replace('\r\n', '\n').split('\n')
     for line in lines:
         if " E1101: Instance of 'Bucket' " in line:
+            pass
+        elif " W0201: Attribute 'spans' defined outside " in line:
+            pass
+        elif " W0201: Attribute 'getTotalSpan' defined outside " in line:
             pass
         else:
             print(line)

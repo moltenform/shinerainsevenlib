@@ -6,7 +6,8 @@ import os
 import shutil
 import enum
 
-from .. import *
+from .. import core as srss
+from ..core import alert, warn, trace, assertTrue, assertEq, tracep, softDeleteFile, getRandomString, jslike, Bucket
 
 rename = os.rename
 exists = os.path.exists
@@ -306,21 +307,6 @@ def writeAll(
 
 def isEmptyDir(dirPath):
     return len(os.listdir(dirPath)) == 0
-
-def getDirectorySizeRecurse(
-    dirPath, followSymlinks=False, fnFilterDirs=None, fnDirectExceptionsTo=None
-):
-    from .m2_files_listing import recurseFileInfo
-
-    total = 0
-    for obj in recurseFileInfo(
-        dirPath,
-        followSymlinks=followSymlinks,
-        fnFilterDirs=fnFilterDirs,
-        fnDirectExceptionsTo=fnDirectExceptionsTo,
-    ):
-        total += obj.size()
-    return total
 
 def fileContentsEqual(f1, f2):
     import filecmp

@@ -2,6 +2,7 @@
 # Released under the LGPLv3 License
 import subprocess
 import shutil as _shutil
+from contextlib import ExitStack as _ExitStack
 
 from .m2_files_listing import *
 
@@ -280,29 +281,24 @@ def run(
             stderr = stderr.rstrip()
 
     else:
-        handlesToClose = []
-        if silenceOutput:
-            stdoutArg = open(os.devnull, 'wb')  # noqa
-            stderrArg = open(os.devnull, 'wb')  # noqa
-            handlesToClose.append(stdoutArg)
-            handlesToClose.append(stderrArg)
-        else:
-            stdoutArg = None
-            stderrArg = None
-
-        try:
-            if wait:
-                retcode = subprocess.call(
-                    listArgs, stdout=stdoutArg, stderr=stderrArg, shell=shell, **kwargs
-                )
+        with _ExitStack() as cleanupTasks:
+            if silenceOutput:
+                stdoutArg = open(os.devnull, 'wb')  # noqa
+                stderrArg = open(os.devnull, 'wb')  # noqa
+                cleanupTasks.push(stdoutArg)
+                cleanupTasks.push(stderrArg)
             else:
-                subprocess.Popen(
-                    listArgs, stdout=stdoutArg, stderr=stderrArg, shell=shell, **kwargs
-                )
-        finally:
-            for handle in handlesToClose:
-                handle.close()
-            handlesToClose.clear()
+                stdoutArg = None
+                stderrArg = None
+
+                if wait:
+                    retcode = subprocess.call(
+                        listArgs, stdout=stdoutArg, stderr=stderrArg, shell=shell, **kwargs
+                    )
+                else:
+                    subprocess.Popen(
+                        listArgs, stdout=stdoutArg, stderr=stderrArg, shell=shell, **kwargs
+                    )
 
     if throwOnFailure and retcode != 0:
         if throwOnFailure is True:

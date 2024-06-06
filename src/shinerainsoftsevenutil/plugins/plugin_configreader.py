@@ -2,8 +2,8 @@
 import fnmatch as _fnmatch
 import configparser as _configparser
 import os as _os
-from .. import *
-from .. import files
+
+from .plugin_fileexts import *
 
 class SrssConfigReader:
     """

@@ -6,7 +6,7 @@ try:
 except ImportError:
     import __builtin__ as builtins
 
-from .m4_core_ui import *
+from . import m5_batch_util as _m5_batch_util
 
 def concat(ar1, ar2):
     # like extend, but operates on a copy
@@ -65,7 +65,7 @@ def times(n, fn):
     return [fn() for _ in range(n)]
 
 
-_notProvided = UniqueSentinelForMissingParameter()
+_notProvided = _m5_batch_util.UniqueSentinelForMissingParameter()
 
 def reduce(lst, fn, initialVal=_notProvided):
     # callback should have 2 parameters
@@ -82,6 +82,6 @@ def splice(s, insertionPoint, lenToDelete=0, newText=''):
 
 def spliceSpan(s, span, newText):
     # provide a span [startIndex, stopIndex] to be replaced with newText
-    assertEq(2, len(span), 'expected [startIndex, stopIndex]')
-    assertTrue(span[1] >= span[0])
+    _m5_batch_util.assertEq(2, len(span), 'expected [startIndex, stopIndex]')
+    _m5_batch_util.assertTrue(span[1] >= span[0])
     return splice(s, span[0], span[1] - span[0], newText)
