@@ -76,7 +76,7 @@ def makeDirs(s):
 def ensureEmptyDirectory(d):
     "delete all contents, or raise exception if that fails"
     if isFile(d):
-        raise IOError('file exists at this location ' + d)
+        raise OSFileRelatedError('file exists at this location ' + d)
 
     if isDir(d):
         # delete all existing files in the directory
@@ -95,9 +95,9 @@ def copy(srcFile, destFile, overwrite, doTrace=False,
     """if overwrite is True, always overwrites if destination already exists.
     if overwrite is False, always raises exception if destination already exists."""
     if not isFile(srcFile):
-        raise IOError('source path does not exist or is not a file')
+        raise OSFileRelatedError('source path does not exist or is not a file')
     if not allowDirs and isDir(srcFile):
-        raise IOError('allowDirs is False but given a dir')
+        raise OSFileRelatedError('allowDirs is False but given a dir')
 
     toSetModTime = None
     if keepSameModifiedTime and exists(destFile):
@@ -130,9 +130,9 @@ def move(srcFile, destFile, overwrite, warnBetweenDrives=False,
     """if overwrite is True, always overwrites if destination already exists.
     if overwrite is False, always raises exception if destination already exists."""
     if not exists(srcFile):
-        raise IOError('source path does not exist')
+        raise OSFileRelatedError('source path does not exist')
     if not allowDirs and not isFile(srcFile):
-        raise IOError('allowDirs is False but given a dir')
+        raise OSFileRelatedError('allowDirs is False but given a dir')
 
     if doTrace:
         trace('move()', srcFile, destFile)
@@ -167,7 +167,7 @@ def _copyFileWin(srcFile, destFile, overwrite):
     res = windll.kernel32.CopyFileW(c_wchar_p(srcFile), c_wchar_p(destFile), failIfExists)
     if not res:
         err = GetLastError()
-        raise IOError(f'CopyFileW failed ({_winErrs.get(err, "unknown")}) err={err} ' +
+        raise OSFileRelatedError(f'CopyFileW failed ({_winErrs.get(err, "unknown")}) err={err} ' +
             getPrintable(srcFile + '->' + destFile))
 
 def _moveFileWin(srcFile, destFile, overwrite, warnBetweenDrives):
@@ -184,7 +184,7 @@ def _moveFileWin(srcFile, destFile, overwrite, warnBetweenDrives):
                 getPrintable(srcFile + '->' + destFile))
             return _moveFileWin(srcFile, destFile, overwrite, warnBetweenDrives=False)
 
-        raise IOError(f'MoveFileExW failed ({_winErrs.get(err, "unknown")}) err={err} ' +
+        raise OSFileRelatedError(f'MoveFileExW failed ({_winErrs.get(err, "unknown")}) err={err} ' +
             getPrintable(srcFile + '->' + destFile))
 
 def _copyFilePosix(srcFile, destFile, overwrite):
@@ -287,4 +287,7 @@ def getDirectorySizeRecurse(dir, followSymlinks=False, fnFilterDirs=None, fnDire
 def fileContentsEqual(f1, f2):
     import filecmp
     return filecmp.cmp(f1, f2, shallow=False)
+
+class OSFileRelatedError(OSError):
+    pass
 

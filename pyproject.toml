@@ -23,23 +23,60 @@ Homepage = "https://github.com/moltenform/shinerainsoftsevenutil"
 Issues = "https://github.com/moltenform/shinerainsoftsevenutil/issues"
 
 [tool.ruff]
-line-length = 150
+line-length = 100
 indent-width = 4
 # Assume Python 3.8
 target-version = "py38"
+# tell ruff not to fix blank-lines-after-function-or-class
 
 [tool.ruff.lint]
-ignore = ["F403", "F405", "E302", "E402", "E228", "E401", "E722", "E731"]
-# F403 'from module import *' used; unable to detect undefined names
-# F405 Name may be undefined, or defined from star imports: module
-# E302 Expected 2 blank lines, found 0
-# E402 Module level import not at top of file
-# E128 Continuation line under-indented for visual indent (not in ruff?)
-# E228 Missing whitespace around modulo operator
-# E401 Multiple imports on one line
-# E722 Do not use bare 'except'
-# E731 Do not assign a lambda expression, use a def
-# W504 Line break occurred after a binary operator (not in ruff?)
+fixable = []
+unfixable = [
+    "ERA", # do not autoremove commented out code
+    "E301","E302","E303","E304", "E305", "E306",
+    "F401", "F841", "PIE804"
+    ]
+extend-select = [
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "ERA", # flake8-eradicate/eradicate
+    "I",   # isort
+    # "N" pep8-naming
+    "PIE", # flake8-pie
+    "PGH", # pygrep
+    "RUF", # ruff checks
+    "SIM", # flake8-simplify
+    # TCH flake8-type-checking
+    "TID", # flake8-tidy-imports
+    "UP",  # pyupgrade
+]
+
+ignore = [
+ "F403", # 'from module import *' used; unable to detect undefined names
+ "F405", # Name may be undefined, or defined from star imports: module
+ "E302", # Expected 2 blank lines, found 0
+ "E305", # blank-lines-after-function-or-class
+ "E402", # Module level import not at top of file
+ #"E128", # Continuation line under-indented for visual indent (not in ruff?)
+ "E228", # Missing whitespace around modulo operator
+ "E401", # Multiple imports on one line
+ "E722", # Do not use bare 'except'
+ "E731", # Do not assign a lambda expression, use a def
+ #"W504", # Line break occurred after a binary operator (not in ruff?)
+ "TID252", # prefer absolute imports
+ "SIM201", # a != b not a == b
+ "C408", # i prefer dict(a=b) instead of {a:b}
+ "UP031", # i still have old code with '%2d' % x instead of f'{x}'
+ "PGH004", # ok to have bare noqa
+ "I001", # ok to have unsorted imports for now
+ "SIM103", # ok to if x and y and z: return True instead of return x and y and z
+ "UP028", # it wants yield from
+ "SIM102", # nested if ok
+ "SIM114", # it wants combined branches
+ "SIM117", # it wants combined with statements
+ "SIM108", # it wants ternary
+ "SIM105", # it wants contextlib.suppress, cool but i don't want that to be mandatory
+]
 
 # these might also be useful to disable
 # F405 ok to use a symbol from a import *
@@ -49,4 +86,7 @@ ignore = ["F403", "F405", "E302", "E402", "E228", "E401", "E722", "E731"]
 [tool.ruff.format]
 quote-style = "single"
 indent-style = "space"
+
+[tool.ruff.lint.per-file-ignores]
+"src/poetry/console/*" = [] 
 

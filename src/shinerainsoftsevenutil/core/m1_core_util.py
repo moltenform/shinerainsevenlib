@@ -103,7 +103,7 @@ def getCurrentException():
 class shinerainsoftsevenutilError(RuntimeError):
     def __init__(self, *args):
         "you can pass in more than one string"
-        combined = ' '.join((str(arg) for arg in args))
+        combined = ' '.join(str(arg) for arg in args)
         super().__init__(combined)
 
 # endregion
@@ -316,19 +316,19 @@ def toValidFilename(pathOrig, dirsepOk=False, maxLen=None):
     if dirsepOk:
         # sometimes we want to leave directory-separator characters in the string.
         if _os.path.sep == '/':
-            path = path.replace(u'\\ ', u', ').replace(u'\\', u'-')
+            path = path.replace('\\ ', ', ').replace('\\', '-')
         else:
-            path = path.replace(u'/ ', u', ').replace(u'/', u'-')
+            path = path.replace('/ ', ', ').replace('/', '-')
     else:
-        path = path.replace(u'\\ ', u', ').replace(u'\\', u'-')
-        path = path.replace(u'/ ', u', ').replace(u'/', u'-')
+        path = path.replace('\\ ', ', ').replace('\\', '-')
+        path = path.replace('/ ', ', ').replace('/', '-')
 
-    result = path.replace(u'\u2019', u"'").replace(u'?', u'').replace(u'!', u'') \
-        .replace(u': ', u', ').replace(u':', u'-') \
-        .replace(u'| ', u', ').replace(u'|', u'-') \
-        .replace(u'*', u'') \
-        .replace(u'"', u"'").replace(u'<', u'[').replace(u'>', u']') \
-        .replace(u'\r\n', u' ').replace(u'\r', u' ').replace(u'\n', u' ')
+    result = path.replace('\u2019', "'").replace('?', '').replace('!', '') \
+        .replace(': ', ', ').replace(':', '-') \
+        .replace('| ', ', ').replace('|', '-') \
+        .replace('*', '') \
+        .replace('"', "'").replace('<', '[').replace('>', ']') \
+        .replace('\r\n', ' ').replace('\r', ' ').replace('\n', ' ')
 
     if maxLen and len(result) > maxLen:
         assertTrue(maxLen > 1)

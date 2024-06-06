@@ -52,7 +52,7 @@ def getInputString(prompt, bConfirm=True, flushOutput=True):
         s = getRawInput(prompt, flushOutput).strip()
         if s == 'BRK':
             raise KeyboardInterrupt()
-        if s:
+        elif s:
             if not bConfirm or getInputBool('you intended to write: ' + s):
                 return ustr(s)
 

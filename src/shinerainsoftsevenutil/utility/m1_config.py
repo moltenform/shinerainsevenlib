@@ -196,8 +196,9 @@ def getSsrsInternalPrefs():
             })
         _cachedInternalPrefs.parse(configText)
 
+        # it's fine to use tempDirectory if a EphemeralDirectory was not passed in
         if not _cachedInternalPrefs.parsed.main.tempEphemeralDirectory:
-            _cachedInternalPrefs.parsed.main.tempDirectory
+            _cachedInternalPrefs.parsed.main.tempEphemeralDirectory = _cachedInternalPrefs.parsed.main.tempDirectory
 
     return _cachedInternalPrefs
 

@@ -10,7 +10,7 @@ def openDirectoryInExplorer(path):
     assert isDir(path), 'not a path? ' + path
     if sys.platform.startswith('win'):
         assert '^' not in path and '"' not in path, 'path cannot contain ^ or "'
-        args = [u'cmd', u'/c', u'start', u'explorer.exe', path]
+        args = ['cmd', '/c', 'start', 'explorer.exe', path]
         run(args, shell=True, captureOutput=False, wait=False)
     else:
         # on macos, open should work.
@@ -107,7 +107,7 @@ def computeHash(path, hasher='sha1', buffersize=defaultBufSize):
 def _computeHashImpl(f, hasher, buffersize=defaultBufSize):
     if hasher == 'crc32':
         import zlib
-        crc = zlib.crc32(bytes(), 0)
+        crc = zlib.crc32(b'', 0)
         while True:
             # update the hash with the contents of the file
             buffer = f.read(buffersize)
@@ -233,17 +233,25 @@ def run(listArgs, *, shell=False, createNoWindow=True,
             stderr = stderr.rstrip()
 
     else:
+        handlesToClose = []
         if silenceOutput:
-            stdoutArg = open(os.devnull, 'wb')
-            stderrArg = open(os.devnull, 'wb')
+            stdoutArg = open(os.devnull, 'wb') # noqa
+            stderrArg = open(os.devnull, 'wb') # noqa
+            handlesToClose.append(stdoutArg)
+            handlesToClose.append(stderrArg)
         else:
             stdoutArg = None
             stderrArg = None
 
-        if wait:
-            retcode = subprocess.call(listArgs, stdout=stdoutArg, stderr=stderrArg, shell=shell, **kwargs)
-        else:
-            subprocess.Popen(listArgs, stdout=stdoutArg, stderr=stderrArg, shell=shell, **kwargs)
+        try:
+            if wait:
+                retcode = subprocess.call(listArgs, stdout=stdoutArg, stderr=stderrArg, shell=shell, **kwargs)
+            else:
+                subprocess.Popen(listArgs, stdout=stdoutArg, stderr=stderrArg, shell=shell, **kwargs)
+        finally:
+            for handle in handlesToClose:
+                handle.close()
+            handlesToClose.clear()
 
     if throwOnFailure and retcode != 0:
         if throwOnFailure is True:

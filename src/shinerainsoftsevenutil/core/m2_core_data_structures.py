@@ -29,7 +29,7 @@ class PersistedDict:
         
         self.load()
         if keepHandle:
-            self.handle = open(filename, 'w')
+            self.handle = open(filename, 'w') # noqa
             self.persist()
 
     def load(self, encoding='utf-8'):
@@ -91,8 +91,8 @@ class ParsePlus:
             case_sensitive=True):
         try:
             import parse
-        except:
-            raise ImportError('needs "parse" module from pip, https://pypi.org/project/parse/')
+        except Exception as e:
+            raise ImportError('needs "parse" module from pip, https://pypi.org/project/parse/') from e
         
         self.pattern = pattern
         self.case_sensitive = case_sensitive
@@ -256,7 +256,7 @@ class Bucket:
             object.__setattr__(self, key, kwargs[key])
 
     def __repr__(self):
-        return '\n\n\n'.join(('%s=%s'%(ustr(key), ustr(self.__dict__[key])) for key in sorted(self.__dict__)))
+        return '\n\n\n'.join('%s=%s'%(ustr(key), ustr(self.__dict__[key])) for key in sorted(self.__dict__))
 
 class SimpleEnum:
     "simple enum; also blocks modification after creation."
@@ -285,7 +285,6 @@ class SimpleEnum:
 
 class UniqueSentinelForMissingParameter:
     "use as a default parameter where None is a valid input, see pep 661"
-    pass
 
 # endregion
 # region data structure helpers

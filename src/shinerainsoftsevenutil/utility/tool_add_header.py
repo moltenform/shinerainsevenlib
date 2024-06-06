@@ -1,3 +1,5 @@
+# ruff: noqa
+
 # ~ def goAll(root):
 # ~ for f, short in files.recursefiles(root):
 # ~ if files.getext(f) == 'py':
