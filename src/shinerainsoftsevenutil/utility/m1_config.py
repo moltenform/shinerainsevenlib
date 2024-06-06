@@ -1,8 +1,9 @@
-from ..core import *
-from .. import files
+
 import fnmatch as _fnmatch
 import configparser as _configparser
 import os as _os
+from .. import *
+from .. import files
 
 class SrssConfigReader:
     """
@@ -38,11 +39,12 @@ class SrssConfigReader:
         self._schema[sectionName] = schemaData
 
     def _lookupSchemaSection(self, sectionName):
-        for key in self._schema:
+        for key, val in self._schema:
             if _fnmatch.fnmatch(sectionName, key):
-                return self._schema[key]
+                return val
 
         assertTrue(False, 'unknown section name', sectionName)
+        return None
 
     def _lookupSchemaCol(self, sectionName, colName):
         sectionData = self._lookupSchemaSection(sectionName)
@@ -51,6 +53,7 @@ class SrssConfigReader:
                 return sectionData[key]
 
         assertTrue(False, 'unknown column', colName)
+        return None
 
     def _populateDefaultsForAll(self):
         for sectionName in self._schema:
@@ -90,7 +93,7 @@ class SrssConfigReader:
             return val
         colData = self._lookupSchemaCol(sectionName, colName)
         assertTrue(colData, 'unknown col')
-        colType, colDefaultVal = colData
+        colType, _colDefaultVal = colData
         return self.interpretValue(val, colType, context=f'col {colName}')
 
     def interpretValue(self, val, colType, context):
@@ -107,7 +110,7 @@ class SrssConfigReader:
 
     def parseText(self, text):
         # different versions of python have different configparser behavior
-        assertTrue(isPy3OrNewer, 'Py2 not supported')
+        assertTrue(srss.isPy3OrNewer, 'Py2 not supported')
 
         # check expected start
         if self._autoInsertMainSection:
@@ -149,7 +152,7 @@ class SrssConfigReader:
         Find the column that starts with the prefix and
         matches as much of `s` as possible. See tests."""
         section = getattr(self.parsed, sectionName)
-        cols = getObjAttributes(section)
+        cols = srss.getObjAttributes(section)
         cols = [col for col in cols if col.startswith(prefix)]
         results = []
         for col in cols:
@@ -160,6 +163,7 @@ class SrssConfigReader:
 
         if not results:
             return None, None
+        
         results.sort(key=lambda col: len(col))
         return results[-1], getattr(section, results[-1])
 
@@ -176,22 +180,21 @@ class SrssConfigReader:
         else:
             raise ValueError(rf'Expected true or false but got {s}, {context}')
 
-
-_cachedInternalPrefs = None
+_gCachedInternalPrefs = None
 
 def getSsrsInternalPrefs():
-    global _cachedInternalPrefs
-    if not _cachedInternalPrefs:
+    global _gCachedInternalPrefs
+    if not _gCachedInternalPrefs:
         myPath = _os.path.realpath(__file__)
-        dir = files.getParent(files.getParent(myPath))
-        cfgPath = dir + '/shinerainsoftsevenutil.cfg'
+        dirPath = files.getParent(files.getParent(myPath))
+        cfgPath = dirPath + '/shinerainsoftsevenutil.cfg'
         if files.exists(cfgPath):
             configText = files.readAll(cfgPath)
         else:
             configText = ''
 
-        _cachedInternalPrefs = SrssConfigReader()
-        _cachedInternalPrefs.setSchemaForSection(
+        _gCachedInternalPrefs = SrssConfigReader()
+        _gCachedInternalPrefs.setSchemaForSection(
             'main',
             {
                 'tempDirectory': [str, ''],
@@ -201,12 +204,14 @@ def getSsrsInternalPrefs():
                 'softDeleteDirectory_*': [str, ''],
             },
         )
-        _cachedInternalPrefs.parse(configText)
+        _gCachedInternalPrefs.parse(configText)
 
         # it's fine to use tempDirectory if a EphemeralDirectory was not passed in
-        if not _cachedInternalPrefs.parsed.main.tempEphemeralDirectory:
-            _cachedInternalPrefs.parsed.main.tempEphemeralDirectory = (
-                _cachedInternalPrefs.parsed.main.tempDirectory
+        if not _gCachedInternalPrefs.parsed.main.tempEphemeralDirectory:
+            _gCachedInternalPrefs.parsed.main.tempEphemeralDirectory = (
+                _gCachedInternalPrefs.parsed.main.tempDirectory
             )
 
-    return _cachedInternalPrefs
+    return _gCachedInternalPrefs
+
+

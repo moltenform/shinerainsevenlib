@@ -36,11 +36,11 @@ def getInputYesNoCancel(prompt, flushOutput=True):
         if s == 'BRK':
             raise KeyboardInterrupt()
 
-def getInputInt(prompt, min=0, max=0xFFFFFFFF, flushOutput=True):
+def getInputInt(prompt, minVal=0, maxVal=0xFFFFFFFF, flushOutput=True):
     prompt += ' between %d and %d ' % (min, max)
     while True:
         s = getRawInput(prompt, flushOutput).strip()
-        if s.isdigit() and min <= int(s) <= max:
+        if s.isdigit() and minVal <= int(s) <= maxVal:
             return int(s)
         if s == 'BRK':
             raise KeyboardInterrupt()
@@ -143,7 +143,7 @@ def getInputBoolGui(prompt):
 
 def getInputYesNoCancelGui(prompt):
     "Ask yes, no, or cancel. Returns the string chosen."
-    choice, choiceText = getInputFromChoicesGui(prompt, ['Yes', 'No', 'Cancel'])
+    choice, _choiceText = getInputFromChoicesGui(prompt, ['Yes', 'No', 'Cancel'])
     if choice == -1:
         return 'Cancel'
     elif choice == 0:
@@ -163,15 +163,15 @@ def _createTkSimpleDialog():
     root.withdraw()
     return Tkinter, tkSimpleDialog, root
 
-def getInputFloatGui(prompt, default=None, min=0.0, max=100.0, title=''):
+def getInputFloatGui(prompt, default=None, minVal=0.0, maxVal=100.0, title=' '):
     "validated to be an float (decimal number). Returns None on cancel."
-    Tkinter, tkSimpleDialog, root = _createTkSimpleDialog()
+    _Tkinter, tkSimpleDialog, _root = _createTkSimpleDialog()
     options = dict(initialvalue=default) if default is not None else dict()
-    return tkSimpleDialog.askfloat(' ', prompt, minvalue=min, maxvalue=max, **options)
+    return tkSimpleDialog.askfloat(title, prompt, minvalue=minVal, maxvalue=maxVal, **options)
 
 def getInputStringGui(prompt, initialvalue=None, title=' '):
     "returns '' on cancel"
-    Tkinter, tkSimpleDialog, root = _createTkSimpleDialog()
+    _Tkinter, tkSimpleDialog, _root = _createTkSimpleDialog()
     options = dict(initialvalue=initialvalue) if initialvalue else dict()
     s = tkSimpleDialog.askstring(title, prompt, **options)
     return '' if s is None else s

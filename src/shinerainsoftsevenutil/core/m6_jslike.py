@@ -22,6 +22,7 @@ def some(lst, fn):
     # true if fn called on any element returns true, exits early
     return builtins.any(builtins.map(fn, lst))
 
+# pylint: disable-next=redefined-builtin
 def filter(lst, fn):
     # return a list with items where the condition holds
     return [item for item in lst if fn(item)]
@@ -54,6 +55,7 @@ def lastIndexOf(lst, valToFind):
         i -= 1
     return -1
 
+# pylint: disable-next=redefined-builtin
 def map(lst, fn):
     # return a list with fn called on each item
     return list(builtins.map(fn, lst))

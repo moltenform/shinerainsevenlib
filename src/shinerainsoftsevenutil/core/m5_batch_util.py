@@ -18,12 +18,20 @@ class SrssLooper:
             print('found an odd number', number)
     """
 
-    def __init__(self, input):
+    def __init__(self, listOrLambda):
         self._showPercentages = False
         self._pauseEveryNTimes = None
         self._pauseEverySeconds = None
-        self._input = input
-        self._resetState()
+        self._waitUntilValueSeen = None
+        self._input = listOrLambda
+        
+        # reset state
+        self._didMeaningfulWork = True
+        self._currentIter = None
+        self._counter = 0
+        self._countMeaningfulWork = 0
+        self._estimateCount = None
+        self._prevPercentShown = None
 
     def _resetState(self):
         self._didMeaningfulWork = True
@@ -94,20 +102,20 @@ class SrssLooper:
             trace(self._showPercentages, str(percentage) + '%')
 
     @staticmethod
-    def skipForwardUntilTrue(iter, fnWaitUntil):
-        if isinstance(iter, list):
-            iter = (item for item in iter)
+    def skipForwardUntilTrue(itr, fnWaitUntil):
+        if isinstance(itr, list):
+            itr = (item for item in itr)
 
         hasSeen = False
-        for value in iter:
+        for value in itr:
             if not hasSeen and fnWaitUntil(value):
                 hasSeen = True
             if hasSeen:
                 yield value
 
     @staticmethod
-    def countIterable(iter):
-        return sum(1 for item in iter)
+    def countIterable(itr):
+        return sum(1 for item in itr)
 
 class SrssFileIterator:
     """
@@ -189,7 +197,7 @@ class SrssFileIterator:
         return fnIterator
 
     def getCount(self):
-        return SrssLooper.countIterable(self.getIterator())
+        return SrssLooper.countIterable(self._getIterator()())
 
     @staticmethod
     def pathHasThisDirectory(suffix, path):

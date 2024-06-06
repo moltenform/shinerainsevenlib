@@ -95,3 +95,18 @@ indent-style = "space"
 [tool.ruff.lint.per-file-ignores]
 "src/poetry/console/*" = [] 
 
+[tool.pylint.'MESSAGES CONTROL']
+max-line-length = 999
+# C0103 name styles, W0401 wildcard imports, C0116 missing docsstring, C0114 module docstring
+# W0614:unused import, R0911 too many returns R0912 too many branches C0415: import outside top
+# W0611: unused import, R0913 too many args, C0209 fstring C0305 newlines, W0702 bare except:
+# C0115 no docstring, R1705/R1720: unneeded elif, R0902 too many attributes, E0401 import err
+# C1802 ok to say if len(lst), R0914 too many locals, R1735 dict literal, R1737 wants yield from
+# W0603 global ok, R1716 chained ok, W0718: broad exception, W0108 unnecessary lambda (gave false positives)
+# R0903 too few methods, C0303 whitespace
+# E1101 no member... unfortunately need this disabled for Bucket()
+# R0401 cyclic import... consider fixing later
+# R1732 use with to autoclose resources... consider fixing later
+# E1101...
+disable = "C0103,W0401,C0116,C0114, W0614,R0911,R0912,C0415,W0611,R0913,C0209,C0305,W0702,C0115,R1705,R0902,R0903,E0401,C0303,C1802,R1720,R1732,R0401,R0914,R1735,R1737,W0603,R1716,W0718,W0108"
+

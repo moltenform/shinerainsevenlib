@@ -4,8 +4,9 @@
 import sys
 import os
 import shutil
+import enum
 
-from ..core import *
+from .. import *
 
 rename = os.rename
 exists = os.path.exists
@@ -22,7 +23,10 @@ lineSep = os.linesep
 absPath = os.path.abspath
 rmTree = shutil.rmtree
 
-TimeUnits = SimpleEnum(('Milliseconds', 'Seconds', 'Nanoseconds'))
+class TimeUnits(enum.StrEnum):
+    Milliseconds = enum.auto()
+    Seconds = enum.auto()
+    Nanoseconds = enum.auto()
 
 def getParent(path):
     return os.path.split(path)[0]
@@ -34,19 +38,19 @@ def createdTime(path):
     return os.stat(path).st_ctime
 
 def getExt(s, removeDot=True):
-    a, b = splitExt(s)
-    if removeDot and len(b) > 0 and b[0] == '.':
-        return b[1:].lower()
+    _before, after = splitExt(s)
+    if removeDot and len(after) > 0 and after[0] == '.':
+        return after[1:].lower()
     else:
-        return b.lower()
+        return after.lower()
 
 def getWithDifferentExt(s, ext_with_dot):
     parent, short = os.path.split(s)
-    short_before_ext, short_ext = os.path.splitExt(short)
+    short_before_ext, short_ext = splitExt(short)
     assertTrue(short_ext, s)
     if parent:
         with_trailing_slash = s[0 : len(parent) + 1]
-        assertTrue(with_trailing_slash == parent + '/' or with_trailing_slash == parent + '\\')
+        assertTrue(with_trailing_slash in (parent + '/', parent + '\\'))
         return with_trailing_slash + short_before_ext + ext_with_dot
     else:
         return short_before_ext + ext_with_dot
@@ -81,7 +85,7 @@ def ensureEmptyDirectory(d):
     if isDir(d):
         # delete all existing files in the directory
         for s in os.listdir(d):
-            if os.path.isDir(join(d, s)):
+            if isDir(join(d, s)):
                 shutil.rmtree(join(d, s))
             else:
                 os.unlink(join(d, s))
@@ -110,7 +114,7 @@ def copy(
     toSetModTime = None
     if keepSameModifiedTime and exists(destFile):
         assertTrue(isFile(destFile), 'not supported for directories')
-        toSetModTime = getLastModifiedTime(destFile, units=TimeUnits.Nanoseconds)
+        toSetModTime = getLastModTime(destFile, units=TimeUnits.Nanoseconds)
 
     if doTrace:
         trace('copy()', srcFile, destFile)
@@ -131,7 +135,7 @@ def copy(
 
     assertTrue(exists(destFile))
     if toSetModTime:
-        setLastModifiedTime(destFile, toSetModTime, units=TimeUnits.Nanoseconds)
+        setLastModTime(destFile, toSetModTime, units=TimeUnits.Nanoseconds)
 
 def move(
     srcFile,
@@ -190,7 +194,7 @@ def _copyFileWin(srcFile, destFile, overwrite):
         err = GetLastError()
         raise OSFileRelatedError(
             f'CopyFileW failed ({_winErrs.get(err, "unknown")}) err={err} ' +
-            getPrintable(srcFile + '->' + destFile)
+            srss.getPrintable(srcFile + '->' + destFile)
         )
 
 def _moveFileWin(srcFile, destFile, overwrite, warnBetweenDrives):
@@ -206,14 +210,15 @@ def _moveFileWin(srcFile, destFile, overwrite, warnBetweenDrives):
         if _winErrs.get(err) == 'Different drives' and warnBetweenDrives:
             alert(
                 'Note: moving file from one drive to another. ' +
-                getPrintable(srcFile + '->' + destFile)
+                srss.getPrintable(srcFile + '->' + destFile)
             )
             return _moveFileWin(srcFile, destFile, overwrite, warnBetweenDrives=False)
 
         raise OSFileRelatedError(
             f'MoveFileExW failed ({_winErrs.get(err, "unknown")}) err={err} ' +
-            getPrintable(srcFile + '->' + destFile)
+            srss.getPrintable(srcFile + '->' + destFile)
         )
+    return None
 
 def _copyFilePosix(srcFile, destFile, overwrite):
     if overwrite:
@@ -250,7 +255,7 @@ def _getStatTime(path, key_ns, key_s, units):
     else:
         raise ValueError('unknown unit')
 
-def getLastModifiedTime(path, units=TimeUnits.Seconds):
+def getLastModTime(path, units=TimeUnits.Seconds):
     return _getStatTime(path, 'st_mtime_ns', 'st_mtime', units)
 
 def getCTime(path, units=TimeUnits.Seconds):
@@ -259,7 +264,7 @@ def getCTime(path, units=TimeUnits.Seconds):
 def getATime(path, units=TimeUnits.Seconds):
     return _getStatTime(path, 'st_atime_ns', 'st_atime', units)
 
-def setLastModifiedTime(path, newVal, units=TimeUnits.Seconds):
+def setLastModTime(path, newVal, units=TimeUnits.Seconds):
     if units == TimeUnits.Nanoseconds:
         newVal = int(newVal)
     elif units == TimeUnits.Milliseconds:
@@ -288,28 +293,28 @@ def writeAll(
         encoding = 'utf-8'
 
     if skipIfSameContent and isFile(path):
-        assertTrue(mode == 'w' or mode == 'wb')
+        assertTrue(mode in ('w', 'wb'))
         currentContent = readAll(path, mode=mode.replace('w', 'r'), encoding=encoding)
         if currentContent == txt:
             if updateTimeIfSameContent:
-                setLastModifiedTime(path, getNowAsMillisTime(), units=TimeUnits.Milliseconds)
+                setLastModTime(path, srss.getNowAsMillisTime(), units=TimeUnits.Milliseconds)
             return False
 
     with open(path, mode, encoding=encoding) as f:
         f.write(txt)
         return True
 
-def isEmptyDir(dir):
-    return len(os.listdir(dir)) == 0
+def isEmptyDir(dirPath):
+    return len(os.listdir(dirPath)) == 0
 
 def getDirectorySizeRecurse(
-    dir, followSymlinks=False, fnFilterDirs=None, fnDirectExceptionsTo=None
+    dirPath, followSymlinks=False, fnFilterDirs=None, fnDirectExceptionsTo=None
 ):
     from .m2_files_listing import recurseFileInfo
 
     total = 0
     for obj in recurseFileInfo(
-        dir,
+        dirPath,
         followSymlinks=followSymlinks,
         fnFilterDirs=fnFilterDirs,
         fnDirectExceptionsTo=fnDirectExceptionsTo,

@@ -63,7 +63,7 @@ class Store:
                     % (int(self.currentSchemaVersionNumber()), got)
                 )
         except:
-            if 'SQLError: no such table:' in str(getCurrentException()):
+            if 'SQLError: no such table:' in str(srss.getCurrentException()):
                 raise StoreException(
                     '\n\nSchema version table not found, maybe this is a 0kb empty db. Please delete the db and try again.'
                 )

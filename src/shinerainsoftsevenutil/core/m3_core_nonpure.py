@@ -28,7 +28,7 @@ def _getClipboardTextTk():
         r = Tk()
         r.withdraw()
         s = r.clipboard_get()
-    except BaseException as e:
+    except Exception as e:
         if "selection doesn't exist" in str(e):
             s = ''
         else:
@@ -78,9 +78,9 @@ def DBG(obj=None):
                 not inspect.ismodule(framelocals[key])
             ):
                 newDict[key] = framelocals[key]
-        _pprint._pprint(newDict)
+        _pprint.pprint(newDict)
     else:
-        _pprint._pprint(obj)
+        _pprint.pprint(obj)
 
 def _dbgHookCallback(exctype, value, traceback):
     DBG()
@@ -99,11 +99,11 @@ def registerDebughook(b=True):
 # endregion
 # region rng helpers
 
-def getRandomString(max=1000 * 1000, hex=False):
-    if hex:
+def getRandomString(maxVal=1000 * 1000, asHex=False):
+    if asHex:
         return genUuid().split('-')[0]
     else:
-        return '%s' % _random.randrange(max)
+        return '%s' % _random.randrange(maxVal)
 
 def genUuid(asBase64=False):
     import base64
@@ -137,7 +137,7 @@ class IndependentRNG:
         self.keep_outside_state = _random.getstate()
         _random.setstate(self.state)
 
-    def __exit__(self, type, value, traceback):
+    def __exit__(self, _type, value, traceback):
         if not self.entered:
             return
 
@@ -180,6 +180,7 @@ def softDeleteFile(path, allowDirs=False, doTrace=False):
             trace(f'softDeleteFile |on| {path}')
 
         send2trash(path)
+        return '<sent-to-trash>'
     else:
         if doTrace:
             trace(f'softDeleteFile |on| {path} |to| {newPath}')
@@ -214,7 +215,7 @@ def getSoftDeleteDir(path):
     from .. import utility
 
     prefs = utility.m1_config.getSsrsInternalPrefs()
-    k, v = prefs.findKeyForPath(path, 'softDeleteDirectory_')
+    _k, v = prefs.findKeyForPath(path, 'softDeleteDirectory_')
     if not v:
         v = prefs.parsed.main.softDeleteDirectory
         if not v:
@@ -223,7 +224,7 @@ def getSoftDeleteDir(path):
     assertTrue(files.isDir(v), 'not a directory', v)
     return v
 
-def getSoftTempDir(path=''):
+def getSoftTempDir(_path=''):
     from .. import files
     from .. import utility
 

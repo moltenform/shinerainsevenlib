@@ -4,9 +4,9 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "lint",
+            "label": "pylint lint",
             "type": "shell",
-            "command": "D:\\OnlyHere\\devkits\\Python64_312\\Scripts\\ruff check",
+            "command": "D:\\OnlyHere\\devkits\\Python64_312\\python tools\\internal-ruff.py pylint",
             "problemMatcher": [],
             "group": {
                 "kind": "build",
@@ -16,9 +16,30 @@
             },
         },
         {
-            "label": "lint-and-fix",
+            "label": "ruff lint",
             "type": "shell",
-            "command": "D:\\OnlyHere\\devkits\\Python64_312\\python tools\\internal-ruff.py",
+            "command": "D:\\OnlyHere\\devkits\\Python64_312\\Scripts\\ruff check .\\src",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },"options": {
+                "cwd": "${workspaceFolder}"
+            },
+        },
+        {
+            "label": "ruff lint-and-fix",
+            "type": "shell",
+            "command": "D:\\OnlyHere\\devkits\\Python64_312\\python tools\\internal-ruff.py ruff",
+            "problemMatcher": [],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+        },
+        {
+            "label": "tests",
+            "type": "shell",
+            "command": "D:\\OnlyHere\\devkits\\Python64_312\\python -m pytest .\\tests --maxfail=1",
             "problemMatcher": [],
             "options": {
                 "cwd": "${workspaceFolder}"

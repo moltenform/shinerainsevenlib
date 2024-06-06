@@ -18,22 +18,40 @@ def cleanupAfterRuff(path):
     txt = re.sub(r'\n (  +)\bor\b', r' or\n\1', txt)
     files.writeAll(path, txt)
 
-def cleanupAfterRuffAll(dir):
-    for f, short in files.recurseFiles(dir):
+def cleanupAfterRuffAll(dirPath):
+    for f, short in files.recurseFiles(dirPath):
         if short.lower().endswith('.py'):
             cleanupAfterRuff(f)
 
-def go():
+def goRuff():
     files.run([
         "D:\\OnlyHere\\devkits\\Python64_312\\Scripts\\ruff",
         "format",
         "src\\shinerainsoftsevenutil",
-        #~ "src\\shinerainsoftsevenutil\\core\\m1_core_util.py"
     ])
-    #~ cleanupAfterRuff("src\\shinerainsoftsevenutil\\core\\m1_core_util.py")
-    #~ cleanupAfterRuff("src\\shinerainsoftsevenutil\\core\\m1_core_util.py")
     cleanupAfterRuffAll("src\\shinerainsoftsevenutil")
 
+def goPylint():
+    retcode, stdout, stderr = files.run([
+        "D:\\OnlyHere\\devkits\\Python64_312\\python",
+        "-m",
+        "pylint",
+        "src\\shinerainsoftsevenutil",
+    ], throwOnFailure=False)
+    stdout = stdout.decode('utf-8')
+    lines = stdout.replace('\r\n', '\n').split('\n')
+    for line in lines:
+        if " E1101: Instance of 'Bucket' " in line:
+            pass
+        else:
+            print(line)
+
 if __name__ == '__main__':
-    go()
+    if 'ruff' in sys.argv:
+        goRuff()
+    elif 'pylint' in sys.argv:
+        goPylint()
+    else:
+        assertTrue(False, 'please specfiy ruff or pylint')
+
 

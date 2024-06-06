@@ -45,8 +45,6 @@ def assertWarnEq(expected, received, *messageArgs):
     from . import m4_core_ui
 
     if expected != received:
-        import pprint as _pprint
-
         msg = ' '.join(map(str, messageArgs)) if messageArgs else ''
         msg += '\nexpected:\n'
         msg += _pprint.pformat(expected)
@@ -71,8 +69,8 @@ def assertEqArray(expected, received):
         expected = expected.split('|')
 
     assertEq(len(expected), len(received))
-    for i in range(len(expected)):
-        assertEq(repr(expected[i]), repr(received[i]))
+    for i, expectedVal in enumerate(expected):
+        assertEq(repr(expectedVal), repr(received[i]))
 
 def assertException(fn, excType, excTypeExpectedString=None, msg='', regexp=False):
     "expect fn to throw"
@@ -171,7 +169,7 @@ def renderMillisTimeStandard(millisTime):
 
 def getNowAsMillisTime():
     "gets the number of milliseconds past epoch (unix _time * 1000)"
-    t = _time._time()
+    t = _time.time()
     return int(t * 1000)
 
 class EnglishDateParserWrapper:
@@ -246,22 +244,20 @@ def reReplace(haystack, reNeedle, replace):
     return _re.sub(reNeedle, replace, haystack)
 
 
-"""
-cliffnotes documentation of _re module included here for convenience:
-_re.search(pattern, string, flags=0)
-    look for at most one match starting anywhere
-
-_re.match(pattern, string, flags=0)
-    look for match starting only at beginning of string
-
-_re.findall(pattern, string, flags=0)
-    returns list of strings
-
-_re.finditer(pattern, string, flags=0)
-    returns iterator of match objects
-
-flags include _re.IGNORECASE, _re.MULTILINE, _re.DOTALL
-"""
+# cliffnotes documentation of _re module included here for convenience:
+# _re.search(pattern, string, flags=0)
+#     look for at most one match starting anywhere
+# 
+# _re.match(pattern, string, flags=0)
+#     look for match starting only at beginning of string
+# 
+# _re.findall(pattern, string, flags=0)
+#     returns list of strings
+# 
+# _re.finditer(pattern, string, flags=0)
+#     returns iterator of match objects
+# 
+# flags include _re.IGNORECASE, _re.MULTILINE, _re.DOTALL
 
 def truncateWithEllipsis(s, maxLength):
     if len(s) <= maxLength:
@@ -364,7 +360,7 @@ def toValidFilename(pathOrig, dirsepOk=False, maxLen=None):
 
     if maxLen and len(result) > maxLen:
         assertTrue(maxLen > 1)
-        ext = _os.path.splitExt(path)[1]
+        ext = _os.path.splitext(path)[1]
         beforeExt = path[0 : -len(ext)]
         while len(result) > maxLen:
             result = beforeExt + ext
@@ -414,14 +410,7 @@ def getClassNameFromInstance(obj):
 
 
 if _sys.version_info[0] >= 2:
-    'inspired by mutagen/_compat.py'
-    from io import StringIO
-
-    StringIO = StringIO
-    from io import BytesIO
-
-    cBytesIO = BytesIO
-
+    # inspired by mutagen/_compat.py
     def endsWith(a, b):
         # use with either str or bytes
         if isinstance(a, str):
@@ -459,6 +448,6 @@ if _sys.version_info[0] >= 2:
     xrange = range
     isPy3OrNewer = True
 else:
-    raise Exception('We no longer support python 2')
+    raise NotImplementedError('We no longer support python 2')
 
 # endregion

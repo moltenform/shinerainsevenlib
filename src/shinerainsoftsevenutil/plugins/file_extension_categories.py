@@ -557,6 +557,7 @@ def extensionPossiblyExecutable(s):
     """Returns 'exe' if it looks executable,
     Returns 'warn' if it is a document type that can include embedded scripts,
     Returns False otherwise"""
+    # pylint: disable-next=no-name-in-module
     from .. import files
 
     ext = files.getExt(s, False)

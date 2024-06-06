@@ -20,22 +20,24 @@ else:
     def listChildren(*args, **kwargs):
         return sorted(_listChildrenUnsorted(*args, **kwargs))
 
+# pylint: disable-next=inconsistent-return-statements
 def listDirs(path, *, filenamesOnly=False, allowedExts=None, recurse=False):
     "Return directories within a directory"
     if recurse:
         return recurseDirs(
-            path, filenamesOnly=filenamesOnly, allowedExts=allowedExts, recurse=recurse
+            path, filenamesOnly=filenamesOnly,
         )
 
     for full, name in listChildren(path, allowedExts=allowedExts):
         if os.path.isdir(full):
             yield name if filenamesOnly else (full, name)
 
+# pylint: disable-next=inconsistent-return-statements
 def listFiles(path, *, filenamesOnly=False, allowedExts=None, recurse=False):
     "Return files within a directory"
     if recurse:
         return recurseFiles(
-            path, filenamesOnly=filenamesOnly, allowedExts=allowedExts, recurse=recurse
+            path, filenamesOnly=filenamesOnly, allowedExts=allowedExts
         )
 
     for full, name in listChildren(path, allowedExts=allowedExts):
@@ -59,7 +61,7 @@ def recurseFiles(
 
     for dirPath, dirNames, fileNames in os.walk(root, topdown=topDown, followlinks=followSymlinks):
         if fnFilterDirs:
-            filteredDirs = [dir for dir in dirNames if fnFilterDirs(join(dirPath, dir))]
+            filteredDirs = [dirPath for dirPath in dirNames if fnFilterDirs(join(dirPath, dirPath))]
             dirNames[:] = filteredDirs
 
         if includeFiles:
@@ -74,7 +76,7 @@ def recurseFiles(
             yield getName(dirPath) if filenamesOnly else (dirPath, getName(dirPath))
 
 def recurseDirs(
-    root, *, filenamesOnly=False, fnFilterDirs=None, topdown=True, followSymlinks=False
+    root, *, filenamesOnly=False, fnFilterDirs=None, topDown=True, followSymlinks=False
 ):
     """Return directories within a directory (recursively).
     You can provide a fnFilterDirs to filter out any directories not to traverse into."""
@@ -84,7 +86,7 @@ def recurseDirs(
         fnFilterDirs=fnFilterDirs,
         includeFiles=False,
         includeDirs=True,
-        topdown=topdown,
+        topDown=topDown,
         followSymlinks=followSymlinks,
     )
 
@@ -110,7 +112,7 @@ class FileInfoEntryWrapper:
     def mtime(self):
         return self.obj.stat().st_mtime
 
-    def getLastModifiedTime(self, units=TimeUnits.Seconds):
+    def getLastModTime(self, units=TimeUnits.Seconds):
         mtime = self.obj.stat().st_mtime
 
         if units == TimeUnits.Nanoseconds:
@@ -161,7 +163,7 @@ def recurseFileInfo(
                     ):
                         yield subentry
                 except:
-                    e = getCurrentException()
+                    e = srss.getCurrentException()
                     if fnDirectExceptionsTo and isinstance(e, OSError):
                         fnDirectExceptionsTo(entry.path, e)
                     else:

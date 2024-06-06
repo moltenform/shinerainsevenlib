@@ -29,9 +29,10 @@ def openDirectoryInExplorer(path):
                 return
         raise RuntimeError('unable to open directory.')
 
-def openUrl(url, filter=True):
+def openUrl(url, filterChars=True):
     import webbrowser
 
+    prefix = None
     if url.startswith('http://'):
         prefix = 'http://'
     elif url.startswith('https://'):
@@ -40,7 +41,7 @@ def openUrl(url, filter=True):
         # block potentially risky file:// links
         assertTrue(False, 'url did not start with http')
 
-    if filter:
+    if filterChars:
         url = url[len(prefix) :]
         url = url.replace('%', '%25')
         url = url.replace('&', '%26')
@@ -158,7 +159,7 @@ def _computeHashImpl(f, hasher, buffersize=defaultBufSize):
 
 def windowsUrlFileGet(path):
     "extract the url from a windows .url file"
-    assertEq('.url', os.path.splitExt(path)[1].lower())
+    assertEq('.url', splitExt(path)[1].lower())
     s = readAll(path, mode='r')
     lines = s.split('\n')
     for line in lines:
@@ -317,6 +318,6 @@ def run(
             '\nstderr was ' +
             str(stderr)
         )
-        raise throwOnFailure(getPrintable(exceptionText))
+        raise throwOnFailure(srss.getPrintable(exceptionText))
 
     return retcode, stdout, stderr

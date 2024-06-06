@@ -3,6 +3,8 @@
 
 import os as _os
 import json as _json
+import enum as _enum
+
 from .m1_core_util import *
 
 # region simple persistence
@@ -29,7 +31,7 @@ class PersistedDict:
 
         self.load()
         if keepHandle:
-            self.handle = open(filename, 'w')  # noqa
+            self.handle = open(filename, 'w', encoding='utf-8')  # noqa
             self.persist()
 
     def load(self, encoding='utf-8'):
@@ -103,6 +105,9 @@ class ParsePlus:
         self.case_sensitive = case_sensitive
         self.extra_types = extra_types if extra_types else {}
         self.escapeSequences = escapeSequences if escapeSequences else []
+        self.spans = None
+        self.getTotalSpan = None
+        self._escapeSequencesMap = None
         if 'NoNewlines' in pattern:
 
             @parse.with_pattern(r'[^\r\n]+')
@@ -157,8 +162,8 @@ class ParsePlus:
         return sTransformed
 
     def _unreplaceEscapeSequences(self, s):
-        for key in self._escapeSequencesMap:
-            s = s.replace(key, self._escapeSequencesMap[key])
+        for key, val in self._escapeSequencesMap.items():
+            s = s.replace(key, val)
         return s
 
     def _resultToMyResult(self, parseResult, s):
@@ -167,13 +172,13 @@ class ParsePlus:
             return parseResult
 
         ret = Bucket()
-        lenS = len(s)
+        lengthOfString = len(s)
         for name in parseResult.named:
             val = self._unreplaceEscapeSequences(parseResult.named[name])
             setattr(ret, name, val)
 
         ret.spans = parseResult.spans
-        ret.getTotalSpan = lambda: self._getTotalSpan(parseResult, lenS)
+        ret.getTotalSpan = lambda: self._getTotalSpan(parseResult, lengthOfString)
         return ret
 
     def _getTotalSpan(self, parseResult, lenS):
@@ -251,7 +256,7 @@ class ParsePlus:
         "example: <title>{title}</title>"
         from . import m6_jslike
 
-        results = list(self.findall(s))
+        results = list(self.findAll(s))
         if allowOnlyOnce and len(results) > 1:
             raise RuntimeError('we were told to allow pattern only once.')
         if len(results):
@@ -286,8 +291,8 @@ class Bucket:
     these days types.SimpleNamespace does nearly the same thing."""
 
     def __init__(self, **kwargs):
-        for key in kwargs:
-            object.__setattr__(self, key, kwargs[key])
+        for key, val in kwargs:
+            object.__setattr__(self, key, val)
 
     def __repr__(self):
         return '\n\n\n'.join(
@@ -296,9 +301,7 @@ class Bucket:
 
 class SimpleEnum:
     "simple enum; also blocks modification after creation."
-
     _set = None
-
     def __init__(self, listStart):
         assertTrue(not isinstance(listStart, anystringtype))
         self._set = set(listStart)
@@ -320,6 +323,19 @@ class SimpleEnum:
     def __delattr__(self, name):
         raise RuntimeError
 
+class _EnumExampleInt(_enum.Enum):
+    first = _enum.auto()
+    second = _enum.auto()
+    third = _enum.auto()
+
+class _EnumExampleStr(_enum.StrEnum):
+    first = _enum.auto()
+    second = _enum.auto()
+    third = _enum.auto()
+
+assertEq(1, _EnumExampleInt.first.value)
+assertEq('first', _EnumExampleStr.first)
+
 class UniqueSentinelForMissingParameter:
     "use as a default parameter where None is a valid input, see pep 661"
 
@@ -339,11 +355,11 @@ def takeBatchOnArbitraryIterable(iterable, size):
     "yield successive n-sized chunks from a list"
     import itertools
 
-    it = iter(iterable)
-    item = list(itertools.islice(it, size))
+    itr = iter(iterable)
+    item = list(itertools.islice(itr, size))
     while item:
         yield item
-        item = list(itertools.islice(it, size))
+        item = list(itertools.islice(itr, size))
 
 def takeBatch(itr, n):
     "get successive n-sized chunks from a list, like javascript's _.chunk"
@@ -417,12 +433,13 @@ def BoundedMemoize(fn, limit=20):
         except KeyError:
             result = fn(*args, **kwargs)
             cache[key] = result
-            if len(cache) > memoizeWrapper._limit:
+            # pylint: disable-next=protected-access
+            if len(cache) > memoizeWrapper.limit:
                 cache.popitem(False)  # the false means to remove as FIFO
             return result
 
-    memoizeWrapper._limit = limit
-    memoizeWrapper._cache = cache
+    memoizeWrapper.limit = limit
+    memoizeWrapper.cache = cache
     if isPy3OrNewer:
         memoizeWrapper.__name__ = fn.__name__
     else:
@@ -451,7 +468,7 @@ def compareTwoListsAsSets(l1, l2, transformFn1=None, transformFn2=None):
 
 def expectEqualityTwoListsAsSets(l1, l2, transformFn1=None, transformFn2=None):
     "display differences between two lists of strings"
-    result = compareTwoListsAsSets(l1, l2, transformFn1=None, transformFn2=None)
+    result = compareTwoListsAsSets(l1, l2, transformFn1=transformFn1, transformFn2=transformFn2)
     if len(result.extraItems):
         trace('Extra items seen in list 1:', result.extraItems)
         return False
@@ -477,7 +494,7 @@ def mergeDictIntoBucket(bucketConfigs, dictParams, disallowNewKeys=True):
     validKeys = set(dir(bucketConfigs))
     for key in dictParams:
         if disallowNewKeys and not (key in validKeys and not key.startswith('_')):
-            raise Exception('not a supported config:', key)
+            raise RuntimeError('not a supported config:', key)
         else:
             setattr(bucketConfigs, key, dictParams[key])
 

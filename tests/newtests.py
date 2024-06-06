@@ -29,7 +29,7 @@ if False:
         'softDeleteDirectoryAll' : [str, ''],
         'softDeleteDirectory_*' : [str, ''],})
 
-    input = r'''
+    input3 = r'''
     tempEphemeralDirectory=G:\data\local\temp
     tempDirectory=D:\data\local\temp
     softDeleteDirectoryAll=D:\data\local\trash
@@ -38,7 +38,7 @@ if False:
     th1
     warnSoftDeleteBetweenDrives=1
     '''
-    config.parseText(input)
+    config.parseText(input3)
     print(config.parsed.main.tempEphemeralDirectory)
     print(config.parsed.main.softDeleteDirectory_aColonBackslash)
     print(config.parsed.main.warnSoftDeleteBetweenDrives)
