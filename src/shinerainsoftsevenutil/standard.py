@@ -1,4 +1,7 @@
 
+# shinerainsoftsevenutil (Ben Fisher, moltenform.com)
+# Released under the LGPLv3 License
+
 # don't add these broad imports to __init__.py, otherwise a module in
 # a directory that imported ..otherdir would bring in the entire project.
 
@@ -17,5 +20,4 @@ from .plugins import plugin_compression as SrssCompression
 from .plugins import plugin_imageutil as SrssImageUtil
 from .plugins import plugin_fileexts as SrssFileExts
 from . import files
-
 

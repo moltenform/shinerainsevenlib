@@ -1,4 +1,6 @@
 
+# shinerainsoftsevenutil (Ben Fisher, moltenform.com)
+# Released under the LGPLv3 License
 
 import sys
 sys.path.append('src')
@@ -57,5 +59,4 @@ if __name__ == '__main__':
         goPylint()
     else:
         assertTrue(False, 'please specfiy ruff or pylint')
-
 

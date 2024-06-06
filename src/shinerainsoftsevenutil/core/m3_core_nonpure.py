@@ -1,5 +1,6 @@
 
-
+# shinerainsoftsevenutil (Ben Fisher, moltenform.com)
+# Released under the LGPLv3 License
 
 import pprint as _pprint
 import random as _random
@@ -60,7 +61,6 @@ def _setClipboardTextPyperclip(s):
 
     pyperclip.copy(s)
 
-
 # endregion
 # region debugging
 
@@ -95,7 +95,6 @@ def registerDebughook(b=True):
         _sys.excepthook = _dbgHookCallback
     else:
         _sys.excepthook = _sys.__excepthook__
-
 
 # endregion
 # region rng helpers
@@ -174,7 +173,6 @@ def softDeleteFile(path, allowDirs=False, doTrace=False):
         )
         return newPath
 
-
 cUseOSTrash = UniqueSentinelForMissingParameter()
 
 def getSoftDeleteDir(path):
@@ -211,7 +209,6 @@ def getSoftTempDir(_path=''):
     assertTrue(_os.path.isdir(v), 'not a directory', v)
     return v
 
-
 _rngForSoftDeleteFile = IndependentRNG()
 
 def getSoftDeleteFullPath(path):
@@ -232,7 +229,6 @@ def getSoftDeleteFullPath(path):
     assertTrue(not files.exists(newPath), 'already exists', newPath)
 
     return newPath
-
 
 # endregion
 # region other helpers
@@ -258,6 +254,5 @@ def startThread(fn, args=None):
 
     t = threading.Thread(target=fn, args=args)
     t.start()
-
 
 # endregion

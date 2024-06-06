@@ -1,5 +1,6 @@
 
-
+# shinerainsoftsevenutil (Ben Fisher, moltenform.com)
+# Released under the LGPLv3 License
 
 import os
 from .m1_files_wrappers import *
@@ -9,7 +10,6 @@ def _listChildrenUnsorted(path, *, filenamesOnly=False, allowedExts=None):
     for filename in os.listdir(path):
         if not allowedExts or getExt(filename) in allowedExts:
             yield filename if filenamesOnly else (path + os.path.sep + filename, filename)
-
 
 if sys.platform.startswith('win'):
     exeSuffix = '.exe'

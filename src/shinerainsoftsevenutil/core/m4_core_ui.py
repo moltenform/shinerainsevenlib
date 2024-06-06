@@ -1,5 +1,6 @@
 
-
+# shinerainsoftsevenutil (Ben Fisher, moltenform.com)
+# Released under the LGPLv3 License
 
 import sys as _sys
 import os as _os
@@ -98,14 +99,12 @@ def getRawInput(prompt, flushOutput=True):
     assertTrue(_sys.version_info[0] >= 3)
     return input(getPrintable(''))
 
-
 # endregion
 # region user messages
 
 def err(*args):
     s = ' '.join(map(getPrintable, args))
     raise RuntimeError('fatal error\n' + getPrintable(s))
-
 
 gRedirectAlertCalls = _types.SimpleNamespace()
 gRedirectAlertCalls.fnHook = None
@@ -130,7 +129,6 @@ def warn(*args, flushOutput=True, always=False):
         trace('warning\n' + getPrintable(s))
         if not getInputBool('continue?', flushOutput):
             raise RuntimeError('user chose not to continue after warning')
-
 
 # endregion
 # region using tk gui
@@ -280,7 +278,6 @@ def getSaveFileGui(initialdir=None, types=None, title='Save As'):
 
     return _getFileDialogGui(tkFileDialog.asksaveasfilename, initialdir, types, title)
 
-
 _gDirectoryHistory = {}
 
 def _getFileDialogGui(fn, initialdir, types, title, directoryHistory=None):
@@ -302,7 +299,6 @@ def _getFileDialogGui(fn, initialdir, types, title, directoryHistory=None):
             directoryHistory[repr(types)] = _os.path.split(result)[0]
 
     return result
-
 
 # endregion
 

@@ -1,5 +1,7 @@
-# BenPythonCommon,
-# 2015 Ben Fisher, released under the LGPLv3 license.
+
+# shinerainsoftsevenutil (Ben Fisher, moltenform.com)
+# Released under the LGPLv3 License
+
 # ruff: noqa
 
 import pytest

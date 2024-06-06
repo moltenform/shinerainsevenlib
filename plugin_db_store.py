@@ -1,3 +1,7 @@
+
+# shinerainsoftsevenutil (Ben Fisher, moltenform.com)
+# Released under the LGPLv3 License
+
 # ruff: noqa
 
 # db_store, a simple database abstraction layer

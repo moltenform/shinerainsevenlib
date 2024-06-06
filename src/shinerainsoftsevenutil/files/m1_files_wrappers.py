@@ -1,5 +1,6 @@
 
-
+# shinerainsoftsevenutil (Ben Fisher, moltenform.com)
+# Released under the LGPLv3 License
 
 import sys
 import os
@@ -177,7 +178,6 @@ def move(
         os.unlink(srcFile)
 
     assertTrue(exists(destFile))
-
 
 _winErrs = {
     3: 'Path not found',

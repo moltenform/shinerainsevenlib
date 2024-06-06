@@ -1,5 +1,8 @@
-# ruff: noqa
 
+# shinerainsoftsevenutil (Ben Fisher, moltenform.com)
+# Released under the LGPLv3 License
+
+# ruff: noqa
 
 assertTrue(not srss.SrssFileIterator.pathHasThisDirectory('node_modules', ''))
 assertTrue(not srss.SrssFileIterator.pathHasThisDirectory('node_modules', 'abcd'))
@@ -15,8 +18,6 @@ for SEP in ('/', '\\'):
     assertTrue(srss.SrssFileIterator.pathHasThisDirectory('node_modules', f'a{SEP}node_modules{SEP}b'))
     assertTrue(srss.SrssFileIterator.pathHasThisDirectory('node_modules', f'a{SEP}node_modules{SEP}'))
     assertTrue(srss.SrssFileIterator.pathHasThisDirectory('node_modules', f'a{SEP}node_modules'))
-
-
 
 #~ for i in range(ord('a'), ord('z')+1):
     #~ print(rf"softDeleteDirectory_{chr(i)}ColonBackslash={chr(i).upper()}:\data\local\trash")
@@ -66,7 +67,6 @@ if False:
 
         def __exit__(self, exc_type, _exc_val, _exc_tb):
             print('exiting SampleContextManager')
-
 
     from contextlib import ExitStack
     with ExitStack() as cleanupTasks:

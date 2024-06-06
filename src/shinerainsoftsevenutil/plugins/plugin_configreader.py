@@ -1,4 +1,7 @@
 
+# shinerainsoftsevenutil (Ben Fisher, moltenform.com)
+# Released under the LGPLv3 License
+
 import fnmatch as _fnmatch
 import configparser as _configparser
 import os as _os
@@ -224,5 +227,4 @@ def getSsrsInternalPrefs():
             )
 
     return _gCachedInternalPrefs
-
 

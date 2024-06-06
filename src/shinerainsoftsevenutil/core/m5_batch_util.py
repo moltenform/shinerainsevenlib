@@ -1,3 +1,7 @@
+
+# shinerainsoftsevenutil (Ben Fisher, moltenform.com)
+# Released under the LGPLv3 License
+
 import time as _time
 import os as _os
 import re as _re

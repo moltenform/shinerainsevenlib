@@ -1,5 +1,6 @@
 
-
+# shinerainsoftsevenutil (Ben Fisher, moltenform.com)
+# Released under the LGPLv3 License
 
 import os as _os
 import sys as _sys
@@ -116,7 +117,6 @@ class shinerainsoftsevenutilError(RuntimeError):
         combined = ' '.join(str(arg) for arg in args)
         super().__init__(combined)
 
-
 # endregion
 # region trace helpers
 
@@ -132,7 +132,6 @@ def getPrintable(s, okToIgnore=False):
         return s.encode('ascii', 'ignore').decode('ascii')
     else:
         return s.encode('ascii', 'replace').decode('ascii')
-
 
 gRedirectTraceCalls = _types.SimpleNamespace()
 gRedirectTraceCalls.fnHook = None
@@ -152,7 +151,6 @@ def tracep(*args, always=False):
         gRedirectTraceCalls.fnHook(*args)
     else:
         print(' '.join(map(_pprint.pformat, args)))
-
 
 # endregion
 # region _time helpers
@@ -224,7 +222,6 @@ class EnglishDateParserWrapper:
         assertTrue(dt, 'not parse dt', s)
         return int(dt.timestamp() * 1000)
 
-
 # endregion
 # region string helpers
 
@@ -242,7 +239,6 @@ def reReplaceWholeWord(haystack, needle, replace):
 
 def reReplace(haystack, reNeedle, replace):
     return _re.sub(reNeedle, replace, haystack)
-
 
 # cliffnotes documentation of _re module included here for convenience:
 # _re.search(pattern, string, flags=0)
@@ -281,7 +277,6 @@ def formatSize(n):
     else:
         return '%db' % n
 
-
 # endregion
 # region type conversion helpers
 
@@ -314,7 +309,6 @@ def parseFloatOrFallback(s, fallBack=None):
 def clampNumber(value, minValue, maxValue):
     return max(minValue, min(value, maxValue))
 
-
 # endregion
 # region flow helpers
 
@@ -327,7 +321,6 @@ def runAndCatchException(fn):
         return result, None
     except:
         return None, getCurrentException()
-
 
 # endregion
 # region ascii char helpers
@@ -401,7 +394,6 @@ def containsNonAscii(s):
     withoutAscii = replaceNonAsciiWith(s, '')
     return len(s) != len(withoutAscii)
 
-
 # endregion
 # region object helpers and wrappers
 
@@ -410,7 +402,6 @@ def getObjAttributes(obj):
 
 def getClassNameFromInstance(obj):
     return obj.__class__.__name__
-
 
 if _sys.version_info[0] >= 2:
     # inspired by mutagen/_compat.py

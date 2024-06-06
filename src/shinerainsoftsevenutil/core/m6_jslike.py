@@ -1,5 +1,6 @@
 
-
+# shinerainsoftsevenutil (Ben Fisher, moltenform.com)
+# Released under the LGPLv3 License
 
 try:
     import builtins
@@ -63,7 +64,6 @@ def map(lst, fn):
 def times(n, fn):
     # return a list with n items, values from calling fn
     return [fn() for _ in range(n)]
-
 
 _notProvided = _m5_batch_util.UniqueSentinelForMissingParameter()
 

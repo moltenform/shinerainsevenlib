@@ -1,4 +1,7 @@
 
+# shinerainsoftsevenutil (Ben Fisher, moltenform.com)
+# Released under the LGPLv3 License
+
 from .. import files
 from .. import core as srss
 from ..core import alert, warn, trace, assertTrue, assertEq, tracep, softDeleteFile, getRandomString, jslike, Bucket
@@ -32,7 +35,6 @@ imageExtensions = {
     '.psd': 1,
     '.bmp': 1,
 }
-
 
 vidExtensions = {
     '.webm': 1,  # section
@@ -70,7 +72,6 @@ vidExtensions = {
     '.3gp': 1,
     '.3g2': 1,
 }
-
 
 audExtensions = {
     '.flac': 1,  # section
@@ -128,7 +129,6 @@ audExtensions = {
     '.cda': 1,
     '.8svx': 1,
 }
-
 
 archiveExtensions = {
     '.ar': 1,  # section
@@ -405,8 +405,6 @@ moreNonTextual = {
     '.dat': 1,
 }
 
-
-
 documentExtensions = {
     '.docx': 1,
     '.doc': 1,
@@ -600,7 +598,6 @@ def extensionPossiblyExecutable(s):
         return 'warn'
     else:
         return False
-
 
 mostCommonImageExt = {
     '.gif': 1,

@@ -1,4 +1,6 @@
 
+# shinerainsoftsevenutil (Ben Fisher, moltenform.com)
+# Released under the LGPLv3 License
 
 import subprocess
 import shutil as _shutil
@@ -103,7 +105,6 @@ def hasherFromString(s):
         return xxhash.xxh64()
     else:
         raise ValueError('Unknown hash type ' + s)
-
 
 defaultBufSize = 0x40000  # 256kb
 

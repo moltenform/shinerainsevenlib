@@ -1,5 +1,6 @@
 
-
+# shinerainsoftsevenutil (Ben Fisher, moltenform.com)
+# Released under the LGPLv3 License
 
 import os as _os
 import json as _json
@@ -76,7 +77,6 @@ class PersistedDict:
             self.data[subdictname] = {}
         self.data[subdictname][key1][key2] = value
         self.afterUpdate()
-
 
 # endregion
 # region retrieve text from strings
@@ -282,7 +282,6 @@ class ParsePlus:
 
         files.writeAll(path, newS, 'w', encoding=encoding, skipIfSameContent=True)
 
-
 # endregion
 # region enum helpers
 
@@ -338,7 +337,6 @@ assertEq('first', _EnumExampleStr.first)
 
 class UniqueSentinelForMissingParameter:
     "use as a default parameter where None is a valid input, see pep 661"
-
 
 # endregion
 # region data structure helpers
@@ -415,7 +413,6 @@ class RecentlyUsedList:
             while len(self.list) > self.maxSize:
                 self.list.pop()
 
-
 # endregion
 # region automatically memo-ize
 
@@ -446,7 +443,6 @@ def BoundedMemoize(fn, limit=20):
         memoizeWrapper.func_name = fn.func_name
 
     return memoizeWrapper
-
 
 # endregion
 # region set helpers
@@ -497,6 +493,5 @@ def mergeDictIntoBucket(bucketConfigs, dictParams, disallowNewKeys=True):
             raise RuntimeError('not a supported config:', key)
         else:
             setattr(bucketConfigs, key, dictParams[key])
-
 
 # endregion
