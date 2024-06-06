@@ -1,23 +1,23 @@
 # ruff: noqa
+from shinerainsoftsevenutil.standard import *
 
-# ~ def goAll(root):
-# ~ for f, short in files.recursefiles(root):
-# ~ if files.getext(f) == 'py':
-# ~ goOne(f)
+def goAll(root):
+    for f, short in files.recurseFiles(root):
+        if files.getExt(f) == 'py':
+            goOne(f)
 
-# ~ def goOne(f):
-# ~ code = files.readall(f)
-# ~ expected = standardNewlines(r'''
-# ~ # ShineRainSevenCommon(Ben Fisher)
-# ~ # Useful python helpers
-# ~ # Released under the MIT License
-# ~ ''')
-# ~ expectedAll = expected
-# ~ if files.getname(f).startswith('layer') and not files.getname(f).startswith('layer'):
-# ~ lowerLayer = getLowerLayer(f)
-# ~ if lowerLayer:
-# ~ expectedAll += '\n
+def goOne(f):
+    code = files.readAll(f)
+    want = srss.standardNewlines(r'''
+# shinerainsoftsevenutil (Ben Fisher, moltenform.com)
+# Released under the LGPLv3 License
+    ''')
+    if not code.startswith(want):
+        code = want + code
+        files.writeAll(f, code)
+    
 
-# ~ def getLowerLayer(f):
-# ~ curLayer = files.getname(f).replace('layer', '').split('_')[0]
-# ~ if intOrNone(curLayer)
+
+if __name__ == '__main__':
+    goAll()
+    

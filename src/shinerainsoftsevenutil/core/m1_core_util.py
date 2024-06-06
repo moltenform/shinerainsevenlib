@@ -1,5 +1,5 @@
-# shinerainsoftsevenutil
-# Released under the LGPLv3 License
+
+
 
 import os as _os
 import sys as _sys
@@ -295,6 +295,9 @@ def strToList(s, replaceComments=True):
 def strToSet(s, replaceComments=True):
     lst = strToList(s, replaceComments=replaceComments)
     return set(lst)
+
+def standardNewlines(s):
+    return s.replace('\r\n', '\n').replace('\r', '\n')
 
 def parseIntOrFallback(s, fallBack=None):
     try:

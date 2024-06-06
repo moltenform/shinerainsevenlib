@@ -36,8 +36,7 @@ def goPylint():
         "D:\\OnlyHere\\devkits\\Python64_312\\python",
         "-m",
         "pylint",
-        #~ "src\\shinerainsoftsevenutil",
-        r"D:\tests\mockdepend",
+        "src\\shinerainsoftsevenutil",
     ], throwOnFailure=False)
     stdout = stdout.decode('utf-8')
     lines = stdout.replace('\r\n', '\n').split('\n')

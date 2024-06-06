@@ -183,25 +183,15 @@ class SrssConfigReader:
 myPath = _os.path.abspath(__file__)
 def getSrssConfigLocation():
     dirPath = files.getParent(files.getParent(myPath))
-    cfgPath = dirPath + '/shinerainsoftsevenutil.cfg'
-    if files.exists(cfgPath):
-        return cfgPath
-    cfgPath = dirPath + '/core/shinerainsoftsevenutil.cfg'
-    if files.exists(cfgPath):
-        return cfgPath
-    cfgPath = dirPath + '/shinerainsoftsevenutil/core/shinerainsoftsevenutil.cfg'
-    if files.exists(cfgPath):
-        return cfgPath
-    dir = 123
-    assertTrue(files.exists(cfgPath), 'temp check', cfgPath)
-    
-    
     userHome = _os.path.expanduser('~')
-    cfgPath = userHome + '/.shinerainsoftsevenutil/shinerainsoftsevenutil.cfg'
-    if files.exists(cfgPath):
-        return cfgPath
-    else:
-        return None
+    candidates = [
+        dirPath + '/shinerainsoftsevenutil.cfg',
+        dirPath + '/core/shinerainsoftsevenutil.cfg',
+        dirPath + '/shinerainsoftsevenutil/core/shinerainsoftsevenutil.cfg',
+        userHome + '/.shinerainsoftsevenutil/shinerainsoftsevenutil.cfg'
+    ]
+    
+    return jslike.find(candidates, lambda path: files.exists(path))
 
 _gCachedInternalPrefs = None
 

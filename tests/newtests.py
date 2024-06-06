@@ -68,6 +68,7 @@ if False:
             print('exiting SampleContextManager')
 
 
+    from contextlib import ExitStack
     with ExitStack() as cleanupTasks:
         cleanupTasks.push(SampleContextManager())
         cleanupTasks.callback(lambda: print('second'))

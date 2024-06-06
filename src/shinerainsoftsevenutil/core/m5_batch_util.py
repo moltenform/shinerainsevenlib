@@ -127,10 +127,11 @@ class SrssFileIterator:
         self.prefs.allowedExtsWithDot = None
         self.prefs.fnIncludeTheseFiles = None
         self.prefs.fnIncludeTheseDirs = None
+        self.prefs.fnDirectExceptionsTo = None
         self.prefs.followSymlinks = False
         self.prefs.filesOnly = True
         self.prefs.allowRelativePaths = False
-        self.prefs.excludeNodeModules = True
+        self.prefs.excludeNodeModules = False
         self.prefs.recurse = True
 
     def __init__(self, rootOrListOfRoots, **params):
@@ -179,7 +180,7 @@ class SrssFileIterator:
                     followSymlinks=self.prefs.followSymlinks,
                     filesOnly=self.prefs.filesOnly,
                     fnFilterDirs=fnFilterDirs,
-                    fnDirectExceptionsTo=None,
+                    fnDirectExceptionsTo=self.prefs.fnDirectExceptionsTo,
                     recurse=self.prefs.recurse,
                 ):
                     if self.prefs.allowedExtsWithDot:

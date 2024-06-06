@@ -1,5 +1,5 @@
-# shinerainsoftsevenutil
-# Released under the LGPLv3 License
+
+
 
 import pprint as _pprint
 import random as _random
@@ -131,10 +131,10 @@ class IndependentRNG:
 def softDeleteFile(path, allowDirs=False, doTrace=False):
     "Delete a file in a recoverable way, either OS Trash or a designated folder"
     from .. import files
-    from .. import srssutil
+    from ..plugins.plugin_configreader import getSsrsInternalPrefs
     from .m4_core_ui import warn
 
-    prefs = srssutil.m1_config.getSsrsInternalPrefs()
+    prefs = getSsrsInternalPrefs()
     assertTrue(files.exists(path), 'file not found', path)
     assertTrue(allowDirs or not files.isDir(path), 'you cannot softDelete a dir', path)
     newPath = getSoftDeleteFullPath(path)
@@ -192,9 +192,9 @@ def getSoftDeleteDir(path):
     (all lowercase except the special keywords Slash, Backslash, and Colon)
     """
     from .. import files
-    from .. import srssutil
 
-    prefs = srssutil.m1_config.getSsrsInternalPrefs()
+    from ..plugins.plugin_configreader import getSsrsInternalPrefs
+    prefs = getSsrsInternalPrefs()
     _k, v = prefs.findKeyForPath(path, 'softDeleteDirectory_')
     if not v:
         v = prefs.parsed.main.softDeleteDirectory
@@ -205,9 +205,8 @@ def getSoftDeleteDir(path):
     return v
 
 def getSoftTempDir(_path=''):
-    from .. import srssutil
-
-    prefs = srssutil.m1_config.getSsrsInternalPrefs()
+    from ..plugins.plugin_configreader import getSsrsInternalPrefs
+    prefs = getSsrsInternalPrefs()
     v = prefs.parsed.tempDirectory
     assertTrue(_os.path.isdir(v), 'not a directory', v)
     return v

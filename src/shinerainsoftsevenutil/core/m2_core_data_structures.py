@@ -1,5 +1,5 @@
-# shinerainsoftsevenutil
-# Released under the LGPLv3 License
+
+
 
 import os as _os
 import json as _json
@@ -291,7 +291,7 @@ class Bucket:
     these days types.SimpleNamespace does nearly the same thing."""
 
     def __init__(self, **kwargs):
-        for key, val in kwargs:
+        for key, val in kwargs.items():
             object.__setattr__(self, key, val)
 
     def __repr__(self):

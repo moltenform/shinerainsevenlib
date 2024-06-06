@@ -1,5 +1,5 @@
-# shinerainsoftsevenutil
-# Released under the LGPLv3 License
+
+
 
 import os
 from .m1_files_wrappers import *

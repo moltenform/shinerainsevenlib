@@ -1,5 +1,5 @@
-# shinerainsoftsevenutil
-# Released under the LGPLv3 License
+
+
 import subprocess
 import shutil as _shutil
 from contextlib import ExitStack as _ExitStack
