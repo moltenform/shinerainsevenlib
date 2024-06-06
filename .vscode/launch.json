@@ -9,6 +9,7 @@
             "type": "debugpy",
             "request": "launch",
             "program": "nocpy_explore.py",
+            //~ "program": "nocpy_transition.py",
             "console": "integratedTerminal"
         },
     ]

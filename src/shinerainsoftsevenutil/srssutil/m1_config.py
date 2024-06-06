@@ -39,7 +39,7 @@ class SrssConfigReader:
         self._schema[sectionName] = schemaData
 
     def _lookupSchemaSection(self, sectionName):
-        for key, val in self._schema:
+        for key, val in self._schema.items():
             if _fnmatch.fnmatch(sectionName, key):
                 return val
 
@@ -180,15 +180,36 @@ class SrssConfigReader:
         else:
             raise ValueError(rf'Expected true or false but got {s}, {context}')
 
+myPath = _os.path.abspath(__file__)
+def getSrssConfigLocation():
+    dirPath = files.getParent(files.getParent(myPath))
+    cfgPath = dirPath + '/shinerainsoftsevenutil.cfg'
+    if files.exists(cfgPath):
+        return cfgPath
+    cfgPath = dirPath + '/core/shinerainsoftsevenutil.cfg'
+    if files.exists(cfgPath):
+        return cfgPath
+    cfgPath = dirPath + '/shinerainsoftsevenutil/core/shinerainsoftsevenutil.cfg'
+    if files.exists(cfgPath):
+        return cfgPath
+    dir = 123
+    assertTrue(files.exists(cfgPath), 'temp check', cfgPath)
+    
+    
+    userHome = _os.path.expanduser('~')
+    cfgPath = userHome + '/.shinerainsoftsevenutil/shinerainsoftsevenutil.cfg'
+    if files.exists(cfgPath):
+        return cfgPath
+    else:
+        return None
+
 _gCachedInternalPrefs = None
 
 def getSsrsInternalPrefs():
     global _gCachedInternalPrefs
     if not _gCachedInternalPrefs:
-        myPath = _os.path.realpath(__file__)
-        dirPath = files.getParent(files.getParent(myPath))
-        cfgPath = dirPath + '/shinerainsoftsevenutil.cfg'
-        if files.exists(cfgPath):
+        cfgPath = getSrssConfigLocation()
+        if cfgPath:
             configText = files.readAll(cfgPath)
         else:
             configText = ''
@@ -204,7 +225,7 @@ def getSsrsInternalPrefs():
                 'softDeleteDirectory_*': [str, ''],
             },
         )
-        _gCachedInternalPrefs.parse(configText)
+        _gCachedInternalPrefs.parseText(configText)
 
         # it's fine to use tempDirectory if a EphemeralDirectory was not passed in
         if not _gCachedInternalPrefs.parsed.main.tempEphemeralDirectory:

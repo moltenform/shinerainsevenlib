@@ -21,7 +21,7 @@ for SEP in ('/', '\\'):
 #~ for i in range(ord('a'), ord('z')+1):
     #~ print(rf"softDeleteDirectory_{chr(i)}ColonBackslash={chr(i).upper()}:\data\local\trash")
 if False:
-    config = utility.SrssConfigReader()
+    config = srssutil.SrssConfigReader()
     config.setSchemaForSection('main', {
         'tempEphemeralDirectory' : [str, ''],
         'tempDirectory' : [str, ''],

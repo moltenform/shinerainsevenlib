@@ -99,11 +99,11 @@ def registerDebughook(b=True):
 # endregion
 # region rng helpers
 
-def getRandomString(maxVal=1000 * 1000, asHex=False):
+def getRandomString(maxVal=1000 * 1000, asHex=False, rng=_random):
     if asHex:
         return genUuid().split('-')[0]
     else:
-        return '%s' % _random.randrange(maxVal)
+        return '%s' % rng.randrange(maxVal)
 
 def genUuid(asBase64=False):
     import base64
@@ -122,28 +122,7 @@ class IndependentRNG:
     which would get thrown off by other parts of the program also getting rng values."""
 
     def __init__(self, seed=None):
-        if seed is not None:
-            _random.seed(seed)
-
-        self.state = _random.getstate()
-        self.keep_outside_state = None
-        self.entered = False
-
-    def __enter__(self):
-        if self.entered:
-            return
-
-        self.entered = True
-        self.keep_outside_state = _random.getstate()
-        _random.setstate(self.state)
-
-    def __exit__(self, _type, value, traceback):
-        if not self.entered:
-            return
-
-        self.entered = False
-        _random.setstate(self.keep_outside_state)
-
+        self.rng = _random.Random(seed)
 
 # endregion
 # region temp file helpers
@@ -151,10 +130,10 @@ class IndependentRNG:
 def softDeleteFile(path, allowDirs=False, doTrace=False):
     "Delete a file in a recoverable way, either OS Trash or a designated folder"
     from .. import files
-    from .. import utility
+    from .. import srssutil
     from .m4_core_ui import warn
 
-    prefs = utility.m1_config.getSsrsInternalPrefs()
+    prefs = srssutil.m1_config.getSsrsInternalPrefs()
     assertTrue(files.exists(path), 'file not found', path)
     assertTrue(allowDirs or not files.isDir(path), 'you cannot softDelete a dir', path)
     newPath = getSoftDeleteFullPath(path)
@@ -212,9 +191,9 @@ def getSoftDeleteDir(path):
     (all lowercase except the special keywords Slash, Backslash, and Colon)
     """
     from .. import files
-    from .. import utility
+    from .. import srssutil
 
-    prefs = utility.m1_config.getSsrsInternalPrefs()
+    prefs = srssutil.m1_config.getSsrsInternalPrefs()
     _k, v = prefs.findKeyForPath(path, 'softDeleteDirectory_')
     if not v:
         v = prefs.parsed.main.softDeleteDirectory
@@ -226,15 +205,15 @@ def getSoftDeleteDir(path):
 
 def getSoftTempDir(_path=''):
     from .. import files
-    from .. import utility
+    from .. import srssutil
 
-    prefs = utility.m1_config.getSsrsInternalPrefs()
+    prefs = srssutil.m1_config.getSsrsInternalPrefs()
     v = prefs.parsed.tempDirectory
     assertTrue(files.isDir(v), 'not a directory', v)
     return v
 
 
-_softDeleteFileRng = IndependentRNG()
+_rngForSoftDeleteFile = IndependentRNG()
 
 def getSoftDeleteFullPath(path):
     from .. import files
@@ -246,8 +225,7 @@ def getSoftDeleteFullPath(path):
         return cUseOSTrash
 
     # use an independent rng, so that other random sequences aren't disrupted
-    with _softDeleteFileRng:
-        randomString = getRandomString()
+    randomString = getRandomString(rng=_rngForSoftDeleteFile.rng)
 
     # as a prefix, the first 2 chars of the parent directory
     prefix = files.getName(files.getParent(path))[0:2] + '_'
