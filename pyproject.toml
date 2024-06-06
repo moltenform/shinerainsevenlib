@@ -30,11 +30,12 @@ target-version = "py38"
 # tell ruff not to fix blank-lines-after-function-or-class
 
 [tool.ruff.lint]
-fixable = []
+fixable = ["F403"]
 unfixable = [
     "ERA", # do not autoremove commented out code
     "E301","E302","E303","E304", "E305", "E306",
-    "F401", "F841", "PIE804"
+    "F401", "F841", "PIE804", 
+   #"W503" # operators at end or beginning
     ]
 extend-select = [
     "B",   # flake8-bugbear
@@ -49,6 +50,8 @@ extend-select = [
     # TCH flake8-type-checking
     "TID", # flake8-tidy-imports
     "UP",  # pyupgrade
+     "F",  # pyflakes
+      "ISC",  # implicit string concatenation
 ]
 
 ignore = [
@@ -76,6 +79,8 @@ ignore = [
  "SIM117", # it wants combined with statements
  "SIM108", # it wants ternary
  "SIM105", # it wants contextlib.suppress, cool but i don't want that to be mandatory
+ #"W503" # operators at end or beginning
+ "ISC003" # concats
 ]
 
 # these might also be useful to disable

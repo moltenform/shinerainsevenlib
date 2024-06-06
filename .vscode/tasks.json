@@ -6,7 +6,7 @@
         {
             "label": "lint",
             "type": "shell",
-            "command": "D:\\OnlyHere\\devkits\\Python64_312\\Scripts\\ruff check ${workspaceFolder}",
+            "command": "D:\\OnlyHere\\devkits\\Python64_312\\Scripts\\ruff check",
             "problemMatcher": [],
             "group": {
                 "kind": "build",
@@ -18,7 +18,7 @@
         {
             "label": "lint-and-fix",
             "type": "shell",
-            "command": "ruff format --unfixable=ERA,E301,E302,E303,E304,E305,E306,F401,F841,PIE804",
+            "command": "D:\\OnlyHere\\devkits\\Python64_312\\python tools\\internal-ruff.py",
             "problemMatcher": [],
             "options": {
                 "cwd": "${workspaceFolder}"
@@ -26,4 +26,5 @@
         }
     ]
 }
+
 

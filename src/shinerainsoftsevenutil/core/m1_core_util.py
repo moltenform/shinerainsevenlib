@@ -35,6 +35,7 @@ def assertEq(expected, received, *messageArgs):
 def assertWarn(condition, *messageArgs):
     "show a message to user if condition is false"
     from . import m4_core_ui
+
     if not condition:
         msg = ' '.join(map(str, messageArgs)) if messageArgs else ''
         m4_core_ui.warn(msg)
@@ -42,8 +43,10 @@ def assertWarn(condition, *messageArgs):
 def assertWarnEq(expected, received, *messageArgs):
     "show a message to user if values are not equal"
     from . import m4_core_ui
+
     if expected != received:
         import pprint as _pprint
+
         msg = ' '.join(map(str, messageArgs)) if messageArgs else ''
         msg += '\nexpected:\n'
         msg += _pprint.pformat(expected)
@@ -57,8 +60,9 @@ def assertFloatEq(expected, received, *messageArgs):
     difference = _math.fabs(expected - received)
     if difference > precision:
         messageArgs = list(messageArgs) or []
-        messageArgs.append('expected %f, got %f, difference of %f' % (
-            expected, received, difference))
+        messageArgs.append(
+            'expected %f, got %f, difference of %f' % (expected, received, difference)
+        )
         assertTrue(False, *messageArgs)
 
 def assertEqArray(expected, received):
@@ -80,16 +84,24 @@ def assertException(fn, excType, excTypeExpectedString=None, msg='', regexp=Fals
 
     assertTrue(e is not None, 'did not throw ' + msg)
     if excType:
-        assertTrue(isinstance(e, excType), 'exception type check failed ' + msg +
-            ' \ngot \n' + _pprint.pformat(e) + '\n not \n' + _pprint.pformat(excType))
-        
+        assertTrue(
+            isinstance(e, excType),
+            'exception type check failed ',
+            msg,
+            ' \ngot \n',
+            _pprint.pformat(e),
+            '\n not \n',
+            _pprint.pformat(excType),
+        )
+
     if excTypeExpectedString:
         if regexp:
             passed = _re.search(excTypeExpectedString, str(e))
         else:
             passed = excTypeExpectedString in str(e)
-        assertTrue(passed, 'exception string check failed ' + msg +
-            '\ngot exception string:\n' + str(e))
+        assertTrue(
+            passed, 'exception string check failed ' + msg + '\ngot exception string:\n' + str(e)
+        )
 
 def getTraceback(e):
     "get _traceback from an exception"
@@ -105,6 +117,7 @@ class shinerainsoftsevenutilError(RuntimeError):
         "you can pass in more than one string"
         combined = ' '.join(str(arg) for arg in args)
         super().__init__(combined)
+
 
 # endregion
 # region trace helpers
@@ -122,8 +135,10 @@ def getPrintable(s, okToIgnore=False):
     else:
         return s.encode('ascii', 'replace').decode('ascii')
 
+
 gRedirectTraceCalls = _types.SimpleNamespace()
 gRedirectTraceCalls.fnHook = None
+
 def trace(*args, always=False):
     """similar to print, but
     1) distinguish debugging prints vs intentional production prints
@@ -147,12 +162,12 @@ def tracep(*args, always=False):
 def renderMillisTime(millisTime):
     "`millistime` is number of milliseconds past epoch (unix _time * 1000)"
     t = millisTime / 1000.0
-    return _time.strftime("%m/%d/%Y %I:%M:%S %p", _time.localtime(t))
+    return _time.strftime('%m/%d/%Y %I:%M:%S %p', _time.localtime(t))
 
 def renderMillisTimeStandard(millisTime):
     "`millistime` is number of milliseconds past epoch (unix _time * 1000)"
     t = millisTime / 1000.0
-    return _time.strftime("%Y-%m-%d %I:%M:%S", _time.localtime(t))
+    return _time.strftime('%Y-%m-%d %I:%M:%S', _time.localtime(t))
 
 def getNowAsMillisTime():
     "gets the number of milliseconds past epoch (unix _time * 1000)"
@@ -161,10 +176,12 @@ def getNowAsMillisTime():
 
 class EnglishDateParserWrapper:
     """more convenent than directly calling dateparser
-         default to month-day-year
-         restrict to English, less possibility of accidentally parsing a non-date string"""
+    default to month-day-year
+    restrict to English, less possibility of accidentally parsing a non-date string"""
+
     def __init__(self, dateOrder='MDY'):
         import dateparser
+
         settings = {'STRICT_PARSING': True}
         if dateOrder:
             settings['DATE_ORDER'] = dateOrder
@@ -209,25 +226,27 @@ class EnglishDateParserWrapper:
         assertTrue(dt, 'not parse dt', s)
         return int(dt.timestamp() * 1000)
 
+
 # endregion
-# region string helpers    
+# region string helpers
 
 def replaceMustExist(haystack, needle, replace):
-    assertTrue(needle in haystack, "not found", needle)
+    assertTrue(needle in haystack, 'not found', needle)
     return haystack.replace(needle, replace)
 
 def reSearchWholeWord(haystack, needle):
     reNeedle = '\\b' + _re.escape(needle) + '\\b'
     return _re.search(reNeedle, haystack)
-    
+
 def reReplaceWholeWord(haystack, needle, replace):
-    needle = '\\b'+_re.escape(needle) + '\\b'
+    needle = '\\b' + _re.escape(needle) + '\\b'
     return _re.sub(needle, replace, haystack)
 
 def reReplace(haystack, reNeedle, replace):
     return _re.sub(reNeedle, replace, haystack)
 
-'''
+
+"""
 cliffnotes documentation of _re module included here for convenience:
 _re.search(pattern, string, flags=0)
     look for at most one match starting anywhere
@@ -242,7 +261,7 @@ _re.finditer(pattern, string, flags=0)
     returns iterator of match objects
 
 flags include _re.IGNORECASE, _re.MULTILINE, _re.DOTALL
-'''
+"""
 
 def truncateWithEllipsis(s, maxLength):
     if len(s) <= maxLength:
@@ -252,7 +271,7 @@ def truncateWithEllipsis(s, maxLength):
         if maxLength < len(ellipsis):
             return s[0:maxLength]
         else:
-            return s[0:maxLength - len(ellipsis)] + ellipsis
+            return s[0 : maxLength - len(ellipsis)] + ellipsis
 
 def formatSize(n):
     if n >= 1024 * 1024 * 1024 * 1024:
@@ -266,6 +285,7 @@ def formatSize(n):
     else:
         return '%db' % n
 
+
 # endregion
 # region type conversion helpers
 
@@ -273,9 +293,9 @@ def strToList(s, replaceComments=True):
     lines = s.replace('\r\n', '\n').split('\n')
     if replaceComments:
         lines = [line for line in lines if not line.startswith('#')]
-    
+
     return [line.strip() for line in lines if line.strip()]
-    
+
 def strToSet(s, replaceComments=True):
     lst = strToList(s, replaceComments=replaceComments)
     return set(lst)
@@ -285,7 +305,7 @@ def parseIntOrFallback(s, fallBack=None):
         return int(s)
     except:
         return fallBack
-        
+
 def parseFloatOrFallback(s, fallBack=None):
     try:
         return float(s)
@@ -294,6 +314,7 @@ def parseFloatOrFallback(s, fallBack=None):
 
 def clampNumber(value, minValue, maxValue):
     return max(minValue, min(value, maxValue))
+
 
 # endregion
 # region flow helpers
@@ -307,6 +328,7 @@ def runAndCatchException(fn):
         return result, None
     except:
         return None, getCurrentException()
+
 
 # endregion
 # region ascii char helpers
@@ -323,21 +345,31 @@ def toValidFilename(pathOrig, dirsepOk=False, maxLen=None):
         path = path.replace('\\ ', ', ').replace('\\', '-')
         path = path.replace('/ ', ', ').replace('/', '-')
 
-    result = path.replace('\u2019', "'").replace('?', '').replace('!', '') \
-        .replace(': ', ', ').replace(':', '-') \
-        .replace('| ', ', ').replace('|', '-') \
-        .replace('*', '') \
-        .replace('"', "'").replace('<', '[').replace('>', ']') \
-        .replace('\r\n', ' ').replace('\r', ' ').replace('\n', ' ')
+    result = (
+        path.replace('\u2019', "'")
+        .replace('?', '')
+        .replace('!', '')
+        .replace(': ', ', ')
+        .replace(':', '-')
+        .replace('| ', ', ')
+        .replace('|', '-')
+        .replace('*', '')
+        .replace('"', "'")
+        .replace('<', '[')
+        .replace('>', ']')
+        .replace('\r\n', ' ')
+        .replace('\r', ' ')
+        .replace('\n', ' ')
+    )
 
     if maxLen and len(result) > maxLen:
         assertTrue(maxLen > 1)
         ext = _os.path.splitExt(path)[1]
-        beforeExt = path[0:-len(ext)]
+        beforeExt = path[0 : -len(ext)]
         while len(result) > maxLen:
             result = beforeExt + ext
             beforeExt = beforeExt[0:-1]
-        
+
         # if it ate into the directory, though, throw an error
         assertTrue(_os.path.split(pathOrig)[0] == _os.path.split(result)[0])
 
@@ -347,7 +379,7 @@ def stripHtmlTags(s, removeRepeatedWhitespace=True):
     """remove all html tags.
     see also: html.escape, html.unescape
     a (?:) is a non-capturing group"""
-    
+
     reTags = _re.compile(r'<[^>]+(?:>|$)', _re.DOTALL)
     s = reTags.sub(' ', s)
     if removeRepeatedWhitespace:
@@ -370,40 +402,44 @@ def containsNonAscii(s):
     withoutAscii = replaceNonAsciiWith(s, '')
     return len(s) != len(withoutAscii)
 
+
 # endregion
 # region object helpers and wrappers
 
 def getObjAttributes(obj):
     return [att for att in dir(obj) if not att.startswith('_')]
-    
+
 def getClassNameFromInstance(obj):
     return obj.__class__.__name__
 
+
 if _sys.version_info[0] >= 2:
-    "inspired by mutagen/_compat.py"
+    'inspired by mutagen/_compat.py'
     from io import StringIO
+
     StringIO = StringIO
     from io import BytesIO
+
     cBytesIO = BytesIO
 
     def endsWith(a, b):
         # use with either str or bytes
         if isinstance(a, str):
             if not isinstance(b, str):
-                b = b.decode("ascii")
+                b = b.decode('ascii')
         else:
             if not isinstance(b, bytes):
-                b = b.encode("ascii")
+                b = b.encode('ascii')
         return a.endswith(b)
 
     def startsWith(a, b):
         # use with either str or bytes
         if isinstance(a, str):
             if not isinstance(b, str):
-                b = b.decode("ascii")
+                b = b.decode('ascii')
         else:
             if not isinstance(b, bytes):
-                b = b.encode("ascii")
+                b = b.encode('ascii')
         return a.startswith(b)
 
     def iterBytes(b):
@@ -423,6 +459,6 @@ if _sys.version_info[0] >= 2:
     xrange = range
     isPy3OrNewer = True
 else:
-    raise Exception("We no longer support python 2")
+    raise Exception('We no longer support python 2')
 
 # endregion
