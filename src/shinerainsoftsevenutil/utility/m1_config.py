@@ -1,5 +1,3 @@
-
-
 from ..core import *
 from .. import files
 import fnmatch as _fnmatch
@@ -28,13 +26,14 @@ class SrssConfigReader:
 
     wrapper around ConfigParser that 1) doesn't need main section 2) validates schema 3) has better defaults.
     """
+
     def __init__(self, autoInsertDefaultSection='main', checkSchema=True, caseSensitive=True):
         self.parsed = Bucket()
         self._checkSchema = checkSchema
         self._schema = {}
         self._autoInsertMainSection = autoInsertDefaultSection
         self._caseSensitive = caseSensitive
-    
+
     def setSchemaForSection(self, sectionName, schemaData):
         self._schema[sectionName] = schemaData
 
@@ -42,17 +41,17 @@ class SrssConfigReader:
         for key in self._schema:
             if _fnmatch.fnmatch(sectionName, key):
                 return self._schema[key]
-        
+
         assertTrue(False, 'unknown section name', sectionName)
-    
+
     def _lookupSchemaCol(self, sectionName, colName):
         sectionData = self._lookupSchemaSection(sectionName)
         for key in sectionData:
             if _fnmatch.fnmatch(colName, key):
                 return sectionData[key]
-            
+
         assertTrue(False, 'unknown column', colName)
-    
+
     def _populateDefaultsForAll(self):
         for sectionName in self._schema:
             if '*' not in sectionName:
@@ -66,7 +65,9 @@ class SrssConfigReader:
                 assertTrue(not colDefaultVal, "we don't support default values for wildcard ")
             else:
                 # confirm that the default value is the correct type
-                colDefaultVal = self.interpretValue(colDefaultVal, colType, context=f'col {colName}')
+                colDefaultVal = self.interpretValue(
+                    colDefaultVal, colType, context=f'col {colName}'
+                )
                 self.setVal(sectionName, colName, colDefaultVal)
 
     def setVal(self, section, col, v):
@@ -74,7 +75,7 @@ class SrssConfigReader:
             setattr(self.parsed, section, Bucket())
         parsedSection = getattr(self.parsed, section)
         setattr(parsedSection, col, v)
-    
+
     def getValOrNone(self, section, col):
         if not hasattr(self.parsed, section):
             setattr(self.parsed, section, Bucket())
@@ -103,7 +104,7 @@ class SrssConfigReader:
     def parse(self, path):
         text = files.readAll(path)
         return self.parseText(text)
-    
+
     def parseText(self, text):
         # different versions of python have different configparser behavior
         assertTrue(isPy3OrNewer, 'Py2 not supported')
@@ -115,8 +116,9 @@ class SrssConfigReader:
                 text = expectSection + text
 
         # start configparser
-        rawparsed = _configparser.ConfigParser(strict=True,
-            empty_lines_in_values=False, interpolation=None, delimiters='=')
+        rawparsed = _configparser.ConfigParser(
+            strict=True, empty_lines_in_values=False, interpolation=None, delimiters='='
+        )
         if self._caseSensitive:
             rawparsed.optionxform = str
         rawparsed.read_string(text)
@@ -131,7 +133,7 @@ class SrssConfigReader:
                 val = rawparsed.get(sectionName, option)
                 val = self.checkSchemaCol(sectionName, option, val)
                 self.setVal(sectionName, option, val)
-        
+
     def findKeyForPath(self, path, prefix, sectionName='main'):
         """Helper method finding the longest match,
         that starts with the prefix. See tests."""
@@ -144,15 +146,15 @@ class SrssConfigReader:
 
     def findKeyByLongestMatch(self, s, prefix, sectionName='main'):
         """Helper method finding the longest match:
-        Find the column that starts with the prefix
-        and matches as much of `s` as possible. See tests."""
+        Find the column that starts with the prefix and
+        matches as much of `s` as possible. See tests."""
         section = getattr(self.parsed, sectionName)
         cols = getObjAttributes(section)
         cols = [col for col in cols if col.startswith(prefix)]
         results = []
         for col in cols:
             if col.startswith(prefix):
-                withoutPrefix = col[len(prefix):]
+                withoutPrefix = col[len(prefix) :]
                 if s.startswith(withoutPrefix):
                     results.append(col)
 
@@ -173,8 +175,10 @@ class SrssConfigReader:
             return False
         else:
             raise ValueError(rf'Expected true or false but got {s}, {context}')
-    
+
+
 _cachedInternalPrefs = None
+
 def getSsrsInternalPrefs():
     global _cachedInternalPrefs
     if not _cachedInternalPrefs:
@@ -185,21 +189,24 @@ def getSsrsInternalPrefs():
             configText = files.readAll(cfgPath)
         else:
             configText = ''
-        
+
         _cachedInternalPrefs = SrssConfigReader()
-        _cachedInternalPrefs.setSchemaForSection('main', {
-            'tempDirectory' : [str, ''],
-            'tempEphemeralDirectory' : [str, ''],
-            'warnSoftDeleteBetweenDrives' : [bool, False],
-            'softDeleteDirectory' : [str, ''],
-            'softDeleteDirectory_*' : [str, ''],
-            })
+        _cachedInternalPrefs.setSchemaForSection(
+            'main',
+            {
+                'tempDirectory': [str, ''],
+                'tempEphemeralDirectory': [str, ''],
+                'warnSoftDeleteBetweenDrives': [bool, False],
+                'softDeleteDirectory': [str, ''],
+                'softDeleteDirectory_*': [str, ''],
+            },
+        )
         _cachedInternalPrefs.parse(configText)
 
         # it's fine to use tempDirectory if a EphemeralDirectory was not passed in
         if not _cachedInternalPrefs.parsed.main.tempEphemeralDirectory:
-            _cachedInternalPrefs.parsed.main.tempEphemeralDirectory = _cachedInternalPrefs.parsed.main.tempDirectory
+            _cachedInternalPrefs.parsed.main.tempEphemeralDirectory = (
+                _cachedInternalPrefs.parsed.main.tempDirectory
+            )
 
     return _cachedInternalPrefs
-
-

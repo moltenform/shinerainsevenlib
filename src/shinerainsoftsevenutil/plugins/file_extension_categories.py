@@ -1,20 +1,15 @@
-
-
-
 imageExtensions = {
-    'jpg': 1,
+    'jpg': 1,  # section
     'jpeg': 1,
     'jfif': 1,
     'gif': 1,
     'png': 1,
     'webp': 1,
     'heic': 1,
-
-    'jxl': 1,
+    'jxl': 1,  # section
     'ico': 1,
     'cur': 1,
-
-    'jp2': 1,
+    'jp2': 1,  # section
     'av1f': 1,
     'avif': 1,
     'bpg': 1,
@@ -22,8 +17,7 @@ imageExtensions = {
     'fuif': 1,
     'tga': 1,
     'pict': 1,
-
-    'tif': 1,
+    'tif': 1,  # section
     'tiff': 1,
     'ppm': 1,
     'pgm': 1,
@@ -36,7 +30,7 @@ imageExtensions = {
 
 
 vidExtensions = {
-    'webm': 1,
+    'webm': 1,  # section
     'mkv': 1,
     'vob': 1,
     'mp4': 1,
@@ -45,8 +39,7 @@ vidExtensions = {
     'mpg': 1,
     'mpeg': 1,
     'm2v': 1,
-
-    'flv': 1,
+    'flv': 1,  # section
     'oggv': 1,
     'drc': 1,
     'gifv': 1,
@@ -75,22 +68,19 @@ vidExtensions = {
 
 
 audExtensions = {
-    'flac': 1,
+    'flac': 1,  # section
     'ogg': 1,
     'mp3': 1,
     'm4a': 1,
     'wav': 1,
-
-    'aif': 1,
+    'aif': 1,  # section
     'aiff': 1,
     'au': 1,
     'pcm': 1,
-
-    'opus': 1,
+    'opus': 1,  # section
     'oga': 1,
     'mogg': 1,
-
-    'wma': 1,
+    'wma': 1,  # section
     'ape': 1,
     'wv': 1,
     'tta': 1,
@@ -109,8 +99,7 @@ audExtensions = {
     'oma': 1,
     'omg': 1,
     'bwf': 1,
-
-    'aa': 1,
+    'aa': 1,  # section
     'aax': 1,
     'act': 1,
     'amr': 1,
@@ -129,8 +118,7 @@ audExtensions = {
     'rm': 1,
     'raw': 1,
     'fr64': 1,
-
-    'voc': 1,
+    'voc': 1,  # section
     'vox': 1,
     'cda': 1,
     '8svx': 1,
@@ -138,7 +126,7 @@ audExtensions = {
 
 
 archiveExtensions = {
-    'ar': 1,
+    'ar': 1,  # section
     'cpio': 1,
     'shar': 1,
     'lbr': 1,
@@ -146,8 +134,7 @@ archiveExtensions = {
     'mar': 1,
     'sbx': 1,
     'tar': 1,
-
-    'br': 1,
+    'br': 1,  # section
     'bz2': 1,
     'f': 1,
     'gz': 1,
@@ -161,12 +148,10 @@ archiveExtensions = {
     'xz': 1,
     'z': 1,
     'zst': 1,
-    
-    '7z': 1,
+    '7z': 1,  # section
     'zip': 1,
     'rar': 1,
-
-    's7z': 1,
+    's7z': 1,  # section
     'ace': 1,
     'afa': 1,
     'alz': 1,
@@ -395,9 +380,8 @@ alreadyCompressedExt = {
     '.pea': 1,
     '.jxl': 1,
     '.avif': 1,
-    '.mpo': 1
+    '.mpo': 1,
 }
-
 
 
 exeExt = {
@@ -447,7 +431,7 @@ exeExt = {
     '.workflow': 1,
     '.ws': 1,
     '.wsf': 1,
-    '.wsh': 1
+    '.wsh': 1,
 }
 
 warnExt = {
@@ -566,14 +550,15 @@ warnExt = {
     '.xltm': 1,
     '.xqt': 1,
     '.xys': 1,
-    '.zl9': 1
+    '.zl9': 1,
 }
 
 def extensionPossiblyExecutable(s):
-    '''Returns 'exe' if it looks executable,
+    """Returns 'exe' if it looks executable,
     Returns 'warn' if it is a document type that can include embedded scripts,
-    Returns False otherwise'''
+    Returns False otherwise"""
     from .. import files
+
     ext = files.getExt(s, False)
     if ext in exeExt:
         return 'exe'
@@ -581,6 +566,7 @@ def extensionPossiblyExecutable(s):
         return 'warn'
     else:
         return False
+
 
 mostCommonImageExt = {
     '.gif': 1,
@@ -590,6 +576,5 @@ mostCommonImageExt = {
     '.bmp': 1,
     '.tif': 1,
     '.webp': 1,
-    '.jxl': 1
+    '.jxl': 1,
 }
-

@@ -1,4 +1,3 @@
-
 # shinerainsoftsevenutil
 # Released under the LGPLv3 License
 
@@ -63,10 +62,13 @@ def times(n, fn):
     # return a list with n items, values from calling fn
     return [fn() for _ in range(n)]
 
+
 _notProvided = UniqueSentinelForMissingParameter()
+
 def reduce(lst, fn, initialVal=_notProvided):
     # callback should have 2 parameters
     import functools
+
     if initialVal is _notProvided:
         return functools.reduce(fn, lst)
     else:
@@ -74,12 +76,10 @@ def reduce(lst, fn, initialVal=_notProvided):
 
 def splice(s, insertionPoint, lenToDelete=0, newText=''):
     # like javascript's splice
-    return s[0:insertionPoint] + newText + s[insertionPoint + lenToDelete:]
+    return s[0:insertionPoint] + newText + s[insertionPoint + lenToDelete :]
 
 def spliceSpan(s, span, newText):
     # provide a span [startIndex, stopIndex] to be replaced with newText
     assertEq(2, len(span), 'expected [startIndex, stopIndex]')
     assertTrue(span[1] >= span[0])
     return splice(s, span[0], span[1] - span[0], newText)
-
-

@@ -1,4 +1,3 @@
-
 import time as _time
 import os as _os
 import re as _re
@@ -18,13 +17,14 @@ class SrssLooper:
         else:
             print('found an odd number', number)
     """
+
     def __init__(self, input):
         self._showPercentages = False
         self._pauseEveryNTimes = None
         self._pauseEverySeconds = None
         self._input = input
         self._resetState()
-    
+
     def _resetState(self):
         self._didMeaningfulWork = True
         self._currentIter = None
@@ -32,7 +32,7 @@ class SrssLooper:
         self._countMeaningfulWork = 0
         self._estimateCount = None
         self._prevPercentShown = None
-    
+
     def _getIter(self):
         if callable(self._input):
             # must be a lambda that returns an iterable
@@ -41,10 +41,11 @@ class SrssLooper:
             # must be a list
             assertTrue(isinstance(self._input, list))
             newIter = self._input
-        
+
         if self._waitUntilValueSeen:
             return SrssLooper.skipForwardUntilTrue(
-                newIter, lambda item: item==self._waitUntilValueSeen)
+                newIter, lambda item: item == self._waitUntilValueSeen
+            )
         else:
             return newIter
 
@@ -52,7 +53,7 @@ class SrssLooper:
         # it will be an estimate, since the iterable
         # might return a different number of items
         self._showPercentages = displayStr
-    
+
     def addPauses(self, pauseEveryNTimes=20, seconds=20):
         self._pauseEveryNTimes = pauseEveryNTimes
         self._pauseEverySeconds = seconds
@@ -78,15 +79,15 @@ class SrssLooper:
                 trace('sleeping')
                 _time.sleep(self._pauseEverySeconds)
                 trace('waking')
-        
+
         self._didMeaningfulWork = True
         return next(self._currentIter)
-    
+
     def _showPercent(self):
         if not self._showPercentages:
             return
-        
-        percentage = int(100*self._counter/self._estimateCount)
+
+        percentage = int(100 * self._counter / self._estimateCount)
         percentage = clampNumber(percentage, 0.0, 99.9)
         if percentage != self._prevPercentShown:
             self._prevPercentShown = percentage
@@ -96,24 +97,24 @@ class SrssLooper:
     def skipForwardUntilTrue(iter, fnWaitUntil):
         if isinstance(iter, list):
             iter = (item for item in iter)
-            
+
         hasSeen = False
         for value in iter:
             if not hasSeen and fnWaitUntil(value):
                 hasSeen = True
             if hasSeen:
                 yield value
-    
+
     @staticmethod
     def countIterable(iter):
         return sum(1 for item in iter)
-    
 
 class SrssFileIterator:
     """
     helpful for file iteration,
     adding some extra features to files.recurseFiles.
     """
+
     def getDefaultPrefs(self):
         self.prefs.allowedExtsWithDot = None
         self.prefs.fnIncludeTheseFiles = None
@@ -131,50 +132,62 @@ class SrssFileIterator:
         roots = [rootOrListOfRoots] if isinstance(rootOrListOfRoots, str) else rootOrListOfRoots
         self.roots = roots
         self._currentIter = None
-        
+
         for root in self.roots:
-            assertTrue(self.prefs.allowRelativePaths or _os.path.isabs(root), 'relative paths not allowed', root)
-        
+            assertTrue(
+                self.prefs.allowRelativePaths or _os.path.isabs(root),
+                'relative paths not allowed',
+                root,
+            )
+
         # make it a little faster
         if isinstance(self.prefs.allowedExtsWithDot, list):
             self.prefs.allowedExtsWithDot = set(self.prefs.allowedExtsWithDot)
-    
+
     def __iter__(self):
         self._currentIter = self._getIterator()()
         return self
 
     def __next__(self):
         return next(self._currentIter)
-    
+
     def _getIterator(self):
         def fnFilterDirs(path):
-            if self.prefs.excludeNodeModules and (SrssFileIterator.pathHasThisDirectory('node_modules', path)):
+            if self.prefs.excludeNodeModules and (
+                SrssFileIterator.pathHasThisDirectory('node_modules', path)
+            ):
                 return False
             elif self.prefs.fnIncludeTheseDirs and not self.prefs.fnIncludeTheseDirs(path):
                 return False
             else:
                 return True
-        
+
         def fnIterator():
             from .. import files
-            
+
             for root in self.roots:
-                for obj in files.recurseFileInfo(root,
-                        followSymlinks=self.prefs.followSymlinks, filesOnly=self.prefs.filesOnly, 
-                        fnFilterDirs=fnFilterDirs, 
-                        fnDirectExceptionsTo=None, recurse=self.prefs.recurse):
-                    
+                for obj in files.recurseFileInfo(
+                    root,
+                    followSymlinks=self.prefs.followSymlinks,
+                    filesOnly=self.prefs.filesOnly,
+                    fnFilterDirs=fnFilterDirs,
+                    fnDirectExceptionsTo=None,
+                    recurse=self.prefs.recurse,
+                ):
                     if self.prefs.allowedExtsWithDot:
                         ext = files.splitExt(obj.path)[1].lower()
                         if ext not in self.prefs.allowedExtsWithDot:
                             continue
-                    
-                    if self.prefs.fnIncludeTheseFiles and not self.prefs.fnIncludeTheseFiles(obj.path):
+
+                    if self.prefs.fnIncludeTheseFiles and not self.prefs.fnIncludeTheseFiles(
+                        obj.path
+                    ):
                         continue
-                        
+
                     yield obj
+
         return fnIterator
-    
+
     def getCount(self):
         return SrssLooper.countIterable(self.getIterator())
 
@@ -182,4 +195,3 @@ class SrssFileIterator:
     def pathHasThisDirectory(suffix, path):
         regexp = _re.compile(r'[/\\]' + suffix + r'([/\\]|$)')
         return bool(regexp.search(path))
-    

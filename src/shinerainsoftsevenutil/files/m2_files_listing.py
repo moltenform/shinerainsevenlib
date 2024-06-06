@@ -10,19 +10,23 @@ def _listChildrenUnsorted(path, *, filenamesOnly=False, allowedExts=None):
         if not allowedExts or getExt(filename) in allowedExts:
             yield filename if filenamesOnly else (path + os.path.sep + filename, filename)
 
+
 if sys.platform.startswith('win'):
     exeSuffix = '.exe'
     listChildren = _listChildrenUnsorted
 else:
     exeSuffix = ''
+
     def listChildren(*args, **kwargs):
         return sorted(_listChildrenUnsorted(*args, **kwargs))
 
 def listDirs(path, *, filenamesOnly=False, allowedExts=None, recurse=False):
     "Return directories within a directory"
     if recurse:
-        return recurseDirs(path, filenamesOnly=filenamesOnly, allowedExts=allowedExts, recurse=recurse)
-        
+        return recurseDirs(
+            path, filenamesOnly=filenamesOnly, allowedExts=allowedExts, recurse=recurse
+        )
+
     for full, name in listChildren(path, allowedExts=allowedExts):
         if os.path.isdir(full):
             yield name if filenamesOnly else (full, name)
@@ -30,19 +34,30 @@ def listDirs(path, *, filenamesOnly=False, allowedExts=None, recurse=False):
 def listFiles(path, *, filenamesOnly=False, allowedExts=None, recurse=False):
     "Return files within a directory"
     if recurse:
-        return recurseFiles(path, filenamesOnly=filenamesOnly, allowedExts=allowedExts, recurse=recurse)
-        
+        return recurseFiles(
+            path, filenamesOnly=filenamesOnly, allowedExts=allowedExts, recurse=recurse
+        )
+
     for full, name in listChildren(path, allowedExts=allowedExts):
         if not os.path.isdir(full):
             yield name if filenamesOnly else (full, name)
 
-def recurseFiles(root, *, filenamesOnly=False, allowedExts=None,
-        fnFilterDirs=None, includeFiles=True, includeDirs=False, topDown=True, followSymlinks=False):
+def recurseFiles(
+    root,
+    *,
+    filenamesOnly=False,
+    allowedExts=None,
+    fnFilterDirs=None,
+    includeFiles=True,
+    includeDirs=False,
+    topDown=True,
+    followSymlinks=False,
+):
     """Return files within a directory (recursively).
     You can provide a fnFilterDirs to filter out any directories not to traverse into."""
     assert isDir(root)
 
-    for (dirPath, dirNames, fileNames) in os.walk(root, topdown=topDown, followlinks=followSymlinks):
+    for dirPath, dirNames, fileNames in os.walk(root, topdown=topDown, followlinks=followSymlinks):
         if fnFilterDirs:
             filteredDirs = [dir for dir in dirNames if fnFilterDirs(join(dirPath, dir))]
             dirNames[:] = filteredDirs
@@ -51,24 +66,35 @@ def recurseFiles(root, *, filenamesOnly=False, allowedExts=None,
             iterFilenames = fileNames if sys.platform.startswith('win') else sorted(fileNames)
             for filename in iterFilenames:
                 if not allowedExts or getExt(filename) in allowedExts:
-                    yield filename if filenamesOnly else (dirPath + os.path.sep + filename, filename)
+                    yield (
+                        filename if filenamesOnly else (dirPath + os.path.sep + filename, filename)
+                    )
 
         if includeDirs:
             yield getName(dirPath) if filenamesOnly else (dirPath, getName(dirPath))
 
-def recurseDirs(root, *, filenamesOnly=False, fnFilterDirs=None,
-        topdown=True, followSymlinks=False):
+def recurseDirs(
+    root, *, filenamesOnly=False, fnFilterDirs=None, topdown=True, followSymlinks=False
+):
     """Return directories within a directory (recursively).
     You can provide a fnFilterDirs to filter out any directories not to traverse into."""
-    return recurseFiles(root, filenamesOnly=filenamesOnly, fnFilterDirs=fnFilterDirs, includeFiles=False,
-        includeDirs=True, topdown=topdown, followSymlinks=followSymlinks)
+    return recurseFiles(
+        root,
+        filenamesOnly=filenamesOnly,
+        fnFilterDirs=fnFilterDirs,
+        includeFiles=False,
+        includeDirs=True,
+        topdown=topdown,
+        followSymlinks=followSymlinks,
+    )
 
 class FileInfoEntryWrapper:
     "Helper class to make recurseFileInfo more convenient to use."
+
     def __init__(self, obj):
         self.obj = obj
         self.path = obj.path
-        
+
     def isDir(self, *args):
         return self.obj.is_dir(*args)
 
@@ -83,10 +109,10 @@ class FileInfoEntryWrapper:
 
     def mtime(self):
         return self.obj.stat().st_mtime
-    
+
     def getLastModifiedTime(self, units=TimeUnits.Seconds):
         mtime = self.obj.stat().st_mtime
-        
+
         if units == TimeUnits.Nanoseconds:
             return int(mtime * 1.0e6)
         elif units == TimeUnits.Milliseconds:
@@ -104,8 +130,14 @@ class FileInfoEntryWrapper:
         assertTrue(sys.platform.startswith('win'))
         return self.obj.stat().st_ctime
 
-def recurseFileInfo(root, recurse=True, followSymlinks=False, filesOnly=True,
-        fnFilterDirs=None, fnDirectExceptionsTo=None):
+def recurseFileInfo(
+    root,
+    recurse=True,
+    followSymlinks=False,
+    filesOnly=True,
+    fnFilterDirs=None,
+    fnDirectExceptionsTo=None,
+):
     """Convenient interface to python 3's file iterator.
     On Windows this can be very fast because calls to get file properties like size
     don't require an extra system call.
@@ -119,9 +151,14 @@ def recurseFileInfo(root, recurse=True, followSymlinks=False, filesOnly=True,
                 yield FileInfoEntryWrapper(entry)
             if recurse and (not fnFilterDirs or fnFilterDirs(entry.path)):
                 try:
-                    for subentry in recurseFileInfo(entry.path, recurse=recurse,
-                            followSymlinks=followSymlinks, filesOnly=filesOnly,
-                            fnFilterDirs=fnFilterDirs, fnDirectExceptionsTo=fnDirectExceptionsTo):
+                    for subentry in recurseFileInfo(
+                        entry.path,
+                        recurse=recurse,
+                        followSymlinks=followSymlinks,
+                        filesOnly=filesOnly,
+                        fnFilterDirs=fnFilterDirs,
+                        fnDirectExceptionsTo=fnDirectExceptionsTo,
+                    ):
                         yield subentry
                 except:
                     e = getCurrentException()
@@ -135,6 +172,4 @@ def recurseFileInfo(root, recurse=True, followSymlinks=False, filesOnly=True,
 
 def listFileInfo(root, followSymlinks=False, filesOnly=True):
     "Like recurseFileInfo, but does not recurse."
-    return recurseFileInfo(root, recurse=False,
-        followSymlinks=followSymlinks, filesOnly=filesOnly)
-
+    return recurseFileInfo(root, recurse=False, followSymlinks=followSymlinks, filesOnly=filesOnly)

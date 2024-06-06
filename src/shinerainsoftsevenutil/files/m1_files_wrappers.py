@@ -45,8 +45,8 @@ def getWithDifferentExt(s, ext_with_dot):
     short_before_ext, short_ext = os.path.splitExt(short)
     assertTrue(short_ext, s)
     if parent:
-        with_trailing_slash = s[0:len(parent)+1]
-        assertTrue(with_trailing_slash == parent+'/' or with_trailing_slash == parent+'\\')
+        with_trailing_slash = s[0 : len(parent) + 1]
+        assertTrue(with_trailing_slash == parent + '/' or with_trailing_slash == parent + '\\')
         return with_trailing_slash + short_before_ext + ext_with_dot
     else:
         return short_before_ext + ext_with_dot
@@ -90,8 +90,16 @@ def ensureEmptyDirectory(d):
     else:
         os.makedirs(d)
 
-def copy(srcFile, destFile, overwrite, doTrace=False,
-        keepSameModifiedTime=False, allowDirs=False, createParent=False, traceOnly=False):
+def copy(
+    srcFile,
+    destFile,
+    overwrite,
+    doTrace=False,
+    keepSameModifiedTime=False,
+    allowDirs=False,
+    createParent=False,
+    traceOnly=False,
+):
     """if overwrite is True, always overwrites if destination already exists.
     if overwrite is False, always raises exception if destination already exists."""
     if not isFile(srcFile):
@@ -106,7 +114,7 @@ def copy(srcFile, destFile, overwrite, doTrace=False,
 
     if doTrace:
         trace('copy()', srcFile, destFile)
-    
+
     if traceOnly:
         # can be useful for temporary debugging
         return
@@ -125,8 +133,16 @@ def copy(srcFile, destFile, overwrite, doTrace=False,
     if toSetModTime:
         setLastModifiedTime(destFile, toSetModTime, units=TimeUnits.Nanoseconds)
 
-def move(srcFile, destFile, overwrite, warnBetweenDrives=False,
-        doTrace=False, allowDirs=False, createParent=False, traceOnly=False):
+def move(
+    srcFile,
+    destFile,
+    overwrite,
+    warnBetweenDrives=False,
+    doTrace=False,
+    allowDirs=False,
+    createParent=False,
+    traceOnly=False,
+):
     """if overwrite is True, always overwrites if destination already exists.
     if overwrite is False, always raises exception if destination already exists."""
     if not exists(srcFile):
@@ -136,7 +152,7 @@ def move(srcFile, destFile, overwrite, warnBetweenDrives=False,
 
     if doTrace:
         trace('move()', srcFile, destFile)
-    
+
     if traceOnly:
         # can be useful for temporary debugging
         return
@@ -157,35 +173,47 @@ def move(srcFile, destFile, overwrite, warnBetweenDrives=False,
 
     assertTrue(exists(destFile))
 
-_winErrs = {3: 'Path not found', 5: 'Access denied',
-            17: 'Different drives',
-             80: 'Destination already exists' }
+
+_winErrs = {
+    3: 'Path not found',
+    5: 'Access denied',
+    17: 'Different drives',
+    80: 'Destination already exists',
+}
 
 def _copyFileWin(srcFile, destFile, overwrite):
     from ctypes import windll, c_wchar_p, c_int, GetLastError
+
     failIfExists = c_int(0) if overwrite else c_int(1)
     res = windll.kernel32.CopyFileW(c_wchar_p(srcFile), c_wchar_p(destFile), failIfExists)
     if not res:
         err = GetLastError()
-        raise OSFileRelatedError(f'CopyFileW failed ({_winErrs.get(err, "unknown")}) err={err} ' +
-            getPrintable(srcFile + '->' + destFile))
+        raise OSFileRelatedError(
+            f'CopyFileW failed ({_winErrs.get(err, "unknown")}) err={err} ' +
+            getPrintable(srcFile + '->' + destFile)
+        )
 
 def _moveFileWin(srcFile, destFile, overwrite, warnBetweenDrives):
     from ctypes import windll, c_wchar_p, c_int, GetLastError
+
     flags = 0
     flags |= 1 if overwrite else 0
     flags |= 0 if warnBetweenDrives else 2
     res = windll.kernel32.MoveFileExW(c_wchar_p(srcFile), c_wchar_p(destFile), c_int(flags))
-    
+
     if not res:
         err = GetLastError()
         if _winErrs.get(err) == 'Different drives' and warnBetweenDrives:
-            alert('Note: moving file from one drive to another. ' +
-                getPrintable(srcFile + '->' + destFile))
+            alert(
+                'Note: moving file from one drive to another. ' +
+                getPrintable(srcFile + '->' + destFile)
+            )
             return _moveFileWin(srcFile, destFile, overwrite, warnBetweenDrives=False)
 
-        raise OSFileRelatedError(f'MoveFileExW failed ({_winErrs.get(err, "unknown")}) err={err} ' +
-            getPrintable(srcFile + '->' + destFile))
+        raise OSFileRelatedError(
+            f'MoveFileExW failed ({_winErrs.get(err, "unknown")}) err={err} ' +
+            getPrintable(srcFile + '->' + destFile)
+        )
 
 def _copyFilePosix(srcFile, destFile, overwrite):
     if overwrite:
@@ -205,7 +233,6 @@ def _copyFilePosix(srcFile, destFile, overwrite):
                     break
                 fDest.write(buffer)
 
-
 def _getStatTime(path, key_ns, key_s, units):
     st = os.stat(path)
     if key_ns in dir(st):
@@ -213,7 +240,7 @@ def _getStatTime(path, key_ns, key_s, units):
     else:
         # fall back to seconds in case it is not available (like some py2)
         timeNs = getattr(st, key_s) * 1000 * 1000
-    
+
     if units == TimeUnits.Nanoseconds:
         return int(timeNs)
     elif units == TimeUnits.Milliseconds:
@@ -223,16 +250,14 @@ def _getStatTime(path, key_ns, key_s, units):
     else:
         raise ValueError('unknown unit')
 
-
 def getLastModifiedTime(path, units=TimeUnits.Seconds):
     return _getStatTime(path, 'st_mtime_ns', 'st_mtime', units)
 
 def getCTime(path, units=TimeUnits.Seconds):
     return _getStatTime(path, 'st_ctime_ns', 'st_ctime', units)
-    
+
 def getATime(path, units=TimeUnits.Seconds):
     return _getStatTime(path, 'st_atime_ns', 'st_atime', units)
-
 
 def setLastModifiedTime(path, newVal, units=TimeUnits.Seconds):
     if units == TimeUnits.Nanoseconds:
@@ -243,7 +268,7 @@ def setLastModifiedTime(path, newVal, units=TimeUnits.Seconds):
         newVal = int(newVal * 1.0e9)
     else:
         raise ValueError('unknown unit')
-        
+
     atimeNs = getATime(path, units=TimeUnits.Nanoseconds)
     os.utime(path, ns=(atimeNs, newVal))
 
@@ -255,12 +280,13 @@ def readAll(path, mode='r', encoding=None):
     with open(path, mode, encoding=encoding) as f:
         return f.read()
 
-def writeAll(path, txt, mode='w', encoding=None,
-             skipIfSameContent=False, updateTimeIfSameContent=True):
+def writeAll(
+    path, txt, mode='w', encoding=None, skipIfSameContent=False, updateTimeIfSameContent=True
+):
     """Write entire file. Defaults to utf-8."""
     if 'b' not in mode and encoding is None:
         encoding = 'utf-8'
-    
+
     if skipIfSameContent and isFile(path):
         assertTrue(mode == 'w' or mode == 'wb')
         currentContent = readAll(path, mode=mode.replace('w', 'r'), encoding=encoding)
@@ -275,19 +301,26 @@ def writeAll(path, txt, mode='w', encoding=None,
 
 def isEmptyDir(dir):
     return len(os.listdir(dir)) == 0
-    
-def getDirectorySizeRecurse(dir, followSymlinks=False, fnFilterDirs=None, fnDirectExceptionsTo=None):
+
+def getDirectorySizeRecurse(
+    dir, followSymlinks=False, fnFilterDirs=None, fnDirectExceptionsTo=None
+):
     from .m2_files_listing import recurseFileInfo
+
     total = 0
-    for obj in recurseFileInfo(dir, followSymlinks=followSymlinks,
-            fnFilterDirs=fnFilterDirs, fnDirectExceptionsTo=fnDirectExceptionsTo):
+    for obj in recurseFileInfo(
+        dir,
+        followSymlinks=followSymlinks,
+        fnFilterDirs=fnFilterDirs,
+        fnDirectExceptionsTo=fnDirectExceptionsTo,
+    ):
         total += obj.size()
     return total
 
 def fileContentsEqual(f1, f2):
     import filecmp
+
     return filecmp.cmp(f1, f2, shallow=False)
 
 class OSFileRelatedError(OSError):
     pass
-

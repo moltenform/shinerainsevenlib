@@ -1,4 +1,3 @@
-
 import os as _os
 from ..core import *
 
@@ -22,5 +21,5 @@ def removeEmptyFolders(path, removeRootIfEmpty=True, isRecurse=False, verbose=Fa
         else:
             if verbose:
                 trace('Deleting empty dir', path)
-                
+
             _os.rmdir(path)

@@ -1,4 +1,3 @@
-
 # shinerainsoftsevenutil
 # Released under the LGPLv3 License
 
@@ -24,12 +23,13 @@ def setClipboardText(s):
 
 def _getClipboardTextTk():
     from tkinter import Tk
+
     try:
         r = Tk()
         r.withdraw()
         s = r.clipboard_get()
     except BaseException as e:
-        if 'selection doesn\'t exist' in str(e):
+        if "selection doesn't exist" in str(e):
             s = ''
         else:
             raise
@@ -39,6 +39,7 @@ def _getClipboardTextTk():
 
 def _setClipboardTextTk(s):
     from tkinter import Tk
+
     assertTrue(isPy3OrNewer, 'Python 3 required')
     try:
         r = Tk()
@@ -50,27 +51,32 @@ def _setClipboardTextTk(s):
 
 def _getClipboardTextPyperclip():
     import pyperclip
+
     return pyperclip.paste()
 
 def _setClipboardTextPyperclip(s):
     import pyperclip
+
     pyperclip.copy(s)
-    
+
+
 # endregion
 # region debugging
 
 def DBG(obj=None):
     "dump values of local variables"
     import inspect
-    
+
     if obj is None:
         fback = inspect.currentframe().f_back
         framelocals = fback.f_locals
         newDict = {}
         for key in framelocals:
-            if not callable(framelocals[key]) and not \
-                    inspect.isclass(framelocals[key]) and not \
-                    inspect.ismodule(framelocals[key]):
+            if (
+                not callable(framelocals[key]) and
+                not inspect.isclass(framelocals[key]) and
+                not inspect.ismodule(framelocals[key])
+            ):
                 newDict[key] = framelocals[key]
         _pprint._pprint(newDict)
     else:
@@ -79,6 +85,7 @@ def DBG(obj=None):
 def _dbgHookCallback(exctype, value, traceback):
     DBG()
     from .m4_core_ui import alert
+
     alert('unhandled exception ' + value)
     _sys.__excepthook__(exctype, value, traceback)
 
@@ -87,6 +94,7 @@ def registerDebughook(b=True):
         _sys.excepthook = _dbgHookCallback
     else:
         _sys.excepthook = _sys.__excepthook__
+
 
 # endregion
 # region rng helpers
@@ -100,7 +108,7 @@ def getRandomString(max=1000 * 1000, hex=False):
 def genUuid(asBase64=False):
     import base64
     import uuid
-    
+
     u = uuid.uuid4()
     if asBase64:
         b = base64.urlsafe_b64encode(u.bytes_le)
@@ -112,28 +120,30 @@ class IndependentRNG:
     """keep a separate random stream that won't get affected by someone else.
     sometimes you want to set rng state to get a repeatable sequence of numbers back,
     which would get thrown off by other parts of the program also getting rng values."""
+
     def __init__(self, seed=None):
         if seed is not None:
             _random.seed(seed)
-            
+
         self.state = _random.getstate()
         self.keep_outside_state = None
         self.entered = False
-    
+
     def __enter__(self):
         if self.entered:
             return
-        
+
         self.entered = True
         self.keep_outside_state = _random.getstate()
         _random.setstate(self.state)
-    
+
     def __exit__(self, type, value, traceback):
         if not self.entered:
             return
-                
+
         self.entered = False
         _random.setstate(self.keep_outside_state)
+
 
 # endregion
 # region temp file helpers
@@ -143,6 +153,7 @@ def softDeleteFile(path, allowDirs=False, doTrace=False):
     from .. import files
     from .. import utility
     from .m4_core_ui import warn
+
     prefs = utility.m1_config.getSsrsInternalPrefs()
     assertTrue(files.exists(path), 'file not found', path)
     assertTrue(allowDirs or not files.isDir(path), 'you cannot softDelete a dir', path)
@@ -151,37 +162,49 @@ def softDeleteFile(path, allowDirs=False, doTrace=False):
 
     if warnIfBetweenDrives:
         if not newPath or newPath is cUseOSTrash:
-            warn('about to send file to OS trash. you may want to put a softDeleteDirectory '
-                 'into shinerainsoftsevenutil.cfg')
-    
+            warn(
+                'about to send file to OS trash. you may want to put a softDeleteDirectory '
+                'into shinerainsoftsevenutil.cfg'
+            )
+
     if not newPath or newPath is cUseOSTrash:
         try:
             from send2trash import send2trash
         except ImportError:
-            assertTrue(False, 'Either put a softDeleteDirectory into shinerainsoftsevenutil.cfg',
-                       ', or install the package send2trash')
+            assertTrue(
+                False,
+                'Either put a softDeleteDirectory into shinerainsoftsevenutil.cfg',
+                ', or install the package send2trash',
+            )
         if doTrace:
             trace(f'softDeleteFile |on| {path}')
-        
+
         send2trash(path)
     else:
         if doTrace:
             trace(f'softDeleteFile |on| {path} |to| {newPath}')
-        
-        files.move(path, newPath, overwrite=False, warnBetweenDrives=warnIfBetweenDrives,
-                   allowDirs=allowDirs)
+
+        files.move(
+            path,
+            newPath,
+            overwrite=False,
+            warnBetweenDrives=warnIfBetweenDrives,
+            allowDirs=allowDirs,
+        )
         return newPath
 
+
 cUseOSTrash = UniqueSentinelForMissingParameter()
+
 def getSoftDeleteDir(path):
-    """you can set up shinerainsoftsevenutil.cfg so that soft-deleted files go to a specified dir.
-    set `softDeleteDirectory=path`
-    or to be even more precise you can set different softDeletePaths based on the path,
+    r"""you can set up shinerainsoftsevenutil.cfg so that soft-deleted files go to a specified dir.
+    set `softDeleteDirectory=path` or
+    to be even more precise you can set different softDeletePaths based on the path,
     which can reduce number of disk writes. edit shinerainsoftsevenutil.cfg with paths like
     softDeleteDirectory_SlashhomeSlashuserSlasha=path1
     softDeleteDirectory_SlashhomeSlashuserSlashb=path2
-    (which maps /home/a to path1 and /home/2 to path2)
-    or
+    (which maps /home/a to path1 and /home/2 to path2) or
+
     softDeleteDirectory_cColonBackslash=path1
     softDeleteDirectory_dColonBackslash=path2
     (which maps C:\ to path1 and D:\ to path2)
@@ -189,56 +212,61 @@ def getSoftDeleteDir(path):
     """
     from .. import files
     from .. import utility
+
     prefs = utility.m1_config.getSsrsInternalPrefs()
     k, v = prefs.findKeyForPath(path, 'softDeleteDirectory_')
     if not v:
         v = prefs.parsed.main.softDeleteDirectory
         if not v:
             return cUseOSTrash
-    
+
     assertTrue(files.isDir(v), 'not a directory', v)
     return v
 
 def getSoftTempDir(path=''):
     from .. import files
     from .. import utility
+
     prefs = utility.m1_config.getSsrsInternalPrefs()
     v = prefs.parsed.tempDirectory
     assertTrue(files.isDir(v), 'not a directory', v)
     return v
 
+
 _softDeleteFileRng = IndependentRNG()
+
 def getSoftDeleteFullPath(path):
     from .. import files
+
     assertTrue(files.exists(path), 'file not found', path)
-    
+
     dirPath = getSoftDeleteDir(path)
     if not dirPath or dirPath is cUseOSTrash:
         return cUseOSTrash
-    
+
     # use an independent rng, so that other random sequences aren't disrupted
     with _softDeleteFileRng:
         randomString = getRandomString()
-    
+
     # as a prefix, the first 2 chars of the parent directory
     prefix = files.getName(files.getParent(path))[0:2] + '_'
     newPath = dirPath + files.sep + prefix + files.getName(path) + randomString
     assertTrue(not files.exists(newPath), 'already exists', newPath)
-    
+
     return newPath
-    
 
 
 # endregion
-# region other helpers    
+# region other helpers
 
 def downloadUrl(url, toFile=None, timeout=30, asText=False):
     import requests
+
     resp = requests.get(url, timeout=timeout)
     if toFile:
         with open(toFile, 'wb') as fOut:
             fOut.write(resp.content)
-    
+
     if asText:
         return resp.text
     else:
@@ -246,10 +274,12 @@ def downloadUrl(url, toFile=None, timeout=30, asText=False):
 
 def startThread(fn, args=None):
     import threading
+
     if args is None:
         args = tuple()
-    
+
     t = threading.Thread(target=fn, args=args)
     t.start()
-    
+
+
 # endregion

@@ -1,4 +1,3 @@
-
 # shinerainsoftsevenutil
 # Released under the LGPLv3 License
 
@@ -10,30 +9,32 @@ from .m1_core_util import *
 
 class PersistedDict:
     "store a dict (or dict of dicts) on disk."
+
     data = None
     handle = None
     counter = 0
     persistEveryNWrites = 1
 
-    def __init__(self, filename, warnIfCreatingNew=True,
-            keepHandle=False, persistEveryNWrites=5):
+    def __init__(self, filename, warnIfCreatingNew=True, keepHandle=False, persistEveryNWrites=5):
         from .. import files
         from .m4_core_ui import alert
+
         self.filename = filename
         self.persistEveryNWrites = persistEveryNWrites
         if not files.exists(filename):
             if warnIfCreatingNew:
-                alert("creating new cache at " + filename)
-                
+                alert('creating new cache at ' + filename)
+
             files.writeAll(filename, '{}')
-        
+
         self.load()
         if keepHandle:
-            self.handle = open(filename, 'w') # noqa
+            self.handle = open(filename, 'w')  # noqa
             self.persist()
 
     def load(self, encoding='utf-8'):
         from .. import files
+
         txt = files.readAll(self.filename, encoding=encoding)
         self.data = _json.loads(txt)
 
@@ -44,6 +45,7 @@ class PersistedDict:
 
     def persist(self):
         from .. import files
+
         txt = _json.dumps(self.data)
         if self.handle:
             self.handle.seek(0, _os.SEEK_SET)
@@ -73,6 +75,7 @@ class PersistedDict:
         self.data[subdictname][key1][key2] = value
         self.afterUpdate()
 
+
 # endregion
 # region retrieve text from strings
 
@@ -87,27 +90,33 @@ class ParsePlus:
         replaceFieldWithText (see examples in tests)
         getTotalSpan
     """
-    def __init__(self, pattern, extra_types=None, escapeSequences=None,
-            case_sensitive=True):
+
+    def __init__(self, pattern, extra_types=None, escapeSequences=None, case_sensitive=True):
         try:
             import parse
         except Exception as e:
-            raise ImportError('needs "parse" module from pip, https://pypi.org/project/parse/') from e
-        
+            raise ImportError(
+                'needs "parse" module from pip, https://pypi.org/project/parse/'
+            ) from e
+
         self.pattern = pattern
         self.case_sensitive = case_sensitive
         self.extra_types = extra_types if extra_types else {}
         self.escapeSequences = escapeSequences if escapeSequences else []
         if 'NoNewlines' in pattern:
+
             @parse.with_pattern(r'[^\r\n]+')
             def parse_NoNewlines(s):
                 return str(s)
+
             self.extra_types['NoNewlines'] = parse_NoNewlines
-            
+
         if 'NoSpaces' in pattern:
+
             @parse.with_pattern(r'[^\r\n\t ]+')
             def parse_NoSpaces(s):
                 return str(s)
+
             self.extra_types['NoSpaces'] = parse_NoSpaces
 
     def _createEscapeSequencesMap(self, s):
@@ -117,21 +126,28 @@ class ParsePlus:
 
         sTransformed = s
         for i, seq in enumerate(self.escapeSequences):
-            assertTrue(len(seq) > 1, "an escape-sequence only makes sense if " +
-                "it is at least two characters")
+            assertTrue(
+                len(seq) > 1,
+                'an escape-sequence only makes sense if it is at least two characters',
+            )
 
             # use a rarely-occurring ascii char,
             # \x01 (start of heading)
             rareChar = chr(i + 1)
-            
+
             # raise error if there's any occurance of rareChar, not repl,
             # otherwise we would have incorrect expansions
             if rareChar in s:
-                raise RuntimeError("we don't yet support escape sequences " +
-                "if the input string contains rare ascii characters. the " +
-                "input string contains " + rareChar + ' (ascii ' +
-                str(ord(rareChar)) + ')')
-                
+                raise RuntimeError(
+                    "we don't yet support escape sequences " +
+                    'if the input string contains rare ascii characters. the ' +
+                    'input string contains ' +
+                    rareChar +
+                    ' (ascii ' +
+                    str(ord(rareChar)) +
+                    ')'
+                )
+
             # replacement string is the same length, so offsets aren't affected
             repl = rareChar * len(seq)
             self._escapeSequencesMap[repl] = seq
@@ -149,22 +165,24 @@ class ParsePlus:
         "add some extra information to the results"
         if not parseResult:
             return parseResult
-        
+
         ret = Bucket()
         lenS = len(s)
         for name in parseResult.named:
             val = self._unreplaceEscapeSequences(parseResult.named[name])
             setattr(ret, name, val)
-        
+
         ret.spans = parseResult.spans
         ret.getTotalSpan = lambda: self._getTotalSpan(parseResult, lenS)
         return ret
 
     def _getTotalSpan(self, parseResult, lenS):
         if '{{' in self.pattern or '}}' in self.pattern:
-            raise RuntimeError("for simplicity, we don't yet support getTotalSpan " +
-                "if the pattern contains {{ or }}")
-        
+            raise RuntimeError(
+                "for simplicity, we don't yet support getTotalSpan " +
+                'if the pattern contains {{ or }}'
+            )
+
         locationOfFirstOpen = self.pattern.find('{')
         locationOfLastClose = self.pattern.rfind('}')
         if locationOfFirstOpen == -1 or locationOfLastClose == -1:
@@ -186,41 +204,53 @@ class ParsePlus:
         largestSpanEnd += len(self.pattern) - (locationOfLastClose + len('}'))
 
         # sanity check that the bounds make sense
-        assertTrue(0 <= smallestSpanStart <= lenS,
-            'internal error: span outside bounds')
-        assertTrue(0 <= largestSpanEnd <= lenS,
-            'internal error: span outside bounds')
-        assertTrue(largestSpanEnd >= smallestSpanStart,
-            'internal error: invalid span')
+        assertTrue(0 <= smallestSpanStart <= lenS, 'internal error: span outside bounds')
+        assertTrue(0 <= largestSpanEnd <= lenS, 'internal error: span outside bounds')
+        assertTrue(largestSpanEnd >= smallestSpanStart, 'internal error: invalid span')
         return (smallestSpanStart, largestSpanEnd)
 
     def match(self, s):
         "entire string must match"
         import parse
+
         sTransformed = self._createEscapeSequencesMap(s)
-        parseResult = parse.parse(self.pattern, sTransformed,
-            extra_types=self.extra_types, case_sensitive=self.case_sensitive)
+        parseResult = parse.parse(
+            self.pattern,
+            sTransformed,
+            extra_types=self.extra_types,
+            case_sensitive=self.case_sensitive,
+        )
         return self._resultToMyResult(parseResult, s)
 
     def search(self, s):
         import parse
+
         sTransformed = self._createEscapeSequencesMap(s)
-        parseResult = parse.search(self.pattern, sTransformed,
-            extra_types=self.extra_types, case_sensitive=self.case_sensitive)
+        parseResult = parse.search(
+            self.pattern,
+            sTransformed,
+            extra_types=self.extra_types,
+            case_sensitive=self.case_sensitive,
+        )
         return self._resultToMyResult(parseResult, s)
 
     def findAll(self, s):
         import parse
+
         sTransformed = self._createEscapeSequencesMap(s)
-        parseResults = parse.findall(self.pattern, sTransformed,
-            extra_types=self.extra_types, case_sensitive=self.case_sensitive)
+        parseResults = parse.findall(
+            self.pattern,
+            sTransformed,
+            extra_types=self.extra_types,
+            case_sensitive=self.case_sensitive,
+        )
         for parseResult in parseResults:
             yield self._resultToMyResult(parseResult, s)
 
-    def replaceFieldWithText(self, s, key, newValue,
-            appendIfNotFound=None, allowOnlyOnce=False):
+    def replaceFieldWithText(self, s, key, newValue, appendIfNotFound=None, allowOnlyOnce=False):
         "example: <title>{title}</title>"
         from . import m6_jslike
+
         results = list(self.findall(s))
         if allowOnlyOnce and len(results) > 1:
             raise RuntimeError('we were told to allow pattern only once.')
@@ -229,21 +259,24 @@ class ParsePlus:
             return m6_jslike.spliceSpan(s, span, newValue)
         else:
             if appendIfNotFound is None:
-                raise RuntimeError("pattern not found.")
+                raise RuntimeError('pattern not found.')
             else:
                 return s + appendIfNotFound
 
-    def replaceFieldWithTextIntoFile(self, path, key, newValue,
-            appendIfNotFound=None, allowOnlyOnce=False, encoding='utf-8'):
+    def replaceFieldWithTextIntoFile(
+        self, path, key, newValue, appendIfNotFound=None, allowOnlyOnce=False, encoding='utf-8'
+    ):
         "convenience method to write the results to a file"
         from .. import files
+
         s = files.readAll(path, encoding=encoding)
 
-        newS = self.replaceFieldWithText(s, key, newValue,
-            appendIfNotFound=appendIfNotFound,
-            allowOnlyOnce=allowOnlyOnce)
+        newS = self.replaceFieldWithText(
+            s, key, newValue, appendIfNotFound=appendIfNotFound, allowOnlyOnce=allowOnlyOnce
+        )
 
         files.writeAll(path, newS, 'w', encoding=encoding, skipIfSameContent=True)
+
 
 # endregion
 # region enum helpers
@@ -251,15 +284,19 @@ class ParsePlus:
 class Bucket:
     """simple named-tuple; o.field looks nicer than o['field'].
     these days types.SimpleNamespace does nearly the same thing."""
+
     def __init__(self, **kwargs):
         for key in kwargs:
             object.__setattr__(self, key, kwargs[key])
 
     def __repr__(self):
-        return '\n\n\n'.join('%s=%s'%(ustr(key), ustr(self.__dict__[key])) for key in sorted(self.__dict__))
+        return '\n\n\n'.join(
+            '%s=%s' % (ustr(key), ustr(self.__dict__[key])) for key in sorted(self.__dict__)
+        )
 
 class SimpleEnum:
     "simple enum; also blocks modification after creation."
+
     _set = None
 
     def __init__(self, listStart):
@@ -286,6 +323,7 @@ class SimpleEnum:
 class UniqueSentinelForMissingParameter:
     "use as a default parameter where None is a valid input, see pep 661"
 
+
 # endregion
 # region data structure helpers
 
@@ -300,6 +338,7 @@ def appendToListInDictOrStartNewList(d, key, val):
 def takeBatchOnArbitraryIterable(iterable, size):
     "yield successive n-sized chunks from a list"
     import itertools
+
     it = iter(iterable)
     item = list(itertools.islice(it, size))
     while item:
@@ -313,6 +352,7 @@ def takeBatch(itr, n):
 class TakeBatch:
     """run a callback on n-sized chunks from a list, like javascript's _.chunk.
     the convenient part is that any leftover pieces will be automatically processed."""
+
     def __init__(self, batchSize, callback):
         self.batch = []
         self.batchSize = batchSize
@@ -334,7 +374,8 @@ class TakeBatch:
                 self.callback(self.batch)
 
 class RecentlyUsedList:
-    'keep a list of items. decided not to store duplicates'
+    "keep a list of items. decided not to store duplicates"
+
     def __init__(self, maxSize=None, startList=None):
         self.list = startList or []
         self.maxSize = maxSize
@@ -345,6 +386,7 @@ class RecentlyUsedList:
     def add(self, s):
         # if it's also elsewhere in the list, remove that one
         from . import m6_jslike
+
         index = m6_jslike.indexOf(self.list, s)
         if index != -1:
             self.list.pop(index)
@@ -357,6 +399,7 @@ class RecentlyUsedList:
             while len(self.list) > self.maxSize:
                 self.list.pop()
 
+
 # endregion
 # region automatically memo-ize
 
@@ -364,6 +407,7 @@ def BoundedMemoize(fn, limit=20):
     "inspired by http://code.activestate.com/recipes/496879-memoize-decorator-function-with-cache-size-limit/"
     from collections import OrderedDict
     import pickle
+
     cache = OrderedDict()
 
     def memoizeWrapper(*args, **kwargs):
@@ -383,7 +427,7 @@ def BoundedMemoize(fn, limit=20):
         memoizeWrapper.__name__ = fn.__name__
     else:
         memoizeWrapper.func_name = fn.func_name
-    
+
     return memoizeWrapper
 
 
@@ -400,7 +444,7 @@ def compareTwoListsAsSets(l1, l2, transformFn1=None, transformFn2=None):
         raise ValueError('Duplicate item(s) seen in list 1.' + str(l1Transformed))
     if len(set2) != len(l2Transformed):
         raise ValueError('Duplicate item(s) seen in list 2.' + str(l2Transformed))
-    
+
     extraItems = list(set1 - set2)
     missingItems = list(set2 - set1)
     return Bucket(extraItems=extraItems, missingItems=missingItems)
@@ -411,11 +455,11 @@ def expectEqualityTwoListsAsSets(l1, l2, transformFn1=None, transformFn2=None):
     if len(result.extraItems):
         trace('Extra items seen in list 1:', result.extraItems)
         return False
-    
+
     if len(result.missingItems):
         trace('Missing items not present in list 1:', result.missingItems)
         return False
-    
+
     return True
 
 def throwIfDuplicates(l1, transformFn1=None, context=''):
@@ -437,5 +481,5 @@ def mergeDictIntoBucket(bucketConfigs, dictParams, disallowNewKeys=True):
         else:
             setattr(bucketConfigs, key, dictParams[key])
 
-# endregion
 
+# endregion

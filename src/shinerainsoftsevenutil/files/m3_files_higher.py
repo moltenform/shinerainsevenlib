@@ -18,12 +18,20 @@ def openDirectoryInExplorer(path):
             pathBin = findBinaryOnPath(candidate)
             if pathBin:
                 args = [pathBin, path]
-                run(args, shell=False, createNoWindow=False, throwOnFailure=False, captureOutput=False, wait=False)
+                run(
+                    args,
+                    shell=False,
+                    createNoWindow=False,
+                    throwOnFailure=False,
+                    captureOutput=False,
+                    wait=False,
+                )
                 return
         raise RuntimeError('unable to open directory.')
 
 def openUrl(url, filter=True):
     import webbrowser
+
     if url.startswith('http://'):
         prefix = 'http://'
     elif url.startswith('https://'):
@@ -33,7 +41,7 @@ def openUrl(url, filter=True):
         assertTrue(False, 'url did not start with http')
 
     if filter:
-        url = url[len(prefix):]
+        url = url[len(prefix) :]
         url = url.replace('%', '%25')
         url = url.replace('&', '%26')
         url = url.replace('|', '%7C')
@@ -45,9 +53,8 @@ def openUrl(url, filter=True):
         url = url.replace('<', '%3C')
         url = url.replace(' ', '%20')
         url = prefix + url
-        
-    webbrowser.open(url, new=2)
 
+    webbrowser.open(url, new=2)
 
 def findBinaryOnPath(name):
     "this even adds a .exe on windows platforms"
@@ -55,6 +62,7 @@ def findBinaryOnPath(name):
 
 def hasherFromString(s):
     import hashlib
+
     if s == 'sha1':
         return hashlib.sha1()
     elif s == 'sha224':
@@ -85,17 +93,22 @@ def hasherFromString(s):
         return hashlib.shake_256()
     elif s == 'xxhash_32':
         import xxhash
+
         return xxhash.xxh32()
     elif s == 'xxhash_64':
         import xxhash
+
         return xxhash.xxh64()
     else:
         raise ValueError('Unknown hash type ' + s)
 
-defaultBufSize = 0x40000 # 256kb
+
+defaultBufSize = 0x40000  # 256kb
+
 def computeHashBytes(b, hasher='sha1', buffersize=defaultBufSize):
     "Get hash of a bytes object, or a crc32"
     import io
+
     with io.BytesIO(b) as f:
         return _computeHashImpl(f, hasher, buffersize)
 
@@ -107,6 +120,7 @@ def computeHash(path, hasher='sha1', buffersize=defaultBufSize):
 def _computeHashImpl(f, hasher, buffersize=defaultBufSize):
     if hasher == 'crc32':
         import zlib
+
         crc = zlib.crc32(b'', 0)
         while True:
             # update the hash with the contents of the file
@@ -114,7 +128,7 @@ def _computeHashImpl(f, hasher, buffersize=defaultBufSize):
             if not buffer:
                 break
             crc = zlib.crc32(buffer, crc)
-        crc = crc & 0xffffffff
+        crc = crc & 0xFFFFFFFF
         return '%08x' % crc
     elif hasher == 'crc64':
         try:
@@ -149,7 +163,7 @@ def windowsUrlFileGet(path):
     lines = s.split('\n')
     for line in lines:
         if line.startswith('URL='):
-            return line[len('URL='):]
+            return line[len('URL=') :]
     raise RuntimeError('no url seen in ' + path)
 
 def windowsUrlFileWrite(path, url):
@@ -165,16 +179,26 @@ def runWithoutWait(listArgs):
     p = subprocess.Popen(listArgs, shell=False)
     return p.pid
 
-def runWithTimeout(args, *, shell=False, createNoWindow=True,
-                  throwOnFailure=True, captureOutput=True, timeoutSeconds=None, addArgs=None):
+def runWithTimeout(
+    args,
+    *,
+    shell=False,
+    createNoWindow=True,
+    throwOnFailure=True,
+    captureOutput=True,
+    timeoutSeconds=None,
+    addArgs=None,
+):
     """Run a process, with a timeout.
     on some windows IDEs, starting a process visually shows a black window appearing,
     so can pass createNoWindow to prevent this.
     returns tuple (returncode, stdout, stderr)"""
     addArgs = addArgs if addArgs else {}
-    
-    assertTrue(throwOnFailure is True or throwOnFailure is False or throwOnFailure is None,
-        "we don't yet support custom exception types set here, you can use CalledProcessError")
+
+    assertTrue(
+        throwOnFailure is True or throwOnFailure is False or throwOnFailure is None,
+        "we don't yet support custom exception types set here, you can use CalledProcessError",
+    )
 
     retcode = -1
     stdout = None
@@ -182,29 +206,50 @@ def runWithTimeout(args, *, shell=False, createNoWindow=True,
     if sys.platform.startswith('win') and createNoWindow:
         addArgs['creationflags'] = 0x08000000
 
-    ret = subprocess.run(args, capture_output=captureOutput, shell=shell, timeout=timeoutSeconds,
-        check=throwOnFailure, **addArgs)
+    ret = subprocess.run(
+        args,
+        capture_output=captureOutput,
+        shell=shell,
+        timeout=timeoutSeconds,
+        check=throwOnFailure,
+        **addArgs,
+    )
 
     retcode = ret.returncode
     if captureOutput:
         stdout = ret.stdout
         stderr = ret.stderr
-    
+
     return retcode, stdout, stderr
 
-def run(listArgs, *, shell=False, createNoWindow=True,
-        throwOnFailure=RuntimeError, stripText=True, captureOutput=True, silenceOutput=False,
-        wait=True, confirmExists=False):
+def run(
+    listArgs,
+    *,
+    shell=False,
+    createNoWindow=True,
+    throwOnFailure=RuntimeError,
+    stripText=True,
+    captureOutput=True,
+    silenceOutput=False,
+    wait=True,
+    confirmExists=False,
+):
     """Run a process.
     on some windows IDEs, starting a process visually shows a black window appearing,
     so can pass createNoWindow to prevent this.
     by default throws if the process fails (return code is nonzero).
     returns tuple (returncode, stdout, stderr)"""
-    
+
     if confirmExists:
-        assertTrue(isFile(listArgs[0]) or 'which' not in dir(_shutil)
-                   or _shutil.which(listArgs[0]) or shell, 'file not found?', listArgs[0])
-    
+        assertTrue(
+            isFile(listArgs[0]) or
+            'which' not in dir(_shutil) or
+            _shutil.which(listArgs[0]) or
+            shell,
+            'file not found?',
+            listArgs[0],
+        )
+
     kwargs = {}
 
     if sys.platform.startswith('win') and createNoWindow:
@@ -221,8 +266,9 @@ def run(listArgs, *, shell=False, createNoWindow=True,
     stderr = None
 
     if captureOutput:
-        sp = subprocess.Popen(listArgs, shell=shell,
-            stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kwargs)
+        sp = subprocess.Popen(
+            listArgs, shell=shell, stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kwargs
+        )
 
         comm = sp.communicate()
         stdout = comm[0]
@@ -235,8 +281,8 @@ def run(listArgs, *, shell=False, createNoWindow=True,
     else:
         handlesToClose = []
         if silenceOutput:
-            stdoutArg = open(os.devnull, 'wb') # noqa
-            stderrArg = open(os.devnull, 'wb') # noqa
+            stdoutArg = open(os.devnull, 'wb')  # noqa
+            stderrArg = open(os.devnull, 'wb')  # noqa
             handlesToClose.append(stdoutArg)
             handlesToClose.append(stderrArg)
         else:
@@ -245,9 +291,13 @@ def run(listArgs, *, shell=False, createNoWindow=True,
 
         try:
             if wait:
-                retcode = subprocess.call(listArgs, stdout=stdoutArg, stderr=stderrArg, shell=shell, **kwargs)
+                retcode = subprocess.call(
+                    listArgs, stdout=stdoutArg, stderr=stderrArg, shell=shell, **kwargs
+                )
             else:
-                subprocess.Popen(listArgs, stdout=stdoutArg, stderr=stderrArg, shell=shell, **kwargs)
+                subprocess.Popen(
+                    listArgs, stdout=stdoutArg, stderr=stderrArg, shell=shell, **kwargs
+                )
         finally:
             for handle in handlesToClose:
                 handle.close()
@@ -257,13 +307,16 @@ def run(listArgs, *, shell=False, createNoWindow=True,
         if throwOnFailure is True:
             throwOnFailure = RuntimeError
 
-        exceptionText = 'retcode is not 0 for process ' + \
-            str(listArgs) + '\nretcode was ' + str(retcode) + \
-            '\nstdout was ' + str(stdout) + \
-            '\nstderr was ' + str(stderr)
+        exceptionText = (
+            'retcode is not 0 for process ' +
+            str(listArgs) +
+            '\nretcode was ' +
+            str(retcode) +
+            '\nstdout was ' +
+            str(stdout) +
+            '\nstderr was ' +
+            str(stderr)
+        )
         raise throwOnFailure(getPrintable(exceptionText))
 
     return retcode, stdout, stderr
-
-
-
