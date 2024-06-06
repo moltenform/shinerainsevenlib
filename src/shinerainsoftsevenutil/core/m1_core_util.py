@@ -18,13 +18,13 @@ import math as _math
 # but these ones are loud, they always throw on failure.
 
 def assertTrue(condition, *messageArgs):
-    "throw if condition is false"
+    "Throw if condition is false"
     if not condition:
         msg = ' '.join(map(str, messageArgs)) if messageArgs else ''
         raise AssertionError(msg)
 
 def assertEq(expected, received, *messageArgs):
-    "throw if values are not equal"
+    "Throw if values are not equal"
     if expected != received:
         msg = ' '.join(map(str, messageArgs)) if messageArgs else ''
         msg += '\nassertion failed, expected:\n'
@@ -34,7 +34,7 @@ def assertEq(expected, received, *messageArgs):
         raise AssertionError(msg)
 
 def assertWarn(condition, *messageArgs):
-    "show a message to user if condition is false"
+    "Show a message to user if condition is false"
     from . import m4_core_ui
 
     if not condition:
@@ -42,7 +42,7 @@ def assertWarn(condition, *messageArgs):
         m4_core_ui.warn(msg)
 
 def assertWarnEq(expected, received, *messageArgs):
-    "show a message to user if values are not equal"
+    "Show a message to user if values are not equal"
     from . import m4_core_ui
 
     if expected != received:
@@ -54,7 +54,7 @@ def assertWarnEq(expected, received, *messageArgs):
         m4_core_ui.warn(msg)
 
 def assertFloatEq(expected, received, *messageArgs):
-    "throw if values are not very close, use this if comparing floats"
+    "Throw if values are not very close, use this if comparing floats"
     precision = 0.000001
     difference = _math.fabs(expected - received)
     if difference > precision:
@@ -65,7 +65,7 @@ def assertFloatEq(expected, received, *messageArgs):
         assertTrue(False, *messageArgs)
 
 def assertEqArray(expected, received):
-    "throw if arrays are not the same, with a convenient message"
+    "Throw if arrays are not the same, with a convenient message"
     if isinstance(expected, str):
         expected = expected.split('|')
 
@@ -74,7 +74,7 @@ def assertEqArray(expected, received):
         assertEq(repr(expectedVal), repr(received[i]))
 
 def assertException(fn, excType, excTypeExpectedString=None, msg='', regexp=False):
-    "expect fn to throw"
+    "Expect fn to throw"
     e = None
     try:
         fn()
@@ -103,17 +103,17 @@ def assertException(fn, excType, excTypeExpectedString=None, msg='', regexp=Fals
         )
 
 def getTraceback(e):
-    "get _traceback from an exception"
+    "Get _traceback from an exception"
     lines = _traceback.format_exception(type(e), e, e.__traceback__)
     return ''.join(lines)
 
 def getCurrentException():
-    "get current exception"
+    "Get current exception"
     return _sys.exc_info()[1]
 
 class shinerainsoftsevenutilError(RuntimeError):
     def __init__(self, *args):
-        "you can pass in more than one string"
+        "You can pass in more than one string"
         combined = ' '.join(str(arg) for arg in args)
         super().__init__(combined)
 
@@ -121,7 +121,7 @@ class shinerainsoftsevenutilError(RuntimeError):
 # region trace helpers
 
 def getPrintable(s, okToIgnore=False):
-    "from a-with-accent to plain a, get closest visual ascii equivalent"
+    "From a-with-accent to plain a, get closest visual ascii equivalent"
     if isinstance(s, bytes):
         return s.decode('ascii')
     if not isinstance(s, str):
@@ -137,7 +137,7 @@ gRedirectTraceCalls = _types.SimpleNamespace()
 gRedirectTraceCalls.fnHook = None
 
 def trace(*args, always=False):
-    """similar to print, but
+    """Similar to print, but
     1) distinguish debugging prints vs intentional production prints
     2) can be redirected to fnHook
     3) certain terminals throw exceptions if given unicode characters"""
@@ -166,12 +166,12 @@ def renderMillisTimeStandard(millisTime):
     return _time.strftime('%Y-%m-%d %I:%M:%S', _time.localtime(t))
 
 def getNowAsMillisTime():
-    "gets the number of milliseconds past epoch (unix _time * 1000)"
+    "Gets the number of milliseconds past epoch (unix _time * 1000)"
     t = _time.time()
     return int(t * 1000)
 
 class EnglishDateParserWrapper:
-    """more convenent than directly calling dateparser
+    """More convenent than directly calling dateparser
     default to month-day-year
     restrict to English, less possibility of accidentally parsing a non-date string"""
 
@@ -187,7 +187,7 @@ class EnglishDateParserWrapper:
         return self.p.get_date_data(s)['date_obj']
 
     def fromFullWithTimezone(self, s):
-        """able to parse timestamps with a timezone
+        """Able to parse timestamps with a timezone
         compensate for +0000
         Wed Nov 07 04:01:10 +0000 2018"""
         pts = s.split(' ')
@@ -203,20 +203,20 @@ class EnglishDateParserWrapper:
         return ' '.join(newpts) + isTimeZone
 
     def getDaysBefore(self, baseDate, nDaysBefore):
-        "subtract n days (simple), return datetime object"
+        "Subtract n days (simple), return datetime object"
         assertTrue(isinstance(nDaysBefore, int))
         diff = _datetime.timedelta(days=nDaysBefore)
         return baseDate - diff
 
     def getDaysBeforeInMilliseconds(self, sBaseDate, nDaysBefore):
-        "subtract n days (simple), return number of milliseconds past epoch"
+        "Subtract n days (simple), return number of milliseconds past epoch"
         dObj = self.parse(sBaseDate)
         diff = _datetime.timedelta(days=nDaysBefore)
         dBefore = dObj - diff
         return int(dBefore.timestamp() * 1000)
 
     def toUnixMilliseconds(self, s):
-        "conviently go straight from string to the number of milliseconds past epoch"
+        "Conviently go straight from string to the number of milliseconds past epoch"
         assertTrue(isPy3OrNewer, 'requires python 3 or newer')
         dt = self.parse(s)
         assertTrue(dt, 'not parse dt', s)
@@ -313,7 +313,7 @@ def clampNumber(value, minValue, maxValue):
 # region flow helpers
 
 def runAndCatchException(fn):
-    """can be convenient to not need a try/except structure.
+    """Can be convenient to not need a try/except structure.
     use like golang,
     result, err = callFn()"""
     try:
@@ -368,7 +368,7 @@ def toValidFilename(pathOrig, dirsepOk=False, maxLen=None):
     return result
 
 def stripHtmlTags(s, removeRepeatedWhitespace=True):
-    """remove all html tags.
+    """Remove all html tags.
     see also: html.escape, html.unescape
     a (?:) is a non-capturing group"""
 
@@ -384,12 +384,12 @@ def stripHtmlTags(s, removeRepeatedWhitespace=True):
     return s
 
 def replaceNonAsciiWith(s, replaceWith):
-    """replace non-ascii or control chars.
+    """Replace non-ascii or control chars.
     printable is 32-126"""
     return _re.sub(r'[^\x20-\x7e]', replaceWith, s)
 
 def containsNonAscii(s):
-    """does string contain non-ascii or control chars?
+    """Does string contain non-ascii or control chars?
     aka does string contain chars outside 32-126"""
     withoutAscii = replaceNonAsciiWith(s, '')
     return len(s) != len(withoutAscii)

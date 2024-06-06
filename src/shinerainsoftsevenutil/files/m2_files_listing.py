@@ -5,21 +5,6 @@
 import os
 from .m1_files_wrappers import *
 
-def _listChildrenUnsorted(path, *, filenamesOnly=False, allowedExts=None):
-    "list directory contents. allowedExts in the form ['png', 'gif']"
-    for filename in os.listdir(path):
-        if not allowedExts or getExt(filename) in allowedExts:
-            yield filename if filenamesOnly else (path + os.path.sep + filename, filename)
-
-if sys.platform.startswith('win'):
-    exeSuffix = '.exe'
-    listChildren = _listChildrenUnsorted
-else:
-    exeSuffix = ''
-
-    def listChildren(*args, **kwargs):
-        return sorted(_listChildrenUnsorted(*args, **kwargs))
-
 # pylint: disable-next=inconsistent-return-statements
 def listDirs(path, *, filenamesOnly=False, allowedExts=None, recurse=False):
     "Return directories within a directory"
@@ -43,6 +28,22 @@ def listFiles(path, *, filenamesOnly=False, allowedExts=None, recurse=False):
     for full, name in listChildren(path, allowedExts=allowedExts):
         if not os.path.isdir(full):
             yield name if filenamesOnly else (full, name)
+
+def _listChildrenUnsorted(path, *, filenamesOnly=False, allowedExts=None):
+    "List directory contents. allowedExts in the form ['png', 'gif']"
+    for filename in os.listdir(path):
+        if not allowedExts or getExt(filename) in allowedExts:
+            yield filename if filenamesOnly else (path + os.path.sep + filename, filename)
+
+# on windows platforms we can typically assume dir list results are sorted
+# for consistency, on other platforms, sort the results.
+if sys.platform.startswith('win'):
+    exeSuffix = '.exe'
+    listChildren = _listChildrenUnsorted
+else:
+    exeSuffix = ''
+    def listChildren(*args, **kwargs):
+        return sorted(_listChildrenUnsorted(*args, **kwargs))
 
 def recurseFiles(
     root,

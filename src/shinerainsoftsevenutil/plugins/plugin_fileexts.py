@@ -591,7 +591,7 @@ def extensionPossiblyExecutable(s):
     Returns 'warn' if it is a document type that can include embedded scripts,
     Returns False otherwise"""
 
-    ext = files.getExt(s, False)
+    ext = files.getExt(s, removeDot=False)
     if ext in exeExt:
         return 'exe'
     elif ext in warnExt:

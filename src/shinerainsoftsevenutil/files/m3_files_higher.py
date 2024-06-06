@@ -61,7 +61,7 @@ def openUrl(url, filterChars=True):
     webbrowser.open(url, new=2)
 
 def findBinaryOnPath(name):
-    "this even adds a .exe on windows platforms"
+    "This even knows about .bat and .exe on windows platforms"
     return _shutil.which(name)
 
 def hasherFromString(s):
@@ -160,7 +160,7 @@ def _computeHashImpl(f, hasher, buffersize=defaultBufSize):
         return hasher.hexdigest()
 
 def windowsUrlFileGet(path):
-    "extract the url from a windows .url file"
+    "Extract the url from a windows .url file"
     assertEq('.url', splitExt(path)[1].lower())
     s = readAll(path, mode='r')
     lines = s.split('\n')
@@ -170,7 +170,7 @@ def windowsUrlFileGet(path):
     raise RuntimeError('no url seen in ' + path)
 
 def windowsUrlFileWrite(path, url):
-    "create a windows .url file"
+    "Create a windows .url file"
     assertTrue(len(url) > 0)
     assertTrue(not exists(path), 'file already exists at', path)
     s = '[InternetShortcut]\n'
@@ -178,7 +178,7 @@ def windowsUrlFileWrite(path, url):
     writeAll(path, s)
 
 def runWithoutWait(listArgs):
-    "run process without waiting for completion"
+    "Run process without waiting for completion"
     p = subprocess.Popen(listArgs, shell=False)
     return p.pid
 

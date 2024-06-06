@@ -10,7 +10,7 @@ from .plugin_fileexts import *
 
 class SrssConfigReader:
     """
-    example:
+    Example:
 
     config = SimpleConfigReader()
     config.setSchemaForSection('main', {'setting1' : [int, 0], 'setting2' : [bool, True], 'setting3' : [str, 'default']})
@@ -185,6 +185,7 @@ class SrssConfigReader:
 
 myPath = _os.path.abspath(__file__)
 def getSrssConfigLocation():
+    "Internal helper for finding where shinerainsoftsevenutil's own cfgs are"
     dirPath = files.getParent(files.getParent(myPath))
     userHome = _os.path.expanduser('~')
     candidates = [
@@ -199,6 +200,7 @@ def getSrssConfigLocation():
 _gCachedInternalPrefs = None
 
 def getSsrsInternalPrefs():
+    "Internal helper for getting shinerainsoftsevenutil's own cfgs"
     global _gCachedInternalPrefs
     if not _gCachedInternalPrefs:
         cfgPath = getSrssConfigLocation()

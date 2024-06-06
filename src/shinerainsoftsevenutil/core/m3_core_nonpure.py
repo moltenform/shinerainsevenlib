@@ -65,7 +65,7 @@ def _setClipboardTextPyperclip(s):
 # region debugging
 
 def DBG(obj=None):
-    "dump values of local variables"
+    "Dump values of local variables"
     import inspect
 
     if obj is None:
@@ -117,7 +117,7 @@ def genUuid(asBase64=False):
         return str(u)
 
 class IndependentRNG:
-    """keep a separate random stream that won't get affected by someone else.
+    """Keep a separate random stream that won't get affected by someone else.
     sometimes you want to set rng state to get a repeatable sequence of numbers back,
     which would get thrown off by other parts of the program also getting rng values."""
 
@@ -176,7 +176,7 @@ def softDeleteFile(path, allowDirs=False, doTrace=False):
 cUseOSTrash = UniqueSentinelForMissingParameter()
 
 def getSoftDeleteDir(path):
-    r"""you can set up shinerainsoftsevenutil.cfg so that soft-deleted files go to a specified dir.
+    r"""You can set up shinerainsoftsevenutil.cfg so that soft-deleted files go to a specified dir.
     set `softDeleteDirectory=path` or
     to be even more precise you can set different softDeletePaths based on the path,
     which can reduce number of disk writes. edit shinerainsoftsevenutil.cfg with paths like

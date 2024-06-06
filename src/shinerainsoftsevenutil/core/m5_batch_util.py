@@ -123,8 +123,9 @@ class SrssLooper:
 
 class SrssFileIterator:
     """
-    helpful for file iteration,
+    Helpful for file iteration,
     adding some extra features to files.recurseFiles.
+    Very useful for skipping big node_modules directories.
     """
 
     def getDefaultPrefs(self):

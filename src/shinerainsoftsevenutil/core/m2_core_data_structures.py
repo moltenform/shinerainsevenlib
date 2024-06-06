@@ -11,7 +11,7 @@ from .m1_core_util import *
 # region simple persistence
 
 class PersistedDict:
-    "store a dict (or dict of dicts) on disk."
+    "Store a dict (or dict of dicts) on disk."
 
     data = None
     handle = None
@@ -167,7 +167,7 @@ class ParsePlus:
         return s
 
     def _resultToMyResult(self, parseResult, s):
-        "add some extra information to the results"
+        "Add some extra information to the results"
         if not parseResult:
             return parseResult
 
@@ -215,7 +215,7 @@ class ParsePlus:
         return (smallestSpanStart, largestSpanEnd)
 
     def match(self, s):
-        "entire string must match"
+        "Entire string must match"
         import parse
 
         sTransformed = self._createEscapeSequencesMap(s)
@@ -253,7 +253,7 @@ class ParsePlus:
             yield self._resultToMyResult(parseResult, s)
 
     def replaceFieldWithText(self, s, key, newValue, appendIfNotFound=None, allowOnlyOnce=False):
-        "example: <title>{title}</title>"
+        "Example: <title>{title}</title>"
         from . import m6_jslike
 
         results = list(self.findAll(s))
@@ -271,7 +271,7 @@ class ParsePlus:
     def replaceFieldWithTextIntoFile(
         self, path, key, newValue, appendIfNotFound=None, allowOnlyOnce=False, encoding='utf-8'
     ):
-        "convenience method to write the results to a file"
+        "Convenience method to write the results to a file"
         from .. import files
 
         s = files.readAll(path, encoding=encoding)
@@ -286,7 +286,7 @@ class ParsePlus:
 # region enum helpers
 
 class Bucket:
-    """simple named-tuple; o.field looks nicer than o['field'].
+    """Simple named-tuple; o.field looks nicer than o['field'].
     these days types.SimpleNamespace does nearly the same thing."""
 
     def __init__(self, **kwargs):
@@ -298,29 +298,7 @@ class Bucket:
             '%s=%s' % (ustr(key), ustr(self.__dict__[key])) for key in sorted(self.__dict__)
         )
 
-class SimpleEnum:
-    "simple enum; also blocks modification after creation."
-    _set = None
-    def __init__(self, listStart):
-        assertTrue(not isinstance(listStart, anystringtype))
-        self._set = set(listStart)
-
-    def __getattribute__(self, name):
-        if name.startswith('_'):
-            return object.__getattribute__(self, name)
-        elif name in self._set:
-            return name
-        else:
-            raise AttributeError
-
-    def __setattr__(self, name, value):
-        if name.startswith('_'):
-            object.__setattr__(self, name, value)
-        else:
-            raise RuntimeError
-
-    def __delattr__(self, name):
-        raise RuntimeError
+# deleted SimpleEnum in favor of modern Python enums
 
 class _EnumExampleInt(_enum.Enum):
     first = _enum.auto()
@@ -336,13 +314,13 @@ assertEq(1, _EnumExampleInt.first.value)
 assertEq('first', _EnumExampleStr.first)
 
 class UniqueSentinelForMissingParameter:
-    "use as a default parameter where None is a valid input, see pep 661"
+    "Use as a default parameter where None is a valid input, see pep 661"
 
 # endregion
 # region data structure helpers
 
 def appendToListInDictOrStartNewList(d, key, val):
-    "makes the code easier to read than setdefault imo"
+    "Makes the code easier to read than setdefault imo"
     got = d.get(key, None)
     if got:
         got.append(val)
@@ -350,7 +328,7 @@ def appendToListInDictOrStartNewList(d, key, val):
         d[key] = [val]
 
 def takeBatchOnArbitraryIterable(iterable, size):
-    "yield successive n-sized chunks from a list"
+    "Yield successive n-sized chunks from a list"
     import itertools
 
     itr = iter(iterable)
@@ -360,11 +338,11 @@ def takeBatchOnArbitraryIterable(iterable, size):
         item = list(itertools.islice(itr, size))
 
 def takeBatch(itr, n):
-    "get successive n-sized chunks from a list, like javascript's _.chunk"
+    "Get successive n-sized chunks from a list, like javascript's _.chunk"
     return list(takeBatchOnArbitraryIterable(itr, n))
 
 class TakeBatch:
-    """run a callback on n-sized chunks from a list, like javascript's _.chunk.
+    """Run a callback on n-sized chunks from a list, like javascript's _.chunk.
     the convenient part is that any leftover pieces will be automatically processed."""
 
     def __init__(self, batchSize, callback):
@@ -388,7 +366,7 @@ class TakeBatch:
                 self.callback(self.batch)
 
 class RecentlyUsedList:
-    "keep a list of items. decided not to store duplicates"
+    "Keep a list of items. decided not to store duplicates"
 
     def __init__(self, maxSize=None, startList=None):
         self.list = startList or []
@@ -417,7 +395,7 @@ class RecentlyUsedList:
 # region automatically memo-ize
 
 def BoundedMemoize(fn, limit=20):
-    "inspired by http://code.activestate.com/recipes/496879-memoize-decorator-function-with-cache-size-limit/"
+    "Inspired by http://code.activestate.com/recipes/496879-memoize-decorator-function-with-cache-size-limit/"
     from collections import OrderedDict
     import pickle
 
@@ -448,7 +426,7 @@ def BoundedMemoize(fn, limit=20):
 # region set helpers
 
 def compareTwoListsAsSets(l1, l2, transformFn1=None, transformFn2=None):
-    "compare two lists of strings"
+    "Compare two lists of strings"
     l1Transformed = l1 if not transformFn1 else [transformFn1(item) for item in l1]
     l2Transformed = l2 if not transformFn2 else [transformFn2(item) for item in l2]
     set1 = set(l1Transformed)
@@ -463,7 +441,7 @@ def compareTwoListsAsSets(l1, l2, transformFn1=None, transformFn2=None):
     return Bucket(extraItems=extraItems, missingItems=missingItems)
 
 def expectEqualityTwoListsAsSets(l1, l2, transformFn1=None, transformFn2=None):
-    "display differences between two lists of strings"
+    "Display differences between two lists of strings"
     result = compareTwoListsAsSets(l1, l2, transformFn1=transformFn1, transformFn2=transformFn2)
     if len(result.extraItems):
         trace('Extra items seen in list 1:', result.extraItems)
@@ -476,7 +454,7 @@ def expectEqualityTwoListsAsSets(l1, l2, transformFn1=None, transformFn2=None):
     return True
 
 def throwIfDuplicates(l1, transformFn1=None, context=''):
-    "detect duplicate items in a list"
+    "Detect duplicate items in a list"
     l1Transformed = l1 if not transformFn1 else [transformFn1(item) for item in l1]
     seen = {}
     for item in l1Transformed:

@@ -40,6 +40,7 @@ def createdTime(path):
     return os.stat(path).st_ctime
 
 def getExt(s, removeDot=True):
+    "Get extension. removeDot determines whether result is '.jpg' or 'jpg' "
     _before, after = splitExt(s)
     if removeDot and len(after) > 0 and after[0] == '.':
         return after[1:].lower()
@@ -47,6 +48,7 @@ def getExt(s, removeDot=True):
         return after.lower()
 
 def getWithDifferentExt(s, ext_with_dot):
+    "From /a/b/c.ext1 to /a/b/c.ext1"
     parent, short = os.path.split(s)
     short_before_ext, short_ext = splitExt(short)
     assertTrue(short_ext, s)
@@ -58,19 +60,21 @@ def getWithDifferentExt(s, ext_with_dot):
         return short_before_ext + ext_with_dot
 
 def delete(s, doTrace=False):
+    "Delete a file"
     if doTrace:
         trace('delete()', s)
 
     os.unlink(s)
 
 def deleteSure(s, doTrace=False):
+    "Delete a file and confirm it is no longer there"
     if exists(s):
         delete(s, doTrace)
 
     assertTrue(not exists(s))
 
 def makeDirs(s):
-    "ok if dir already exists. also, creates parent directory(s) if needed."
+    "Make dirs, OK if dir already exists. also, creates parent directory(s) if needed."
     try:
         os.makedirs(s)
     except OSError:
@@ -80,7 +84,7 @@ def makeDirs(s):
             raise
 
 def ensureEmptyDirectory(d):
-    "delete all contents, or raise exception if that fails"
+    "Delete all contents, or raise exception if that fails"
     if isFile(d):
         raise OSFileRelatedError('file exists at this location ' + d)
 
@@ -106,7 +110,7 @@ def copy(
     createParent=False,
     traceOnly=False,
 ):
-    """if overwrite is True, always overwrites if destination already exists.
+    """If overwrite is True, always overwrites if destination already exists.
     if overwrite is False, always raises exception if destination already exists."""
     if not isFile(srcFile):
         raise OSFileRelatedError('source path does not exist or is not a file')
@@ -149,7 +153,7 @@ def move(
     createParent=False,
     traceOnly=False,
 ):
-    """if overwrite is True, always overwrites if destination already exists.
+    """If overwrite is True, always overwrites if destination already exists.
     if overwrite is False, always raises exception if destination already exists."""
     if not exists(srcFile):
         raise OSFileRelatedError('source path does not exist')
@@ -310,7 +314,6 @@ def isEmptyDir(dirPath):
 
 def fileContentsEqual(f1, f2):
     import filecmp
-
     return filecmp.cmp(f1, f2, shallow=False)
 
 class OSFileRelatedError(OSError):
