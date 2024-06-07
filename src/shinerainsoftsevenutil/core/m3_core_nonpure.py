@@ -202,12 +202,36 @@ def getSoftDeleteDir(path):
     assertTrue(files.isDir(v), 'not a directory', v)
     return v
 
-def getSoftTempDir(_path=''):
+def _getSoftTempDirImpl(path='', preferEphemeral=False):
+    from .. import files
     from ..plugins.plugin_configreader import getSsrsInternalPrefs
     prefs = getSsrsInternalPrefs()
-    v = prefs.parsed.tempDirectory
-    assertTrue(_os.path.isdir(v), 'not a directory', v)
-    return v
+
+    if preferEphemeral and prefs.parsed.tempEphemeralDirectory:
+        return prefs.parsed.tempEphemeralDirectory
+
+    assertTrue(files.exists(path), 'file not found', path)
+    dirPath = getSoftDeleteDir(path)
+    if not dirPath or dirPath is cUseOSTrash:
+        if prefs.parsed.tempDirectory:
+            return prefs.parsed.tempDirectory
+        else:
+            import tempfile
+            dirPath = tempfile.gettempdir()
+            dirPath += '/srss'
+            files.makeDirs(dirPath)
+            return dirPath
+        
+    return dirPath
+
+def getSoftTempDir(path='', preferEphemeral=False):
+    dirPath = _getSoftTempDirImpl(path=path, preferEphemeral=preferEphemeral)
+    
+    # place in the temp subfolder
+    assertTrue(_os.path.isdir(dirPath), 'temp dir not a directory', dirPath)
+    dirPath += '/temp'
+    _os.mkdir(dirPath)
+    return dirPath
 
 _rngForSoftDeleteFile = IndependentRNG()
 
@@ -215,10 +239,13 @@ def getSoftDeleteFullPath(path):
     from .. import files
 
     assertTrue(files.exists(path), 'file not found', path)
-
     dirPath = getSoftDeleteDir(path)
     if not dirPath or dirPath is cUseOSTrash:
         return cUseOSTrash
+
+    # place in the trash subfolder
+    dirPath += '/trash'
+    _os.mkdir(dirPath)
 
     # use an independent rng, so that other random sequences aren't disrupted
     randomString = getRandomString(rng=_rngForSoftDeleteFile.rng)

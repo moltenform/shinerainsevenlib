@@ -249,7 +249,7 @@ def run(
             'which' not in dir(_shutil) or
             _shutil.which(listArgs[0]) or
             shell,
-            'file not found?',
+            'executable file not found?',
             listArgs[0],
         )
 

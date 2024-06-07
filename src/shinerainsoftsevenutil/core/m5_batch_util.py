@@ -5,6 +5,8 @@
 import time as _time
 import os as _os
 import re as _re
+import contextlib as _contextlib
+
 from .m4_core_ui import *
 
 class SrssLooper:
@@ -210,7 +212,24 @@ class SrssFileIterator:
         regexp = _re.compile(r'[/\\]' + suffix + r'([/\\]|$)')
         return bool(regexp.search(path))
 
+class CleanupTempFilesOnException(_contextlib.ExitStack):
+    """Register temp files to be deleted later.
+    Example:
+
+    with CleanupTempFilesOnException() as cleanup:
+        cleanup.registerTempFile('out.tmp')
+        files.writeAll('out.tmp', 'abc')
+        ...something that might throw
+        files.delete('out.tmp')
+    """
+    def registerTempFile(self, path):
+        def fn():
+            if _os.path.exists(path):
+                _os.unlink(path)
+        self.callback(fn)
+
 def removeEmptyFolders(path, removeRootIfEmpty=True, isRecurse=False, verbose=False):
+    "Recursively removes empty directories"
     if not _os.path.isdir(path):
         return
 

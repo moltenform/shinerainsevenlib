@@ -143,7 +143,7 @@ class SrssConfigReader:
     def findKeyForPath(self, path, prefix, sectionName='main'):
         """Helper method finding the longest match,
         that starts with the prefix. See tests."""
-        path = _os.path.realpath(path)
+        path = _os.path.abspath(path)
         path = path.lower()
         path = path.replace(':', 'Colon')
         path = path.replace('/', 'Slash')
@@ -221,12 +221,6 @@ def getSsrsInternalPrefs():
             },
         )
         _gCachedInternalPrefs.parseText(configText)
-
-        # it's fine to use tempDirectory if a EphemeralDirectory was not passed in
-        if not _gCachedInternalPrefs.parsed.main.tempEphemeralDirectory:
-            _gCachedInternalPrefs.parsed.main.tempEphemeralDirectory = (
-                _gCachedInternalPrefs.parsed.main.tempDirectory
-            )
 
     return _gCachedInternalPrefs
 

@@ -17,7 +17,7 @@ from .plugins.plugin_store import SrssStore
 
 # add other modules
 from .plugins import plugin_compression as SrssCompression
-from .plugins import plugin_imageutil as SrssImageUtil
 from .plugins import plugin_fileexts as SrssFileExts
+from .plugins import plugin_media as SrssMedia
 from . import files
 
