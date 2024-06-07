@@ -2,16 +2,20 @@
 # shinerainsoftsevenutil (Ben Fisher, moltenform.com)
 # Released under the LGPLv3 License
 
-from .plugin_fileexts import *
+
 import re
+from .. import files as _files
+from .. import core as _srss
+from ..core import assertTrue
+from . import plugin_fileexts as _plugin_fileexts
 
 def imageTypeFromExtension(path):
     "Gets the image type like `jpg`, `png`, etc"
-    ext = files.getExt(path, removeDot=False)
-    if ext in mostCommonImageExtAlternatives:
-        ext = mostCommonImageExtAlternatives[ext]
+    ext = _files.getExt(path, removeDot=False)
+    if ext in _plugin_fileexts.mostCommonImageExtAlternatives:
+        ext = _plugin_fileexts.mostCommonImageExtAlternatives[ext]
     
-    if ext in mostCommonImageExt:
+    if ext in _plugin_fileexts.mostCommonImageExt:
         return ext.replace('.', '')
     else:
         return None
@@ -41,7 +45,7 @@ def imageTypeFromContents(path, treatMpoAsJpg=True):
     return format
 
 def getAudAndVidCodec(inPath, ffmpegPath='ffmpeg'):
-    results = Bucket(audFormat=None, vidFormat=None, fullResults=None, err=None)
+    results = _srss.Bucket(audFormat=None, vidFormat=None, fullResults=None, err=None)
     try:
         _getAudAndVidCodecImpl(inPath, results, ffmpegPath=ffmpegPath)
     except Exception as e:
@@ -50,7 +54,7 @@ def getAudAndVidCodec(inPath, ffmpegPath='ffmpeg'):
 
 def _getAudAndVidCodecImpl(inPath, results, ffmpegPath='ffmpeg'):
     args = [ffmpegPath, '-nostdin', '-i', inPath]
-    _ret, _stdout, stderr = files.run(args, throwOnFailure=None, confirmExists=True)
+    _ret, _stdout, stderr = _files.run(args, throwOnFailure=None, confirmExists=True)
     stderr = stderr.decode('utf-8').replace('\r\n', '\n')
     stderr = stderr.replace('At least one output file must be specified', '(Intentional err)')
     results.fullResults = stderr

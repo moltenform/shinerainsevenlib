@@ -2,7 +2,8 @@
 # shinerainsoftsevenutil (Ben Fisher, moltenform.com)
 # Released under the LGPLv3 License
 
-import os
+import os as _os
+import sys as _sys
 from .m1_files_wrappers import *
 
 # pylint: disable-next=inconsistent-return-statements
@@ -14,7 +15,7 @@ def listDirs(path, *, filenamesOnly=False, allowedExts=None, recurse=False):
         )
 
     for full, name in listChildren(path, allowedExts=allowedExts):
-        if os.path.isdir(full):
+        if _os.path.isdir(full):
             yield name if filenamesOnly else (full, name)
 
 # pylint: disable-next=inconsistent-return-statements
@@ -26,18 +27,18 @@ def listFiles(path, *, filenamesOnly=False, allowedExts=None, recurse=False):
         )
 
     for full, name in listChildren(path, allowedExts=allowedExts):
-        if not os.path.isdir(full):
+        if not _os.path.isdir(full):
             yield name if filenamesOnly else (full, name)
 
 def _listChildrenUnsorted(path, *, filenamesOnly=False, allowedExts=None):
     "List directory contents. allowedExts in the form ['png', 'gif']"
-    for filename in os.listdir(path):
-        if not allowedExts or getExt(filename) in allowedExts:
-            yield filename if filenamesOnly else (path + os.path.sep + filename, filename)
+    for filename in _os.listdir(path):
+        if not allowedExts or getExt(filename, removeDot=True) in allowedExts:
+            yield filename if filenamesOnly else (path + _os.path.sep + filename, filename)
 
 # on windows platforms we can typically assume dir list results are sorted
 # for consistency, on other platforms, sort the results.
-if sys.platform.startswith('win'):
+if _sys.platform.startswith('win'):
     exeSuffix = '.exe'
     listChildren = _listChildrenUnsorted
 else:
@@ -60,17 +61,17 @@ def recurseFiles(
     You can provide a fnFilterDirs to filter out any directories not to traverse into."""
     assert isDir(root)
 
-    for dirPath, dirNames, fileNames in os.walk(root, topdown=topDown, followlinks=followSymlinks):
+    for dirPath, dirNames, fileNames in _os.walk(root, topdown=topDown, followlinks=followSymlinks):
         if fnFilterDirs:
             filteredDirs = [dirPath for dirPath in dirNames if fnFilterDirs(join(dirPath, dirPath))]
             dirNames[:] = filteredDirs
 
         if includeFiles:
-            iterFilenames = fileNames if sys.platform.startswith('win') else sorted(fileNames)
+            iterFilenames = fileNames if _sys.platform.startswith('win') else sorted(fileNames)
             for filename in iterFilenames:
-                if not allowedExts or getExt(filename) in allowedExts:
+                if not allowedExts or getExt(filename, removeDot=True) in allowedExts:
                     yield (
-                        filename if filenamesOnly else (dirPath + os.path.sep + filename, filename)
+                        filename if filenamesOnly else (dirPath + _os.path.sep + filename, filename)
                     )
 
         if includeDirs:
@@ -105,7 +106,7 @@ class FileInfoEntryWrapper:
         return self.obj.is_file(*args)
 
     def short(self):
-        return os.path.split(self.path)[1]
+        return _os.path.split(self.path)[1]
 
     def size(self):
         return self.obj.stat().st_size
@@ -126,11 +127,11 @@ class FileInfoEntryWrapper:
             raise ValueError('unknown unit')
 
     def getMetadataChangeTime(self):
-        assertTrue(not sys.platform.startswith('win'))
+        assertTrue(not _sys.platform.startswith('win'))
         return self.obj.stat().st_ctime
 
     def getCreateTime(self):
-        assertTrue(sys.platform.startswith('win'))
+        assertTrue(_sys.platform.startswith('win'))
         return self.obj.stat().st_ctime
 
 def recurseFileInfo(
@@ -148,7 +149,7 @@ def recurseFileInfo(
 
     # note that scandir's resources are released in a destructor,
     # so do not create circular references holding it.
-    for entry in os.scandir(root):
+    for entry in _os.scandir(root):
         if entry.is_dir(follow_symlinks=followSymlinks):
             if not filesOnly:
                 yield FileInfoEntryWrapper(entry)

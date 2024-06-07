@@ -1,6 +1,11 @@
 
+# shinerainsoftsevenutil (Ben Fisher, moltenform.com)
+# Released under the LGPLv3 License
+
 import shutil
 from .plugin_fileexts import *
+from .. import files
+from ..core import assertTrue, getRandomString, trace
 
 def addAllToRar(inPath, outPath, effort=None, formatVersion='4', dictSize=None, solid=True, pword=None):
     from .plugin_compression import Strength, params7z, runProcessThatCreatesOutput
@@ -31,9 +36,9 @@ def addAllToRar(inPath, outPath, effort=None, formatVersion='4', dictSize=None, 
     args.extend(['%input%'])
     runProcessThatCreatesOutput(args, inPath=inPath, outPath=outPath)
 
-def getContentsViaRar(archive, verbose, silenceWarnings, pword=None):
+def getContentsViaRar(archive, verbose, _silenceWarnings, pword=None):
     from . import plugin_compression_7z
-    assertTrue(files.isfile(archive))
+    assertTrue(files.isFile(archive))
     assertTrue(verbose, 'we only support verbose listing')
     args = [getRarPath(), 'lt', plugin_compression_7z.getPlaceholderPword(pword), archive]
     _retcode, stdout, _stderr = files.run(args)

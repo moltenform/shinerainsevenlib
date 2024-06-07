@@ -2,7 +2,8 @@
 # shinerainsoftsevenutil (Ben Fisher, moltenform.com)
 # Released under the LGPLv3 License
 
-import subprocess
+import sys as _sys
+import subprocess as _subprocess
 import shutil as _shutil
 from contextlib import ExitStack as _ExitStack
 
@@ -11,7 +12,7 @@ from .m2_files_listing import *
 def openDirectoryInExplorer(path):
     "Open directory in operating system, like finder or windows explorer."
     assert isDir(path), 'not a path? ' + path
-    if sys.platform.startswith('win'):
+    if _sys.platform.startswith('win'):
         assert '^' not in path and '"' not in path, 'path cannot contain ^ or "'
         args = ['cmd', '/c', 'start', 'explorer.exe', path]
         run(args, shell=True, captureOutput=False, wait=False)
@@ -179,7 +180,7 @@ def windowsUrlFileWrite(path, url):
 
 def runWithoutWait(listArgs):
     "Run process without waiting for completion"
-    p = subprocess.Popen(listArgs, shell=False)
+    p = _subprocess.Popen(listArgs, shell=False)
     return p.pid
 
 def runWithTimeout(
@@ -206,10 +207,10 @@ def runWithTimeout(
     retcode = -1
     stdout = None
     stderr = None
-    if sys.platform.startswith('win') and createNoWindow:
+    if _sys.platform.startswith('win') and createNoWindow:
         addArgs['creationflags'] = 0x08000000
 
-    ret = subprocess.run(
+    ret = _subprocess.run(
         args,
         capture_output=captureOutput,
         shell=shell,
@@ -255,7 +256,7 @@ def run(
 
     kwargs = {}
 
-    if sys.platform.startswith('win') and createNoWindow:
+    if _sys.platform.startswith('win') and createNoWindow:
         kwargs['creationflags'] = 0x08000000
 
     if captureOutput and not wait:
@@ -269,8 +270,8 @@ def run(
     stderr = None
 
     if captureOutput:
-        sp = subprocess.Popen(
-            listArgs, shell=shell, stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kwargs
+        sp = _subprocess.Popen(
+            listArgs, shell=shell, stdout=_subprocess.PIPE, stderr=_subprocess.PIPE, **kwargs
         )
 
         comm = sp.communicate()
@@ -293,11 +294,11 @@ def run(
                 stderrArg = None
 
                 if wait:
-                    retcode = subprocess.call(
+                    retcode = _subprocess.call(
                         listArgs, stdout=stdoutArg, stderr=stderrArg, shell=shell, **kwargs
                     )
                 else:
-                    subprocess.Popen(
+                    _subprocess.Popen(
                         listArgs, stdout=stdoutArg, stderr=stderrArg, shell=shell, **kwargs
                     )
 

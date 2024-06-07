@@ -2,42 +2,42 @@
 # shinerainsoftsevenutil (Ben Fisher, moltenform.com)
 # Released under the LGPLv3 License
 
-import sys
-import os
-import shutil
-import enum
+import sys as _sys
+import os as _os
+import shutil as _shutil
+import enum as _enum
 
 from .. import core as srss
 from ..core import alert, warn, trace, assertTrue, assertEq, tracep, softDeleteFile, getRandomString, jslike, Bucket
 
-rename = os.rename
-exists = os.path.exists
-join = os.path.join
-split = os.path.split
-splitExt = os.path.splitext
-isDir = os.path.isdir
-isFile = os.path.isfile
-getSize = os.path.getsize
-rmDir = os.rmdir
-chDir = os.chdir
-sep = os.path.sep
-lineSep = os.linesep
-absPath = os.path.abspath
-rmTree = shutil.rmtree
+rename = _os.rename
+exists = _os.path.exists
+join = _os.path.join
+split = _os.path.split
+splitExt = _os.path.splitext
+isDir = _os.path.isdir
+isFile = _os.path.isfile
+getSize = _os.path.getsize
+rmDir = _os.rmdir
+chDir = _os.chdir
+sep = _os.path.sep
+lineSep = _os.linesep
+absPath = _os.path.abspath
+rmTree = _shutil.rmtree
 
-class TimeUnits(enum.StrEnum):
-    Milliseconds = enum.auto()
-    Seconds = enum.auto()
-    Nanoseconds = enum.auto()
+class TimeUnits(_enum.StrEnum):
+    Milliseconds = _enum.auto()
+    Seconds = _enum.auto()
+    Nanoseconds = _enum.auto()
 
 def getParent(path):
-    return os.path.split(path)[0]
+    return _os.path.split(path)[0]
 
 def getName(path):
-    return os.path.split(path)[1]
+    return _os.path.split(path)[1]
 
 def createdTime(path):
-    return os.stat(path).st_ctime
+    return _os.stat(path).st_ctime
 
 def getExt(s, removeDot=True):
     "Get extension. removeDot determines whether result is '.jpg' or 'jpg' "
@@ -49,7 +49,7 @@ def getExt(s, removeDot=True):
 
 def getWithDifferentExt(s, ext_with_dot):
     "From /a/b/c.ext1 to /a/b/c.ext1"
-    parent, short = os.path.split(s)
+    parent, short = _os.path.split(s)
     short_before_ext, short_ext = splitExt(short)
     assertTrue(short_ext, s)
     if parent:
@@ -64,7 +64,7 @@ def delete(s, doTrace=False):
     if doTrace:
         trace('delete()', s)
 
-    os.unlink(s)
+    _os.unlink(s)
 
 def deleteSure(s, doTrace=False):
     "Delete a file and confirm it is no longer there"
@@ -76,7 +76,7 @@ def deleteSure(s, doTrace=False):
 def makeDirs(s):
     "Make dirs, OK if dir already exists. also, creates parent directory(s) if needed."
     try:
-        os.makedirs(s)
+        _os.makedirs(s)
     except OSError:
         if isDir(s):
             return
@@ -90,15 +90,15 @@ def ensureEmptyDirectory(d):
 
     if isDir(d):
         # delete all existing files in the directory
-        for s in os.listdir(d):
+        for s in _os.listdir(d):
             if isDir(join(d, s)):
-                shutil.rmtree(join(d, s))
+                _shutil.rmtree(join(d, s))
             else:
-                os.unlink(join(d, s))
+                _os.unlink(join(d, s))
 
         assertTrue(isEmptyDir(d))
     else:
-        os.makedirs(d)
+        _os.makedirs(d)
 
 def copy(
     srcFile,
@@ -134,7 +134,7 @@ def copy(
 
     if srcFile == destFile:
         pass
-    elif sys.platform.startswith('win'):
+    elif _sys.platform.startswith('win'):
         _copyFileWin(srcFile, destFile, overwrite)
     else:
         _copyFilePosix(srcFile, destFile, overwrite)
@@ -172,14 +172,14 @@ def move(
 
     if srcFile == destFile:
         pass
-    elif sys.platform.startswith('win'):
+    elif _sys.platform.startswith('win'):
         _moveFileWin(srcFile, destFile, overwrite, warnBetweenDrives)
-    elif sys.platform.startswith('linux') and overwrite:
-        os.rename(srcFile, destFile)
+    elif _sys.platform.startswith('linux') and overwrite:
+        _os.rename(srcFile, destFile)
     else:
         copy(srcFile, destFile, overwrite)
         assertTrue(exists(destFile))
-        os.unlink(srcFile)
+        _os.unlink(srcFile)
 
     assertTrue(exists(destFile))
 
@@ -227,14 +227,14 @@ def _moveFileWin(srcFile, destFile, overwrite, warnBetweenDrives):
 
 def _copyFilePosix(srcFile, destFile, overwrite):
     if overwrite:
-        shutil.copy(srcFile, destFile)
+        _shutil.copy(srcFile, destFile)
         return
 
     # fails if destination already exists. O_EXCL prevents other files from writing to location.
     # raises OSError on failure.
-    flags = os.O_CREAT | os.O_EXCL | os.O_WRONLY
-    fileHandle = os.open(destFile, flags)
-    with os.fdopen(fileHandle, 'wb') as fDest:
+    flags = _os.O_CREAT | _os.O_EXCL | _os.O_WRONLY
+    fileHandle = _os.open(destFile, flags)
+    with _os.fdopen(fileHandle, 'wb') as fDest:
         # confirmed that the context manager will automatically close the handle
         with open(srcFile, 'rb') as fSrc:
             while True:
@@ -244,7 +244,7 @@ def _copyFilePosix(srcFile, destFile, overwrite):
                 fDest.write(buffer)
 
 def _getStatTime(path, key_ns, key_s, units):
-    st = os.stat(path)
+    st = _os.stat(path)
     if key_ns in dir(st):
         timeNs = getattr(st, key_ns)
     else:
@@ -280,7 +280,7 @@ def setLastModTime(path, newVal, units=TimeUnits.Seconds):
         raise ValueError('unknown unit')
 
     atimeNs = getATime(path, units=TimeUnits.Nanoseconds)
-    os.utime(path, ns=(atimeNs, newVal))
+    _os.utime(path, ns=(atimeNs, newVal))
 
 def readAll(path, mode='r', encoding=None):
     """Read entire file into string (mode=='r') or bytes (mode=='rb')
@@ -310,7 +310,7 @@ def writeAll(
         return True
 
 def isEmptyDir(dirPath):
-    return len(os.listdir(dirPath)) == 0
+    return len(_os.listdir(dirPath)) == 0
 
 def fileContentsEqual(f1, f2):
     import filecmp

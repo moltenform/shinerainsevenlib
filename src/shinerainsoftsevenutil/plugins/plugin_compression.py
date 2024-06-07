@@ -2,25 +2,28 @@
 # shinerainsoftsevenutil (Ben Fisher, moltenform.com)
 # Released under the LGPLv3 License
 
-from enum import StrEnum, Enum, auto
-import zipfile
-import os
-import sys
+import enum as _enum
+import zipfile as _zipfile
+import os as _os
+import sys as _sys
 
-from plugin_fileexts import *
 from . import plugin_compression_7z as _plugin_compression_7z
 from . import plugin_compression_rar as _plugin_compression_rar
+from .. import files as _files
+from .. import core as _srss
+from ..core import assertTrue, getRandomString
+from . import plugin_fileexts
 
-class ZipMethods(Enum):
-    store=zipfile.ZIP_STORED
-    deflate=zipfile.ZIP_DEFLATED
-    lzma=zipfile.ZIP_LZMA
+class ZipMethods(_enum.IntEnum):
+    store=_zipfile.ZIP_STORED
+    deflate=_zipfile.ZIP_DEFLATED
+    lzma=_zipfile.ZIP_LZMA
 
-class Strength(StrEnum):
-    max = auto()
-    strong = auto()
-    default = auto()
-    store = auto()
+class Strength(_enum.StrEnum):
+    max = _enum.auto()
+    strong = _enum.auto()
+    default = _enum.auto()
+    store = _enum.auto()
 
 paramsZip = {}
 
@@ -83,33 +86,33 @@ def addAllToZip(inPath, zipPath, method=ZipMethods.deflate, alreadyCompressedAsS
         creatingNewArchive=True, pathPrefix=None, recurse=True, **kwargs):
 
     if creatingNewArchive:
-        assertTrue(not files.exists(zipPath), 'already exists')
+        assertTrue(not _files.exists(zipPath), 'already exists')
 
     def getCompressionMethod(path):
-        if alreadyCompressedAsStore and files.getext(path, False) in alreadyCompressedExt:
-            return zipfile.ZIP_STORED
+        if alreadyCompressedAsStore and _files.getExt(path, removeDot=False) in plugin_fileexts.alreadyCompressedExt:
+            return _zipfile.ZIP_STORED
         else:
             assertTrue(method is not None, 'invalid method (note that ZIP_LZMA is not always available)')
             assertTrue(isinstance(method, int), 'please specify ZipMethods.deflate instead of "deflate"')
             return method
 
     assertTrue(not inPath.endswith('/') and not inPath.endswith('\\'))
-    with zipfile.ZipFile(zipPath, 'a') as zip:
-        if files.isfile(inPath):
-            thisMethod = getCompressionMethod(inPath)
-            zip.write(inPath, (pathPrefix or '') + files.getname(inPath), compress_type=thisMethod)
-        elif files.isdir(inPath):
-            itr = files.recursefiles(inPath, **kwargs) if recurse else files.listfiles(inPath, **kwargs)
-            for f, short in itr:
+    with _zipfile.ZipFile(zipPath, 'a') as zip:
+        if _files.isFile(inPath):
+            compressionMethod = getCompressionMethod(inPath)
+            zip.write(inPath, (pathPrefix or '') + _files.getName(inPath), compress_type=compressionMethod)
+        elif _files.isDir(inPath):
+            itr = _files.recurseFiles(inPath, **kwargs) if recurse else _files.listfiles(inPath, **kwargs)
+            for f, _short in itr:
                 assertTrue(f.startswith(inPath))
                 shortname = f[len(inPath) + 1:]
-                thisMethod = getCompressionMethod(f)
+                compressionMethod = getCompressionMethod(f)
                 assertTrue(shortname, 'needs shortname')
                 if pathPrefix is None:
-                    innerPath = files.getname(inPath) + '/' + shortname
+                    innerPath = _files.getName(inPath) + '/' + shortname
                 else:
                     innerPath = pathPrefix + shortname
-                zip.write(f, innerPath, compress_type=thisMethod)
+                zip.write(f, innerPath, compress_type=compressionMethod)
         else:
             raise RuntimeError("not found: " + inPath)
 
@@ -118,19 +121,19 @@ def getContents(archive, verbose=True, silenceWarnings=False, pword=None,
         okToFallbackTo7zForRar=False):
     results = None
     if archive.lower().endswith('.rar'):
-        if files.exists(_plugin_compression_rar.getRarPath()):
+        if _files.exists(_plugin_compression_rar.getRarPath()):
             results = _plugin_compression_rar.getContentsViaRar(archive, verbose, silenceWarnings, pword=pword)
         else:
             assertTrue(okToFallbackTo7zForRar, 'rar not found for a rar file')
 
     if not results:
-        results = _plugin_compression_7z.getContentsVia7z(archive, verbose, silenceWarnings, pword=pword)
+        results = _plugin_compression_7z._getContentsVia7z(archive, verbose, silenceWarnings, pword=pword)
 
     for item in results:
         assertTrue(item.get('Path'), 'all items must have a path', item)
 
-        # 7z doesn't include a crc for empty files, so add one.
-        if srss.parseIntOrFallback(item.get('Size')) == 0 and (not item.get('CRC') or item.get('CRC') == '--no crc found'):
+        # 7z doesn't include a crc for empty _files, so add one.
+        if _srss.parseIntOrFallback(item.get('Size')) == 0 and (not item.get('CRC') or item.get('CRC') == '--no crc found'):
             item['CRC'] = '00000000'
 
     return results
@@ -138,10 +141,10 @@ def getContents(archive, verbose=True, silenceWarnings=False, pword=None,
 
 
 def _getRunCommandCommonTempFile(path, preferEphemeral=False, prefix='runCommandCommon'):
-    outExtension = files.getExt(path, removeDot=False)
-    tempOutFilename = rf'{prefix}{os.getpid()}_{getRandomString()}{outExtension}'
-    dirPath = srss.getSoftTempDir(path, preferEphemeral=preferEphemeral)
-    return files.join(dirPath, tempOutFilename)
+    outExtension = _files.getExt(path, removeDot=False)
+    tempOutFilename = rf'{prefix}{_os.getpid()}_{getRandomString()}{outExtension}'
+    dirPath = _srss.getSoftTempDir(path, preferEphemeral=preferEphemeral)
+    return _files.join(dirPath, tempOutFilename)
 
 def runProcessThatCreatesOutput(listArgs, outPath, *, inPath=None, sizeMustBeGreaterThan=0, copyLastModTimeFromInput=False,
     handleUnicodeInputs=False):
@@ -152,27 +155,31 @@ def runProcessThatCreatesOutput(listArgs, outPath, *, inPath=None, sizeMustBeGre
     Example:
     runProcessThatCreatesOutput(['magick', 'convert', '%input%', '%output%'], inPath='a.bmp', outPath='b.png')
     """
-    with srss.CleanupTempFilesOnException() as cleanup:
-        assertTrue(not files.exists(outPath), 'output already there')
+    with _srss.CleanupTempFilesOnException() as cleanup:
+        assertTrue(not _files.exists(outPath), 'output already there')
         tmpOutPath = _getRunCommandCommonTempFile(outPath)
-        assertTrue(not files.exists(tmpOutPath), 'tmpOutPath already there')
+        assertTrue(not _files.exists(tmpOutPath), 'tmpOutPath already there')
         cleanup.registerTempFile(tmpOutPath)
 
         inPathToUse = inPath
-        if handleUnicodeInputs and sys.platform.startswith('win') and srss.containsNonAscii(inPath):
+        if handleUnicodeInputs and _sys.platform.startswith('win') and _srss.containsNonAscii(inPath):
             inPathToUse = _getRunCommandCommonTempFile(inPath, 'runCommandCommonInput')
-            assertTrue(not files.exists(inPathToUse), 'inPathToUse already there')
+            assertTrue(not _files.exists(inPathToUse), 'inPathToUse already there')
             cleanup.registerTempFile(inPathToUse)
-            files.copy(inPath, inPathToUse, True)
+            _files.copy(inPath, inPathToUse, True)
         
         transformedArgs = list(listArgs)
         for i in range(len(transformedArgs)):
             transformedArgs[i] = transformedArgs[i].replace('%input%', inPathToUse).replace('%output%', tmpOutPath)
 
-        files.run(transformedArgs)
-        assertTrue(files.isFile(tmpOutPath), 'output not created', transformedArgs)
-        assertTrue(files.getSize(tmpOutPath) > sizeMustBeGreaterThan, 'output too small', transformedArgs)
-        files.move(tmpOutPath, outPath, False)
+        _files.run(transformedArgs)
+        assertTrue(_files.isFile(tmpOutPath), 'output not created', transformedArgs)
+        assertTrue(_files.getSize(tmpOutPath) > sizeMustBeGreaterThan, 'output too small', transformedArgs)
+        if copyLastModTimeFromInput:
+            lmt = _files.getLastModTime(inPath)
+            _files.setLastModTime(tmpOutPath, lmt)
+        
+        _files.move(tmpOutPath, outPath, False)
 
 
 

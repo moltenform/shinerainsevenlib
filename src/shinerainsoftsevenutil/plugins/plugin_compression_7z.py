@@ -1,6 +1,11 @@
+
+# shinerainsoftsevenutil (Ben Fisher, moltenform.com)
+# Released under the LGPLv3 License
+
 import shutil
 from .plugin_fileexts import *
-
+from .. import files
+from ..core import assertTrue, getRandomString, trace
 
 def addAllTo7z(inPath, outPath, effort=None, multiThread='off', solid=True):
     from .plugin_compression import Strength, params7z, runProcessThatCreatesOutput
@@ -28,7 +33,6 @@ def addAllTo7z(inPath, outPath, effort=None, multiThread='off', solid=True):
     args.extend(['%input%'])
     runProcessThatCreatesOutput(args, inPath=inPath, outPath=outPath)
 
-
 def checkArchivePasswordVia7z(inPath, pword=None):
     args = ['7z', 'l', getPlaceholderPword(pword), inPath]
     retcode, stdout, stderr = files.run(args, throwOnFailure=None)
@@ -41,7 +45,7 @@ def checkArchivePasswordVia7z(inPath, pword=None):
 
 def checkArchiveIntegrityVia7z(inPath, pword=None):
     args = ['7z', 't', getPlaceholderPword(pword), inPath]
-    retcode, stdout, stderr = files.run(args, throwOnFailure=None)
+    retcode, _stdout, stderr = files.run(args, throwOnFailure=None)
     if retcode == 0:
         return True
     elif b'Cannot open the file as archive' in stderr:
@@ -57,13 +61,11 @@ def checkArchiveIntegrityVia7z(inPath, pword=None):
     else:
         assertTrue(False, 'failed to test archive', inPath, stderr)
 
-
 def getPlaceholderPword(pword):
     # we send in a placeholder password to intentionally get an error
     # -- otherwise it will block on stdin!
     pword = pword or '(placeholder-password)'
     return '-p' + pword
-
 
 def _processAttributes7z(item):
     isDir = ('D' in item.get('Attributes', '') or item.get('Folder', '').strip() == '+')
@@ -77,20 +79,19 @@ def _processAttributes7z(item):
         Raw=item
     )
 
-
-def _getContentsVia7z(archive, verbose, silenceWarnings, pword=None):
-    assertTrue(files.isfile(archive))
+def getContentsVia7z(archive, verbose, silenceWarnings, pword=None):
+    assertTrue(files.isFile(archive))
     assertTrue(verbose, 'we only support verbose listing')
     args = ['7z', '-slt', 'l', getPlaceholderPword(pword), archive]
     _retcode, stdout, stderr = files.run(args)
     results = _getContentsVia7zImpl(stdout, stderr, archive, verbose, silenceWarnings, pword=pword)
 
     if len(results) == 1 and (isCompressedTarExtension(archive) or results[0]['Path'].endswith('.tar')):
-        assertTrue(files.isfile(archive))
+        assertTrue(files.isFile(archive))
         # detect a .tar.gz file and list the tar contents instead. use pipe so there's no disk used. 
         # 7z does not seem to be able to list .tar.bz2,  but it can list the inner tar after extracting, so it all still works.
         args = ['7z', 'x', archive, getPlaceholderPword(pword), '-so', '|', '7z', 'l', '-slt', '-ttar', '-si']
-        retcode, stdout, stderr = files.run(args, shell=True)
+        _retcode, stdout, stderr = files.run(args, shell=True)
         results = _getContentsVia7zImpl(stdout, stderr, archive, verbose, silenceWarnings, pword=pword)
 
     return results
@@ -99,7 +100,7 @@ def _getContentsVia7zImpl(stdout, stderr, archive, verbose, silenceWarnings, pwo
     stdoutFull = stdout.decode('latin-1').replace('\r\n', '\n')
     marker = '\n----------\n'
     if marker not in stdoutFull:
-        if files.getsize(archive) < 1024:
+        if files.getSize(archive) < 1024:
             trace('apparently an empty archive', archive)
             return []
         else:
@@ -126,7 +127,6 @@ def _getContentsVia7zImpl(stdout, stderr, archive, verbose, silenceWarnings, pwo
             title, contents = line.split(' = ', 1)
             result[title.strip()] = contents.strip()
     return [_processAttributes7z(result) for result in results]
-
 
 def _isIgnorableWarning(stdout):
     # having a file with .7z extension but is actually a .rar is confusing, but ok.

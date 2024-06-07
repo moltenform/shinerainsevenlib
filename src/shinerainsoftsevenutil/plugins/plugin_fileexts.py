@@ -2,9 +2,9 @@
 # shinerainsoftsevenutil (Ben Fisher, moltenform.com)
 # Released under the LGPLv3 License
 
-from .. import files
-from .. import core as srss
-from ..core import alert, warn, trace, assertTrue, assertEq, tracep, softDeleteFile, getRandomString, jslike, Bucket
+from .. import files as _files
+from .. import core as _srss
+from ..core import assertTrue
 
 imageExtensions = {
     '.jpg': 1,  # section
@@ -591,7 +591,7 @@ def extensionPossiblyExecutable(s):
     Returns 'warn' if it is a document type that can include embedded scripts,
     Returns False otherwise"""
 
-    ext = files.getExt(s, removeDot=False)
+    ext = _files.getExt(s, removeDot=False)
     if ext in exeExt:
         return 'exe'
     elif ext in warnExt:

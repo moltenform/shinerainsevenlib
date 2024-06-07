@@ -7,7 +7,7 @@ from shinerainsoftsevenutil.standard import *
 
 def goAll(root):
     for f, short in files.recurseFiles(root):
-        if files.getExt(f) == 'py':
+        if files.getExt(f, removeDot=True) == 'py':
             goOne(f)
 
 def goOne(f):
