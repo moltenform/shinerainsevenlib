@@ -2,19 +2,19 @@
 # shinerainsoftsevenutil (Ben Fisher, moltenform.com)
 # Released under the LGPLv3 License
 
-import shutil
 from .plugin_fileexts import *
 from .. import files
-from ..core import assertTrue, getRandomString, trace
+from .. import core as srss
+from ..core import assertTrue, trace
 
 def addAllTo7z(inPath, outPath, effort=None, multiThread='off', solid=True):
     from .plugin_compression import Strength, params7z, runProcessThatCreatesOutput
 
     if not effort:
-        effort = Strength.optsDefault
+        effort = Strength.default
 
     assertTrue(not isinstance(inPath, list), "we don't yet support multiple items")
-    assertTrue(outPath.endswith('7z') or outPath.endswith('zip'))
+    assertTrue(outPath.endswith(('7z', 'zip')))
     if outPath.lower().endswith('.zip'):
         # zip format does not support solid
         assertTrue(not solid, 'not solid')
@@ -43,6 +43,7 @@ def checkArchivePasswordVia7z(inPath, pword=None):
         return {'couldNotOpenDueToIncorrectPassword': True}
     else:
         assertTrue(False, 'failed to load archive', inPath)
+        return None
 
 def checkArchiveIntegrityVia7z(inPath, pword=None):
     args = ['7z', 't', getPlaceholderPword(pword), inPath]
@@ -61,6 +62,7 @@ def checkArchiveIntegrityVia7z(inPath, pword=None):
         return False
     else:
         assertTrue(False, 'failed to test archive', inPath, stderr)
+        return None
 
 def getPlaceholderPword(pword):
     # we send in a placeholder password to intentionally get an error
@@ -113,7 +115,8 @@ def getContentsVia7z(archive, verbose, silenceWarnings, pword=None):
 
     return results
 
-def _getContentsVia7zImpl(stdout, stderr, archive, verbose, silenceWarnings, pword=None):
+def _getContentsVia7zImpl(stdout, _stderr, archive, _verbose, silenceWarnings, pword=None):
+    srss.unused(pword)
     stdoutFull = stdout.decode('latin-1').replace('\r\n', '\n')
     marker = '\n----------\n'
     if marker not in stdoutFull:
@@ -153,3 +156,5 @@ def _isIgnorableWarning(stdout):
         '\nWarnings: 1' in stdout
     ):
         return True
+    else:
+        return False

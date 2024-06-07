@@ -112,19 +112,14 @@ def addAllToZip(
             return method
 
     assertTrue(not inPath.endswith('/') and not inPath.endswith('\\'))
-    with _zipfile.ZipFile(zipPath, 'a') as zip:
+    with _zipfile.ZipFile(zipPath, 'a') as zpFile:
         if _files.isFile(inPath):
             compressionMethod = getCompressionMethod(inPath)
-            zip.write(
+            zpFile.write(
                 inPath, (pathPrefix or '') + _files.getName(inPath), compress_type=compressionMethod
             )
         elif _files.isDir(inPath):
-            itr = (
-                _files.recurseFiles(inPath, **kwargs)
-                if recurse
-                else _files.listfiles(inPath, **kwargs)
-            )
-            for f, _short in itr:
+            for f, _short in _files.listFiles(inPath, **kwargs, recurse=recurse):
                 assertTrue(f.startswith(inPath))
                 shortname = f[len(inPath) + 1 :]
                 compressionMethod = getCompressionMethod(f)
@@ -133,7 +128,7 @@ def addAllToZip(
                     innerPath = _files.getName(inPath) + '/' + shortname
                 else:
                     innerPath = pathPrefix + shortname
-                zip.write(f, innerPath, compress_type=compressionMethod)
+                zpFile.write(f, innerPath, compress_type=compressionMethod)
         else:
             raise RuntimeError('not found: ' + inPath)
 
@@ -150,7 +145,7 @@ def getContents(
             assertTrue(okToFallbackTo7zForRar, 'rar not found for a rar file')
 
     if not results:
-        results = _plugin_compression_7z._getContentsVia7z(
+        results = _plugin_compression_7z.getContentsVia7z(
             archive, verbose, silenceWarnings, pword=pword
         )
 
@@ -205,9 +200,9 @@ def runProcessThatCreatesOutput(
             _files.copy(inPath, inPathToUse, True)
 
         transformedArgs = list(listArgs)
-        for i in range(len(transformedArgs)):
+        for i, val in enumerate(transformedArgs):
             transformedArgs[i] = (
-                transformedArgs[i].replace('%input%', inPathToUse).replace('%output%', tmpOutPath)
+                val.replace('%input%', inPathToUse).replace('%output%', tmpOutPath)
             )
 
         _files.run(transformedArgs)

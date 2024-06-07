@@ -31,17 +31,17 @@ def imageTypeFromContents(path, treatMpoAsJpg=True):
             return 'heic'
 
     im = Image.open(f)
-    format = str(im.format).lower()
-    if format == 'tiff':
-        format = 'tif'
-    elif format == 'mpo' and treatMpoAsJpg:
+    imFormat = str(im.format).lower()
+    if imFormat == 'tiff':
+        imFormat = 'tif'
+    elif imFormat == 'mpo' and treatMpoAsJpg:
         # some cameras save their images in a mpo form,
         # but 99% of the time we want to treat the file as a typical jpg image.
-        format = 'jpg'
-    elif format == 'jpeg':
-        format = 'jpg'
+        imFormat = 'jpg'
+    elif imFormat == 'jpeg':
+        imFormat = 'jpg'
 
-    return format
+    return imFormat
 
 def getAudAndVidCodec(inPath, ffmpegPath='ffmpeg'):
     results = _srss.Bucket(audFormat=None, vidFormat=None, fullResults=None, err=None)

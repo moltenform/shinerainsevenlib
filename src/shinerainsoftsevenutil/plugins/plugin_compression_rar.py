@@ -5,15 +5,15 @@
 import shutil
 from .plugin_fileexts import *
 from .. import files
-from ..core import assertTrue, getRandomString, trace
+from ..core import assertTrue
 
 def addAllToRar(
     inPath, outPath, effort=None, formatVersion='4', dictSize=None, solid=True, pword=None
 ):
-    from .plugin_compression import Strength, params7z, runProcessThatCreatesOutput
+    from .plugin_compression import Strength, runProcessThatCreatesOutput
 
     if not effort:
-        effort = Strength.optsDefault
+        effort = Strength.default
 
     assertTrue(not isinstance(inPath, list), "we don't yet support multiple items")
     if not dictSize:
@@ -25,7 +25,7 @@ def addAllToRar(
         args.extend(['-s'])
 
     # 5 ("max") is still quite fast
-    strEffort = '0' if effort == Strength.optsStore else '5'
+    strEffort = '0' if effort == Strength.store else '5'
     if outPath.lower().endswith('.rar'):
         args.extend(['-m' + strEffort])
         args.extend(['-ma' + formatVersion])

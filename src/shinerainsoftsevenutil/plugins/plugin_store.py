@@ -5,9 +5,12 @@
 # SrssStore, a database abstraction layer
 # as of Nov 2022, apsw can be installed by simply running python -m pip install apsw
 
-import apsw
 import re
+import apsw
 from .plugin_fileexts import *
+from .. import files
+from .. import core as srss
+from ..core import assertTrue, assertEq
 
 class SrssStoreBasic:
     """
@@ -60,11 +63,11 @@ class SrssStoreBasic:
                     'DB is empty or comes from a different version. Expected schema version %s, got %s'
                     % (int(self.currentSchemaVersionNumber()), got)
                 )
-        except:
+        except Exception as e:
             if 'SQLError: no such table:' in str(srss.getCurrentException()):
                 raise SrssStoreException(
                     '\n\nSchema version table not found, maybe this is a 0kb empty db. Please delete the db and try again.'
-                )
+                ) from e
             else:
                 raise
 
@@ -72,14 +75,14 @@ class SrssStoreBasic:
         return self.conn.cursor()
 
     def rowExists(self, cursor, *args):
-        for row in cursor.execute(*args):
+        for _row in cursor.execute(*args):
             return True
         return False
 
     def connectOrCreate(self, dbpath, flags=None):
         if flags is None:
             flags = apsw.SQLITE_OPEN_NOMUTEX | apsw.SQLITE_OPEN_READWRITE | apsw.SQLITE_OPEN_CREATE
-        did_exist = files.isfile(dbpath)
+        did_exist = files.isFile(dbpath)
         self.conn = apsw.Connection(dbpath, flags=flags)
         cursor = self.conn.cursor()
         cursor.execute('PRAGMA temp_store = memory')
@@ -124,7 +127,7 @@ class SrssStore(SrssStoreBasic):
 
         self.re_check = re.compile('^[a-zA-Z0-9]+$')
         self.schema = self.getFieldNamesAndAttributes()
-        self.default_tbl = [tbl for tbl in self.schema][0]
+        self.default_tbl = list(self.schema)[0]
         if autoConnect:
             self.connectOrCreate(dbpath, flags)
 
@@ -153,7 +156,7 @@ class SrssStore(SrssStoreBasic):
                     elif tblschema[fld].get('index') is True:
                         modifier = ''
                     else:
-                        raise Exception('unknown index type')
+                        raise SrssStoreException('unknown index type')
 
                     cursor.execute(
                         'CREATE ' +
@@ -241,7 +244,7 @@ class SrssStore(SrssStoreBasic):
 
     def _check(self, s):
         if not self.re_check.match(s):
-            raise Exception('invalid identifier (only alphanumeric reqd) ' + s)
+            raise SrssStoreException('invalid identifier (only alphanumeric reqd) ' + s)
 
         return s
 

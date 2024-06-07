@@ -79,8 +79,11 @@ ignore = [
  "SIM117", # it wants combined with statements
  "SIM108", # it wants ternary
  "SIM105", # it wants contextlib.suppress, cool but i don't want that to be mandatory
- #"W503" # operators at end or beginning
- "ISC003" # concats
+ #"W503", # operators at end or beginning
+ "ISC003", # concats
+ "E713", # concanot in vs ints
+ "ERA001", # commented out code
+ "RUF015", # single element slice
 ]
 
 # these might also be useful to disable
@@ -103,10 +106,11 @@ max-line-length = 999
 # C0115 no docstring, R1705/R1720: unneeded elif, R0902 too many attributes, E0401 import err
 # C1802 ok to say if len(lst), R0914 too many locals, R1735 dict literal, R1737 wants yield from
 # W0603 global ok, R1716 chained ok, W0718: broad exception, W0108 unnecessary lambda (gave false positives)
+# R1703 i prefer return True
 # R0903 too few methods, C0303 whitespace
 # R0401 cyclic import... too aggressive and fires even when the cycle is within a function call (safe)
 # R1732 use with to autoclose resources... consider fixing later
-disable = "C0103,W0401,C0116,C0114, W0614,R0911,R0912,C0415,W0611,R0913,C0209,C0305,W0702,C0115,R1705,R0902,R0903,E0401,C0303,C1802,R0401,R1720,R1732,R0914,R1735,R1737,W0603,R1716,W0718,W0108"
+disable = "C0103,W0401,C0116,C0114, W0614,R0911,R0912,C0415,W0611,R0913,C0209,C0305,W0702,C0115,R1705,R0902,R0903,E0401,C0303,C1802,R0401,R1720,R1732,R0914,R1735,R1737,W0603,R1716,W0718,W0108,R1703"
 
 # The warning E1101 we want enabled because it's useful to catch missing functions.
 

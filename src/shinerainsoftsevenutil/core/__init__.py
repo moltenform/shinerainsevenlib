@@ -1,6 +1,7 @@
 
 # shinerainsoftsevenutil (Ben Fisher, moltenform.com)
 # Released under the LGPLv3 License
+# ruff: noqa
 
 from .m5_batch_util import *
 

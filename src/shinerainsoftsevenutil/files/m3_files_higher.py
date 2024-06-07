@@ -3,6 +3,7 @@
 # Released under the LGPLv3 License
 
 import sys as _sys
+import os as _os
 import subprocess as _subprocess
 import shutil as _shutil
 from contextlib import ExitStack as _ExitStack
@@ -17,7 +18,7 @@ def openDirectoryInExplorer(path):
         args = ['cmd', '/c', 'start', 'explorer.exe', path]
         run(args, shell=True, captureOutput=False, wait=False)
     else:
-        # on macos, open should work.
+        # on mac_os, open should work.
         for candidate in ['xdg-open', 'nautilus', 'open']:
             pathBin = findBinaryOnPath(candidate)
             if pathBin:
@@ -285,8 +286,8 @@ def run(
     else:
         with _ExitStack() as cleanupTasks:
             if silenceOutput:
-                stdoutArg = open(os.devnull, 'wb')  # noqa
-                stderrArg = open(os.devnull, 'wb')  # noqa
+                stdoutArg = open(_os.devnull, 'wb')  # noqa
+                stderrArg = open(_os.devnull, 'wb')  # noqa
                 cleanupTasks.push(stdoutArg)
                 cleanupTasks.push(stderrArg)
             else:

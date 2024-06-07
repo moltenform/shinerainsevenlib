@@ -10,15 +10,9 @@ import enum as _enum
 from .. import core as srss
 from ..core import (
     alert,
-    warn,
     trace,
     assertTrue,
-    assertEq,
-    tracep,
-    softDeleteFile,
-    getRandomString,
-    jslike,
-    Bucket,
+    assertEq
 )
 
 rename = _os.rename

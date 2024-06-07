@@ -397,6 +397,9 @@ def containsNonAscii(s):
 # endregion
 # region object helpers and wrappers
 
+def unused(_obj):
+    "Use this to tell linters the variable is intentionally unused"
+
 def getObjAttributes(obj):
     return [att for att in dir(obj) if not att.startswith('_')]
 

@@ -7,6 +7,9 @@ import configparser as _configparser
 import os as _os
 
 from .plugin_fileexts import *
+from .. import files
+from .. import core as srss
+from ..core import assertTrue, assertEq, Bucket, jslike
 
 class SrssConfigReader:
     """

@@ -3,8 +3,6 @@
 # Released under the LGPLv3 License
 
 from .. import files as _files
-from .. import core as _srss
-from ..core import assertTrue
 
 imageExtensions = {
     '.jpg': 1,  # section
@@ -600,29 +598,28 @@ def extensionPossiblyExecutable(s):
 
 def isCompressedTarExtension(archive):
     archive = archive.lower()
-    return (
-        archive.endswith('.tar.z') or
-        archive.endswith('.tar.br') or
-        archive.endswith('.tar.zst') or
-        archive.endswith('.tar.gz') or
-        archive.endswith('.tar.bz2') or
-        archive.endswith('.tar.xz') or
-        archive.endswith('.tgz') or
-        archive.endswith('.tbz') or
-        archive.endswith('.tbz2') or
-        archive.endswith('.txz')
-    )
+    return archive.endswith((
+        '.tar.z',
+        '.tar.br',
+        '.tar.zst',
+        '.tar.gz',
+        '.tar.bz2',
+        '.tar.xz',
+        '.tgz',
+        '.tbz',
+        '.tbz2',
+        '.txz'))
 
 def isSingleFileCompressionExtension(archive):
     archive = archive.lower()
-    return (
-        archive.endswith('.z') or
-        archive.endswith('.br') or
-        archive.endswith('.zst') or
-        archive.endswith('.gz') or
-        archive.endswith('.bz2') or
-        archive.endswith('.xz')
-    )
+    return archive.endswith((
+       '.z',
+       '.br',
+       '.zst',
+       '.gz',
+       '.bz2',
+       '.xz',
+    ))
 
 mostCommonImageExt = {
     '.gif': 1,
