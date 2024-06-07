@@ -6,7 +6,18 @@
 # a directory that imported ..otherdir would bring in the entire project.
 
 # add the most-commonly-used items to the top scope
-from .core import alert, warn, trace, assertTrue, assertEq, tracep, softDeleteFile, getRandomString, jslike, Bucket
+from .core import (
+    alert,
+    warn,
+    trace,
+    assertTrue,
+    assertEq,
+    tracep,
+    softDeleteFile,
+    getRandomString,
+    jslike,
+    Bucket,
+)
 
 # the rest can be accessed via `srss`
 from . import core as srss
@@ -20,4 +31,3 @@ from .plugins import plugin_compression as SrssCompression
 from .plugins import plugin_fileexts as SrssFileExts
 from .plugins import plugin_media as SrssMedia
 from . import files
-

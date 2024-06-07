@@ -15,9 +15,9 @@ from ..core import assertTrue, getRandomString
 from . import plugin_fileexts
 
 class ZipMethods(_enum.IntEnum):
-    store=_zipfile.ZIP_STORED
-    deflate=_zipfile.ZIP_DEFLATED
-    lzma=_zipfile.ZIP_LZMA
+    store = _zipfile.ZIP_STORED
+    deflate = _zipfile.ZIP_DEFLATED
+    lzma = _zipfile.ZIP_LZMA
 
 class Strength(_enum.StrEnum):
     max = _enum.auto()
@@ -43,7 +43,9 @@ params7z = {}
 # confirmed will only need 2gb ram to decompress, though. (used sysinternals to see peak private bytes)
 # for 7z (unlike rar), it's fine to use a very large dict size for small input because
 # when decompressing, the full 1.5gb is not allocated in ram unless there are actually big files.
-params7z[Strength.max] = '-t7z,-mx=9,-mfb=273,-myx=9,-mmt,-mmtf,-md=1536m,-mmf=bt3,-mqs=on,-mmc=10000'
+params7z[Strength.max] = (
+    '-t7z,-mx=9,-mfb=273,-myx=9,-mmt,-mmtf,-md=1536m,-mmf=bt3,-mqs=on,-mmc=10000'
+)
 # strong compression
 # an alternative is '-t7z,-md=31,-mmf=bt3,-mmc=10000,-mpb=0,-mlc=0'
 # in rare cases this can be better, usually though it is just slower and worse
@@ -81,31 +83,50 @@ params7z[Strength.store] = '-t7z,-mx=0'
 # 7z e extracts to current directory (ignoring path info in archive)
 # 7z x extracts with full paths
 
-
-def addAllToZip(inPath, zipPath, method=ZipMethods.deflate, alreadyCompressedAsStore=False,
-        creatingNewArchive=True, pathPrefix=None, recurse=True, **kwargs):
-
+def addAllToZip(
+    inPath,
+    zipPath,
+    method=ZipMethods.deflate,
+    alreadyCompressedAsStore=False,
+    creatingNewArchive=True,
+    pathPrefix=None,
+    recurse=True,
+    **kwargs,
+):
     if creatingNewArchive:
         assertTrue(not _files.exists(zipPath), 'already exists')
 
     def getCompressionMethod(path):
-        if alreadyCompressedAsStore and _files.getExt(path, removeDot=False) in plugin_fileexts.alreadyCompressedExt:
+        if (
+            alreadyCompressedAsStore and
+            _files.getExt(path, removeDot=False) in plugin_fileexts.alreadyCompressedExt
+        ):
             return _zipfile.ZIP_STORED
         else:
-            assertTrue(method is not None, 'invalid method (note that ZIP_LZMA is not always available)')
-            assertTrue(isinstance(method, int), 'please specify ZipMethods.deflate instead of "deflate"')
+            assertTrue(
+                method is not None, 'invalid method (note that ZIP_LZMA is not always available)'
+            )
+            assertTrue(
+                isinstance(method, int), 'please specify ZipMethods.deflate instead of "deflate"'
+            )
             return method
 
     assertTrue(not inPath.endswith('/') and not inPath.endswith('\\'))
     with _zipfile.ZipFile(zipPath, 'a') as zip:
         if _files.isFile(inPath):
             compressionMethod = getCompressionMethod(inPath)
-            zip.write(inPath, (pathPrefix or '') + _files.getName(inPath), compress_type=compressionMethod)
+            zip.write(
+                inPath, (pathPrefix or '') + _files.getName(inPath), compress_type=compressionMethod
+            )
         elif _files.isDir(inPath):
-            itr = _files.recurseFiles(inPath, **kwargs) if recurse else _files.listfiles(inPath, **kwargs)
+            itr = (
+                _files.recurseFiles(inPath, **kwargs)
+                if recurse
+                else _files.listfiles(inPath, **kwargs)
+            )
             for f, _short in itr:
                 assertTrue(f.startswith(inPath))
-                shortname = f[len(inPath) + 1:]
+                shortname = f[len(inPath) + 1 :]
                 compressionMethod = getCompressionMethod(f)
                 assertTrue(shortname, 'needs shortname')
                 if pathPrefix is None:
@@ -114,31 +135,35 @@ def addAllToZip(inPath, zipPath, method=ZipMethods.deflate, alreadyCompressedAsS
                     innerPath = pathPrefix + shortname
                 zip.write(f, innerPath, compress_type=compressionMethod)
         else:
-            raise RuntimeError("not found: " + inPath)
+            raise RuntimeError('not found: ' + inPath)
 
-
-def getContents(archive, verbose=True, silenceWarnings=False, pword=None,
-        okToFallbackTo7zForRar=False):
+def getContents(
+    archive, verbose=True, silenceWarnings=False, pword=None, okToFallbackTo7zForRar=False
+):
     results = None
     if archive.lower().endswith('.rar'):
         if _files.exists(_plugin_compression_rar.getRarPath()):
-            results = _plugin_compression_rar.getContentsViaRar(archive, verbose, silenceWarnings, pword=pword)
+            results = _plugin_compression_rar.getContentsViaRar(
+                archive, verbose, silenceWarnings, pword=pword
+            )
         else:
             assertTrue(okToFallbackTo7zForRar, 'rar not found for a rar file')
 
     if not results:
-        results = _plugin_compression_7z._getContentsVia7z(archive, verbose, silenceWarnings, pword=pword)
+        results = _plugin_compression_7z._getContentsVia7z(
+            archive, verbose, silenceWarnings, pword=pword
+        )
 
     for item in results:
         assertTrue(item.get('Path'), 'all items must have a path', item)
 
         # 7z doesn't include a crc for empty _files, so add one.
-        if _srss.parseIntOrFallback(item.get('Size')) == 0 and (not item.get('CRC') or item.get('CRC') == '--no crc found'):
+        if _srss.parseIntOrFallback(item.get('Size')) == 0 and (
+            not item.get('CRC') or item.get('CRC') == '--no crc found'
+        ):
             item['CRC'] = '00000000'
 
     return results
-
-
 
 def _getRunCommandCommonTempFile(path, preferEphemeral=False, prefix='runCommandCommon'):
     outExtension = _files.getExt(path, removeDot=False)
@@ -146,8 +171,15 @@ def _getRunCommandCommonTempFile(path, preferEphemeral=False, prefix='runCommand
     dirPath = _srss.getSoftTempDir(path, preferEphemeral=preferEphemeral)
     return _files.join(dirPath, tempOutFilename)
 
-def runProcessThatCreatesOutput(listArgs, outPath, *, inPath=None, sizeMustBeGreaterThan=0, copyLastModTimeFromInput=False,
-    handleUnicodeInputs=False):
+def runProcessThatCreatesOutput(
+    listArgs,
+    outPath,
+    *,
+    inPath=None,
+    sizeMustBeGreaterThan=0,
+    copyLastModTimeFromInput=False,
+    handleUnicodeInputs=False,
+):
     """
     Writes to a temp location first,
     1) no risk of getting a half-made file (like if user hits ctrl-c halfway through).
@@ -162,24 +194,29 @@ def runProcessThatCreatesOutput(listArgs, outPath, *, inPath=None, sizeMustBeGre
         cleanup.registerTempFile(tmpOutPath)
 
         inPathToUse = inPath
-        if handleUnicodeInputs and _sys.platform.startswith('win') and _srss.containsNonAscii(inPath):
+        if (
+            handleUnicodeInputs and
+            _sys.platform.startswith('win') and
+            _srss.containsNonAscii(inPath)
+        ):
             inPathToUse = _getRunCommandCommonTempFile(inPath, 'runCommandCommonInput')
             assertTrue(not _files.exists(inPathToUse), 'inPathToUse already there')
             cleanup.registerTempFile(inPathToUse)
             _files.copy(inPath, inPathToUse, True)
-        
+
         transformedArgs = list(listArgs)
         for i in range(len(transformedArgs)):
-            transformedArgs[i] = transformedArgs[i].replace('%input%', inPathToUse).replace('%output%', tmpOutPath)
+            transformedArgs[i] = (
+                transformedArgs[i].replace('%input%', inPathToUse).replace('%output%', tmpOutPath)
+            )
 
         _files.run(transformedArgs)
         assertTrue(_files.isFile(tmpOutPath), 'output not created', transformedArgs)
-        assertTrue(_files.getSize(tmpOutPath) > sizeMustBeGreaterThan, 'output too small', transformedArgs)
+        assertTrue(
+            _files.getSize(tmpOutPath) > sizeMustBeGreaterThan, 'output too small', transformedArgs
+        )
         if copyLastModTimeFromInput:
             lmt = _files.getLastModTime(inPath)
             _files.setLastModTime(tmpOutPath, lmt)
-        
+
         _files.move(tmpOutPath, outPath, False)
-
-
-

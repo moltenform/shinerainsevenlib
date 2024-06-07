@@ -85,4 +85,3 @@ def spliceSpan(s, span, newText):
     _m5_batch_util.assertEq(2, len(span), 'expected [startIndex, stopIndex]')
     _m5_batch_util.assertTrue(span[1] >= span[0])
     return splice(s, span[0], span[1] - span[0], newText)
-

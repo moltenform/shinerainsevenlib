@@ -8,7 +8,18 @@ import shutil as _shutil
 import enum as _enum
 
 from .. import core as srss
-from ..core import alert, warn, trace, assertTrue, assertEq, tracep, softDeleteFile, getRandomString, jslike, Bucket
+from ..core import (
+    alert,
+    warn,
+    trace,
+    assertTrue,
+    assertEq,
+    tracep,
+    softDeleteFile,
+    getRandomString,
+    jslike,
+    Bucket,
+)
 
 rename = _os.rename
 exists = _os.path.exists
@@ -40,7 +51,7 @@ def createdTime(path):
     return _os.stat(path).st_ctime
 
 def getExt(s, removeDot=True):
-    "Get extension. removeDot determines whether result is '.jpg' or 'jpg' "
+    "Get extension. removeDot determines whether result is '.jpg' or 'jpg'"
     _before, after = splitExt(s)
     if removeDot and len(after) > 0 and after[0] == '.':
         return after[1:].lower()
@@ -314,6 +325,7 @@ def isEmptyDir(dirPath):
 
 def fileContentsEqual(f1, f2):
     import filecmp
+
     return filecmp.cmp(f1, f2, shallow=False)
 
 class OSFileRelatedError(OSError):

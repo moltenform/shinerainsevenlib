@@ -11,7 +11,8 @@ def listDirs(path, *, filenamesOnly=False, allowedExts=None, recurse=False):
     "Return directories within a directory"
     if recurse:
         return recurseDirs(
-            path, filenamesOnly=filenamesOnly,
+            path,
+            filenamesOnly=filenamesOnly,
         )
 
     for full, name in listChildren(path, allowedExts=allowedExts):
@@ -22,9 +23,7 @@ def listDirs(path, *, filenamesOnly=False, allowedExts=None, recurse=False):
 def listFiles(path, *, filenamesOnly=False, allowedExts=None, recurse=False):
     "Return files within a directory"
     if recurse:
-        return recurseFiles(
-            path, filenamesOnly=filenamesOnly, allowedExts=allowedExts
-        )
+        return recurseFiles(path, filenamesOnly=filenamesOnly, allowedExts=allowedExts)
 
     for full, name in listChildren(path, allowedExts=allowedExts):
         if not _os.path.isdir(full):
@@ -43,6 +42,7 @@ if _sys.platform.startswith('win'):
     listChildren = _listChildrenUnsorted
 else:
     exeSuffix = ''
+
     def listChildren(*args, **kwargs):
         return sorted(_listChildrenUnsorted(*args, **kwargs))
 

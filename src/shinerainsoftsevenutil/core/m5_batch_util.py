@@ -30,7 +30,7 @@ class SrssLooper:
         self._pauseEverySeconds = None
         self._waitUntilValueSeen = None
         self._input = listOrLambda
-        
+
         # reset state
         self._didMeaningfulWork = True
         self._currentIter = None
@@ -222,10 +222,12 @@ class CleanupTempFilesOnException(_contextlib.ExitStack):
         ...something that might throw
         files.delete('out.tmp')
     """
+
     def registerTempFile(self, path):
         def fn():
             if _os.path.exists(path):
                 _os.unlink(path)
+
         self.callback(fn)
 
 def removeEmptyFolders(path, removeRootIfEmpty=True, isRecurse=False, verbose=False):

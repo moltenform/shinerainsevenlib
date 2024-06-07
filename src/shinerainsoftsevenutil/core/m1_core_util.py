@@ -243,16 +243,16 @@ def reReplace(haystack, reNeedle, replace):
 # cliffnotes documentation of _re module included here for convenience:
 # _re.search(pattern, string, flags=0)
 #     look for at most one match starting anywhere
-# 
+#
 # _re.match(pattern, string, flags=0)
 #     look for match starting only at beginning of string
-# 
+#
 # _re.findall(pattern, string, flags=0)
 #     returns list of strings
-# 
+#
 # _re.finditer(pattern, string, flags=0)
 #     returns iterator of match objects
-# 
+#
 # flags include _re.IGNORECASE, _re.MULTILINE, _re.DOTALL
 
 def truncateWithEllipsis(s, maxLength):

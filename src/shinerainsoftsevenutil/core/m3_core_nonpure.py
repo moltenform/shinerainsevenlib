@@ -192,6 +192,7 @@ def getSoftDeleteDir(path):
     from .. import files
 
     from ..plugins.plugin_configreader import getSsrsInternalPrefs
+
     prefs = getSsrsInternalPrefs()
     _k, v = prefs.findKeyForPath(path, 'softDeleteDirectory_')
     if not v:
@@ -205,6 +206,7 @@ def getSoftDeleteDir(path):
 def _getSoftTempDirImpl(path='', preferEphemeral=False):
     from .. import files
     from ..plugins.plugin_configreader import getSsrsInternalPrefs
+
     prefs = getSsrsInternalPrefs()
 
     if preferEphemeral and prefs.parsed.tempEphemeralDirectory:
@@ -217,16 +219,17 @@ def _getSoftTempDirImpl(path='', preferEphemeral=False):
             return prefs.parsed.tempDirectory
         else:
             import tempfile
+
             dirPath = tempfile.gettempdir()
             dirPath += '/srss'
             files.makeDirs(dirPath)
             return dirPath
-        
+
     return dirPath
 
 def getSoftTempDir(path='', preferEphemeral=False):
     dirPath = _getSoftTempDirImpl(path=path, preferEphemeral=preferEphemeral)
-    
+
     # place in the temp subfolder
     assertTrue(_os.path.isdir(dirPath), 'temp dir not a directory', dirPath)
     dirPath += '/temp'

@@ -319,4 +319,3 @@ def run(
         raise throwOnFailure(srss.getPrintable(exceptionText))
 
     return retcode, stdout, stderr
-

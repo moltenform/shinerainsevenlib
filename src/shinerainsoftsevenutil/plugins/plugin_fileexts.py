@@ -397,7 +397,7 @@ moreNonTextual = {
     '.pyc': 1,
     '.pch': 1,
     '.pyd': 1,
-    '.lnk': 1, #
+    '.lnk': 1,  #
     '.scssc': 1,
     '.mid': 1,
     '.db': 1,
@@ -414,7 +414,6 @@ documentExtensions = {
     '.pptx': 1,
     '.pdf': 1,
     '.ttf': 1,
-    
 }
 
 exeExt = {
@@ -601,15 +600,29 @@ def extensionPossiblyExecutable(s):
 
 def isCompressedTarExtension(archive):
     archive = archive.lower()
-    return archive.endswith('.tar.z') or archive.endswith('.tar.br') or archive.endswith('.tar.zst') or \
-        archive.endswith('.tar.gz') or archive.endswith('.tar.bz2') or archive.endswith('.tar.xz') or \
-        archive.endswith('.tgz') or archive.endswith('.tbz') or archive.endswith('.tbz2') or archive.endswith('.txz')
+    return (
+        archive.endswith('.tar.z') or
+        archive.endswith('.tar.br') or
+        archive.endswith('.tar.zst') or
+        archive.endswith('.tar.gz') or
+        archive.endswith('.tar.bz2') or
+        archive.endswith('.tar.xz') or
+        archive.endswith('.tgz') or
+        archive.endswith('.tbz') or
+        archive.endswith('.tbz2') or
+        archive.endswith('.txz')
+    )
 
 def isSingleFileCompressionExtension(archive):
     archive = archive.lower()
-    return archive.endswith('.z') or archive.endswith('.br') or archive.endswith('.zst') or \
-        archive.endswith('.gz') or archive.endswith('.bz2') or archive.endswith('.xz')
-
+    return (
+        archive.endswith('.z') or
+        archive.endswith('.br') or
+        archive.endswith('.zst') or
+        archive.endswith('.gz') or
+        archive.endswith('.bz2') or
+        archive.endswith('.xz')
+    )
 
 mostCommonImageExt = {
     '.gif': 1,
@@ -631,4 +644,3 @@ mostCommonImageExtAlternatives = {
     '.tiff': '.tif',
     '.png_large': '.png',
 }
-

@@ -2,7 +2,6 @@
 # shinerainsoftsevenutil (Ben Fisher, moltenform.com)
 # Released under the LGPLv3 License
 
-
 import re
 from .. import files as _files
 from .. import core as _srss
@@ -14,7 +13,7 @@ def imageTypeFromExtension(path):
     ext = _files.getExt(path, removeDot=False)
     if ext in _plugin_fileexts.mostCommonImageExtAlternatives:
         ext = _plugin_fileexts.mostCommonImageExtAlternatives[ext]
-    
+
     if ext in _plugin_fileexts.mostCommonImageExt:
         return ext.replace('.', '')
     else:
@@ -30,7 +29,7 @@ def imageTypeFromContents(path, treatMpoAsJpg=True):
             return 'jxl'
         if b'ftypheic' in firstBytes:
             return 'heic'
-        
+
     im = Image.open(f)
     format = str(im.format).lower()
     if format == 'tiff':
@@ -76,18 +75,17 @@ def _getAudAndVidCodecImpl(inPath, results, ffmpegPath='ffmpeg'):
             s = line.split('\n')[0]
             if s.startswith('Audio: '):
                 assertTrue(audFormat is None, 'two audio tracks?', inPath)
-                audFormat = _getAFormat(s[len('Audio: '):])
+                audFormat = _getAFormat(s[len('Audio: ') :])
             elif s.startswith('Video: '):
                 assertTrue(vidFormat is None, 'two video tracks?', inPath)
-                vidFormat =  _getVFormat(s[len('Video: '):])
+                vidFormat = _getVFormat(s[len('Video: ') :])
             elif s.startswith('Data: '):
                 pass
             else:
                 assertTrue(False, 'unknown stream type', s, inPath)
 
-    results.audFormat=audFormat
-    results.vidFormat=vidFormat
-
+    results.audFormat = audFormat
+    results.vidFormat = vidFormat
 
 aFormatsFfmpeg = dict(
     flac='flac',
@@ -142,4 +140,3 @@ def _getVFormat(s):
         assertTrue(False, 'unknown vid format', s, firstWord)
 
     return vFormatsFfmpeg[firstWord]
-

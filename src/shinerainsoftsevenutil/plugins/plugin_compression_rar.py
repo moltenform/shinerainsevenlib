@@ -7,11 +7,14 @@ from .plugin_fileexts import *
 from .. import files
 from ..core import assertTrue, getRandomString, trace
 
-def addAllToRar(inPath, outPath, effort=None, formatVersion='4', dictSize=None, solid=True, pword=None):
+def addAllToRar(
+    inPath, outPath, effort=None, formatVersion='4', dictSize=None, solid=True, pword=None
+):
     from .plugin_compression import Strength, params7z, runProcessThatCreatesOutput
+
     if not effort:
         effort = Strength.optsDefault
-        
+
     assertTrue(not isinstance(inPath, list), "we don't yet support multiple items")
     if not dictSize:
         dictSize = '256m' if formatVersion == '5' else '4096k'
@@ -38,6 +41,7 @@ def addAllToRar(inPath, outPath, effort=None, formatVersion='4', dictSize=None, 
 
 def getContentsViaRar(archive, verbose, _silenceWarnings, pword=None):
     from . import plugin_compression_7z
+
     assertTrue(files.isFile(archive))
     assertTrue(verbose, 'we only support verbose listing')
     args = [getRarPath(), 'lt', plugin_compression_7z.getPlaceholderPword(pword), archive]
@@ -45,7 +49,7 @@ def getContentsViaRar(archive, verbose, _silenceWarnings, pword=None):
     stdout = stdout.decode('latin-1').replace('\r\n', '\n')
     results = []
     parts = stdout.split(' Name: ')
-    parts.pop(0) # just the header
+    parts.pop(0)  # just the header
     for part in parts:
         lines = part.split('\n')
         result = {}
@@ -63,15 +67,16 @@ def getContentsViaRar(archive, verbose, _silenceWarnings, pword=None):
 
 def processAttributesRar(item):
     return dict(
-        Path=item.get('Path', ''), # uses \ as dirsep
-        Type=item.get('Type', '--no type found'), # File or Directory
-        Modified=item.get('Modified', '--no modified found').split(',')[0], # 2023-02-02 12:56:05,673617400
+        Path=item.get('Path', ''),  # uses \ as dirsep
+        Type=item.get('Type', '--no type found'),  # File or Directory
+        Modified=item.get('Modified', '--no modified found').split(',')[
+            0
+        ],  # 2023-02-02 12:56:05,673617400
         CRC=item.get('CRC32', '--no crc found'),
         Size=item.get('Size', '--no size found'),
         PackedSize=item.get('Packed size', '--no packedsize found'),
-        Raw=item
+        Raw=item,
     )
 
 def getRarPath():
-    return 'rar' if shutil.which('rar') else r"C:\Program Files\WinRAR\Rar.exe"
-
+    return 'rar' if shutil.which('rar') else r'C:\Program Files\WinRAR\Rar.exe'

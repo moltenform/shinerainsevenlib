@@ -166,7 +166,7 @@ class SrssConfigReader:
 
         if not results:
             return None, None
-        
+
         results.sort(key=lambda col: len(col))
         return results[-1], getattr(section, results[-1])
 
@@ -184,6 +184,7 @@ class SrssConfigReader:
             raise ValueError(rf'Expected true or false but got {s}, {context}')
 
 myPath = _os.path.abspath(__file__)
+
 def getSrssConfigLocation():
     "Internal helper for finding where shinerainsoftsevenutil's own cfgs are"
     dirPath = files.getParent(files.getParent(myPath))
@@ -192,9 +193,9 @@ def getSrssConfigLocation():
         dirPath + '/shinerainsoftsevenutil.cfg',
         dirPath + '/core/shinerainsoftsevenutil.cfg',
         dirPath + '/shinerainsoftsevenutil/core/shinerainsoftsevenutil.cfg',
-        userHome + '/.shinerainsoftsevenutil/shinerainsoftsevenutil.cfg'
+        userHome + '/.shinerainsoftsevenutil/shinerainsoftsevenutil.cfg',
     ]
-    
+
     return jslike.find(candidates, lambda path: files.exists(path))
 
 _gCachedInternalPrefs = None
@@ -223,4 +224,3 @@ def getSsrsInternalPrefs():
         _gCachedInternalPrefs.parseText(configText)
 
     return _gCachedInternalPrefs
-
