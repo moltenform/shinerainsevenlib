@@ -29,7 +29,8 @@ def goRuff():
     files.run([
         "D:\\OnlyHere\\devkits\\Python64_312\\Scripts\\ruff",
         "format",
-        "src\\shinerainsoftsevenutil",
+        #~ "src\\shinerainsoftsevenutil",
+        r"C:\b\pydev\dev\contracts\gnostic\gnosticnotepad\src\tools\typescript-super-auto-import",
     ])
     cleanupAfterRuffAll("src\\shinerainsoftsevenutil")
 
@@ -38,7 +39,9 @@ def goPylint():
         "D:\\OnlyHere\\devkits\\Python64_312\\python",
         "-m",
         "pylint",
-        "src\\shinerainsoftsevenutil",
+        #~ "src\\shinerainsoftsevenutil",
+        r"C:\b\pydev\dev\contracts\gnostic\gnosticnotepad\src\tools\typescript-super-auto-import",
+
     ], throwOnFailure=False)
     stdout = stdout.decode('utf-8')
     lines = stdout.replace('\r\n', '\n').split('\n')
@@ -53,6 +56,10 @@ def goPylint():
             print(line)
 
 if __name__ == '__main__':
+    alert('wrong path intentionally')
+    import os
+    import sys
+    os.chdir(r"C:\b\pydev\dev\contracts\gnostic\gnosticnotepad\src\tools\typescript-super-auto-import")
     if 'ruff' in sys.argv:
         goRuff()
     elif 'pylint' in sys.argv:

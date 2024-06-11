@@ -6,7 +6,6 @@
 # as of Nov 2022, apsw can be installed by simply running python -m pip install apsw
 
 import re
-import apsw
 from .plugin_fileexts import *
 from .. import files
 from .. import core as srss
@@ -80,6 +79,7 @@ class SrssStoreBasic:
         return False
 
     def connectOrCreate(self, dbpath, flags=None):
+        import apsw
         if flags is None:
             flags = apsw.SQLITE_OPEN_NOMUTEX | apsw.SQLITE_OPEN_READWRITE | apsw.SQLITE_OPEN_CREATE
         did_exist = files.isFile(dbpath)

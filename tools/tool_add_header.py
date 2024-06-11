@@ -7,9 +7,9 @@
 from shinerainsoftsevenutil.standard import *
 
 def goAll(root):
-    for f, short in files.recurseFiles(root):
-        if files.getExt(f, removeDot=True) == 'py':
-            goOne(f)
+    for fullPath, _short in files.recurseFiles(root):
+        if files.getExt(fullPath, removeDot=True) == 'py':
+            goOne(fullPath)
 
 def goOne(f):
     code = files.readAll(f)
@@ -28,4 +28,5 @@ def goOne(f):
 
 if __name__ == '__main__':
     goAll(r'.')
+
 

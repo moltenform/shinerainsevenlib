@@ -15,26 +15,26 @@ from ..core import assertTrue, getRandomString
 from . import plugin_fileexts
 
 class ZipMethods(_enum.IntEnum):
-    store = _zipfile.ZIP_STORED
-    deflate = _zipfile.ZIP_DEFLATED
-    lzma = _zipfile.ZIP_LZMA
+    Store = _zipfile.ZIP_STORED
+    Deflate = _zipfile.ZIP_DEFLATED
+    Lzma = _zipfile.ZIP_LZMA
 
 class Strength(_enum.StrEnum):
-    max = _enum.auto()
-    strong = _enum.auto()
-    default = _enum.auto()
-    store = _enum.auto()
+    Max = _enum.auto()
+    Strong = _enum.auto()
+    Default = _enum.auto()
+    Store = _enum.auto()
 
 paramsZip = {}
 
 # max compression (slow)
-paramsZip[Strength.max] = '-tzip,-mx=9,-mm=Deflate,-mfb=258,-mpass=15'
+paramsZip[Strength.Max] = '-tzip,-mx=9,-mm=Deflate,-mfb=258,-mpass=15'
 # strong compression
-paramsZip[Strength.strong] = '-tzip,-mx=9'
+paramsZip[Strength.Strong] = '-tzip,-mx=9'
 # 7z's default compression
-paramsZip[Strength.default] = '-tzip'
+paramsZip[Strength.Default] = '-tzip'
 # store
-paramsZip[Strength.store] = '-tzip,-mx=0'
+paramsZip[Strength.Store] = '-tzip,-mx=0'
 
 params7z = {}
 
@@ -43,17 +43,17 @@ params7z = {}
 # confirmed will only need 2gb ram to decompress, though. (used sysinternals to see peak private bytes)
 # for 7z (unlike rar), it's fine to use a very large dict size for small input because
 # when decompressing, the full 1.5gb is not allocated in ram unless there are actually big files.
-params7z[Strength.max] = (
+params7z[Strength.Max] = (
     '-t7z,-mx=9,-mfb=273,-myx=9,-mmt,-mmtf,-md=1536m,-mmf=bt3,-mqs=on,-mmc=10000'
 )
 # strong compression
 # an alternative is '-t7z,-md=31,-mmf=bt3,-mmc=10000,-mpb=0,-mlc=0'
 # in rare cases this can be better, usually though it is just slower and worse
-params7z[Strength.strong] = '-t7z,-m0=lzma,-mx=9,-mfb=64,-md=256m,-ms=on'
+params7z[Strength.Strong] = '-t7z,-m0=lzma,-mx=9,-mfb=64,-md=256m,-ms=on'
 # 7z's default compression
-params7z[Strength.default] = '-t7z'
+params7z[Strength.Default] = '-t7z'
 # store
-params7z[Strength.store] = '-t7z,-mx=0'
+params7z[Strength.Store] = '-t7z,-mx=0'
 
 # Documentation on additional switches, and my notes
 # -m0=lzma2 (default)   method=lzma2
@@ -86,7 +86,7 @@ params7z[Strength.store] = '-t7z,-mx=0'
 def addAllToZip(
     inPath,
     zipPath,
-    method=ZipMethods.deflate,
+    method=ZipMethods.Deflate,
     alreadyCompressedAsStore=False,
     creatingNewArchive=True,
     pathPrefix=None,
@@ -119,16 +119,16 @@ def addAllToZip(
                 inPath, (pathPrefix or '') + _files.getName(inPath), compress_type=compressionMethod
             )
         elif _files.isDir(inPath):
-            for f, _short in _files.listFiles(inPath, **kwargs, recurse=recurse):
-                assertTrue(f.startswith(inPath))
-                shortname = f[len(inPath) + 1 :]
-                compressionMethod = getCompressionMethod(f)
+            for fullPath, _short in _files.listFiles(inPath, **kwargs, recurse=recurse):
+                assertTrue(fullPath.startswith(inPath))
+                shortname = fullPath[len(inPath) + 1 :]
+                compressionMethod = getCompressionMethod(fullPath)
                 assertTrue(shortname, 'needs shortname')
                 if pathPrefix is None:
                     innerPath = _files.getName(inPath) + '/' + shortname
                 else:
                     innerPath = pathPrefix + shortname
-                zpFile.write(f, innerPath, compress_type=compressionMethod)
+                zpFile.write(fullPath, innerPath, compress_type=compressionMethod)
         else:
             raise RuntimeError('not found: ' + inPath)
 

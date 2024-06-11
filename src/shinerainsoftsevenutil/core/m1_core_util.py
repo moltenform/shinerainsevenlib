@@ -111,7 +111,7 @@ def getCurrentException():
     "Get current exception"
     return _sys.exc_info()[1]
 
-class shinerainsoftsevenutilError(RuntimeError):
+class ShinerainsoftsevenutilError(RuntimeError):
     def __init__(self, *args):
         "You can pass in more than one string"
         combined = ' '.join(str(arg) for arg in args)
@@ -141,16 +141,18 @@ def trace(*args, always=False):
     1) distinguish debugging prints vs intentional production prints
     2) can be redirected to fnHook
     3) certain terminals throw exceptions if given unicode characters"""
+    val = ' '.join(map(getPrintable, args))
     if gRedirectTraceCalls.fnHook and not always:
-        gRedirectTraceCalls.fnHook(*args)
+        gRedirectTraceCalls.fnHook(val)
     else:
-        print(' '.join(map(getPrintable, args)))
+        print(val)
 
 def tracep(*args, always=False):
+    val = ' '.join(map(_pprint.pformat, args))
     if gRedirectTraceCalls.fnHook and not always:
-        gRedirectTraceCalls.fnHook(*args)
+        gRedirectTraceCalls.fnHook(val)
     else:
-        print(' '.join(map(_pprint.pformat, args)))
+        print(val)
 
 # endregion
 # region _time helpers

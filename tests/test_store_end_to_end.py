@@ -6,35 +6,27 @@
 
 import pytest
 import tempfile
-from ..common_util import isPy3OrNewer
-from ..store import Store, StoreWithCrudHelpers, StoreException
-from ..files import join, getsize, writeall, ensureEmptyDirectory
-from .test_store import StoreWithCrudHelpersDemo, fixture_temp_db
+#~ from ..common_util import isPy3OrNewer
+#~ from ..store import Store, StoreWithCrudHelpers, StoreException
+#~ from ..files import join, getsize, writeall, ensureEmptyDirectory
+#~ from .test_store import StoreWithCrudHelpersDemo, fixture_temp_db
+from shinerainsoftsevenutil.standard import *
 
-@pytest.mark.skipif('not isPy3OrNewer')
-class TestCrudHelper(object):
-    def test_opening_with_no_schema_version(self, fixture_temp_db):
-        db, dbpath = fixture_temp_db
-        db.cursor().execute('DELETE FROM ben_python_common_store_properties WHERE 1')
-        db.close()
-        with pytest.raises(StoreException) as exc:
-            db.connect_or_create(dbpath)
-        exc.match('DB is empty or comes from a different version. Expected schema version 1, got None')
         
 def testGlobalImageInformationCache():
     print('Running testGlobalImageInformationCache')
     # should not allow null hashes
-    def tryNullHash():
-        dbpath = './test.db'
+    with pytest.raises(Exception, 'NOT NULL constraint failed'):
+            dbpath = './test.db'
         files.deletesure(dbpath)
         with GlobalImageInformationCache(dbpath) as globalDb:
             globalDb.begin()
             globalDb.insert({'fileBytesHash': 'val1'})
             globalDb.end()
-    assertException(tryNullHash, Exception, 'NOT NULL constraint failed')
+            getWithDifferentExt('./file_no_ext', '.new')
 
     # should not allow dupe hashes
-    def tryMakeDupe():
+    with pytest.raises(Exception, 'UNIQUE constraint failed'):
         dbpath = './test.db'
         files.deletesure(dbpath)
         with GlobalImageInformationCache(dbpath) as globalDb:
@@ -43,7 +35,6 @@ def testGlobalImageInformationCache():
             globalDb.insert({'filePath': '/test/b', 'fileBytesHash': 'val2'})
             globalDb.insert({'filePath': '/test/c', 'fileBytesHash': 'val1'})
             globalDb.end()
-    assertException(tryMakeDupe, Exception, 'UNIQUE constraint failed')
 
     # test inserts and gets
     dbpath = './test.db'
@@ -58,22 +49,22 @@ def testGlobalImageInformationCache():
     with GlobalImageInformationCache(dbpath) as globalDb:
         globalDb.begin()
         got = globalDb.getByFileBytesHash('val0')
-        assertEq(None, got)
+        assert got == None
         got = globalDb.getByFileBytesHash('val1')
-        assertEq('/test/a', got['filePath'])
-        assertEq('val1', got['fileBytesHash'])
-        assertEq(None, got['pixelsHash'])
-        assertEq(None, got['averageHash'])
+        assert got['filePath'] == '/test/a'
+        assert got['fileBytesHash'] == 'val1'
+        assert got['pixelsHash'] == None
+        assert got['averageHash'] == None
         got = globalDb.getByFileBytesHash('val2')
-        assertEq('/test/b', got['filePath'])
-        assertEq('val2', got['fileBytesHash'])
-        assertEq('pixelsHashVal1', got['pixelsHash'])
-        assertEq(None, got['averageHash'])
+        assert got['filePath'] == '/test/b'
+        assert got['fileBytesHash'] == 'val2'
+        assert got['pixelsHash'] == 'pixelsHashVal1'
+        assert got['averageHash'] == None
         got = globalDb.getByFileBytesHash('val3')
-        assertEq('/test/c', got['filePath'])
-        assertEq('val3', got['fileBytesHash'])
-        assertEq(None, got['pixelsHash'])
-        assertEq('averageHashVal1', got['averageHash'])
+        assert got['filePath'] == '/test/c'
+        assert got['fileBytesHash'] == 'val3'
+        assert got['pixelsHash'] == None
+        assert got['averageHash'] == 'averageHashVal1'
         globalDb.end()
 
     # test updates
@@ -86,22 +77,31 @@ def testGlobalImageInformationCache():
     with GlobalImageInformationCache(dbpath) as globalDb:
         globalDb.begin()
         got = globalDb.getByFileBytesHash('val1')
-        assertEq('/test/a', got['filePath'])
-        assertEq('val1', got['fileBytesHash'])
-        assertEq(None, got['pixelsHash'])
-        assertEq(None, got['averageHash'])
+        assert got['filePath'] == '/test/a'
+        assert got['fileBytesHash'] == 'val1'
+        assert got['pixelsHash'] == None
+        assert got['averageHash'] == None
         got = globalDb.getByFileBytesHash('val2')
-        assertEq('/test/b', got['filePath'])
-        assertEq('val2', got['fileBytesHash'])
-        assertEq('pixelsHashVal1', got['pixelsHash'])
-        assertEq('averageHashValNew', got['averageHash'])
+        assert got['filePath'] == '/test/b'
+        assert got['fileBytesHash'] == 'val2'
+        assert got['pixelsHash'] == 'pixelsHashVal1'
+        assert got['averageHash'] == 'averageHashValNew'
         got = globalDb.getByFileBytesHash('val3')
-        assertEq('/test/c', got['filePath'])
-        assertEq('val3', got['fileBytesHash'])
-        assertEq(None, got['pixelsHash'])
-        assertEq('averageHashValModified', got['averageHash'])
+        assert got['filePath'] == '/test/c'
+        assert got['fileBytesHash'] == 'val3'
+        assert got['pixelsHash'] == None
+        assert got['averageHash'] == 'averageHashValModified'
         globalDb.end()
         
+
+class TestCrudHelper(object):
+    def test_opening_with_no_schema_version(self, fixture_temp_db):
+        db, dbpath = fixture_temp_db
+        db.cursor().execute('DELETE FROM ben_python_common_store_properties WHERE 1')
+        db.close()
+        with pytest.raises(StoreException) as exc:
+            db.connect_or_create(dbpath)
+        exc.match('DB is empty or comes from a different version. Expected schema version 1, got None')
 
 class GlobalImageInformationCache(StoreWithCrudHelpersDemo):
     def get_field_names_and_attributes(self):

@@ -294,13 +294,13 @@ class Bucket:
             object.__setattr__(self, key, val)
 
     def __repr__(self):
-        return '\n\n\n'.join(
+        return '\n'.join(
             '%s=%s' % (ustr(key), ustr(self.__dict__[key])) for key in sorted(self.__dict__)
         )
 
 # deleted SimpleEnum in favor of modern Python enums
 
-class _EnumExampleInt(_enum.Enum):
+class _EnumExampleInt(_enum.IntEnum):
     first = _enum.auto()
     second = _enum.auto()
     third = _enum.auto()
@@ -459,7 +459,7 @@ def throwIfDuplicates(l1, transformFn1=None, context=''):
     seen = {}
     for item in l1Transformed:
         if item in seen:
-            raise shinerainsoftsevenutilError('duplicate seen:', item, context)
+            raise ShinerainsoftsevenutilError('duplicate seen:', item, context)
 
 def mergeDict(dict1, dict2):
     return dict1 | dict2

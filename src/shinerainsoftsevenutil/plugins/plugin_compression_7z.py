@@ -11,7 +11,7 @@ def addAllTo7z(inPath, outPath, effort=None, multiThread='off', solid=True):
     from .plugin_compression import Strength, params7z, runProcessThatCreatesOutput
 
     if not effort:
-        effort = Strength.default
+        effort = Strength.Default
 
     assertTrue(not isinstance(inPath, list), "we don't yet support multiple items")
     assertTrue(outPath.endswith(('7z', 'zip')))

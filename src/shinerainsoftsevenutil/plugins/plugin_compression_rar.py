@@ -13,7 +13,7 @@ def addAllToRar(
     from .plugin_compression import Strength, runProcessThatCreatesOutput
 
     if not effort:
-        effort = Strength.default
+        effort = Strength.Default
 
     assertTrue(not isinstance(inPath, list), "we don't yet support multiple items")
     if not dictSize:
@@ -25,7 +25,7 @@ def addAllToRar(
         args.extend(['-s'])
 
     # 5 ("max") is still quite fast
-    strEffort = '0' if effort == Strength.store else '5'
+    strEffort = '0' if effort == Strength.Store else '5'
     if outPath.lower().endswith('.rar'):
         args.extend(['-m' + strEffort])
         args.extend(['-ma' + formatVersion])

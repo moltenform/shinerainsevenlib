@@ -5,11 +5,18 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "pytest",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "pytest",
+            "args":[".\\tests\\test_files", "--maxfail=1"]
+        },
+        {
             "name": "Python Debugger: Explore",
             "type": "debugpy",
             "request": "launch",
-            "program": "nocpy_explore.py",
-            //~ "program": "nocpy_transition.py",
+            //~ "program": "nocpy_explore.py",
+            "program": "nocpy_transition.py",
             "console": "integratedTerminal"
         },
     ]

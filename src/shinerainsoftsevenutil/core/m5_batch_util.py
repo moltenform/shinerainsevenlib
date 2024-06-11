@@ -236,16 +236,16 @@ def removeEmptyFolders(path, removeRootIfEmpty=True, isRecurse=False, verbose=Fa
         return
 
     # remove empty subfolders
-    files = _os.listdir(path)
-    if len(files):
-        for f in files:
-            fullpath = _os.path.join(path, f)
-            if _os.path.isdir(fullpath):
-                removeEmptyFolders(fullpath, removeRootIfEmpty=removeRootIfEmpty, isRecurse=True)
+    paths = _os.listdir(path)
+    if len(paths):
+        for path in paths:
+            fullPath = _os.path.join(path, path)
+            if _os.path.isdir(fullPath):
+                removeEmptyFolders(fullPath, removeRootIfEmpty=removeRootIfEmpty, isRecurse=True)
 
     # if folder empty, delete it
-    files = _os.listdir(path)
-    if len(files) == 0:
+    paths = _os.listdir(path)
+    if len(paths) == 0:
         if not isRecurse and not removeRootIfEmpty:
             pass
         else:
