@@ -631,6 +631,7 @@ mostCommonImageExt = {
     '.webp': 1,
     '.jxl': 1,
     '.heic': 1,
+    '.avif': 1,
 }
 
 mostCommonImageExtAlternatives = {

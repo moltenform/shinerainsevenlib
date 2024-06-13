@@ -11,7 +11,7 @@ from shinerainsoftsevenutil.core import *
 
 fixture_dir = fixture_dir_
 
-class TestStringHelpersSimple(object):
+class TestStringHelpersSimple:
     # getPrintable
     def test_getPrintableEmpty(self):
         assert '' == getPrintable('')
@@ -269,7 +269,7 @@ class TestStringHelpersSimple(object):
         assert lst == set(['a', 'bb', 'c'])
 
 
-class TestBucket(object):
+class TestBucket:
     def test_bucket(self):
         a = Bucket()
         a.f1 = 'abc'
@@ -304,7 +304,7 @@ class enumExampleStr(enum.StrEnum):
     third = enum.auto()
 
 
-class TestSimpleEnum(object):
+class TestSimpleEnum:
     def test_values(self):
         assert enumExampleInt.first == 1
         assert enumExampleInt.third == 3
@@ -328,7 +328,7 @@ class TestSimpleEnum(object):
             enumExampleStr.missing = "other"
 
 
-class TestOtherSimpleHelpers(object):
+class TestOtherSimpleHelpers:
     def test_waitUntilTrueArr(self):
         arr = [0, 1, 2, 3, 4, 5]
         results = [item for item in waitUntilTrue(arr, lambda x: x == 3)]
@@ -355,7 +355,7 @@ class TestOtherSimpleHelpers(object):
         results = [item for item in waitUntilTrue(exampleIter(), lambda x: x == 9)]
         assert results == []
 
-class TestDataStructures(object):
+class TestDataStructures:
     # takeBatch
     def test_takeBatchNonLazy(self):
         assert [[1, 2, 3], [4, 5, 6], [7]] == takeBatch([1, 2, 3, 4, 5, 6, 7], 3)
@@ -524,7 +524,7 @@ def dateParserAvailable():
         return False
 
 @pytest.mark.skipif('not dateParserAvailable()')
-class TestDateParsing(object):
+class TestDateParsing:
     def test_spanish_dates_should_not_parsed(self):
         uu = EnglishDateParserWrapper()
         assert uu.parse(u'Martes 21 de Octubre de 2014') is None
@@ -610,7 +610,7 @@ class TestDateParsing(object):
         assert '02/16/2023 07:17:46 PM' == renderMillisTime(sampleMillisTime)
         assert '2023-02-16 07:17:46' == renderMillisTimeStandard(sampleMillisTime)
 
-class TestCustomAsserts(object):
+class TestCustomAsserts:
     def exampleRaiseValueErr(self):
         raise ValueError('msg')
 

@@ -4,3 +4,8 @@
 
 import pytest
 
+class TestHelloWorld:
+    def test2(self):
+        a = 2+4
+        assert a == 6
+

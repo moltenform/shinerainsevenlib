@@ -25,21 +25,25 @@ def imageTypeFromContents(path, treatMpoAsJpg=True):
 
     with open(path, 'rb') as f:
         firstBytes = f.read(128)
-        if b'\x0c\x4a\x58\x4c' in firstBytes:
-            return 'jxl'
         if b'ftypheic' in firstBytes:
             return 'heic'
+        if b'ftypavif' in firstBytes:
+            return 'avif'
+        if b'\x0c\x4a\x58\x4c' in firstBytes:
+            return 'jxl'
+        if firstBytes.startswith(b'\xff\x0a'):
+            return 'jxl'
 
-    im = Image.open(f)
-    imFormat = str(im.format).lower()
-    if imFormat == 'tiff':
-        imFormat = 'tif'
-    elif imFormat == 'mpo' and treatMpoAsJpg:
-        # some cameras save their images in a mpo form,
-        # but 99% of the time we want to treat the file as a typical jpg image.
-        imFormat = 'jpg'
-    elif imFormat == 'jpeg':
-        imFormat = 'jpg'
+    with Image.open(path) as im:
+        imFormat = str(im.format).lower()
+        if imFormat == 'tiff':
+            imFormat = 'tif'
+        elif imFormat == 'mpo' and treatMpoAsJpg:
+            # some cameras save their images in a mpo form,
+            # but 99% of the time we want to treat the file as a typical jpg image.
+            imFormat = 'jpg'
+        elif imFormat == 'jpeg':
+            imFormat = 'jpg'
 
     return imFormat
 
@@ -57,13 +61,21 @@ def _getAudAndVidCodecImpl(inPath, results, ffmpegPath='ffmpeg'):
     stderr = stderr.decode('utf-8').replace('\r\n', '\n')
     stderr = stderr.replace('At least one output file must be specified', '(Intentional err)')
     results.fullResults = stderr
+    if 'Error opening input: Invalid data found when processing input' in stderr:
+        # often happens for unrecognized input formats / non-video files
+        results.err = 'Invalid data found when processing input'
+        return
+    elif 'Error opening input: No such file or directory' in stderr:
+        results.err = 'No such file or directory'
+        return
+
     audFormat = None
     vidFormat = None
     attempts = [
-        r'\n  Stream #[0-9]\((?:eng|und|rus)\): ',
-        r'\n  Stream #[0-9]:[0-9]\[0x[0-9a-f]+\]\((?:eng|und|rus)\): ',
+        r'\n  Stream #[0-9]\((?:[a-z]{3})\): ',
+        r'\n  Stream #[0-9]:[0-9]\[0x[0-9a-f]+\]\((?:[a-z]{3})\): ',
         r'\n  Stream #[0-9]:[0-9]\[0x[0-9a-f]+\]: ',
-        r'\n  Stream #[0-9]:[0-9]\((?:eng|und|rus)\): ',
+        r'\n  Stream #[0-9]:[0-9]\((?:[a-z]{3})\): ',
         r'\n  Stream #[0-9]:[0-9]: ',
         r'\n  Stream #[0-9]: ',
     ]

@@ -94,7 +94,7 @@ def testGlobalImageInformationCache():
         globalDb.end()
         
 
-class TestCrudHelper(object):
+class TestCrudHelper:
     def test_opening_with_no_schema_version(self, fixture_temp_db):
         db, dbpath = fixture_temp_db
         db.cursor().execute('DELETE FROM ben_python_common_store_properties WHERE 1')

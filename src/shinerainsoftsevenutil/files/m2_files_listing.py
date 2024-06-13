@@ -6,34 +6,36 @@ import os as _os
 import sys as _sys
 from .m1_files_wrappers import *
 
-# pylint: disable-next=inconsistent-return-statements
-def listDirs(path, *, filenamesOnly=False, allowedExts=None, recurse=False):
+def listDirs(path, *, filenamesOnly=False, recurse=False, **kwargs):
     "Return directories within a directory"
     if recurse:
         return recurseDirs(
             path,
-            filenamesOnly=filenamesOnly,
+            filenamesOnly=filenamesOnly, **kwargs
         )
+    else:
+        return listChildren(path, filenamesOnly=filenamesOnly, 
+                            includeFiles=False, includeDirs=True, **kwargs)
 
-    for full, name in listChildren(path, allowedExts=allowedExts):
-        if _os.path.isdir(full):
-            yield name if filenamesOnly else (full, name)
-
-# pylint: disable-next=inconsistent-return-statements
-def listFiles(path, *, filenamesOnly=False, allowedExts=None, recurse=False):
+def listFiles(path, *, recurse=False, filenamesOnly=False, **kwargs):
     "Return files within a directory"
     if recurse:
-        return recurseFiles(path, filenamesOnly=filenamesOnly, allowedExts=allowedExts)
+        return recurseFiles(path, filenamesOnly=filenamesOnly, **kwargs)
+    else:
+        return listChildren(path, filenamesOnly=filenamesOnly, 
+                            includeFiles=True, includeDirs=False, **kwargs)
 
-    for full, name in listChildren(path, allowedExts=allowedExts):
-        if not _os.path.isdir(full):
-            yield name if filenamesOnly else (full, name)
-
-def _listChildrenUnsorted(path, *, filenamesOnly=False, allowedExts=None):
+def _listChildrenUnsorted(path, *, filenamesOnly=False, allowedExts=None,
+                          includeFiles=True, includeDirs=True):
     "List directory contents. allowedExts in the form ['png', 'gif']"
     for filename in _os.listdir(path):
-        if not allowedExts or getExt(filename, removeDot=True) in allowedExts:
-            yield filename if filenamesOnly else (path + _os.path.sep + filename, filename)
+        if not allowedExts or (getExt(filename, removeDot=True) in allowedExts):
+            fullPath = path + _os.path.sep + filename
+            if not includeFiles and _os.path.isfile(fullPath):
+                continue
+            if not includeDirs and _os.path.isdir(fullPath):
+                continue
+            yield filename if filenamesOnly else (fullPath, filename)
 
 # on windows platforms we can typically assume dir list results are sorted
 # for consistency, on other platforms, sort the results.
@@ -69,7 +71,7 @@ def recurseFiles(
         if includeFiles:
             iterFilenames = fileNames if _sys.platform.startswith('win') else sorted(fileNames)
             for filename in iterFilenames:
-                if not allowedExts or getExt(filename, removeDot=True) in allowedExts:
+                if not allowedExts or (getExt(filename, removeDot=True) in allowedExts):
                     yield (
                         filename if filenamesOnly else (dirPath + _os.path.sep + filename, filename)
                     )

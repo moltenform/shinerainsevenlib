@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+
 from shinerainsoftsevenutil.standard import *
 from enum import StrEnum, auto
 
@@ -24,11 +25,13 @@ def goOne(f, mode):
     restOfPath = pathparts[pathparts.index('shinerainsoftsevenutil')+1:]
     restOfPath = jslike.map(restOfPath, lambda s:'test_'+s)
     restOfPath = './test/' + '/'.join(restOfPath)
+    trace(restOfPath)
     if mode == Mode.generate:
-        tContent = files.readAll('template-testfile.py')
+        tContent = files.readAll('tools/gentests_template.py')
         if files.isFile(restOfPath):
             trace('skipping, file already exists')
         else:
+            files.makeDirs(files.getParent(restOfPath))
             files.writeAll(restOfPath, tContent)
     elif mode == Mode.check:
         if not files.exists(restOfPath):
@@ -37,13 +40,23 @@ def goOne(f, mode):
         assertTrue(False, 'unknown mode')
 
 
-    trace(f, restOfPath)
     return
     
     if (files.isFile(restOfPath)):
         return
     
 
-goAll()
+#~ goAll(Mode.generate)
+try:
+    #~ import fghfgh
+    ff = open('q:\\nothere')
+except Exception as e:
+    import inspect
+    for chain in (inspect.getmro(e.__class__)):
+        print(repr(chain).replace("<class '", '').replace("'>", ''))
+    #~ print(e.__class__.__bases__)
+    #~ print(repr(e))
 
+print(repr("abc"))
 
+#~ ModuleNotFoundError *abc*
