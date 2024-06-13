@@ -5,6 +5,7 @@
 import pytest
 from src.shinerainsoftsevenutil.standard import *
 from src.shinerainsoftsevenutil.plugins.plugin_testhelpers import *
+from src.shinerainsoftsevenutil.plugins.plugin_configreader import getExecutablePathFromPrefs
 from src.shinerainsoftsevenutil.core import assertException
 from PIL import Image
 
@@ -67,12 +68,14 @@ class TestPluginMedia:
         assertException(lambda: fn('notexist.txt'), FileNotFoundError)
 
         # mpo case
+        # this example image is a real mpo, from https://github.com/odrevet/Multi-Picture-Object
         assert fn('a.mpo.jpg', treatMpoAsJpg=True) == 'jpg'
         assert fn('a.mpo.jpg', treatMpoAsJpg=False) == 'mpo'
 
     def testGetAudAndVidCodec(self):
         def fn(s):
-            results = SrssMedia.getAudAndVidCodec(f'test/collat/media/{s}')
+            results = SrssMedia.getAudAndVidCodec(f'test/collat/media/{s}',
+                                                    ffmpegPath=getExecutablePathFromPrefs('ffmpeg', throwIfNotFound=True))
             if results.err:
                 return 'ERR:' + results.err
             else:

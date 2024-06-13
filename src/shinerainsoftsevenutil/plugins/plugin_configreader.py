@@ -5,6 +5,7 @@
 import fnmatch as _fnmatch
 import configparser as _configparser
 import os as _os
+import shutil as _shutil
 
 from .plugin_fileexts import *
 from .. import files
@@ -222,8 +223,33 @@ def getSsrsInternalPrefs():
                 'warnSoftDeleteBetweenDrives': [bool, False],
                 'softDeleteDirectory': [str, ''],
                 'softDeleteDirectory_*': [str, ''],
+                'pathExecutable*': [str, ''],
             },
         )
         _gCachedInternalPrefs.parseText(configText)
 
     return _gCachedInternalPrefs
+
+def getExecutablePathFromPrefs(name, throwIfNotFound, fallbacksToTry=None):
+    "We let people configure by putting paths to external executables in the cfg file,"
+    from .. import files
+    prefs = getSsrsInternalPrefs()
+    keyname = f'pathExecutable{name[0].upper()}{name[1:].lower()}'
+    got = getattr(prefs.parsed.main, keyname)
+    if got:
+        assertTrue(files.isFile(got) or _shutil.which(got), "shinerainsoftsevenutil.cfg File not found", keyname, got)
+        return got
+
+    if files.isFile(name) or _shutil.which(name):
+        return name
+    
+    if fallbacksToTry:
+        for fallback in fallbacksToTry:
+            if files.isFile(fallback) or _shutil.which(fallback):
+                return fallback
+
+    if throwIfNotFound:
+        assertTrue(False, f"path to executable {name} not found. Please put it on system path, or add an entry for {keyname} in shinerainsoftsevenutil.cfg")
+    else:
+        return None
+

@@ -20,7 +20,7 @@ def addAllToRar(
         dictSize = '256m' if formatVersion == '5' else '4096k'
 
     assertTrue(outPath.lower().endswith('.rar') or outPath.lower().endswith('.zip'))
-    args = [getRarPath(), 'a']
+    args = [getRarExecutablePath(), 'a']
     if solid:
         args.extend(['-s'])
 
@@ -44,7 +44,7 @@ def getContentsViaRar(archive, verbose, _silenceWarnings, pword=None):
 
     assertTrue(files.isFile(archive))
     assertTrue(verbose, 'we only support verbose listing')
-    args = [getRarPath(), 'lt', plugin_compression_7z.getPlaceholderPword(pword), archive]
+    args = [getRarExecutablePath(), 'lt', plugin_compression_7z.getPlaceholderPword(pword), archive]
     _retcode, stdout, _stderr = files.run(args)
     stdout = stdout.decode('latin-1').replace('\r\n', '\n')
     results = []
@@ -78,5 +78,7 @@ def processAttributesRar(item):
         Raw=item,
     )
 
-def getRarPath():
-    return 'rar' if shutil.which('rar') else r'C:\Program Files\WinRAR\Rar.exe'
+def getRarExecutablePath():
+    from .plugin_configreader import getExecutablePathFromPrefs
+    fallbackGuesses = [r"C:\Program Files\WinRAR\RAR.exe"]
+    return getExecutablePathFromPrefs('rar', throwIfNotFound=True,fallbacksToTry=fallbackGuesses)

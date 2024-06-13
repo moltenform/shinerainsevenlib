@@ -137,7 +137,7 @@ def getContents(
 ):
     results = None
     if archive.lower().endswith('.rar'):
-        if _files.exists(_plugin_compression_rar.getRarPath()):
+        if _files.exists(_plugin_compression_rar.getRarExecutablePath()):
             results = _plugin_compression_rar.getContentsViaRar(
                 archive, verbose, silenceWarnings, pword=pword
             )

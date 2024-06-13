@@ -190,7 +190,6 @@ def getSoftDeleteDir(path):
     (all lowercase except the special keywords Slash, Backslash, and Colon)
     """
     from .. import files
-
     from ..plugins.plugin_configreader import getSsrsInternalPrefs
 
     prefs = getSsrsInternalPrefs()

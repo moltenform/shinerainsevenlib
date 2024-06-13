@@ -5,6 +5,7 @@
 import time as _time
 import os as _os
 import re as _re
+import shutil as _shutil
 import contextlib as _contextlib
 
 from .m4_core_ui import *
@@ -229,6 +230,7 @@ class CleanupTempFilesOnException(_contextlib.ExitStack):
                 _os.unlink(path)
 
         self.callback(fn)
+
 
 def removeEmptyFolders(path, removeRootIfEmpty=True, isRecurse=False, verbose=False):
     "Recursively removes empty directories"

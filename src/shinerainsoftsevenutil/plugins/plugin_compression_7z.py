@@ -22,7 +22,7 @@ def addAllTo7z(inPath, outPath, effort=None, multiThread='off', solid=True):
     else:
         opts = params7z[effort].split(',')
 
-    args = ['7z', 'a']
+    args = [get7zExecutablePath(), 'a']
     args.extend(['-mmt=' + multiThread])
     if opts:
         args.extend(opts)
@@ -35,7 +35,7 @@ def addAllTo7z(inPath, outPath, effort=None, multiThread='off', solid=True):
     runProcessThatCreatesOutput(args, inPath=inPath, outPath=outPath)
 
 def checkArchivePasswordVia7z(inPath, pword=None):
-    args = ['7z', 'l', getPlaceholderPword(pword), inPath]
+    args = [get7zExecutablePath(), 'l', getPlaceholderPword(pword), inPath]
     retcode, stdout, stderr = files.run(args, throwOnFailure=None)
     if retcode == 0:
         return {'output': stdout, 'couldNotOpenDueToIncorrectPassword': False}
@@ -46,7 +46,7 @@ def checkArchivePasswordVia7z(inPath, pword=None):
         return None
 
 def checkArchiveIntegrityVia7z(inPath, pword=None):
-    args = ['7z', 't', getPlaceholderPword(pword), inPath]
+    args = [get7zExecutablePath(), 't', getPlaceholderPword(pword), inPath]
     retcode, _stdout, stderr = files.run(args, throwOnFailure=None)
     if retcode == 0:
         return True
@@ -85,7 +85,7 @@ def _processAttributes7z(item):
 def getContentsVia7z(archive, verbose, silenceWarnings, pword=None):
     assertTrue(files.isFile(archive))
     assertTrue(verbose, 'we only support verbose listing')
-    args = ['7z', '-slt', 'l', getPlaceholderPword(pword), archive]
+    args = [get7zExecutablePath(), '-slt', 'l', getPlaceholderPword(pword), archive]
     _retcode, stdout, stderr = files.run(args)
     results = _getContentsVia7zImpl(stdout, stderr, archive, verbose, silenceWarnings, pword=pword)
 
@@ -96,7 +96,7 @@ def getContentsVia7z(archive, verbose, silenceWarnings, pword=None):
         # detect a .tar.gz file and list the tar contents instead. use pipe so there's no disk used.
         # 7z does not seem to be able to list .tar.bz2,  but it can list the inner tar after extracting, so it all still works.
         args = [
-            '7z',
+            get7zExecutablePath(),
             'x',
             archive,
             getPlaceholderPword(pword),
@@ -158,3 +158,9 @@ def _isIgnorableWarning(stdout):
         return True
     else:
         return False
+
+def get7zExecutablePath():
+    from .plugin_configreader import getExecutablePathFromPrefs
+    fallbackGuesses = [r"C:\Program Files (x86)\7-Zip\7z.exe",
+                       r"C:\Program Files\7-Zip\7z.exe"]
+    return getExecutablePathFromPrefs('7z', throwIfNotFound=True,fallbacksToTry=fallbackGuesses)
