@@ -108,7 +108,7 @@ def addAllToZip(
                 method is not None, 'invalid method (note that ZIP_LZMA is not always available)'
             )
             assertTrue(
-                isinstance(method, int), 'please specify ZipMethods.deflate instead of "deflate"'
+                isinstance(method, int), 'please specify ZipMethods.Deflate instead of "Deflate"'
             )
             return method
 
@@ -175,7 +175,7 @@ def runProcessThatCreatesOutput(
     inPath=None,
     sizeMustBeGreaterThan=0,
     copyLastModTimeFromInput=False,
-    handleUnicodeInputs=False,
+    handleUnicodeInputs=True,
 ):
     """
     Writes to a temp location first,
@@ -201,6 +201,7 @@ def runProcessThatCreatesOutput(
             cleanup.registerTempFile(inPathToUse)
             _files.copy(inPath, inPathToUse, True)
 
+        assertTrue(any('%output%' in arg for arg in listArgs), 'expected to see %output% in args')
         transformedArgs = list(listArgs)
         for i, val in enumerate(transformedArgs):
             transformedArgs[i] = (
@@ -218,10 +219,11 @@ def runProcessThatCreatesOutput(
 
         _files.move(tmpOutPath, outPath, False)
 
-def checkArchiveIntegrity(inPath, pword=None):
-    return _plugin_compression_7z.checkArchiveIntegrityVia7z(inPath, pword=pword)
 
-def checkArchivePassword(inPath, pword=None):
-    return _plugin_compression_7z.checkArchivePasswordVia7z(inPath, pword=pword)
+checkArchiveIntegrity = _plugin_compression_7z.checkArchiveIntegrityVia7z
+checkArchivePassword = _plugin_compression_7z.checkArchivePasswordVia7z
+addAllTo7z = _plugin_compression_7z.addAllTo7z
+addAllToRar = _plugin_compression_rar.addAllToRar
+
 
 

@@ -8,7 +8,7 @@ from .. import core as srss
 from ..core import assertTrue, trace
 
 def addAllTo7z(inPath, outPath, effort=None, multiThread='off', solid=True):
-    from .plugin_compression import Strength, params7z, runProcessThatCreatesOutput
+    from .plugin_compression import Strength, params7z, paramsZip, runProcessThatCreatesOutput
 
     if not effort:
         effort = Strength.Default
@@ -18,11 +18,11 @@ def addAllTo7z(inPath, outPath, effort=None, multiThread='off', solid=True):
     if outPath.lower().endswith('.zip'):
         # zip format does not support solid
         assertTrue(not solid, 'not solid')
-        opts = params7z[effort].split(',')
+        opts = paramsZip[effort].split(',')
     else:
         opts = params7z[effort].split(',')
 
-    args = [get7zExecutablePath(), 'a']
+    args = [get7zExecutablePath(), 'a', '%output%']
     args.extend(['-mmt=' + multiThread])
     if opts:
         args.extend(opts)
@@ -30,7 +30,6 @@ def addAllTo7z(inPath, outPath, effort=None, multiThread='off', solid=True):
     if not solid and not outPath.lower().endswith('.zip'):
         args.extend(['-ms=off'])
 
-    args.extend(['%output%'])
     args.extend(['%input%'])
     runProcessThatCreatesOutput(args, inPath=inPath, outPath=outPath)
 
@@ -135,7 +134,7 @@ def _handleSingleFileCase(archive, pword):
     _retcode, stdout, _stderr = files.run(args, shell=True)
     stdout = stdout.decode('utf-8').strip()
     assertTrue(' ' in stdout)
-    pts = stdout.split(' ')
+    pts = stdout.replace('  ', ' ').split(' ')
     _unusableCrc32 = int(pts[0])
     countBytes = int(pts[1])
 
@@ -143,7 +142,7 @@ def _handleSingleFileCase(archive, pword):
     innerFilename = files.splitExt(files.getName(archive))[0]
     _unusableRenderedCrc = ('%08x'%_unusableCrc32).upper()
 
-    # TODO: the crc given by cksum is not the same crc32 as used by zip.
+    # Note: the crc given by cksum is not the same crc32 as used by zip.
     # solution: either have users install the unix tool named 'crc32'
     # or shell out to gzip in a clever way to retrieve its crc
     # from @robert on stackoverflow,

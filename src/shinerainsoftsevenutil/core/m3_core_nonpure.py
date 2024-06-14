@@ -208,10 +208,9 @@ def _getSoftTempDirImpl(path='', preferEphemeral=False):
 
     prefs = getSsrsInternalPrefs()
 
-    if preferEphemeral and prefs.parsed.tempEphemeralDirectory:
-        return prefs.parsed.tempEphemeralDirectory
+    if preferEphemeral and prefs.parsed.get('tempEphemeralDirectory'):
+        return prefs.parsed.get('tempEphemeralDirectory')
 
-    assertTrue(files.exists(path), 'file not found', path)
     dirPath = getSoftDeleteDir(path)
     if not dirPath or dirPath is cUseOSTrash:
         if prefs.parsed.tempDirectory:
@@ -232,7 +231,8 @@ def getSoftTempDir(path='', preferEphemeral=False):
     # place in the temp subfolder
     assertTrue(_os.path.isdir(dirPath), 'temp dir not a directory', dirPath)
     dirPath += '/temp'
-    _os.mkdir(dirPath)
+    if not _os.path.exists(dirPath):
+        _os.makedirs(dirPath)
     return dirPath
 
 _rngForSoftDeleteFile = IndependentRNG()
@@ -247,7 +247,7 @@ def getSoftDeleteFullPath(path):
 
     # place in the trash subfolder
     dirPath += '/trash'
-    _os.mkdir(dirPath)
+    files.makeDirs(dirPath)
 
     # use an independent rng, so that other random sequences aren't disrupted
     randomString = getRandomString(rng=_rngForSoftDeleteFile.rng)

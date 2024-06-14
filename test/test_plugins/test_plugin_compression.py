@@ -3,18 +3,22 @@
 # Released under the LGPLv3 License
 
 import pytest
+import zipfile
+import shutil
+import sys
+
 from src.shinerainsoftsevenutil.standard import *
 from src.shinerainsoftsevenutil.plugins.plugin_configreader import getExecutablePathFromPrefs
 from src.shinerainsoftsevenutil.plugins.plugin_compression_rar import getRarExecutablePath
 from src.shinerainsoftsevenutil.core import assertException
-import zipfile
-import shutil
+
+from test.test_core.common import fixture_dir
 
 
 class TestPluginCompression:
     def test_listZipPython(self):
         def fn(s):
-            result = (str(zipListAsStrViaPython(f'./test/collat/compression/{s}')))
+            result = (str(helperGetContentsViaPython(f'./test/collat/compression/{s}')))
             result = result.replace('incremental_autocompletion', 'd').replace('scintilla.patch', '1.txt').replace('scite.patch', '2.txt')
             return result
 
@@ -26,7 +30,7 @@ class TestPluginCompression:
     
     def test_listZipSrssCompress(self):
         def fn(s):
-            result = str(archiveListAsStr(f'./test/collat/compression/{s}')).replace('"', "'")
+            result = str(helperGetContents(f'./test/collat/compression/{s}')).replace('"', "'")
             result = result.replace('incremental_autocompletion', 'd').replace('scintilla.patch', '1.txt').replace('scite.patch', '2.txt')
             return result
 
@@ -38,7 +42,7 @@ class TestPluginCompression:
     
     def test_listOtherArchivetypes(self):
         def fn(s, alwaysUse7z=False):
-            result = str(archiveListAsStr(f'./test/collat/compression/{s}', alwaysUse7z=alwaysUse7z)).replace('"', "'")
+            result = str(helperGetContents(f'./test/collat/compression/{s}', alwaysUse7z=alwaysUse7z)).replace('"', "'")
             result = result.replace('incremental_autocompletion', 'd').replace('scintilla.patch', '1.txt').replace('scite.patch', '2.txt')
             return result
 
@@ -66,7 +70,7 @@ class TestPluginCompression:
 
     def test_unicodeAndZeroByte(self):
         def fn(s, alwaysUse7z=False):
-            result = str(archiveListAsStr(f'./test/collat/compression/{s}', alwaysUse7z=alwaysUse7z)).replace('"', "'")
+            result = str(helperGetContents(f'./test/collat/compression/{s}', alwaysUse7z=alwaysUse7z)).replace('"', "'")
             return result
         assert fn("unicode_and_zero_byte.zip") == "Path=beach-redundant-1.jpg,Type=File,CRC=9B47D08F,Size=22686,PackedSize=22587,;Path=st-helens-unicodes-_.bmp,Type=File,CRC=CB5985DD,Size=123570,PackedSize=49012,;Path=zero_bytes.txt,Type=File,CRC=00000000,Size=0,PackedSize=0,;"
         assert fn("unicode_and_zero_byte.7z") == "Path=beach-redundant-1.jpg,Type=File,CRC=9B47D08F,Size=22686,PackedSize=71692,;Path=st-helens-unicodes-_.bmp,Type=File,CRC=CB5985DD,Size=123570,PackedSize=,;Path=zero_bytes.txt,Type=File,CRC=00000000,Size=0,PackedSize=0,;"
@@ -114,7 +118,7 @@ class TestPluginCompression:
 
     def test_checkArchiveContentsWithPassword(self):
         def fn(s, alwaysUse7z=False, pword=None):
-            result = (str(archiveListAsStr(f'./test/collat/compression/{s}', alwaysUse7z=alwaysUse7z, pword=pword)))
+            result = (str(helperGetContents(f'./test/collat/compression/{s}', alwaysUse7z=alwaysUse7z, pword=pword)))
             result = result.replace('incremental_autocompletion', 'd').replace('scintilla.patch', '1.txt').replace('scite.patch', '2.txt')
             return result
         
@@ -142,16 +146,185 @@ class TestPluginCompression:
         assert fn("feature_password.rar") == r"failedOtherReason=False;failedWrongPword=True;success=False"
         assert fn("feature_password.rar", pword='wrong') == r"failedOtherReason=False;failedWrongPword=True;success=False"
         assert fn("feature_password.rar", pword='abc') == r"failedOtherReason=False;failedWrongPword=False;success=True"
-        
-        
+    
+    def test_runProcessThatCreatesOutput(self, fixture_dir):
+        cjxl = getExecutablePathFromPrefs('cjxl', throwIfNotFound=True,)
+        _tmpDir, dirToArchive = prepareForMakingArchives(fixture_dir)
+        def fn(listArgs, inName, expectFail=False, **kwargs):
+            assert (not 'outPath' in kwargs and not 'inPath' in kwargs)
+            inPath = f'{dirToArchive}/{inName}'
+            outPath = f'{dirToArchive}/{inName}.jxl'
+            files.deleteSure(inPath)
+            files.copy(f'{dirToArchive}/beach-redundant-1.jpg', inPath, True)
+            if expectFail:
+                assertException(lambda: SrssCompression.runProcessThatCreatesOutput(listArgs, inPath=inPath, outPath=outPath, **kwargs), Exception, expectFail)
+            else:
+                SrssCompression.runProcessThatCreatesOutput(listArgs, inPath=inPath, outPath=outPath, **kwargs )
+                assert files.exists(outPath)
+                assert files.getSize(outPath) > 1024
 
+        # test standard usage
+        files.deleteSure(f'{dirToArchive}/file.jpg.jxl')
+        fn([cjxl, '%input%', '%output%'], 'file.jpg')
+        assert (files.getSize(f'{dirToArchive}/file.jpg.jxl') > 0)
+
+        # test with input given directly
+        files.deleteSure(f'{dirToArchive}/other.jpg.jxl')
+        fn([cjxl, f'{dirToArchive}/beach-redundant-1.jpg', '%output%'], 'other.jpg')
+        assert (files.getSize(f'{dirToArchive}/other.jpg.jxl') > 0)
+
+        # test file not found
+        files.deleteSure(f'{dirToArchive}/other.jpg.jxl')
+        fn([cjxl, 'not--found.jpg', '%output%'], 'other.jpg', expectFail='Reading image data failed')
+        assert (not files.isFile(f'{dirToArchive}/other.jpg.jxl'))
+        
+        # fail with unicode input if feature turned off (and on windows)
+        files.deleteSure(f'{dirToArchive}/unicode넬.jpg.jxl')
+        if sys.platform.startswith('win'):
+            fn([cjxl, '%input%', '%output%'], 'unicode넬.jpg', expectFail='Reading image data failed', handleUnicodeInputs=False)
+            assert (not files.isFile(f'{dirToArchive}/unicode넬.jpg.jxl'))
+        else:
+            fn([cjxl, '%input%', '%output%'], 'unicode넬.jpg', handleUnicodeInputs=False)
+            assert (files.getSize(f'{dirToArchive}/unicode넬.jpg.jxl') > 0)
+
+        # test with unicode input
+        files.deleteSure(f'{dirToArchive}/unicode넬.jpg.jxl')
+        fn([cjxl, '%input%', '%output%'], 'unicode넬.jpg')
+        assert (files.getSize(f'{dirToArchive}/unicode넬.jpg.jxl') > 0)
+        
+        # should warn if output not seen in args
+        files.deleteSure(f'{dirToArchive}/file.jpg.jxl')
+        fn([cjxl, '-V'], 'file.jpg', expectFail='expected to see %output%')
+        assert (not files.isFile(f'{dirToArchive}/file.jpg.jxl'))
+        
+        # should assert if output not created
+        files.deleteSure(f'{dirToArchive}/file.jpg.jxl')
+        fn([cjxl, '-V', '%output%'], 'file.jpg', expectFail='output not created')
+        assert (not files.isFile(f'{dirToArchive}/file.jpg.jxl'))
+
+        # should assert if output already there
+        files.writeAll(f'{dirToArchive}/file.jpg.jxl', 'abc')
+        fn([cjxl, '-V', '%output%'], 'file.jpg',  expectFail='output already there',)
+        assert (files.isFile(f'{dirToArchive}/file.jpg.jxl'))
+        
+        # should assert if output too small
+        files.deleteSure(f'{dirToArchive}/file.jpg.jxl')
+        fn([cjxl, '%input%', '%output%'], 'file.jpg',  expectFail='output too small', sizeMustBeGreaterThan=1024*1024,)
+        assert (not files.isFile(f'{dirToArchive}/file.jpg.jxl'))
+
+        # (change file lmt)
+        for f, _short in files.listFiles(dirToArchive):
+            files.setLastModTime(f, files.getLastModTime(f) - 1000)
+
+        # without last-modified
+        files.deleteSure(f'{dirToArchive}/file.jpg.jxl')
+        fn([cjxl, '%input%', '%output%'], 'file.jpg')
+        assert (files.getSize(f'{dirToArchive}/file.jpg.jxl') > 0)
+        assert files.getLastModTime(f'{dirToArchive}/file.jpg') != files.getLastModTime(f'{dirToArchive}/file.jpg.jxl')
+
+        # copy last-modified
+        files.deleteSure(f'{dirToArchive}/file.jpg.jxl')
+        fn([cjxl, '%input%', '%output%'], 'file.jpg', copyLastModTimeFromInput=True)
+        assert (files.getSize(f'{dirToArchive}/file.jpg.jxl') > 0)
+        assert files.getLastModTime(f'{dirToArchive}/file.jpg') == files.getLastModTime(f'{dirToArchive}/file.jpg.jxl')
+
+
+    def test_createArchives(self, fixture_dir):
+        tmpDir, dirToArchive = prepareForMakingArchives(fixture_dir)
+        archive = files.join(tmpDir, 'zip-7z-max.zip')
+        SrssCompression.addAllTo7z(dirToArchive, archive, SrssCompression.Strength.Max, solid=False)
+        checkSizeCloseToKB(archive, 96.5)
+
+        archive = files.join(tmpDir, 'zip-7z-strong.zip')
+        SrssCompression.addAllTo7z(dirToArchive, archive, SrssCompression.Strength.Strong, solid=False)
+        checkSizeCloseToKB(archive, 96.5)
+
+        archive = files.join(tmpDir, 'zip-7z-default.zip')
+        SrssCompression.addAllTo7z(dirToArchive, archive, SrssCompression.Strength.Default, solid=False)
+        checkSizeCloseToKB(archive, 98.1)
+
+        archive = files.join(tmpDir, 'zip-7z-store.zip')
+        SrssCompression.addAllTo7z(dirToArchive, archive, SrssCompression.Strength.Store, solid=False)
+        checkSizeCloseToKB(archive, 165)
+
+        archive = files.join(tmpDir, 'zip-winrar-default.zip')
+        SrssCompression.addAllToRar(dirToArchive, archive, solid=False)
+        checkSizeCloseToKB(archive, 92.1)
+
+        archive = files.join(tmpDir, 'zip-py-store.zip')
+        SrssCompression.addAllToZip(dirToArchive, archive, SrssCompression.ZipMethods.Store)
+        checkSizeCloseToKB(archive, 165)
+
+        archive = files.join(tmpDir, 'zip-py-deflate.zip')
+        SrssCompression.addAllToZip(dirToArchive, archive, SrssCompression.ZipMethods.Deflate)
+        checkSizeCloseToKB(archive, 99.1)
+
+        archive = files.join(tmpDir, 'zip-py-lzma.zip')
+        SrssCompression.addAllToZip(dirToArchive, archive, SrssCompression.ZipMethods.Lzma)
+        checkSizeCloseToKB(archive, 92.3)
+
+    def test_create7zAndRar(self, fixture_dir):
+        tmpDir, dirToArchive = prepareForMakingArchives(fixture_dir)
+        self._createRar(tmpDir, dirToArchive, True)
+        self._createRar(tmpDir, dirToArchive, False)
+        self._create7z(tmpDir, dirToArchive, True)
+        self._create7z(tmpDir, dirToArchive,False)
+        
+    def _createRar(self, tmpDir, dirToArchive, isSolid):
+        isSolidStr = 'solid' if isSolid else 'not-solid'
+        archive = files.join(tmpDir, 'rar-rar4-%s-4096kb.rar'%(isSolidStr))
+        SrssCompression.addAllToRar(dirToArchive, archive, formatVersion='4',
+            dictSize='4096k', solid=isSolid)
+        checkSizeCloseToKB(archive, 55.8 if isSolid else 77.7)
+
+        archive = files.join(tmpDir, 'rar-rar5-%s-512mb.rar'%(isSolidStr))
+        SrssCompression.addAllToRar(dirToArchive, archive, formatVersion='5',
+            dictSize='512m', solid=isSolid)
+        checkSizeCloseToKB(archive, 69.3 if isSolid else 91.4)
+
+        archive = files.join(tmpDir, 'rar-rar4-%s-store.rar'%(isSolidStr))
+        SrssCompression.addAllToRar(dirToArchive, archive, formatVersion='4',
+                                        solid=isSolid, effort=SrssCompression.Strength.Store)
+        checkSizeCloseToKB(archive, 165)
+
+        archive = files.join(tmpDir, 'rar-rar5-%s-store.rar'%(isSolidStr))
+        SrssCompression.addAllToRar(dirToArchive, archive, formatVersion='5',
+                                        solid=isSolid, effort=SrssCompression.Strength.Store)
+        checkSizeCloseToKB(archive, 165)
+        
+    def _create7z(self, tmpDir, dirToArchive, isSolid):
+        isSolidStr = 'solid' if isSolid else 'not-solid'
+        archive = files.join(tmpDir, '7z-%s-max.7z'%(isSolidStr))
+        SrssCompression.addAllTo7z(dirToArchive, archive, solid=isSolid,
+            effort=SrssCompression.Strength.Max)
+        checkSizeCloseToKB(archive, 70.0 if isSolid else 92.0)
+
+        archive = files.join(tmpDir, '7z-%s-strong.7z'%(isSolidStr))
+        SrssCompression.addAllTo7z(dirToArchive, archive, solid=isSolid,
+            effort=SrssCompression.Strength.Strong)
+        checkSizeCloseToKB(archive, 70.0 if isSolid else 92.0)
+
+        archive = files.join(tmpDir, '7z-%s-default.7z'%(isSolidStr))
+        SrssCompression.addAllTo7z(dirToArchive, archive, solid=isSolid,
+            effort=SrssCompression.Strength.Default)
+        checkSizeCloseToKB(archive, 70.3 if isSolid else 92.3)
+
+        archive = files.join(tmpDir, '7z-%s-store.7z'%(isSolidStr))
+        SrssCompression.addAllTo7z(dirToArchive, archive, solid=isSolid,
+            effort=SrssCompression.Strength.Store)
+        checkSizeCloseToKB(archive, 165)
 
     def test_rarPath(self):
         rarPath = getRarExecutablePath()
         assert files.isFile(rarPath) or shutil.which(rarPath), "path to rar not found, can continue but will not get as much code coverage"
 
 
-def zipListAsStrViaPython(path):
+def checkSizeCloseToKB(archive, expectedSize):
+    gotInKb = files.getSize(archive) / 1024
+    assert abs(expectedSize - gotInKb) < 5, f'Difference is more than 5kb {abs(expectedSize - gotInKb)} {gotInKb}'
+
+
+def helperGetContentsViaPython(path):
     results = []
     with zipfile.ZipFile(path) as z:
         lst = z.infolist()
@@ -160,7 +333,7 @@ def zipListAsStrViaPython(path):
             results.append(f'{item.filename};{item.file_size};{'%x' % item.CRC};algorithm={item.compress_type}')
     return results
 
-def archiveListAsStr(path, alwaysUse7z=True, pword=None):
+def helperGetContents(path, alwaysUse7z=True, pword=None):
     lst = SrssCompression.getContents(path, alwaysUse7z=alwaysUse7z, okToFallbackTo7zForRar=False, pword=pword)
     lst.sort(key=lambda item: item['Path'])
     results = ''
@@ -172,6 +345,37 @@ def archiveListAsStr(path, alwaysUse7z=True, pword=None):
         results += ';'
     
     return results
+
+def helperMakeZip(fixture_dir, **zipArgs):
+    files.ensureEmptyDirectory(fixture_dir)
+    files.makeDirs(files.join(fixture_dir, 'a/b'))
+    files.writeAll(files.join(fixture_dir, 'a/b.bmp'), 'contents111')
+    files.writeAll(files.join(fixture_dir, 'a/b/im.png'), 'contents3')
+    files.writeAll(files.join(fixture_dir, 'a/b/te.txt'), 'contents4')
+    files.writeAll(files.join(fixture_dir, 'a/noext'), 'contents2')
+    outPath = files.join(fixture_dir, 'a.zip')
+    SrssCompression.addAllToZip(files.join(fixture_dir, 'a'), outPath, **zipArgs)
+    with zipfile.ZipFile(outPath) as z:
+        lst = z.infolist()
+        lst.sort(key=lambda item: item.filename)
+
+    return outPath, lst
+
+
+def prepareForMakingArchives(fixture_dir):
+    tempDir = fixture_dir + '/tmp'
+    dirToArchive = tempDir + '/dir-within-archive'
+    # create a directory called 'dir-within-archive' with the contents:
+    # unicodes.bmp -- compressible and has unicode filename
+    # beach-redundant-1.jpg -- not compressible
+    # beach-redundant-2.jpg -- same as other jpg, so solid mode will be much smaller
+    zipPath = './test/collat/compression/unicode_and_zero_byte.zip'
+    with zipfile.ZipFile(zipPath, 'r') as zip:
+        zip.extractall(path=dirToArchive, members=None, pwd=None)
+
+    files.deleteSure(dirToArchive + '/zero_bytes.txt')
+    files.copy(dirToArchive + '/beach-redundant-1.jpg', dirToArchive + '/beach-redundant-2.jpg', True)
+    return tempDir, dirToArchive
 
 
     

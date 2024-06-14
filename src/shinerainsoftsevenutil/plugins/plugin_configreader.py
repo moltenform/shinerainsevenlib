@@ -81,17 +81,17 @@ class SrssConfigReader:
                 self.setVal(sectionName, colName, colDefaultVal)
 
     def setVal(self, section, col, v):
-        if not hasattr(self.parsed, section):
+        if not self.parsed.get(section):
             setattr(self.parsed, section, Bucket())
-        parsedSection = getattr(self.parsed, section)
+        parsedSection = self.parsed.get(section)
         setattr(parsedSection, col, v)
 
     def getValOrNone(self, section, col):
-        if not hasattr(self.parsed, section):
+        if not self.parsed.get(section):
             setattr(self.parsed, section, Bucket())
-        parsedSection = getattr(self.parsed, section)
-        if hasattr(parsedSection, col):
-            return getattr(parsedSection, col)
+        parsedSection = self.parsed.get(section)
+        if parsedSection.get(col):
+            return parsedSection.get(col)
         else:
             return None
 
@@ -159,7 +159,7 @@ class SrssConfigReader:
         """Helper method finding the longest match:
         Find the column that starts with the prefix and
         matches as much of `s` as possible. See tests."""
-        section = getattr(self.parsed, sectionName)
+        section = self.parsed.get(sectionName)
         cols = srss.getObjAttributes(section)
         cols = [col for col in cols if col.startswith(prefix)]
         results = []
@@ -173,7 +173,7 @@ class SrssConfigReader:
             return None, None
 
         results.sort(key=lambda col: len(col))
-        return results[-1], getattr(section, results[-1])
+        return results[-1], section.get(results[-1])
 
     @staticmethod
     def strToBool(s, context=''):
@@ -236,11 +236,10 @@ def getExecutablePathFromPrefs(name, throwIfNotFound, fallbacksToTry=None):
     from .. import files
     prefs = getSsrsInternalPrefs()
     keyname = f'pathExecutable{name[0].upper()}{name[1:].lower()}'
-    if hasattr(prefs.parsed.main, keyname):
-        got = getattr(prefs.parsed.main, keyname)
-        if got:
-            assertTrue(files.isFile(got) or _shutil.which(got), "shinerainsoftsevenutil.cfg File not found", keyname, got)
-            return got
+    got = prefs.parsed.main.get(keyname)
+    if got:
+        assertTrue(files.isFile(got) or _shutil.which(got), "shinerainsoftsevenutil.cfg File not found", keyname, got)
+        return got
 
     if files.isFile(name) or _shutil.which(name):
         return name

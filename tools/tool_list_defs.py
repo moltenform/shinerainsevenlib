@@ -137,8 +137,6 @@ def getAllFnCalls(filename):
                 #~ code = ln[i.col_offset:i.end_col_offset]
                 #~ trace('====')
                 #~ trace(code, i.lineno, i.col_offset, i.end_col_offset)
-                #~ for k in dir(i):
-                    #~ trace(k, getattr(i,k))
                 #~ print('got it', i.args)
                 #~ for arg in i.args:
                     #~ trace('   ', arg)

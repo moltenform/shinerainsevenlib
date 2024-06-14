@@ -298,6 +298,15 @@ class Bucket:
             '%s=%s' % (ustr(key), ustr(self.__dict__[key])) for key in sorted(self.__dict__)
         )
 
+    def get(self, k, fallback=None):
+        if hasattr(self, k):
+            return getattr(self, k)
+        else:
+            return fallback
+    
+    def getChildKeys(self):
+        return [k for k in dir(self) if not k.startswith('_') and not callable(self.get(k))]
+
 # deleted SimpleEnum in favor of modern Python enums
 
 class _EnumExampleInt(_enum.IntEnum):

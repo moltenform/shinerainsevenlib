@@ -242,20 +242,20 @@ def reReplaceWholeWord(haystack, needle, replace):
 def reReplace(haystack, reNeedle, replace):
     return _re.sub(reNeedle, replace, haystack)
 
-# cliffnotes documentation of _re module included here for convenience:
-# _re.search(pattern, string, flags=0)
+# cliffnotes documentation of re module included here for convenience:
+# re.search(pattern, string, flags=0)
 #     look for at most one match starting anywhere
 #
-# _re.match(pattern, string, flags=0)
+# re.match(pattern, string, flags=0)
 #     look for match starting only at beginning of string
 #
-# _re.findall(pattern, string, flags=0)
+# re.findall(pattern, string, flags=0)
 #     returns list of strings
 #
-# _re.finditer(pattern, string, flags=0)
+# re.finditer(pattern, string, flags=0)
 #     returns iterator of match objects
 #
-# flags include _re.IGNORECASE, _re.MULTILINE, _re.DOTALL
+# flags include re.IGNORECASE, re.MULTILINE, re.DOTALL
 
 def truncateWithEllipsis(s, maxLength):
     if len(s) <= maxLength:
