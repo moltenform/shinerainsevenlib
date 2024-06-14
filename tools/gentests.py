@@ -12,8 +12,9 @@ def goAll(mode):
     encountered = {}
     for f, short in files.recurseFiles('./src/shinerainsoftsevenutil'):
         encountered[f] = True
-        if f.endswith('.py') and '__init__' not in short and 'standard.py' not in short:
-            goOne(f, mode)
+        if f.endswith('.py') and '__init__' not in short:
+            if 'standard.py' not in short and not short.endswith('compression_7z.py') and not short.endswith('compression_rar.py'):
+                goOne(f, mode)
     
     if mode==Mode.check:
         for f, short in files.recurseFiles('./test'):

@@ -2,20 +2,18 @@
 # shinerainsoftsevenutil (Ben Fisher, moltenform.com)
 # Released under the LGPLv3 License
 
-# ruff: noqa
-
 import pytest
-import tempfile
-#~ from ..common_util import isPy3OrNewer
-#~ from ..store import Store, StoreWithCrudHelpers, StoreException
-#~ from ..files import join, getsize, writeall, ensureEmptyDirectory
-#~ from .test_store import StoreWithCrudHelpersDemo, fixture_temp_db
-from shinerainsoftsevenutil.standard import *
+from src.shinerainsoftsevenutil.standard import *
+from src.shinerainsoftsevenutil.core import assertException
+from src.shinerainsoftsevenutil.plugins.plugin_store import SrssStoreBasic, SrssStoreException
+from src.shinerainsoftsevenutil.files import join, getSize, writeAll, ensureEmptyDirectory
+from test.test_core.common import fixture_dir
 
-        
-def testGlobalImageInformationCache():
-    print('Running testGlobalImageInformationCache')
-    # should not allow null hashes
+from test_plugin_store import fixture_temp_db, MockCursor, StoreDemo
+
+class TestEndToEnd:
+    def testEndToEnd(self):
+        # should not allow null hashes
     with pytest.raises(Exception, 'NOT NULL constraint failed'):
             dbpath = './test.db'
         files.deletesure(dbpath)
@@ -92,7 +90,9 @@ def testGlobalImageInformationCache():
         assert got['pixelsHash'] == None
         assert got['averageHash'] == 'averageHashValModified'
         globalDb.end()
-        
+
+
+
 
 class TestCrudHelper:
     def test_opening_with_no_schema_version(self, fixture_temp_db):
