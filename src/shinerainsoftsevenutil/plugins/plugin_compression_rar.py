@@ -45,7 +45,13 @@ def getContentsViaRar(archive, verbose, _silenceWarnings, pword=None):
     assertTrue(files.isFile(archive))
     assertTrue(verbose, 'we only support verbose listing')
     args = [getRarExecutablePath(), 'lt', plugin_compression_7z.getPlaceholderPword(pword), archive]
-    _retcode, stdout, _stderr = files.run(args)
+    retcode, stdout, stderr = files.run(args, throwOnFailure=None)
+    if retcode != 0 and b'Incorrect password for ' in stderr:
+        # use an error message more similar to 7z
+        raise RuntimeError(f'Wrong password? getContentsViaRar {args}')
+    elif retcode != 0:
+        raise RuntimeError(f'return code is not 0 when running getContentsViaRar {args}')
+
     stdout = stdout.decode('latin-1').replace('\r\n', '\n')
     results = []
     parts = stdout.split(' Name: ')
@@ -78,7 +84,7 @@ def processAttributesRar(item):
         Raw=item,
     )
 
-def getRarExecutablePath():
+def getRarExecutablePath(throwIfNotFound=True):
     from .plugin_configreader import getExecutablePathFromPrefs
     fallbackGuesses = [r"C:\Program Files\WinRAR\RAR.exe"]
-    return getExecutablePathFromPrefs('rar', throwIfNotFound=True,fallbacksToTry=fallbackGuesses)
+    return getExecutablePathFromPrefs('rar', throwIfNotFound=throwIfNotFound,fallbacksToTry=fallbackGuesses)

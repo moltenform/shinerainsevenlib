@@ -37,13 +37,14 @@ def addAllTo7z(inPath, outPath, effort=None, multiThread='off', solid=True):
 def checkArchivePasswordVia7z(inPath, pword=None):
     args = [get7zExecutablePath(), 'l', getPlaceholderPword(pword), inPath]
     retcode, stdout, stderr = files.run(args, throwOnFailure=None)
+    results = srss.Bucket(success=False, failedWrongPword=False, failedOtherReason=False, stdout=stdout, stderr=stderr)
     if retcode == 0:
-        return {'output': stdout, 'couldNotOpenDueToIncorrectPassword': False}
+        results.success = True
     elif b'Wrong password?' in stderr:
-        return {'couldNotOpenDueToIncorrectPassword': True}
+        results.failedWrongPword = True
     else:
-        assertTrue(False, 'failed to load archive', inPath)
-        return None
+        results.failedOtherReason = True
+    return results
 
 def checkArchiveIntegrityVia7z(inPath, pword=None):
     args = [get7zExecutablePath(), 't', getPlaceholderPword(pword), inPath]
@@ -87,14 +88,15 @@ def getContentsVia7z(archive, verbose, silenceWarnings, pword=None):
     assertTrue(verbose, 'we only support verbose listing')
     args = [get7zExecutablePath(), '-slt', 'l', getPlaceholderPword(pword), archive]
     _retcode, stdout, stderr = files.run(args)
-    results = _getContentsVia7zImpl(stdout, stderr, archive, verbose, silenceWarnings, pword=pword)
+    results = _getContentsVia7zImpl(stdout, stderr, archive, verbose, silenceWarnings)
 
     if len(results) == 1 and (
         isCompressedTarExtension(archive) or results[0]['Path'].endswith('.tar')
     ):
         assertTrue(files.isFile(archive))
         # detect a .tar.gz file and list the tar contents instead. use pipe so there's no disk used.
-        # 7z does not seem to be able to list .tar.bz2,  but it can list the inner tar after extracting, so it all still works.
+        # 7z does not seem to be able to list .tar.bz2 directly (unlike winrar), 
+        # but it can list the inner tar after extracting, so it all still works.
         args = [
             get7zExecutablePath(),
             'x',
@@ -102,7 +104,7 @@ def getContentsVia7z(archive, verbose, silenceWarnings, pword=None):
             getPlaceholderPword(pword),
             '-so',
             '|',
-            '7z',
+            get7zExecutablePath(),
             'l',
             '-slt',
             '-ttar',
@@ -110,13 +112,51 @@ def getContentsVia7z(archive, verbose, silenceWarnings, pword=None):
         ]
         _retcode, stdout, stderr = files.run(args, shell=True)
         results = _getContentsVia7zImpl(
-            stdout, stderr, archive, verbose, silenceWarnings, pword=pword
+            stdout, stderr, archive, verbose, silenceWarnings,
         )
+    elif len(results) == 1 and (isSingleFileCompressionExtension(archive)):
+        results = _handleSingleFileCase(archive, pword)
 
     return results
 
-def _getContentsVia7zImpl(stdout, _stderr, archive, _verbose, silenceWarnings, pword=None):
-    srss.unused(pword)
+def _handleSingleFileCase(archive, pword):
+    "Handle cases like example.gz"
+    
+    # get crc32 checksum of contents
+    args = [
+        get7zExecutablePath(),
+        'x',
+        archive,
+        getPlaceholderPword(pword),
+        '-so',
+        '|',
+        getCksumExecutablePath(),
+    ]
+    _retcode, stdout, _stderr = files.run(args, shell=True)
+    stdout = stdout.decode('utf-8').strip()
+    assertTrue(' ' in stdout)
+    pts = stdout.split(' ')
+    _unusableCrc32 = int(pts[0])
+    countBytes = int(pts[1])
+
+    # by convention, the 'filename' is just the input name minus extension
+    innerFilename = files.splitExt(files.getName(archive))[0]
+    _unusableRenderedCrc = ('%08x'%_unusableCrc32).upper()
+
+    # TODO: the crc given by cksum is not the same crc32 as used by zip.
+    # solution: either have users install the unix tool named 'crc32'
+    # or shell out to gzip in a clever way to retrieve its crc
+    # from @robert on stackoverflow,
+    # echo "abc" | gzip -1 -c | tail -c8 | hexdump -n4 -e '"%u"'
+    # for now though I'll just leave without a checksum.
+    mockItem = dict(Path=innerFilename, Size=countBytes)
+
+    # to ensure consistency with code from when we really read a 7z,
+    # call into the same processing function.
+    return [_processAttributes7z(mockItem)]
+
+
+def _getContentsVia7zImpl(stdout, _stderr, archive, _verbose, silenceWarnings):
     stdoutFull = stdout.decode('latin-1').replace('\r\n', '\n')
     marker = '\n----------\n'
     if marker not in stdoutFull:
@@ -164,3 +204,7 @@ def get7zExecutablePath():
     fallbackGuesses = [r"C:\Program Files (x86)\7-Zip\7z.exe",
                        r"C:\Program Files\7-Zip\7z.exe"]
     return getExecutablePathFromPrefs('7z', throwIfNotFound=True,fallbacksToTry=fallbackGuesses)
+
+def getCksumExecutablePath():
+    from .plugin_configreader import getExecutablePathFromPrefs
+    return getExecutablePathFromPrefs('cksum', throwIfNotFound=True)

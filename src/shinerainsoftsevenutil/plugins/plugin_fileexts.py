@@ -597,6 +597,8 @@ def extensionPossiblyExecutable(s):
         return False
 
 def isCompressedTarExtension(archive):
+    """Is this a compressed tar archive, like example.tar.gz or example.tgz'
+    Not example.gz which should fall under isSingleFileCompressionExtension() instead"""
     archive = archive.lower()
     return archive.endswith((
         '.tar.z',
@@ -611,15 +613,21 @@ def isCompressedTarExtension(archive):
         '.txz'))
 
 def isSingleFileCompressionExtension(archive):
+    """Is this a plain single-file-archive, like example.gz'
+    Not example.tar.gz which should fall under isCompressedTarExtension() instead"""
     archive = archive.lower()
-    return archive.endswith((
-       '.z',
-       '.br',
-       '.zst',
-       '.gz',
-       '.bz2',
-       '.xz',
-    ))
+    a, _b = _files.splitExt(archive)
+    if a.endswith('.tar'):
+        return False
+    else:
+        return archive.endswith((
+        '.z',
+        '.br',
+        '.zst',
+        '.gz',
+        '.bz2',
+        '.xz',
+        ))
 
 mostCommonImageExt = {
     '.gif': 1,

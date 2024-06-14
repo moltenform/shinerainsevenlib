@@ -131,6 +131,7 @@ class SrssConfigReader:
         )
         if self._caseSensitive:
             rawparsed.optionxform = str
+            
         rawparsed.read_string(text)
         self._populateDefaultsForAll()
         sections = rawparsed.sections()
@@ -235,10 +236,11 @@ def getExecutablePathFromPrefs(name, throwIfNotFound, fallbacksToTry=None):
     from .. import files
     prefs = getSsrsInternalPrefs()
     keyname = f'pathExecutable{name[0].upper()}{name[1:].lower()}'
-    got = getattr(prefs.parsed.main, keyname)
-    if got:
-        assertTrue(files.isFile(got) or _shutil.which(got), "shinerainsoftsevenutil.cfg File not found", keyname, got)
-        return got
+    if hasattr(prefs.parsed.main, keyname):
+        got = getattr(prefs.parsed.main, keyname)
+        if got:
+            assertTrue(files.isFile(got) or _shutil.which(got), "shinerainsoftsevenutil.cfg File not found", keyname, got)
+            return got
 
     if files.isFile(name) or _shutil.which(name):
         return name

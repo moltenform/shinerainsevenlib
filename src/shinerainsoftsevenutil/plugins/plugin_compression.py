@@ -6,6 +6,7 @@ import enum as _enum
 import zipfile as _zipfile
 import os as _os
 import sys as _sys
+import shutil as _shutil
 
 from . import plugin_compression_7z as _plugin_compression_7z
 from . import plugin_compression_rar as _plugin_compression_rar
@@ -133,11 +134,12 @@ def addAllToZip(
             raise RuntimeError('not found: ' + inPath)
 
 def getContents(
-    archive, verbose=True, silenceWarnings=False, pword=None, okToFallbackTo7zForRar=False
+    archive, verbose=True, silenceWarnings=False, pword=None, okToFallbackTo7zForRar=False, alwaysUse7z=False
 ):
     results = None
-    if archive.lower().endswith('.rar'):
-        if _files.exists(_plugin_compression_rar.getRarExecutablePath()):
+    if not alwaysUse7z and archive.lower().endswith('.rar'):
+        rar = _plugin_compression_rar.getRarExecutablePath(throwIfNotFound=False)
+        if rar and (_files.exists(rar) or _shutil.which(rar)):
             results = _plugin_compression_rar.getContentsViaRar(
                 archive, verbose, silenceWarnings, pword=pword
             )
@@ -160,7 +162,7 @@ def getContents(
 
     return results
 
-def _getRunCommandCommonTempFile(path, preferEphemeral=False, prefix='runCommandCommon'):
+def _runProcessThatCreatesOutputGetTempFile(path, preferEphemeral=False, prefix='runCommandCommon'):
     outExtension = _files.getExt(path, removeDot=False)
     tempOutFilename = rf'{prefix}{_os.getpid()}_{getRandomString()}{outExtension}'
     dirPath = _srss.getSoftTempDir(path, preferEphemeral=preferEphemeral)
@@ -184,7 +186,7 @@ def runProcessThatCreatesOutput(
     """
     with _srss.CleanupTempFilesOnException() as cleanup:
         assertTrue(not _files.exists(outPath), 'output already there')
-        tmpOutPath = _getRunCommandCommonTempFile(outPath)
+        tmpOutPath = _runProcessThatCreatesOutputGetTempFile(outPath)
         assertTrue(not _files.exists(tmpOutPath), 'tmpOutPath already there')
         cleanup.registerTempFile(tmpOutPath)
 
@@ -194,7 +196,7 @@ def runProcessThatCreatesOutput(
             _sys.platform.startswith('win') and
             _srss.containsNonAscii(inPath)
         ):
-            inPathToUse = _getRunCommandCommonTempFile(inPath, 'runCommandCommonInput')
+            inPathToUse = _runProcessThatCreatesOutputGetTempFile(inPath, 'runCommandCommonInput')
             assertTrue(not _files.exists(inPathToUse), 'inPathToUse already there')
             cleanup.registerTempFile(inPathToUse)
             _files.copy(inPath, inPathToUse, True)
@@ -215,3 +217,11 @@ def runProcessThatCreatesOutput(
             _files.setLastModTime(tmpOutPath, lmt)
 
         _files.move(tmpOutPath, outPath, False)
+
+def checkArchiveIntegrity(inPath, pword=None):
+    return _plugin_compression_7z.checkArchiveIntegrityVia7z(inPath, pword=pword)
+
+def checkArchivePassword(inPath, pword=None):
+    return _plugin_compression_7z.checkArchivePasswordVia7z(inPath, pword=pword)
+
+

@@ -65,12 +65,20 @@ def makeAsserts(s):
     for line in lines:
         print(f'assert fn("{line}") == "xxxxxx"')
 
+#~ def checkTestCoverage
+
 if __name__ == '__main__':
     pass
     makeAsserts(r'''
-test(tbz).tar.bz2
-test(tgz).tar.gz
-test(txz).tar.xz
+feature_corrupt_minor.zip
+feature_password.rar
+otherformat.tar
+otherformat.tar.bz2
+otherformat.tar.gz
+otherformat.tar.xz
+singlefile.xml
+singlefile.xml.bz2
+singlefile.xml.gz
 test_7z.7z
 test_rar_nosolid_nostore.rar
 test_rar_nosolid_store.rar
@@ -80,8 +88,9 @@ test_zip_made_with_7z_store.zip
 test_zip_made_with_py_default.zip
 test_zip_made_with_py_lzma.zip
 test_zip_made_with_winrar.zip
-unicode.7z
-unicode.rar
-unicode.zip
+unicode_and_zero_byte.7z
+unicode_and_zero_byte.rar
+unicode_and_zero_byte.zip
+
                 ''')
 

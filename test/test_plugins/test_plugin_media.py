@@ -4,7 +4,6 @@
 
 import pytest
 from src.shinerainsoftsevenutil.standard import *
-from src.shinerainsoftsevenutil.plugins.plugin_testhelpers import *
 from src.shinerainsoftsevenutil.plugins.plugin_configreader import getExecutablePathFromPrefs
 from src.shinerainsoftsevenutil.core import assertException
 from PIL import Image
