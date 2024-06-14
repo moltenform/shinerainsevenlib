@@ -228,6 +228,27 @@ class TestPluginCompression:
         assert (files.getSize(f'{dirToArchive}/file.jpg.jxl') > 0)
         assert files.getLastModTime(f'{dirToArchive}/file.jpg') == files.getLastModTime(f'{dirToArchive}/file.jpg.jxl')
 
+    def test_createZipsWithPython(self, fixture_dir):
+        def fn(s):
+            return str(helperGetContentsViaPython(s))
+        
+        path = helperMakeZip(fixture_dir, 'standard.zip')
+        assert fn(path) == "['a/b/im.bmp;9;4d09f139;algorithm=8', 'a/b/im.png;10;6eb06c37;algorithm=8', 'a/noext;11;cdd8c08e;algorithm=8']"
+
+        path = helperMakeZip(fixture_dir, 'lzma.zip', method=SrssCompression.ZipMethods.Lzma)
+        assert fn(path) == "['a/b/im.bmp;9;4d09f139;algorithm=14', 'a/b/im.png;10;6eb06c37;algorithm=14', 'a/noext;11;cdd8c08e;algorithm=14']"
+
+        path = helperMakeZip(fixture_dir, 'store.zip', method=SrssCompression.ZipMethods.Store)
+        assert fn(path) == "['a/b/im.bmp;9;4d09f139;algorithm=0', 'a/b/im.png;10;6eb06c37;algorithm=0', 'a/noext;11;cdd8c08e;algorithm=0']"
+
+        path = helperMakeZip(fixture_dir, 'automatic.zip', alreadyCompressedAsStore=True)
+        assert fn(path) == "['a/b/im.bmp;9;4d09f139;algorithm=8', 'a/b/im.png;10;6eb06c37;algorithm=0', 'a/noext;11;cdd8c08e;algorithm=8']"
+
+        path = helperMakeZip(fixture_dir, 'path_prefix.zip', pathPrefix='prefix')
+        assert fn(path) == "['prefixb/im.bmp;9;4d09f139;algorithm=8', 'prefixb/im.png;10;6eb06c37;algorithm=8', 'prefixnoext;11;cdd8c08e;algorithm=8']"
+
+        path = helperMakeZip(fixture_dir, 'no_recurse.zip', recurse=False)
+        assert fn(path) == "['a/noext;11;cdd8c08e;algorithm=8']"
 
     def test_createArchives(self, fixture_dir):
         tmpDir, dirToArchive = prepareForMakingArchives(fixture_dir)
@@ -346,20 +367,15 @@ def helperGetContents(path, alwaysUse7z=True, pword=None):
     
     return results
 
-def helperMakeZip(fixture_dir, **zipArgs):
+def helperMakeZip(fixture_dir, outName, **zipArgs):
     files.ensureEmptyDirectory(fixture_dir)
     files.makeDirs(files.join(fixture_dir, 'a/b'))
-    files.writeAll(files.join(fixture_dir, 'a/b.bmp'), 'contents111')
-    files.writeAll(files.join(fixture_dir, 'a/b/im.png'), 'contents3')
-    files.writeAll(files.join(fixture_dir, 'a/b/te.txt'), 'contents4')
-    files.writeAll(files.join(fixture_dir, 'a/noext'), 'contents2')
-    outPath = files.join(fixture_dir, 'a.zip')
+    files.writeAll(files.join(fixture_dir, 'a/b/im.bmp'), 'contents1')
+    files.writeAll(files.join(fixture_dir, 'a/b/im.png'), 'contents22')
+    files.writeAll(files.join(fixture_dir, 'a/noext'), 'contents333')
+    outPath = files.join(fixture_dir, outName)
     SrssCompression.addAllToZip(files.join(fixture_dir, 'a'), outPath, **zipArgs)
-    with zipfile.ZipFile(outPath) as z:
-        lst = z.infolist()
-        lst.sort(key=lambda item: item.filename)
-
-    return outPath, lst
+    return outPath
 
 
 def prepareForMakingArchives(fixture_dir):

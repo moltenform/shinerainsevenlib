@@ -20,7 +20,7 @@ def addAllToRar(
         dictSize = '256m' if formatVersion == '5' else '4096k'
 
     assertTrue(outPath.lower().endswith('.rar') or outPath.lower().endswith('.zip'))
-    args = [getRarExecutablePath(), 'a']
+    args = [getRarExecutablePath(), 'a', '%output%']
     if solid:
         args.extend(['-s'])
 
@@ -35,7 +35,6 @@ def addAllToRar(
         # hp encrypts both headers and files
         args.extend(['-hp' + pword])
 
-    args.extend(['%output%'])
     args.extend(['%input%'])
     runProcessThatCreatesOutput(args, inPath=inPath, outPath=outPath)
 
