@@ -115,6 +115,7 @@ def addAllToZip(
     assertTrue(not inPath.endswith('/') and not inPath.endswith('\\'))
     with _zipfile.ZipFile(zipPath, 'a') as zpFile:
         if _files.isFile(inPath):
+            assertTrue(not kwargs, 'not a valid param')
             compressionMethod = getCompressionMethod(inPath)
             zpFile.write(
                 inPath, (pathPrefix or '') + _files.getName(inPath), compress_type=compressionMethod

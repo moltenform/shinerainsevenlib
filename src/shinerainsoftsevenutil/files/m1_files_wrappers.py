@@ -69,13 +69,12 @@ def delete(s, doTrace=False):
     if doTrace:
         trace('delete()', s)
 
-    _os.unlink(s)
+    if exists(s):
+        _os.unlink(s)
 
 def deleteSure(s, doTrace=False):
     "Delete a file and confirm it is no longer there"
-    if exists(s):
-        delete(s, doTrace)
-
+    delete(s, doTrace)
     assertTrue(not exists(s))
 
 def makeDirs(s):
@@ -296,7 +295,7 @@ def readAll(path, mode='r', encoding=None):
         return f.read()
 
 def writeAll(
-    path, txt, mode='w', encoding=None, skipIfSameContent=False, updateTimeIfSameContent=True
+    path, content, mode='w', encoding=None, skipIfSameContent=False, updateTimeIfSameContent=True
 ):
     """Write entire file. Defaults to utf-8."""
     if 'b' not in mode and encoding is None:
@@ -305,13 +304,13 @@ def writeAll(
     if skipIfSameContent and isFile(path):
         assertTrue(mode in ('w', 'wb'))
         currentContent = readAll(path, mode=mode.replace('w', 'r'), encoding=encoding)
-        if currentContent == txt:
+        if currentContent == content:
             if updateTimeIfSameContent:
                 setLastModTime(path, srss.getNowAsMillisTime(), units=TimeUnits.Milliseconds)
             return False
 
     with open(path, mode, encoding=encoding) as f:
-        f.write(txt)
+        f.write(content)
         return True
 
 def isEmptyDir(dirPath):

@@ -31,6 +31,7 @@ class SrssLooper:
         self._pauseEverySeconds = None
         self._waitUntilValueSeen = None
         self._input = listOrLambda
+        self._currentStateToPrint = None
 
         # reset state
         self._didMeaningfulWork = True
@@ -69,6 +70,9 @@ class SrssLooper:
         # might return a different number of items
         self._showPercentages = displayStr
 
+    def currentStateToPrint(self, currentStateToPrint):
+        self._currentStateToPrint = currentStateToPrint
+
     def addPauses(self, pauseEveryNTimes=20, seconds=20):
         self._pauseEveryNTimes = pauseEveryNTimes
         self._pauseEverySeconds = seconds
@@ -106,7 +110,11 @@ class SrssLooper:
         percentage = clampNumber(percentage, 0.0, 99.9)
         if percentage != self._prevPercentShown:
             self._prevPercentShown = percentage
-            trace(self._showPercentages, str(percentage) + '%')
+            s = str(percentage) + '%'
+            if self._currentStateToPrint != None:
+                s = str(self._currentStateToPrint) + ' ' + s
+
+            trace(self._showPercentages, s)
 
     @staticmethod
     def skipForwardUntilTrue(itr, fnWaitUntil):

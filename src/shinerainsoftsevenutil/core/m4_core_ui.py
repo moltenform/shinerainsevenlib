@@ -54,7 +54,7 @@ def getInputString(prompt, bConfirm=True, flushOutput=True):
             raise KeyboardInterrupt()
         elif s:
             if not bConfirm or getInputBool('you intended to write: ' + s):
-                return ustr(s)
+                return s
 
 def getInputFromChoices(
     prompt,
@@ -266,25 +266,25 @@ def warnGui(*args):
     ):
         raise RuntimeError('user chose not to continue after warning')
 
-def getOpenFileGui(initialdir=None, types=None, title='Open'):
+def getOpenFileGui(initialDir=None, types=None, title='Open'):
     "Specify types in the format ['.png|Png image','.gif|Gif image'] and so on."
     import tkinter.filedialog as tkFileDialog
 
-    return _getFileDialogGui(tkFileDialog.askopenfilename, initialdir, types, title)
+    return _getFileDialogGui(tkFileDialog.askopenfilename, initialDir, types, title)
 
-def getSaveFileGui(initialdir=None, types=None, title='Save As'):
+def getSaveFileGui(initialDir=None, types=None, title='Save As'):
     "Specify types in the format ['.png|Png image','.gif|Gif image'] and so on."
     import tkinter.filedialog as tkFileDialog
 
-    return _getFileDialogGui(tkFileDialog.asksaveasfilename, initialdir, types, title)
+    return _getFileDialogGui(tkFileDialog.asksaveasfilename, initialDir, types, title)
 
 _gDirectoryHistory = {}
 
-def _getFileDialogGui(fn, initialdir, types, title, directoryHistory=None):
+def _getFileDialogGui(fn, initialDir, types, title, directoryHistory=None):
     "Helper that keeps a list of recently used directories"
-    if initialdir is None:
+    if initialDir is None:
         if directoryHistory:
-            initialdir = _gDirectoryHistory.get(repr(types), '.')
+            initialDir = _gDirectoryHistory.get(repr(types), '.')
 
     kwargs = dict()
     if types is not None:
@@ -293,7 +293,7 @@ def _getFileDialogGui(fn, initialdir, types, title, directoryHistory=None):
         kwargs['defaultextension'] = defaultExtension
         kwargs['filetypes'] = aTypes
 
-    result = fn(initialdir=initialdir, title=title, **kwargs)
+    result = fn(initialdir=initialDir, title=title, **kwargs)
     if result:
         if directoryHistory:
             directoryHistory[repr(types)] = _os.path.split(result)[0]

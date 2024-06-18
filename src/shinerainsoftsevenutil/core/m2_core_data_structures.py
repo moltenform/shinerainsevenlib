@@ -93,7 +93,7 @@ class ParsePlus:
         getTotalSpan
     """
 
-    def __init__(self, pattern, extra_types=None, escapeSequences=None, case_sensitive=True):
+    def __init__(self, pattern, extraTypes=None, escapeSequences=None, caseSensitive=True):
         try:
             import parse
         except Exception as e:
@@ -102,8 +102,8 @@ class ParsePlus:
             ) from e
 
         self.pattern = pattern
-        self.case_sensitive = case_sensitive
-        self.extra_types = extra_types if extra_types else {}
+        self.caseSensitive = caseSensitive
+        self.extraTypes = extraTypes if extraTypes else {}
         self.escapeSequences = escapeSequences if escapeSequences else []
         self.spans = None
         self.getTotalSpan = None
@@ -114,7 +114,7 @@ class ParsePlus:
             def parse_NoNewlines(s):
                 return str(s)
 
-            self.extra_types['NoNewlines'] = parse_NoNewlines
+            self.extraTypes['NoNewlines'] = parse_NoNewlines
 
         if 'NoSpaces' in pattern:
 
@@ -122,7 +122,7 @@ class ParsePlus:
             def parse_NoSpaces(s):
                 return str(s)
 
-            self.extra_types['NoSpaces'] = parse_NoSpaces
+            self.extraTypes['NoSpaces'] = parse_NoSpaces
 
     def _createEscapeSequencesMap(self, s):
         self._escapeSequencesMap = {}
@@ -222,8 +222,8 @@ class ParsePlus:
         parseResult = parse.parse(
             self.pattern,
             sTransformed,
-            extra_types=self.extra_types,
-            case_sensitive=self.case_sensitive,
+            extra_types=self.extraTypes,
+            case_sensitive=self.caseSensitive,
         )
         return self._resultToMyResult(parseResult, s)
 
@@ -234,8 +234,8 @@ class ParsePlus:
         parseResult = parse.search(
             self.pattern,
             sTransformed,
-            extra_types=self.extra_types,
-            case_sensitive=self.case_sensitive,
+            extra_types=self.extraTypes,
+            case_sensitive=self.caseSensitive,
         )
         return self._resultToMyResult(parseResult, s)
 
@@ -246,8 +246,8 @@ class ParsePlus:
         parseResults = parse.findall(
             self.pattern,
             sTransformed,
-            extra_types=self.extra_types,
-            case_sensitive=self.case_sensitive,
+            extra_types=self.extraTypes,
+            case_sensitive=self.caseSensitive,
         )
         for parseResult in parseResults:
             yield self._resultToMyResult(parseResult, s)
@@ -295,7 +295,7 @@ class Bucket:
 
     def __repr__(self):
         return '\n'.join(
-            '%s=%s' % (ustr(key), ustr(self.__dict__[key])) for key in sorted(self.__dict__)
+            '%s=%s' % ((key), (self.__dict__[key])) for key in sorted(self.__dict__)
         )
 
     def get(self, k, fallback=None):
