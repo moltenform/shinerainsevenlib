@@ -10,15 +10,20 @@
             "request": "launch",
             "module": "pytest",
             //"-o",  "log_cli=true"
-            //~ "args":[".\\test\\test_plugins\\test_plugin_compression.py", "--maxfail=1", "--capture=no"]
-            "args":[".\\test\\test_core\\test_m4_core_ui.py", "--maxfail=1", "--capture=no"]
+            "args":[
+                ".\\test\\test_plugins\\test_plugin_store.py",
+                ".\\test\\test_plugins\\test_plugin_store_operations.py",
+                ".\\test\\test_plugins\\test_plugin_store_end_to_end.py",
+            
+            "--maxfail=1", "--capture=no"]
+            //~ "args":[".\\test\\test_core\\test_m4_core_ui.py", "--maxfail=1", "--capture=no"]
         },
         {
             "name": "Python Debugger: Explore",
             "type": "debugpy",
             "request": "launch",
-            "program": "nocpy_explore.py",
-            //~ "program": "nocpy_transition.py",
+            //~ "program": "nocpy_explore.py",
+            "program": "nocpy_transition.py",
             "console": "integratedTerminal"
         },
     ]

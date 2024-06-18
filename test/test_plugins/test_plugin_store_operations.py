@@ -9,27 +9,28 @@ from src.shinerainsoftsevenutil.plugins.plugin_store import SrssStoreBasic, Srss
 from src.shinerainsoftsevenutil.files import join, getSize, writeAll, ensureEmptyDirectory
 from test.test_core.common import fixture_dir
 
-from test_plugin_store import fixture_temp_db, MockCursor, StoreDemo
+from test_plugin_store import fixture_temp_db, MockCursor, StoreDemo, StoreOperationsDemo
 
 
 class TestStoreOperations:
     def test_addSchema(self):
         o = StoreOperationsDemo(autoConnect=False)
         cursor = MockCursor()
-        o.add_schema(cursor)
+        o.addSchema(cursor)
         assert len(cursor.queries) == 3
         assert cursor.queries[0] == 'CREATE TABLE firstTable (fld1 not null, fld2 , fld3 )'
         assert cursor.queries[1] == 'CREATE  INDEX ix_firstTable_fld2 on firstTable(fld2)'
         assert cursor.queries[2] == 'CREATE TABLE secondTable (oFld1 , oFld2 , oFld3 )'
 
     def test_addUniqueIndex(self):
-        class StoreOperationsDemoUnique(StoreWithCrudHelpers):
-            def get_field_names_and_attributes(self):
+        class StoreOperationsDemoUnique(StoreOperationsDemo):
+            def getFieldNamesAndAttributes(self):
                 return {'firstTable': {'fld1': {'initprops': 'not null'}, 'fld2': {'index': 'unique'}, 'fld3': {}},
                     'secondTable': {'oFld1': {}, 'oFld2': {}, 'oFld3': {}}}
+            
         o = StoreOperationsDemoUnique(autoConnect=False)
         cursor = MockCursor()
-        o.add_schema(cursor)
+        o.addSchema(cursor)
         assert len(cursor.queries) == 3
         assert cursor.queries[0] == 'CREATE TABLE firstTable (fld1 not null, fld2 , fld3 )'
         assert cursor.queries[1] == 'CREATE UNIQUE INDEX ix_firstTable_fld2 on firstTable(fld2)'

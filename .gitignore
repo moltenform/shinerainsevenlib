@@ -1,6 +1,7 @@
 
 nocpy*
 nocpy_obsoletecode/
+test.db
 
 # Let people configure it however they want
 shinerainsoftsevenutil.cfg

@@ -9,118 +9,125 @@ from src.shinerainsoftsevenutil.plugins.plugin_store import SrssStoreBasic, Srss
 from src.shinerainsoftsevenutil.files import join, getSize, writeAll, ensureEmptyDirectory
 from test.test_core.common import fixture_dir
 
-from test_plugin_store import fixture_temp_db, MockCursor, StoreDemo
+from test_plugin_store import fixture_temp_db, MockCursor, StoreDemo, StoreOperationsDemo
 
 class TestEndToEnd:
     def testEndToEnd(self):
         # should not allow null hashes
-    with pytest.raises(Exception, 'NOT NULL constraint failed'):
+        with pytest.raises(Exception, match='.*NOT NULL constraint failed.*'):
             dbpath = './test.db'
-        files.deletesure(dbpath)
-        with GlobalImageInformationCache(dbpath) as globalDb:
-            globalDb.begin()
-            globalDb.insert({'fileBytesHash': 'val1'})
-            globalDb.end()
-            getWithDifferentExt('./file_no_ext', '.new')
+            files.deleteSure(dbpath)
+            with CityDatabase(dbpath) as db:
+                db.txnBegin()
+                db.insert({'cityName': 'val1'})
+                db.txnCommit()
 
-    # should not allow dupe hashes
-    with pytest.raises(Exception, 'UNIQUE constraint failed'):
+        # should not allow dupe hashes
+        with pytest.raises(Exception, match='.*UNIQUE constraint failed.*'):
+            dbpath = './test.db'
+            files.deletesure(dbpath)
+            with CityDatabase(dbpath) as db:
+                db.txnBegin()
+                db.insert({'cityID': '/test/a', 'cityName': 'val1'})
+                db.insert({'cityID': '/test/b', 'cityName': 'val2'})
+                db.insert({'cityID': '/test/c', 'cityName': 'val1'})
+                db.txnCommit()
+
+        # test inserts and gets
         dbpath = './test.db'
         files.deletesure(dbpath)
-        with GlobalImageInformationCache(dbpath) as globalDb:
-            globalDb.begin()
-            globalDb.insert({'filePath': '/test/a', 'fileBytesHash': 'val1'})
-            globalDb.insert({'filePath': '/test/b', 'fileBytesHash': 'val2'})
-            globalDb.insert({'filePath': '/test/c', 'fileBytesHash': 'val1'})
-            globalDb.end()
+        with CityDatabase(dbpath) as db:
+            db.txnBegin()
+            db.insert({'cityID': '/test/a', 'cityName': 'val1'})
+            db.insert({'cityID': '/test/b', 'cityName': 'val2', 'cityNickname': 'cityNicknameVal1'})
+            db.insert({'cityID': '/test/c', 'cityName': 'val3', 'stateName': 'stateNameVal1'})
+            db.txnCommit()
 
-    # test inserts and gets
-    dbpath = './test.db'
-    files.deletesure(dbpath)
-    with GlobalImageInformationCache(dbpath) as globalDb:
-        globalDb.begin()
-        globalDb.insert({'filePath': '/test/a', 'fileBytesHash': 'val1'})
-        globalDb.insert({'filePath': '/test/b', 'fileBytesHash': 'val2', 'pixelsHash': 'pixelsHashVal1'})
-        globalDb.insert({'filePath': '/test/c', 'fileBytesHash': 'val3', 'averageHash': 'averageHashVal1'})
-        globalDb.end()
+        with CityDatabase(dbpath) as db:
+            db.txnBegin()
+            got = db.searchByCityName('val0')
+            assert got == None
 
-    with GlobalImageInformationCache(dbpath) as globalDb:
-        globalDb.begin()
-        got = globalDb.getByFileBytesHash('val0')
-        assert got == None
-        got = globalDb.getByFileBytesHash('val1')
-        assert got['filePath'] == '/test/a'
-        assert got['fileBytesHash'] == 'val1'
-        assert got['pixelsHash'] == None
-        assert got['averageHash'] == None
-        got = globalDb.getByFileBytesHash('val2')
-        assert got['filePath'] == '/test/b'
-        assert got['fileBytesHash'] == 'val2'
-        assert got['pixelsHash'] == 'pixelsHashVal1'
-        assert got['averageHash'] == None
-        got = globalDb.getByFileBytesHash('val3')
-        assert got['filePath'] == '/test/c'
-        assert got['fileBytesHash'] == 'val3'
-        assert got['pixelsHash'] == None
-        assert got['averageHash'] == 'averageHashVal1'
-        globalDb.end()
+            got = db.searchByCityName('val1')
+            assert got['cityID'] == '/test/a'
+            assert got['cityName'] == 'val1'
+            assert got['cityNickname'] == None
+            assert got['stateName'] == None
 
-    # test updates
-    with GlobalImageInformationCache(dbpath) as globalDb:
-        globalDb.begin()
-        globalDb.update({'fileBytesHash': 'val2'}, {'averageHash': 'averageHashValNew'})
-        globalDb.update({'fileBytesHash': 'val3'}, {'averageHash': 'averageHashValModified'})
-        globalDb.end()
-    
-    with GlobalImageInformationCache(dbpath) as globalDb:
-        globalDb.begin()
-        got = globalDb.getByFileBytesHash('val1')
-        assert got['filePath'] == '/test/a'
-        assert got['fileBytesHash'] == 'val1'
-        assert got['pixelsHash'] == None
-        assert got['averageHash'] == None
-        got = globalDb.getByFileBytesHash('val2')
-        assert got['filePath'] == '/test/b'
-        assert got['fileBytesHash'] == 'val2'
-        assert got['pixelsHash'] == 'pixelsHashVal1'
-        assert got['averageHash'] == 'averageHashValNew'
-        got = globalDb.getByFileBytesHash('val3')
-        assert got['filePath'] == '/test/c'
-        assert got['fileBytesHash'] == 'val3'
-        assert got['pixelsHash'] == None
-        assert got['averageHash'] == 'averageHashValModified'
-        globalDb.end()
+            got = db.searchByCityName('val2')
+            assert got['cityID'] == '/test/b'
+            assert got['cityName'] == 'val2'
+            assert got['cityNickname'] == 'cityNicknameVal1'
+            assert got['stateName'] == None
+
+            got = db.searchByCityName('val3')
+            assert got['cityID'] == '/test/c'
+            assert got['cityName'] == 'val3'
+            assert got['cityNickname'] == None
+            assert got['stateName'] == 'stateNameVal1'
+            db.txnCommit()
+
+        # test updates
+        with CityDatabase(dbpath) as db:
+            db.txnBegin()
+            db.update({'cityName': 'val2'}, {'stateName': 'stateNameValNew'})
+            db.update({'cityName': 'val3'}, {'stateName': 'stateNameValModified'})
+            db.txnCommit()
+        
+        with CityDatabase(dbpath) as db:
+            db.txnBegin()
+            got = db.searchByCityName('val1')
+            assert got['cityID'] == '/test/a'
+            assert got['cityName'] == 'val1'
+            assert got['cityNickname'] == None
+            assert got['stateName'] == None
+
+            got = db.searchByCityName('val2')
+            assert got['cityID'] == '/test/b'
+            assert got['cityName'] == 'val2'
+            assert got['cityNickname'] == 'cityNicknameVal1'
+            assert got['stateName'] == 'stateNameValNew'
+
+            got = db.searchByCityName('val3')
+            assert got['cityID'] == '/test/c'
+            assert got['cityName'] == 'val3'
+            assert got['cityNickname'] == None
+            assert got['stateName'] == 'stateNameValModified'
+            db.txnCommit()
 
 
 
 
-class TestCrudHelper:
-    def test_opening_with_no_schema_version(self, fixture_temp_db):
+class TestNoSchema:
+    def testOpeningWithNoSchemaVersion(self, fixture_temp_db):
         db, dbpath = fixture_temp_db
-        db.cursor().execute('DELETE FROM ben_python_common_store_properties WHERE 1')
+        db.cursor().execute('DELETE FROM shinerainsoftsevenutil_store_properties WHERE 1')
         db.close()
-        with pytest.raises(StoreException) as exc:
-            db.connect_or_create(dbpath)
+        with pytest.raises(SrssStoreException) as exc:
+            db.connectOrCreate(dbpath)
         exc.match('DB is empty or comes from a different version. Expected schema version 1, got None')
 
-class GlobalImageInformationCache(StoreWithCrudHelpersDemo):
-    def get_field_names_and_attributes(self):
-        schema = { 'GlobalImageInformationCache': {
-                'filePath': {'initprops': 'not null'},
-                'fileBytesHash': {'initprops': 'not null', 'index': 'unique'},
-                'pixelsHash': {},
-                'perceptualHash': {},
-                'averageHash': {},
+class CityDatabase(StoreOperationsDemo):
+    def __init__(self, dbpath=None, flags=None, autoConnect=True):
+        super().__init__(dbpath, flags, autoConnect)
+    
+    def getFieldNamesAndAttributes(self):
+        schema = { 'CityDatabase': {
+                'cityID': {'initprops': 'not null'},
+                'cityName': {'initprops': 'not null', 'index': 'unique'},
+                'cityNickname': {},
+                'countyName': {},
+                'stateName': {},
             }
         }
 
         return schema
 
-    def getByFileBytesHash(self, fileBytesHash):
-        return self.query_one({'fileBytesHash': fileBytesHash})
+    def searchByCityName(self, cityName):
+        return self.query_one({'cityName': cityName})
     
-    def updateByFileBytesHash(self, fileBytesHash, newData):
-        res = self.update({'fileBytesHash': fileBytesHash}, newData)
+    def updateByCityName(self, cityName, newData):
+        res = self.update({'cityName': cityName}, newData)
         self.onInsertOrUpdateRow()
         return res
         
