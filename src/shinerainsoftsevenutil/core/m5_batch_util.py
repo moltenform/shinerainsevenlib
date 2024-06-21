@@ -51,8 +51,11 @@ class SrssLooper:
 
     def _getIter(self):
         if callable(self._input):
-            # must be a lambda that returns an iterable
-            newIter = self._input()
+            # _input must be a lambda that returns an iterable.
+            
+            # we wrap in iter so that we can call next. if it was
+            # already wrapped in iter, that's totally fine, same behavior.
+            newIter = iter(self._input())
         else:
             # must be a list
             assertTrue(isinstance(self._input, list))
@@ -94,7 +97,7 @@ class SrssLooper:
         self._showPercent()
         if self._didMeaningfulWork:
             self._countMeaningfulWork += 1
-            if self._countMeaningfulWork % self._pauseEveryNTimes == 0:
+            if self._pauseEveryNTimes and self._countMeaningfulWork % self._pauseEveryNTimes == 0:
                 trace('sleeping')
                 _time.sleep(self._pauseEverySeconds)
                 trace('waking')
@@ -130,7 +133,7 @@ class SrssLooper:
 
     @staticmethod
     def countIterable(itr):
-        return sum(1 for item in itr)
+        return sum(1 for _item in itr)
 
 class SrssFileIterator:
     """
@@ -138,36 +141,24 @@ class SrssFileIterator:
     adding some extra features to files.recurseFiles.
     Very useful for skipping big node_modules directories.
     """
+    def __init__(self, rootOrListOfRoots, fnIncludeTheseFiles=None,
+               allowRelativePaths=None,  excludeNodeModules=False, **params):
+        self.fnIncludeTheseFiles = fnIncludeTheseFiles
+        self.allowRelativePaths = allowRelativePaths
+        self.excludeNodeModules = excludeNodeModules
+        self.paramsForIterating = params
 
-    def getDefaultPrefs(self):
-        self.prefs.allowedExtsWithDot = None
-        self.prefs.fnIncludeTheseFiles = None
-        self.prefs.fnIncludeTheseDirs = None
-        self.prefs.fnDirectExceptionsTo = None
-        self.prefs.followSymlinks = False
-        self.prefs.filesOnly = True
-        self.prefs.allowRelativePaths = False
-        self.prefs.excludeNodeModules = False
-        self.prefs.recurse = True
-
-    def __init__(self, rootOrListOfRoots, **params):
-        self.prefs = Bucket()
-        self.getDefaultPrefs()
-        mergeDictIntoBucket(self.prefs, params)
         roots = [rootOrListOfRoots] if isinstance(rootOrListOfRoots, str) else rootOrListOfRoots
         self.roots = roots
         self._currentIter = None
 
         for root in self.roots:
             assertTrue(
-                self.prefs.allowRelativePaths or _os.path.isabs(root),
+                self.allowRelativePaths or _os.path.isabs(root),
                 'relative paths not allowed',
                 root,
             )
 
-        # make it a little faster
-        if isinstance(self.prefs.allowedExtsWithDot, list):
-            self.prefs.allowedExtsWithDot = set(self.prefs.allowedExtsWithDot)
 
     def __iter__(self):
         self._currentIter = self._getIterator()()
@@ -178,11 +169,11 @@ class SrssFileIterator:
 
     def _getIterator(self):
         def fnFilterDirs(path):
-            if self.prefs.excludeNodeModules and (
+            if self.excludeNodeModules and (
                 SrssFileIterator.pathHasThisDirectory('node_modules', path)
             ):
                 return False
-            elif self.prefs.fnIncludeTheseDirs and not self.prefs.fnIncludeTheseDirs(path):
+            elif self.paramsForIterating.get('fnFilterDirs') and not self.paramsForIterating.get('fnFilterDirs')(path):
                 return False
             else:
                 return True
@@ -193,18 +184,10 @@ class SrssFileIterator:
             for root in self.roots:
                 for obj in files.recurseFileInfo(
                     root,
-                    followSymlinks=self.prefs.followSymlinks,
-                    filesOnly=self.prefs.filesOnly,
                     fnFilterDirs=fnFilterDirs,
-                    fnDirectExceptionsTo=self.prefs.fnDirectExceptionsTo,
-                    recurse=self.prefs.recurse,
+                    **self.paramsForIterating
                 ):
-                    if self.prefs.allowedExtsWithDot:
-                        ext = files.splitExt(obj.path)[1].lower()
-                        if ext not in self.prefs.allowedExtsWithDot:
-                            continue
-
-                    if self.prefs.fnIncludeTheseFiles and not self.prefs.fnIncludeTheseFiles(
+                    if self.fnIncludeTheseFiles and not self.fnIncludeTheseFiles(
                         obj.path
                     ):
                         continue
@@ -246,16 +229,16 @@ def removeEmptyFolders(path, removeRootIfEmpty=True, isRecurse=False, verbose=Fa
         return
 
     # remove empty subfolders
-    paths = _os.listdir(path)
-    if len(paths):
-        for path in paths:
-            fullPath = _os.path.join(path, path)
+    subPaths = _os.listdir(path)
+    if len(subPaths):
+        for subpath in subPaths:
+            fullPath = _os.path.join(path, subpath)
             if _os.path.isdir(fullPath):
                 removeEmptyFolders(fullPath, removeRootIfEmpty=removeRootIfEmpty, isRecurse=True)
 
     # if folder empty, delete it
-    paths = _os.listdir(path)
-    if len(paths) == 0:
+    subPaths = _os.listdir(path)
+    if len(subPaths) == 0:
         if not isRecurse and not removeRootIfEmpty:
             pass
         else:
@@ -263,3 +246,4 @@ def removeEmptyFolders(path, removeRootIfEmpty=True, isRecurse=False, verbose=Fa
                 trace('Deleting empty dir', path)
 
             _os.rmdir(path)
+

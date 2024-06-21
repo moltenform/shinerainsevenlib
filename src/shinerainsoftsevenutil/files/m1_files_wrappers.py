@@ -52,17 +52,19 @@ def getExt(s, removeDot=True):
     else:
         return after.lower()
 
-def getWithDifferentExt(s, ext_with_dot):
-    "From /a/b/c.ext1 to /a/b/c.ext1"
-    parent, short = _os.path.split(s)
-    short_before_ext, short_ext = splitExt(short)
-    assertTrue(short_ext, s)
-    if parent:
-        with_trailing_slash = s[0 : len(parent) + 1]
-        assertTrue(with_trailing_slash in (parent + '/', parent + '\\'))
-        return with_trailing_slash + short_before_ext + ext_with_dot
-    else:
-        return short_before_ext + ext_with_dot
+def getWithDifferentExt(s, extWithDot, onesToPreserve=None):
+    """From /a/b/c.ext1 to /a/b/c.ext1
+    
+    onesToPreserve is a list like ['.l.jxl', '.j.jxl']
+    """
+    for attempt in (onesToPreserve or []):
+        if s.endswith(attempt):
+            name = s[0:-len(attempt)]
+            return name + extWithDot
+
+    name, ext = splitExt(s)
+    assertTrue(ext, s)
+    return name + extWithDot
 
 def delete(s, doTrace=False):
     "Delete a file"

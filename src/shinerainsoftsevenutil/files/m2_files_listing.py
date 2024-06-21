@@ -28,6 +28,7 @@ def listFiles(path, *, recurse=False, filenamesOnly=False, **kwargs):
 def _listChildrenUnsorted(path, *, filenamesOnly=False, allowedExts=None,
                           includeFiles=True, includeDirs=True):
     "List directory contents. allowedExts in the form ['png', 'gif']"
+    
     for filename in _os.listdir(path):
         if not allowedExts or (getExt(filename, removeDot=True) in allowedExts):
             fullPath = path + _os.path.sep + filename
@@ -62,6 +63,9 @@ def recurseFiles(
     """Return files within a directory (recursively).
     You can provide a fnFilterDirs to filter out any directories not to traverse into."""
     assert isDir(root)
+
+    if isinstance(allowedExts, list):
+        allowedExts = set(allowedExts)
 
     for dirPath, dirNames, fileNames in _os.walk(root, topdown=topDown, followlinks=followSymlinks):
         if fnFilterDirs:
@@ -138,17 +142,28 @@ class FileInfoEntryWrapper:
 
 def recurseFileInfo(
     root,
-    recurse=True,
-    followSymlinks=False,
-    filesOnly=True,
-    fnFilterDirs=None,
-    fnDirectExceptionsTo=None,
+    allowedExts=None,
+    **kwargs,
 ):
     """Convenient interface to python 3's file iterator.
     On Windows this can be very fast because calls to get file properties like size
     don't require an extra system call.
     You can provide a fnFilterDirs to filter out any directories not to traverse into."""
+    if isinstance(allowedExts, list):
+        allowedExts = set(allowedExts)
+        
+    return _recurseFileInfoRecurse(root, allowedExts=allowedExts, **kwargs)
 
+def _recurseFileInfoRecurse(
+    root,
+    recurse=True,
+    followSymlinks=False,
+    filesOnly=True,
+    fnFilterDirs=None,
+    fnDirectExceptionsTo=None,
+    allowedExts=None
+):
+    
     # note that scandir's resources are released in a destructor,
     # so do not create circular references holding it.
     for entry in _os.scandir(root):
@@ -157,7 +172,7 @@ def recurseFileInfo(
                 yield FileInfoEntryWrapper(entry)
             if recurse and (not fnFilterDirs or fnFilterDirs(entry.path)):
                 try:
-                    for subentry in recurseFileInfo(
+                    for subentry in _recurseFileInfoRecurse(
                         entry.path,
                         recurse=recurse,
                         followSymlinks=followSymlinks,
@@ -174,7 +189,8 @@ def recurseFileInfo(
                         raise
 
         if entry.is_file():
-            yield FileInfoEntryWrapper(entry)
+            if not allowedExts or (getExt(entry.path, removeDot=True) in allowedExts):
+                yield FileInfoEntryWrapper(entry)
 
 def listFileInfo(root, followSymlinks=False, filesOnly=True):
     "Like recurseFileInfo, but does not recurse."

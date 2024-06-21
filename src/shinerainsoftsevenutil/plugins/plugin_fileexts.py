@@ -650,3 +650,6 @@ mostCommonImageExtAlternatives = {
     '.tiff': '.tif',
     '.png_large': '.png',
 }
+
+def removeDotsFromExts(obj):
+    return set(k[1:] if k.startswith('.') else k for k in obj)

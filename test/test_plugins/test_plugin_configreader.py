@@ -3,18 +3,78 @@
 # Released under the LGPLv3 License
 
 import pytest
-from shinerainsoftsevenutil.standard import *
+from src.shinerainsoftsevenutil.standard import *
+from src.shinerainsoftsevenutil.plugins.plugin_configreader import getExecutablePathFromPrefs
+from src.shinerainsoftsevenutil.core import assertException
 
 class TestTemporary:
     def testParseSchema(self):
-        config = SrssConfigReader()
 
         # standard usage, including different types
+        config = SrssConfigReader()
+        config.setSchemaForSection('main', {
+            'string1' : [str, ''],
+            'stringWithDefault1' : [str, 'hasDefault1'],
+            'stringWithDefault2' : [str, 'hasDefault2'],
+            'bool1' : [bool, False],
+            'boolWithDefault1' : [bool, True],
+            'boolWithDefault2' : [bool, True],
+            })
+        config.setSchemaForSection('othersection', {
+            'otherString' : [str, ''],
+            'otherBool' : [bool, False],
+            })
+        cfgInput = r'''
+string1=abc
+bool1=True
+stringWithDefault1=givenValue
+[othersection]
+boolWithDefault1=False
+otherString=def
+otherBool=False
+        '''
+        config.parseText(cfgInput)
+        assert config.parsed.main.string1 == 'abc'
+        assert config.parsed.main.bool1 is True
+        assertException(lambda: config.parsed.main.missingcol)
+        assertException(lambda: config.parsed.missingsection.string1)
+        assert config.parsed.othersection.otherString == 'def'
+        assert config.parsed.othersection.otherBool is False
+        assert config.parsed.main.stringWithDefault1 == 'givenValue'
+        assert config.parsed.main.stringWithDefault2 == 'hasDefault2'
+        assert config.parsed.main.boolWithDefault1 is False
+        assert config.parsed.main.boolWithDefault2 is True
 
         # standard usage, with wildcard cols and wildcard sections
-        
+        config = SrssConfigReader()
+        config.setSchemaForSection('main', {
+            'string1' : [str, ''],
+            'pattern_*' : [str, ''],})
+        config.setSchemaForSection('sectionwildcard*', {
+            'stringwithdefault' : [str, 'hasdefault'],
+            'bool1' : [bool, False],
+            })
+        cfgInput = r'''
+string1=abc
+bool1=True
+[sectionwildcard1]
+stringwithdefault=overridehere
+bool1=True
+[sectionwildcard2]
+bool1=True
+[sectionwildcard3]
+bool1=False
+        '''
+        config.parseText(cfgInput)
+        assertException(lambda: config.parsed.main.missingcol)
+        assertException(lambda: config.parsed.sectionwildcard.bool1)
+        assert config.parsed.main.stringWithDefault1 == 'givenValue'
+
+
         # different ways of representing bool
 
+        # should throw if accesing a missing one with no default
+        
         # should throw if a default is given for a * section
 
         # should throw if a default is wrong type #1
@@ -56,3 +116,4 @@ class TestTemporary:
 
     def testFindKeyByLongestMatch(self):
         pass
+
