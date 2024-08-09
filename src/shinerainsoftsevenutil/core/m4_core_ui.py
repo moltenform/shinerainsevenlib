@@ -9,49 +9,74 @@ from .m3_core_nonpure import *
 
 # region user prompts
 
-def getInputBool(prompt, flushOutput=True):
+def getInputBool(prompt, defaultTo=None, flushOutput=True):
     prompt += ' '
     while True:
         s = getRawInput(prompt, flushOutput).strip()
         if s == 'y':
             return True
-        if s == 'n':
+        elif s == 'n':
             return False
-        if s == 'Y':
+        elif s == 'Y':
             return 1
-        if s == 'N':
+        elif s == 'N':
             return 0
-        if s == 'BRK':
+        elif s == 'BRK':
             raise KeyboardInterrupt()
+        elif s.strip() == '' and defaultTo is not None:
+            return defaultTo
 
-def getInputYesNoCancel(prompt, flushOutput=True):
-    prompt += ' y/n/cancel '
+def getInputYesNoExtended(prompt, addCancel=False, addAlwaysYes=False, addAlwaysNo=False,  flushOutput=True):
+    prompt += ' y/n'
+    if addAlwaysNo:
+        prompt += '/N'
+    if addAlwaysYes:
+        prompt += '/Y'
+    if addCancel:
+        prompt += '/cancel'
     while True:
-        s = getRawInput(prompt, flushOutput).strip()
+        s = getRawInput(prompt + ' ', flushOutput).strip()
         if s == 'y':
-            return 'Yes'
-        if s == 'n':
-            return 'No'
-        if s == 'cancel':
-            return 'Cancel'
-        if s == 'BRK':
+            return 'y'
+        elif s == 'n':
+            return 'n'
+        elif addAlwaysYes and s == 'Y':
+            return 'Y'
+        elif addAlwaysNo and s == 'N':
+            return 'N'
+        elif addCancel and s == 'cancel':
+            return 'cancel'
+        elif s == 'BRK':
             raise KeyboardInterrupt()
 
-def getInputInt(prompt, minVal=0, maxVal=0xFFFFFFFF, flushOutput=True):
-    prompt += ' between %d and %d ' % (min, max)
+def getInputInt(prompt, minVal=None, maxVal=None, defaultTo=None, flushOutput=True):
+    if minVal is None and maxVal is None:
+        pass
+    elif minVal is None and maxVal is not None:
+        prompt += f' less than or equal to {maxVal}'
+    elif minVal is not None and maxVal is None:
+        prompt += f' greater than or equal to {minVal}'
+    else:
+        prompt += f' between {minVal} and {maxVal}'
+    
     while True:
         s = getRawInput(prompt, flushOutput).strip()
-        if s.isdigit() and minVal <= int(s) <= maxVal:
+        parsed = parseIntOrFallback(s, None)
+        if parsed is not None and (minVal is None or parsed >= minVal) and (maxVal is None or parsed <= maxVal):
             return int(s)
-        if s == 'BRK':
+        elif s.strip() == '' and defaultTo is not None:
+            return defaultTo
+        elif s == 'BRK':
             raise KeyboardInterrupt()
 
-def getInputString(prompt, bConfirm=True, flushOutput=True):
+def getInputString(prompt, bConfirm=True, defaultTo=None, flushOutput=True):
     prompt += ' '
     while True:
         s = getRawInput(prompt, flushOutput).strip()
         if s == 'BRK':
             raise KeyboardInterrupt()
+        elif s.strip() == '' and defaultTo is not None:
+            return defaultTo
         elif s:
             if not bConfirm or getInputBool('you intended to write: ' + s):
                 return s

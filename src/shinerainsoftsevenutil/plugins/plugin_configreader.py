@@ -141,7 +141,8 @@ class SrssConfigReader:
             self._populateDefaultsForSection(sectionName)
             options = rawparsed.options(sectionName)
             for option in options:
-                val = rawparsed.get(sectionName, option)
+                val = rawparsed.get(sectionName, option, fallback=None)
+                assertTrue(val is not None)
                 val = self.checkSchemaCol(sectionName, option, val)
                 self.setVal(sectionName, option, val)
 
@@ -210,6 +211,7 @@ def getSsrsInternalPrefs():
     global _gCachedInternalPrefs
     if not _gCachedInternalPrefs:
         cfgPath = getSrssConfigLocation()
+        assertTrue(cfgPath and files.isFile(cfgPath), 'currently require cfg file')
         if cfgPath:
             configText = files.readAll(cfgPath)
         else:

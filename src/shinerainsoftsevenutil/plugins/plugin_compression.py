@@ -83,6 +83,7 @@ params7z[Strength.Store] = '-t7z,-mx=0'
 # note that 7z cannot write a 7z or zip to stdout, only formats like gz.
 # 7z e extracts to current directory (ignoring path info in archive)
 # 7z x extracts with full paths
+# note that libarchive can be acquired on windows via anaconda
 
 def addAllToZip(
     inPath,

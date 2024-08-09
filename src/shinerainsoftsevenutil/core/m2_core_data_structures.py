@@ -304,6 +304,9 @@ class Bucket:
         else:
             return fallback
     
+    def set(self, k, v):
+        setattr(self, k, v)
+    
     def getChildKeys(self):
         return [k for k in dir(self) if not k.startswith('_') and not callable(self.get(k))]
 
@@ -373,6 +376,10 @@ class TakeBatch:
         if not exc_type:
             if len(self.batch):
                 self.callback(self.batch)
+
+def listToNPieces(l, nPieces):
+    for i in range(nPieces):
+        yield l[i::nPieces]
 
 class RecentlyUsedList:
     "Keep a list of items. decided not to store duplicates"

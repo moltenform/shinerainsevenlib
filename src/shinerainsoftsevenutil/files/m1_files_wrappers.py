@@ -19,7 +19,6 @@ rename = _os.rename
 exists = _os.path.exists
 join = _os.path.join
 split = _os.path.split
-splitExt = _os.path.splitext
 isDir = _os.path.isdir
 isFile = _os.path.isfile
 getSize = _os.path.getsize
@@ -65,6 +64,19 @@ def getWithDifferentExt(s, extWithDot, onesToPreserve=None):
     name, ext = splitExt(s)
     assertTrue(ext, s)
     return name + extWithDot
+
+def splitExt(path, onesToPreserve=None):
+    """
+    onesToPreserve is a list like ['.l.jxl', '.j.jxl']
+    """
+    if onesToPreserve:
+        withNoExt = getWithDifferentExt(path, '', onesToPreserve)
+        first = path[0:len(withNoExt)]
+        second = path[len(withNoExt):]
+        return first, second
+    else:
+        return _os.path.splitext(path)
+
 
 def delete(s, doTrace=False):
     "Delete a file"
@@ -118,6 +130,8 @@ def copy(
 ):
     """If overwrite is True, always overwrites if destination already exists.
     if overwrite is False, always raises exception if destination already exists."""
+    if doTrace:
+        trace('copy()', srcFile, destFile)
     if not isFile(srcFile):
         raise OSFileRelatedError('source path does not exist or is not a file')
     if not allowDirs and isDir(srcFile):
@@ -127,9 +141,6 @@ def copy(
     if keepSameModifiedTime and exists(destFile):
         assertTrue(isFile(destFile), 'not supported for directories')
         toSetModTime = getLastModTime(destFile, units=TimeUnits.Nanoseconds)
-
-    if doTrace:
-        trace('copy()', srcFile, destFile)
 
     if traceOnly:
         # can be useful for temporary debugging
@@ -161,13 +172,12 @@ def move(
 ):
     """If overwrite is True, always overwrites if destination already exists.
     if overwrite is False, always raises exception if destination already exists."""
+    if doTrace:
+        trace('move()', srcFile, destFile)
     if not exists(srcFile):
         raise OSFileRelatedError('source path does not exist')
     if not allowDirs and not isFile(srcFile):
         raise OSFileRelatedError('allowDirs is False but given a dir')
-
-    if doTrace:
-        trace('move()', srcFile, destFile)
 
     if traceOnly:
         # can be useful for temporary debugging
@@ -322,6 +332,14 @@ def fileContentsEqual(f1, f2):
     import filecmp
 
     return filecmp.cmp(f1, f2, shallow=False)
+
+def acrossDir(path, directoryFrom, directoryTo):
+    assertTrue(not directoryTo.endswith(('/', '\\')))
+    assertTrue(not directoryFrom.endswith(('/', '\\')))
+    assertTrue(path.startswith(directoryFrom))
+    remainder = path[len(directoryFrom):]
+    assertTrue(remainder == '' or remainder.startswith('/') or remainder.startswith('\\'))
+    return directoryTo + remainder
 
 class OSFileRelatedError(OSError):
     pass

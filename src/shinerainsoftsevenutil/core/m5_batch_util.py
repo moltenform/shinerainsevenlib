@@ -61,7 +61,11 @@ class SrssLooper:
             assertTrue(isinstance(self._input, list))
             newIter = self._input
 
-        if self._waitUntilValueSeen:
+        if callable(self._waitUntilValueSeen):
+            return SrssLooper.skipForwardUntilTrue(
+                newIter, lambda item: self._waitUntilValueSeen(item)
+            )
+        elif self._waitUntilValueSeen:
             return SrssLooper.skipForwardUntilTrue(
                 newIter, lambda item: item == self._waitUntilValueSeen
             )
@@ -109,7 +113,7 @@ class SrssLooper:
         if not self._showPercentages:
             return
 
-        percentage = int(100 * self._counter / self._estimateCount)
+        percentage = int(100 * self._counter / (self._estimateCount or 1))
         percentage = clampNumber(percentage, 0.0, 99.9)
         if percentage != self._prevPercentShown:
             self._prevPercentShown = percentage
@@ -131,6 +135,8 @@ class SrssLooper:
             if hasSeen:
                 yield value
 
+        assertTrue(hasSeen, 'Condition never seen.')
+
     @staticmethod
     def countIterable(itr):
         return sum(1 for _item in itr)
@@ -142,11 +148,13 @@ class SrssFileIterator:
     Very useful for skipping big node_modules directories.
     """
     def __init__(self, rootOrListOfRoots, fnIncludeTheseFiles=None,
+                 fnFilterDirs=None,
                allowRelativePaths=None,  excludeNodeModules=False, **params):
         self.fnIncludeTheseFiles = fnIncludeTheseFiles
         self.allowRelativePaths = allowRelativePaths
         self.excludeNodeModules = excludeNodeModules
         self.paramsForIterating = params
+        self.fnFilterDirsFromUser = fnFilterDirs
 
         roots = [rootOrListOfRoots] if isinstance(rootOrListOfRoots, str) else rootOrListOfRoots
         self.roots = roots
@@ -173,7 +181,7 @@ class SrssFileIterator:
                 SrssFileIterator.pathHasThisDirectory('node_modules', path)
             ):
                 return False
-            elif self.paramsForIterating.get('fnFilterDirs') and not self.paramsForIterating.get('fnFilterDirs')(path):
+            elif self.fnFilterDirsFromUser and not self.fnFilterDirsFromUser(path):
                 return False
             else:
                 return True

@@ -320,3 +320,17 @@ def run(
         raise throwOnFailure(srss.getPrintable(exceptionText))
 
     return retcode, stdout, stderr
+
+def runPskill(args):
+    import winerror
+    retcode, stderr, stdout = run(args, throwOnFailure=None)
+    if retcode == 0:
+        return winerror.S_OK
+    else:
+        stderr = stderr.decode('utf-8')
+        if '\nAccess is denied.' in stderr:
+            return winerror.E_ACCESSDENIED
+        elif '\nProcess does not exist.' in stderr:
+            return winerror.ERROR_NOT_FOUND
+        else:
+            raise RuntimeError('pskill failed ' + stderr)

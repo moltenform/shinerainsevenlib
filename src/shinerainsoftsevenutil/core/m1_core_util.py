@@ -172,6 +172,23 @@ def getNowAsMillisTime():
     t = _time.time()
     return int(t * 1000)
 
+class SimpleTimer:
+    def __init__(self):
+        self.startedAt = self.getTime()
+
+    def getTime(self):
+        import time, sys
+        if sys.platform=='win32':
+            return time.time()
+        else:
+            return time.clock()
+    
+    def check(self):
+        return self.getTime() - self.startedAt
+    
+    def print(self):
+        print('%04f second(s)' % self.check())
+
 class EnglishDateParserWrapper:
     """More convenent than directly calling dateparser
     default to month-day-year

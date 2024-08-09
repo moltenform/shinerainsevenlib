@@ -15,7 +15,6 @@ class SrssStoreBasic:
     """
     SrssStore, a database abstraction layer
 
-    raison d'etre
     1) SrssStore should be about as simple as using pickle/jsonpickle, but scaling better
     2) SrssStore handles common tasks like checking latest schema
     3) SrssStore doesn't have pysqlite's unclear transaction semantics

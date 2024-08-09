@@ -208,13 +208,16 @@ def _getSoftTempDirImpl(path='', preferEphemeral=False):
 
     prefs = getSsrsInternalPrefs()
 
-    if preferEphemeral and prefs.parsed.get('tempEphemeralDirectory'):
-        return prefs.parsed.get('tempEphemeralDirectory')
+    if preferEphemeral and prefs.parsed.main.get('tempEphemeralDirectory'):
+        ret = prefs.parsed.main.get('tempEphemeralDirectory')
+        files.makeDirs(ret)
+        assertTrue(files.isDir(ret))
+        return ret
 
     dirPath = getSoftDeleteDir(path)
     if not dirPath or dirPath is cUseOSTrash:
-        if prefs.parsed.tempDirectory:
-            return prefs.parsed.tempDirectory
+        if prefs.parsed.main.tempDirectory:
+            return prefs.parsed.main.tempDirectory
         else:
             import tempfile
 
@@ -230,7 +233,7 @@ def getSoftTempDir(path='', preferEphemeral=False):
 
     # place in the temp subfolder
     assertTrue(_os.path.isdir(dirPath), 'temp dir not a directory', dirPath)
-    dirPath += '/temp'
+    dirPath += _os.path.sep + 'temp'
     if not _os.path.exists(dirPath):
         _os.makedirs(dirPath)
     return dirPath
@@ -240,7 +243,6 @@ _rngForSoftDeleteFile = IndependentRNG()
 def getSoftDeleteFullPath(path):
     from .. import files
 
-    assertTrue(files.exists(path), 'file not found', path)
     dirPath = getSoftDeleteDir(path)
     if not dirPath or dirPath is cUseOSTrash:
         return cUseOSTrash
