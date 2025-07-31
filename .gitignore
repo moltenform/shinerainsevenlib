@@ -1,10 +1,9 @@
 
 nocpy*
-nocpy_obsoletecode/
 test.db
 
-# Let people configure it however they want
-shinerainsoftsevenutil.cfg
+# For user config
+shinerainsevenlib.cfg
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
