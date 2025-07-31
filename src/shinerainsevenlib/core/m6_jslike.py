@@ -88,3 +88,9 @@ def reduce(lst, fn, initialVal=_m2_core_data_structures.DefaultVal):
 def splice(s, insertionPoint, lenToDelete=0, newText=''):
     "Like javascript's splice"
     return s[0:insertionPoint] + newText + s[insertionPoint + lenToDelete :]
+
+def spliceSpan(s, span, newText):
+    "Provide a span [startIndex, stopIndex] to be replaced with newText"
+    _m5_batch_util.assertEq(2, len(span), 'expected [startIndex, stopIndex]')
+    _m5_batch_util.assertTrue(span[1] >= span[0])
+    return splice(s, span[0], span[1] - span[0], newText)
