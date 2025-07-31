@@ -1,5 +1,5 @@
 Optional Dependencies
-=====
+===========================
 
 shinerainsevenlib has no required dependencies.
 

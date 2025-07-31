@@ -33,3 +33,4 @@ extensions = [
 autoapi_dirs = ['../src/shinerainsevenlib']
 autoapi_type = "python"
 
+

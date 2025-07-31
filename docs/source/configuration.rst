@@ -1,6 +1,6 @@
 
 Configuration
-=====
+===================
 
 There are a few settings in shinerainsevenlib that can be customized.
 

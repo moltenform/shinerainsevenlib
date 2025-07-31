@@ -1,7 +1,7 @@
 
 
 Editing this project
-=====
+=======================
 
 If you open this project in VSCode, there will be some defined tasks and launchors, to make it easy to run tests and attach a debugger.
 

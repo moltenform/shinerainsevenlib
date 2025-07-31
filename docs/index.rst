@@ -1,5 +1,6 @@
 .. shinerainsevenlib documentation master file, created by
    sphinx-quickstart on Thu Jul 31 13:28:00 2025.
+.. see also, https://bylr.info/articles/2022/05/10/api-doc-with-sphinx-autoapi/
 
 shinerainsevenlib documentation
 ===============================
@@ -16,7 +17,6 @@ Contents
 .. toctree::
    :maxdepth: 2
 
-   API <source/api>
    Optional Dependencies <source/optional_dependencies>
    Configuration <source/configuration>
    Editing This Project <source/editing_this_project>
