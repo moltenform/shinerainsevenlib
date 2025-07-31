@@ -199,3 +199,14 @@ class TestReduce:
         with pytest.raises(Exception):
             jslike.reduce([], fn)
 
+
+class TestSplice:
+    def testBasic(self):
+        assert 'abef' == jslike.splice('abcdef', 2, 2, '')
+        assert 'ab1ef' == jslike.splice('abcdef', 2, 2, '1')
+        assert 'ab12ef' == jslike.splice('abcdef', 2, 2, '12')
+        assert 'ab123ef' == jslike.splice('abcdef', 2, 2, '123')
+        assert 'ab123def' == jslike.splice('abcdef', 2, 1, '123')
+        assert 'ab123cdef' == jslike.splice('abcdef', 2, 0, '123')
+
+

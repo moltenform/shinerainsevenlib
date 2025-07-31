@@ -30,7 +30,7 @@
         {
             "label": "ruff lint-and-fix",
             "type": "shell",
-            "command": "python -m ruff",
+            "command": "python -m ruff format ./src",
             "problemMatcher": [],
             "group": {
                 "kind": "build",
