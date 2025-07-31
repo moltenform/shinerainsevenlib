@@ -16,9 +16,13 @@ Contents
 .. toctree::
    :maxdepth: 2
 
+   API <source/api>
    Optional Dependencies <source/optional_dependencies>
    Configuration <source/configuration>
    Editing This Project <source/editing_this_project>
+
+   autoapi/index
+
 
 
 
