@@ -9,6 +9,13 @@
             "args": ["tests/", "--maxfail=1"]
         },
         {
+            "name": "Coverage",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "coverage",
+            "args": ["run", "-m", "pytest", "tests/", "--maxfail=1"]
+        },
+        {
             "name": "Explore (debug)",
             "type": "debugpy",
             "request": "launch",
