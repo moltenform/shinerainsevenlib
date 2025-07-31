@@ -1,0 +1,46 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "pylint lint",
+            "type": "shell",
+            "command": "python -m pylint ./src",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+        },
+        {
+            "label": "ruff lint",
+            "type": "shell",
+            "command": "python -m ruff check ./src",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+        },
+        {
+            "label": "ruff lint-and-fix",
+            "type": "shell",
+            "command": "python -m ruff",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+        }
+    ]
+}
+
+
