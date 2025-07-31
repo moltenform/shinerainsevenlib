@@ -39,6 +39,19 @@
             "options": {
                 "cwd": "${workspaceFolder}"
             },
+        },
+        {
+            "label": "build documentation",
+            "type": "shell",
+            "command": "sphinx-build -M html docs ./docs/_build",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
         }
     ]
 }
