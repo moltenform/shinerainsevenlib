@@ -3,8 +3,10 @@
 # Released under the LGPLv3 License
 
 import os as _os
+import sys as _sys
 import json as _json
 import enum as _enum
+from enum import StrEnum as _StrEnum
 
 from .m1_core_util import *
 
@@ -317,7 +319,9 @@ class _EnumExampleInt(_enum.IntEnum):
     second = _enum.auto()
     third = _enum.auto()
 
-class _EnumExampleStr(_enum.StrEnum):
+# if running in python 3.10 or earlier, see backports.strenum
+
+class _EnumExampleStr(_StrEnum):
     first = _enum.auto()
     second = _enum.auto()
     third = _enum.auto()

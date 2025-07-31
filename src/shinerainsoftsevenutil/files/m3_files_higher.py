@@ -16,7 +16,7 @@ def openDirectoryInExplorer(path):
     if _sys.platform.startswith('win'):
         assert '^' not in path and '"' not in path, 'path cannot contain ^ or "'
         args = ['cmd', '/c', 'start', 'explorer.exe', path]
-        run(args, shell=True, captureOutput=False, wait=False)
+        run(args, shell=True, captureOutput=False, throwOnFailure=False, wait=False)
     else:
         # on mac_os, open should work.
         for candidate in ['xdg-open', 'nautilus', 'open']:
@@ -334,3 +334,11 @@ def runPskill(args):
             return winerror.ERROR_NOT_FOUND
         else:
             raise RuntimeError('pskill failed ' + stderr)
+
+def makeShortcut(sourcePath, targetPath):
+    if _sys.platform.startswith('win'):
+        import winshell
+        winshell.CreateShortcut(sourcePath, targetPath)
+    else:
+        _os.symlink(sourcePath, targetPath)
+

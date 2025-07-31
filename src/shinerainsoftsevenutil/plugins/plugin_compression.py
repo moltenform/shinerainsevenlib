@@ -7,6 +7,7 @@ import zipfile as _zipfile
 import os as _os
 import sys as _sys
 import shutil as _shutil
+from enum import StrEnum as _StrEnum
 
 from . import plugin_compression_7z as _plugin_compression_7z
 from . import plugin_compression_rar as _plugin_compression_rar
@@ -20,7 +21,7 @@ class ZipMethods(_enum.IntEnum):
     Deflate = _zipfile.ZIP_DEFLATED
     Lzma = _zipfile.ZIP_LZMA
 
-class Strength(_enum.StrEnum):
+class Strength(_StrEnum):
     Max = _enum.auto()
     Strong = _enum.auto()
     Default = _enum.auto()
@@ -131,6 +132,10 @@ def addAllToZip(
                     innerPath = _files.getName(inPath) + '/' + shortname
                 else:
                     innerPath = pathPrefix + shortname
+
+                if _sys.platform.startswith('win'):
+                    innerPath = innerPath.replace('\\', '/')
+
                 zpFile.write(fullPath, innerPath, compress_type=compressionMethod)
         else:
             raise RuntimeError('not found: ' + inPath)

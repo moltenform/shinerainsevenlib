@@ -19,12 +19,18 @@ def imageTypeFromExtension(path):
     else:
         return None
 
+# for more, see
+# https://github.com/velocityzen/FileType/blob/master/Sources/FileType/FileTypeMatch.swift
 def imageTypeFromContents(path, treatMpoAsJpg=True):
     "Gets the image type like `jpg`, `png`, etc. Works even if extension is wrong."
     from PIL import Image
 
     with open(path, 'rb') as f:
         firstBytes = f.read(128)
+        if firstBytes.startswith(b'\x49\x49\x2A\x00'):
+            return 'tiff'
+        if firstBytes.startswith(b'\x4d\x4d\x00\x2A'):
+            return 'tiff'
         if b'ftypheic' in firstBytes:
             return 'heic'
         if b'ftypavif' in firstBytes:

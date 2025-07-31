@@ -401,6 +401,7 @@ moreNonTextual = {
     '.db': 1,
     '.db-wal': 1,
     '.dat': 1,
+    '.wasm': 1,
 }
 
 documentExtensions = {
@@ -453,6 +454,7 @@ exeExt = {
     '.sct': 1,
     '.shb': 1,
     '.shs': 1,
+    '.sh': 1,
     '.u3p': 1,
     '.vb': 1,
     '.vbe': 1,

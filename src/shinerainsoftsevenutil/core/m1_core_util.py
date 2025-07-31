@@ -285,7 +285,9 @@ def truncateWithEllipsis(s, maxLength):
             return s[0 : maxLength - len(ellipsis)] + ellipsis
 
 def formatSize(n):
-    if n >= 1024 * 1024 * 1024 * 1024:
+    if not isinstance(n, int):
+        return 'NaN'
+    elif n >= 1024 * 1024 * 1024 * 1024:
         return '%.2fTB' % (n / (1024.0 * 1024.0 * 1024.0 * 1024.0))
     elif n >= 1024 * 1024 * 1024:
         return '%.2fGB' % (n / (1024.0 * 1024.0 * 1024.0))
@@ -300,7 +302,7 @@ def formatSize(n):
 # region type conversion helpers
 
 def strToList(s, replaceComments=True):
-    lines = s.replace('\r\n', '\n').split('\n')
+    lines = standardNewlines(s).split('\n')
     if replaceComments:
         lines = [line for line in lines if not line.startswith('#')]
 
@@ -312,6 +314,23 @@ def strToSet(s, replaceComments=True):
 
 def standardNewlines(s):
     return s.replace('\r\n', '\n').replace('\r', '\n')
+
+def easyToEnterFilepath(s, checkIfExists=True):
+    '''Let's people easily copy/paste a filepath in, without worrying about quotes.
+    see unit tests for examples.'''
+    lines = [line.replace('"', '').replace("'", '').strip() for line in strToList(s)]
+    candidateLines = [line for line in lines if line]
+    if len(candidateLines) == 0:
+        raise ValueError("No input given")
+    elif len(candidateLines) > 1:
+        raise ValueError("More than one input given. You can comment-out extra lines with #")
+    s = candidateLines[0]
+    for c in s:
+        if ord(c) < ord(' '):
+            raise ValueError(f'Non-ascii character found {ord(c)}, do you have a backslash without a r""?')
+    if checkIfExists and not _os.path.exists(s):
+        raise ValueError(f"easyToEnterFilepath, path {s} not found")
+    return s
 
 def parseIntOrFallback(s, fallBack=None):
     try:

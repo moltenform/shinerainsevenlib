@@ -6,6 +6,7 @@ import sys as _sys
 import os as _os
 import shutil as _shutil
 import enum as _enum
+from enum import StrEnum as _StrEnum
 
 from .. import core as srss
 from ..core import (
@@ -29,7 +30,7 @@ lineSep = _os.linesep
 absPath = _os.path.abspath
 rmTree = _shutil.rmtree
 
-class TimeUnits(_enum.StrEnum):
+class TimeUnits(_StrEnum):
     Milliseconds = _enum.auto()
     Seconds = _enum.auto()
     Nanoseconds = _enum.auto()
@@ -175,9 +176,9 @@ def move(
     if doTrace:
         trace('move()', srcFile, destFile)
     if not exists(srcFile):
-        raise OSFileRelatedError('source path does not exist')
+        raise OSFileRelatedError('source path does not exist ' + srcFile)
     if not allowDirs and not isFile(srcFile):
-        raise OSFileRelatedError('allowDirs is False but given a dir')
+        raise OSFileRelatedError('allowDirs is False but given a dir ' + srcFile)
 
     if traceOnly:
         # can be useful for temporary debugging
