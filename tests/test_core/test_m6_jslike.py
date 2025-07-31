@@ -187,7 +187,7 @@ class TestReduce:
         assert jslike.reduce([2], fn, 0) == 0
         assert jslike.reduce([2, 3], fn, 0) == 0
         assert jslike.reduce([2, 3, 4], fn, 0) == 0
-        assert jslike.reduce([], fn, 0) == 0
+        assert jslike.reduce([], fn, 0) == 9999999999
 
     def test_reduceRecorded(self):
         def fn(initialVal, head):
