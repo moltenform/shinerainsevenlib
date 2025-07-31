@@ -7,5 +7,4 @@ class Default:
     def __repr__( self ):
         return "DefaultValue"
 
-DefaultValue = Default()
-
+DefaultVal = Default()

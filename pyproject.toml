@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=61.0"]
+requires = ["setuptools >= 77.0.3"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -9,6 +9,7 @@ authors = [
   { name="Ben Fisher", email="shinerainseven@gmail.com" },
 ]
 license = "LGPL-2.1-or-later"
+license-files = ["LICEN[CS]E*"]
 description = "Useful unadorned utilities for powerful Python programming"
 readme = "README.md"
 requires-python = ">=3.8"
