@@ -1,6 +1,6 @@
 
 # BenPythonCommon,
-# 2015 Ben Fisher, released under the LGPLv3 license.
+# 2015 Ben Fisher, released under the LGPLv2.1 License.
 
 import pytest
 import os
@@ -329,32 +329,6 @@ class TestSimpleEnum:
             enumExampleStr.missing = "other"
 
 
-class TestOtherSimpleHelpers:
-    def test_waitUntilTrueArr(self):
-        arr = [0, 1, 2, 3, 4, 5]
-        results = [item for item in waitUntilTrue(arr, lambda x: x == 3)]
-        assert results == [3, 4, 5]
-
-    def test_waitUntilTrueIter(self):
-        def exampleIter():
-            for i in range(6):
-                yield i
-
-        results = [item for item in waitUntilTrue(exampleIter(), lambda x: x == 3)]
-        assert results == [3, 4, 5]
-
-    def test_waitUntilTrueArr_NeverSeen(self):
-        arr = [0, 1, 2, 3, 4, 5]
-        results = [item for item in waitUntilTrue(arr, lambda x: x == 9)]
-        assert results == []
-
-    def test_waitUntilTrueIter_NeverSeen(self):
-        def exampleIter():
-            for i in range(6):
-                yield i
-
-        results = [item for item in waitUntilTrue(exampleIter(), lambda x: x == 9)]
-        assert results == []
 
 class TestDataStructures:
     # takeBatch

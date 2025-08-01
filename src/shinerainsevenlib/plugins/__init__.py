@@ -1,4 +1,4 @@
 
 # shinerainsevenlib (Ben Fisher, moltenform.com)
-# Released under the LGPLv3 License
+# Released under the LGPLv2.1 License
 

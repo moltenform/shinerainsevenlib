@@ -1,6 +1,6 @@
 
 # shinerainsevenlib (Ben Fisher, moltenform.com)
-# Released under the LGPLv3 License
+# Released under the LGPLv2.1 License
 
 import pytest
 from src.shinerainsevenlib.standard import *
@@ -28,6 +28,33 @@ class TestCoreUIInteractive:
         assert numbersSeen == list(range(3, 100))
         assert abs(timeTaken - 2 * ((100-3)/20)) < 5
 
+
+class TestskipForwardUntilTrue:
+    def test_skipForwardUntilTrueArr(self):
+        arr = [0, 1, 2, 3, 4, 5]
+        results = [item for item in srss.SrssLooper.skipForwardUntilTrue(arr, lambda x: x == 3)]
+        assert results == [3, 4, 5]
+
+    def test_skipForwardUntilTrueIter(self):
+        def exampleIter():
+            for i in range(6):
+                yield i
+
+        results = [item for item in srss.SrssLooper.skipForwardUntilTrue(exampleIter(), lambda x: x == 3)]
+        assert results == [3, 4, 5]
+
+    def test_skipForwardUntilTrueArr_NeverSeen(self):
+        arr = [0, 1, 2, 3, 4, 5]
+        results = [item for item in srss.SrssLooper.skipForwardUntilTrue(arr, lambda x: x == 9)]
+        assert results == []
+
+    def test_skipForwardUntilTrueIter_NeverSeen(self):
+        def exampleIter():
+            for i in range(6):
+                yield i
+
+        results = [item for item in srss.SrssLooper.skipForwardUntilTrue(exampleIter(), lambda x: x == 9)]
+        assert results == []
 
 #~ def interactiveTests():
 

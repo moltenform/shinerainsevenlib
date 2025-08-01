@@ -1,6 +1,6 @@
 
 # shinerainsevenlib (Ben Fisher, moltenform.com)
-# Released under the LGPLv3 License
+# Released under the LGPLv2.1 License
 
 # don't add these broad imports to __init__.py, otherwise a module in
 # a directory that imported ..otherdir would bring in the entire project.
