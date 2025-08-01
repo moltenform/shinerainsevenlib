@@ -137,6 +137,7 @@ def getNowAsMillisTime():
     return int(t * 1000)
 
 class SimpleTimer:
+    "Simple timer to measure elapsed time"
     def __init__(self):
         self.startedAt = self.getTime()
 
@@ -154,8 +155,8 @@ class SimpleTimer:
         print('%04f second(s)' % self.check())
 
 class EnglishDateParserWrapper:
-    """More convenent than directly calling dateparser
-    default to month-day-year
+    """More convenient than directly calling dateparser
+    defaults to month-day-year
     restrict to English, less possibility of accidentally parsing a non-date string"""
 
     def __init__(self, dateOrder='MDY'):
@@ -209,18 +210,22 @@ class EnglishDateParserWrapper:
 # region string helpers
 
 def replaceMustExist(haystack, needle, replace):
+    "Replace needle in haystack, fail if needle not in haystack"
     assertTrue(needle in haystack, 'not found', needle)
     return haystack.replace(needle, replace)
 
 def reSearchWholeWord(haystack, needle):
+    "Search haystack for needle, return match object"
     reNeedle = '\\b' + _re.escape(needle) + '\\b'
     return _re.search(reNeedle, haystack)
 
 def reReplaceWholeWord(haystack, needle, replace):
+    "Replace needle in haystack with a 'whole word' style search"
     needle = '\\b' + _re.escape(needle) + '\\b'
     return _re.sub(needle, replace, haystack)
 
 def reReplace(haystack, reNeedle, replace):
+    "Replace needle in haystack"
     return _re.sub(reNeedle, replace, haystack)
 
 # cliffnotes documentation of re module included here for convenience:
@@ -239,6 +244,7 @@ def reReplace(haystack, reNeedle, replace):
 # flags include re.IGNORECASE, re.MULTILINE, re.DOTALL
 
 def truncateWithEllipsis(s, maxLength):
+    "Truncate a string with an ellipsis if it is too long"
     if len(s) <= maxLength:
         return s
     else:
@@ -249,6 +255,7 @@ def truncateWithEllipsis(s, maxLength):
             return s[0 : maxLength - len(ellipsis)] + ellipsis
 
 def formatSize(n):
+    "Format a number of bytes into a human-readable string"
     if not isinstance(n, int):
         return 'NaN'
     elif n >= 1024 * 1024 * 1024 * 1024:
@@ -280,6 +287,7 @@ def runAndCatchException(fn):
 # region ascii char helpers
 
 def toValidFilename(pathOrig, dirsepOk=False, maxLen=None):
+    "Convert path to a valid filename, especially on Windows where many characters are not allowed"
     path = pathOrig
     if dirsepOk:
         # sometimes we want to leave directory-separator characters in the string.
@@ -355,15 +363,17 @@ def unused(_obj):
     "Use this to tell linters the variable is intentionally unused"
 
 def getObjAttributes(obj):
+    "Get properties on an object"
     return [att for att in dir(obj) if not att.startswith('_')]
 
 def getClassNameFromInstance(obj):
+    "Get class name from an instance"
     return obj.__class__.__name__
 
 if _sys.version_info[0] >= 2:
     # inspired by mutagen/_compat.py
     def endsWith(a, b):
-        # use with either str or bytes
+        "a endsWith that works with either str or bytes"
         if isinstance(a, str):
             if not isinstance(b, str):
                 b = b.decode('ascii')
@@ -373,7 +383,7 @@ if _sys.version_info[0] >= 2:
         return a.endswith(b)
 
     def startsWith(a, b):
-        # use with either str or bytes
+        "a startsWith that works with either str or bytes"
         if isinstance(a, str):
             if not isinstance(b, str):
                 b = b.decode('ascii')
@@ -383,12 +393,15 @@ if _sys.version_info[0] >= 2:
         return a.startswith(b)
 
     def iterBytes(b):
+        "iterate through the bytes"
         return (bytes([v]) for v in b)
 
     def bytesToString(b):
+        "convert bytes to string"
         return b.decode('utf-8')
 
     def asBytes(s, encoding='ascii'):
+        "convert string to bytes"
         return bytes(s, encoding)
 
     rinput = input

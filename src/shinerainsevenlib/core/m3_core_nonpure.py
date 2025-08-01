@@ -15,12 +15,14 @@ from .m2_core_data_structures import *
 # region clipboard state
 
 def getClipboardText():
+    "Get clipboard text"
     try:
         return _getClipboardTextPyperclip()
     except ImportError:
         return _getClipboardTextTk()
 
 def setClipboardText(s):
+    "Set clipboard text"
     try:
         _setClipboardTextPyperclip(s)
     except ImportError:
@@ -134,6 +136,7 @@ class IndependentRNG:
 # region other helpers
 
 def downloadUrl(url, toFile=None, timeout=30, asText=False):
+    "Download a URL, if toFile is not specified returns the results as a string."
     import requests
 
     resp = requests.get(url, timeout=timeout)
@@ -147,6 +150,7 @@ def downloadUrl(url, toFile=None, timeout=30, asText=False):
         return resp.content
 
 def startThread(fn, args=None):
+    "Start a thread"
     import threading
 
     if args is None:
@@ -213,7 +217,10 @@ def _getTrashFullDest(path, trashDir):
 
 
 def softDeleteFile(path, allowDirs=False, doTrace=False):
-    "Delete a file in a recoverable way, either OS Trash or a designated folder"
+    """Delete a file in a recoverable way, either OS Trash or a designated folder.
+    Defaults to ~/trash
+    Configure behavior by editing shinerainsevenlib.cfg, 
+    trashDir='recycleBin' or 'currentDriveDataLocalTrash' or a path"""
     from .. import files
     from .m4_core_ui import warn
 
@@ -230,14 +237,14 @@ def softDeleteFile(path, allowDirs=False, doTrace=False):
             trace(f'softDeleteFile |on| {path} to recycleBin')
         
         send2trash(path)
-        return '<sent-to-trash>'
-
-    destPath = _getTrashFullDest(path, trashDir)
-    if doTrace:
-        trace(f'softDeleteFile |on| {path} to {destPath}')
-    
-    files.move(path, destPath)
-    return destPath
+        return '<sent-to-recycle-bin>'
+    else:
+        destPath = _getTrashFullDest(path, trashDir)
+        if doTrace:
+            trace(f'softDeleteFile |on| {path} to {destPath}')
+        
+        files.move(path, destPath)
+        return destPath
 
 def _getSoftTempDir(originalPath, preferEphemeral):
     import tempfile
@@ -270,7 +277,15 @@ def _getTempDirAndCreateIfNeeded(originalPath, preferEphemeral):
         raise ShineRainSevenLibError('failed to create trash dir', tempDir)
     return tempDir
 
-def getSoftTempDir(path='', preferEphemeral=False):
+def getSoftTempDir(path='', preferEphemeral=False, addRandomSuffix=False):
+    """
+    Get a temporary directory. 
+    Defaults to default OS temp directory, can be configured in shinerainsevenlib.cfg
+    tempDir = (path to dir)
+    tempEphemeralDir = (path to dir)
+    An ephemeral dir is one where data isn't kept long term. I often configure this
+    to be a RAM drive, which are useful for heavy read/write scenarios.
+    """
     ret = _getTempDirAndCreateIfNeeded(path, preferEphemeral)
     assertTrue(_os.path.isdir(ret), 'temp dir not a directory', ret)
     return ret

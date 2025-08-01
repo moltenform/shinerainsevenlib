@@ -10,6 +10,7 @@ from .m3_core_nonpure import *
 # region user prompts
 
 def getInputBool(prompt, defaultTo=None, flushOutput=True):
+    "Ask yes or no. Returns True on yes and False on no"
     prompt += ' '
     while True:
         s = getRawInput(prompt, flushOutput).strip()
@@ -27,6 +28,7 @@ def getInputBool(prompt, defaultTo=None, flushOutput=True):
             return defaultTo
 
 def getInputYesNoExtended(prompt, addCancel=False, addAlwaysYes=False, addAlwaysNo=False,  flushOutput=True):
+    "Ask yes or no. Returns 'y', 'n', 'Y', 'N', or 'cancel'."
     prompt += ' y/n'
     if addAlwaysNo:
         prompt += '/N'
@@ -50,6 +52,7 @@ def getInputYesNoExtended(prompt, addCancel=False, addAlwaysYes=False, addAlways
             raise KeyboardInterrupt()
 
 def getInputInt(prompt, minVal=None, maxVal=None, defaultTo=None, flushOutput=True):
+    "Validated to be an integer. Returns None on cancel."
     if minVal is None and maxVal is None:
         pass
     elif minVal is None and maxVal is not None:
@@ -69,7 +72,8 @@ def getInputInt(prompt, minVal=None, maxVal=None, defaultTo=None, flushOutput=Tr
         elif s == 'BRK':
             raise KeyboardInterrupt()
 
-def getInputString(prompt, bConfirm=True, defaultTo=None, flushOutput=True):
+def getInputString(prompt, confirmation=True, defaultTo=None, flushOutput=True):
+    "Ask for a string. If confirmation is True, ask for confirmation before continuing."
     prompt += ' '
     while True:
         s = getRawInput(prompt, flushOutput).strip()
@@ -78,7 +82,7 @@ def getInputString(prompt, bConfirm=True, defaultTo=None, flushOutput=True):
         elif s.strip() == '' and defaultTo is not None:
             return defaultTo
         elif s:
-            if not bConfirm or getInputBool('you intended to write: ' + s):
+            if not confirmation or getInputBool('you intended to write: ' + s):
                 return s
 
 def getInputFromChoices(
@@ -118,16 +122,18 @@ def getInputFromChoices(
                 return (-1, breakLoop)
 
 def getRawInput(prompt, flushOutput=True):
+    "Ask for input. Returns the input, or None on cancel."
     print(getPrintable(prompt))
     if flushOutput:
         _sys.stdout.flush()
-    assertTrue(_sys.version_info[0] >= 3)
+    assertTrue(isPy3OrNewer)
     return input(getPrintable(''))
 
 # endregion
 # region user messages
 
 def err(*args):
+    "Throw an exception"
     s = ' '.join(map(getPrintable, args))
     raise RuntimeError('fatal error\n' + getPrintable(s))
 
@@ -270,6 +276,7 @@ def getInputFromChoicesGui(prompt, arOptions):
         return result, arOptions[result]
 
 def errGui(*args):
+    "Display error message in GUI, then throw an exception"
     s = ' '.join(map(getPrintable, args))
     from tkinter import messagebox as tkMessageBox
 
@@ -277,12 +284,14 @@ def errGui(*args):
     raise RuntimeError('fatal error\n' + getPrintable(s))
 
 def alertGui(*args):
+    "Display message in GUI"
     s = ' '.join(map(getPrintable, args))
     from tkinter import messagebox as tkMessageBox
 
     tkMessageBox.showinfo(title=' ', message=getPrintable(s))
 
 def warnGui(*args):
+    "Display warning message in GUI"
     s = ' '.join(map(getPrintable, args))
     from tkinter import messagebox as tkMessageBox
 

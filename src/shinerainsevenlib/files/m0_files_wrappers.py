@@ -31,17 +31,21 @@ absPath = _os.path.abspath
 rmTree = _shutil.rmtree
 
 class TimeUnits(_StrEnum):
+    "Specify milliseconds vs seconds"
     Milliseconds = _enum.auto()
     Seconds = _enum.auto()
     Nanoseconds = _enum.auto()
 
 def getParent(path):
+    "From /path/to/file.ext to /path/to"
     return _os.path.split(path)[0]
 
 def getName(path):
+    "From /path/to/file.ext to file.ext"
     return _os.path.split(path)[1]
 
 def createdTime(path):
+    "The 'ctime' of the file"
     return _os.stat(path).st_ctime
 
 def getExt(s, removeDot=True):
@@ -68,7 +72,9 @@ def getWithDifferentExt(s, extWithDot, onesToPreserve=None):
 
 def splitExt(path, onesToPreserve=None):
     """
+    From /a/b/c.ext1 to '/a/b/c' and '.ext1'
     onesToPreserve is a list like ['.l.jxl', '.j.jxl']
+    , in which case '/a/b/c.l.jxl' will return '/a/b/c' and '.l.jxl'
     """
     if onesToPreserve:
         withNoExt = getWithDifferentExt(path, '', onesToPreserve)
@@ -278,15 +284,19 @@ def _getStatTime(path, key_ns, key_s, units):
         raise ValueError('unknown unit')
 
 def getLastModTime(path, units=TimeUnits.Seconds):
+    "Last-modified time"
     return _getStatTime(path, 'st_mtime_ns', 'st_mtime', units)
 
 def getCTime(path, units=TimeUnits.Seconds):
+    "The 'ctime' of a file"
     return _getStatTime(path, 'st_ctime_ns', 'st_ctime', units)
 
 def getATime(path, units=TimeUnits.Seconds):
+    "The 'atime' of a file. In modern systems this isn't usually the last-accessed time."
     return _getStatTime(path, 'st_atime_ns', 'st_atime', units)
 
 def setLastModTime(path, newVal, units=TimeUnits.Seconds):
+    "Set the last-modified time of a file"
     if units == TimeUnits.Nanoseconds:
         newVal = int(newVal)
     elif units == TimeUnits.Milliseconds:
@@ -310,7 +320,7 @@ def readAll(path, mode='r', encoding=None):
 def writeAll(
     path, content, mode='w', encoding=None, skipIfSameContent=False, updateTimeIfSameContent=True
 ):
-    """Write entire file. Defaults to utf-8."""
+    """Write entire file. When writing text, defaults to utf-8."""
     if 'b' not in mode and encoding is None:
         encoding = 'utf-8'
 
@@ -327,14 +337,18 @@ def writeAll(
         return True
 
 def isEmptyDir(dirPath):
+    "Is a directory empty"
     return len(_os.listdir(dirPath)) == 0
 
 def fileContentsEqual(f1, f2):
+    "Efficiently tests if the content of two files is the same"
     import filecmp
 
     return filecmp.cmp(f1, f2, shallow=False)
 
 def acrossDir(path, directoryFrom, directoryTo):
+    """Get the other version of a path.
+    If path is '/path1/to/file.ext' and directoryFrom is '/path1' and directoryTo is '/path2', then return '/path2/to2/file.ext'"""
     assertTrue(not directoryTo.endswith(('/', '\\')))
     assertTrue(not directoryFrom.endswith(('/', '\\')))
     assertTrue(path.startswith(directoryFrom))
@@ -343,4 +357,5 @@ def acrossDir(path, directoryFrom, directoryTo):
     return directoryTo + remainder
 
 class OSFileRelatedError(OSError):
+    "Indicates a file-related exception"
     pass
