@@ -4,7 +4,7 @@ Configuration
 
 There are a few settings in shinerainsevenlib that can be customized.
 
-Place a file named `shinerainsevenlib.cfg` into the `core` directory.
+Place a file named `shinerainsevenlib.cfg` into the `core` directory or a parent directory.
 
 Example contents,
 

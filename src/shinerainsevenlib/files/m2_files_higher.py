@@ -8,7 +8,7 @@ import subprocess as _subprocess
 import shutil as _shutil
 from contextlib import ExitStack as _ExitStack
 
-from .m2_files_listing import *
+from .m1_files_listing import *
 
 def openDirectoryInExplorer(path):
     "Open directory in operating system, like finder or windows explorer."

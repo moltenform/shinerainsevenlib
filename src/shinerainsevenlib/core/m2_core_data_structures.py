@@ -86,13 +86,15 @@ class PersistedDict:
 class ParsePlus:
     """
     Adds the following features to the "parse" module:
-        {s:NoNewlines} field type
-        {s:NoSpaces} works like {s:S}
-        remember that "{s} and {s}" matches "a and a" but not "a and b",
-            use "{s1} and {s2}" or "{} and {}" if the contents can differ
-        escapeSequences such as backslash-escapes (see examples in tests)
-        replaceFieldWithText (see examples in tests)
-        getTotalSpan
+    
+    {s:NoNewlines} field type
+    {s:NoSpaces} works like {s:S}
+    remember that "{s} and {s}" matches "a and a" but not "a and b",
+    
+    use "{s1} and {s2}" or "{} and {}" if the contents can differ.
+    escapeSequences such as backslash-escapes (see examples in tests).
+    replaceFieldWithText (see examples in tests).
+    getTotalSpan.
     """
 
     def __init__(self, pattern, extraTypes=None, escapeSequences=None, caseSensitive=True):

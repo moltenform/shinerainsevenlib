@@ -111,12 +111,6 @@ def getCurrentException():
     "Get current exception"
     return _sys.exc_info()[1]
 
-class ShineRainSevenLibError(RuntimeError):
-    def __init__(self, *args):
-        "You can pass in more than one string"
-        combined = ' '.join(str(arg) for arg in args)
-        super().__init__(combined)
-
 # endregion
 
 # region _time helpers

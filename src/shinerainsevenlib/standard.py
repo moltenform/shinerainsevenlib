@@ -19,9 +19,10 @@ from .core import (
     getRandomString,
     getInputString,
     getInputBool,
-    jslike,
-    Bucket,
+    Bucket
 )
+
+from .core import m6_jslike as jslike
 
 # the rest can be accessed via `srss`
 from . import core as srss

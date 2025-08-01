@@ -74,6 +74,8 @@ def clampNumber(value, minValue, maxValue):
 
 def compareTwoListsAsSets(l1, l2, transformFn1=None, transformFn2=None):
     "Compare two lists of strings"
+    from .m2_core_data_structures import Bucket
+    
     l1Transformed = l1 if not transformFn1 else [transformFn1(item) for item in l1]
     l2Transformed = l2 if not transformFn2 else [transformFn2(item) for item in l2]
     set1 = set(l1Transformed)
@@ -145,7 +147,7 @@ gRedirectTraceCalls['fnHook'] = None
 def trace(*args, always=False):
     """Similar to print, but
     1) distinguish debugging prints vs intentional production prints
-    2) can be redirected to fnHook
+    2) can be redirected to fnHook, e.g. for testing
     3) certain terminals throw exceptions if given unicode characters"""
     val = ' '.join(map(getPrintable, args))
     if gRedirectTraceCalls['fnHook'] and not always:
@@ -163,4 +165,9 @@ def tracep(*args, always=False):
 
 # endregion
 
+class ShineRainSevenLibError(RuntimeError):
+    def __init__(self, *args):
+        "You can pass in more than one string"
+        combined = ' '.join(str(arg) for arg in args)
+        super().__init__(combined)
 

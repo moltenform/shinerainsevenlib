@@ -12,17 +12,17 @@ from .m4_core_ui import *
 
 class SrssLooper:
     """Helpful for batch processing, when you want to add pauses every n iterations
-    Example:
-    loop = SrssLooper(list(range(10)))
-    loop.showPercentageEstimates()
-    loop.addPauses(2, seconds=2)
-    loop.waitUntilValueSeen(3)
-    for number in loop:
-        if number % 2 == 0:
-            print('skipping even number', number)
-            loop.flagDidNoMeaningfulWork()
-        else:
-            print('found an odd number', number)
+    
+    >>> loop = SrssLooper(list(range(10)))
+    >>> loop.showPercentageEstimates()
+    >>> loop.addPauses(2, seconds=2)
+    >>> loop.waitUntilValueSeen(3)
+    >>> for number in loop:
+    >>>     if number % 2 == 0:
+    >>>         print('skipping even number', number)
+    >>>         loop.flagDidNoMeaningfulWork()
+    >>>     else:
+    >>>         print('found an odd number', number)
     """
 
     def __init__(self, listOrLambda):
