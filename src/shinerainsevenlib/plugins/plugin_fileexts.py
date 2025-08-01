@@ -654,4 +654,5 @@ mostCommonImageExtAlternatives = {
 }
 
 def removeDotsFromExts(obj):
+    "Get a version of the dictionary without leading ."
     return set(k[1:] if k.startswith('.') else k for k in obj)

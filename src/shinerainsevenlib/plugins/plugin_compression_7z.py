@@ -8,6 +8,7 @@ from .. import core as srss
 from ..core import assertTrue, trace
 
 def addAllTo7z(inPath, outPath, effort=None, multiThread='off', solid=True):
+    "Create a zip or 7z file. Provide the path to a directory or file."
     from .plugin_compression import Strength, params7z, paramsZip, runProcessThatCreatesOutput
 
     if not effort:
@@ -34,6 +35,7 @@ def addAllTo7z(inPath, outPath, effort=None, multiThread='off', solid=True):
     runProcessThatCreatesOutput(args, inPath=inPath, outPath=outPath)
 
 def checkArchivePasswordVia7z(inPath, pword=None):
+    "Check if password is correct"
     args = [get7zExecutablePath(), 'l', getPlaceholderPword(pword), inPath]
     retcode, stdout, stderr = files.run(args, throwOnFailure=None)
     results = srss.Bucket(success=False, failedWrongPword=False, failedOtherReason=False, stdout=stdout, stderr=stderr)
@@ -46,6 +48,7 @@ def checkArchivePasswordVia7z(inPath, pword=None):
     return results
 
 def checkArchiveIntegrityVia7z(inPath, pword=None):
+    "Check the integrity of a zip, rar, 7z, or other archive format"
     args = [get7zExecutablePath(), 't', getPlaceholderPword(pword), inPath]
     retcode, _stdout, stderr = files.run(args, throwOnFailure=None)
     if retcode == 0:
@@ -65,6 +68,7 @@ def checkArchiveIntegrityVia7z(inPath, pword=None):
         return None
 
 def getPlaceholderPword(pword):
+    "When sending commands to 7z, always provide a dummy password"
     # we send in a placeholder password to intentionally get an error
     # -- otherwise it will block on stdin!
     pword = pword or '(placeholder-password)'
@@ -83,6 +87,9 @@ def _processAttributes7z(item):
     )
 
 def getContentsVia7z(archive, verbose, silenceWarnings, pword=None):
+    """List contents of the zip, 7z, rar, or other type of archive.
+    Details are provided about each item: ``Path, Type, Modified,
+    CRC, Size, PackedSize, and Raw (raw data about the item)``"""
     assertTrue(files.isFile(archive))
     assertTrue(verbose, 'we only support verbose listing')
     args = [get7zExecutablePath(), '-slt', 'l', getPlaceholderPword(pword), archive]
@@ -199,11 +206,13 @@ def _isIgnorableWarning(stdout):
         return False
 
 def get7zExecutablePath():
+    "Get path to 7z binary"
     from .plugin_configreader import getExecutablePathFromPrefs
     fallbackGuesses = [r"C:\Program Files (x86)\7-Zip\7z.exe",
                        r"C:\Program Files\7-Zip\7z.exe"]
     return getExecutablePathFromPrefs('7z', throwIfNotFound=True,fallbacksToTry=fallbackGuesses)
 
 def getCksumExecutablePath():
+    "Get path to cksum binary"
     from .plugin_configreader import getExecutablePathFromPrefs
     return getExecutablePathFromPrefs('cksum', throwIfNotFound=True)

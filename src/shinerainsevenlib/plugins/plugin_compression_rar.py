@@ -10,11 +10,13 @@ from ..core import assertTrue
 def addAllToRar(
     inPath, outPath, effort=None, formatVersion='4', dictSize=None, solid=True, pword=None
 ):
+    "Create a rar or zip archive. inPath should be the path to a directory or file."
     from .plugin_compression import Strength, runProcessThatCreatesOutput
 
     if not effort:
         effort = Strength.Default
 
+    assertTrue(formatVersion in ('4', '5'), 'formatVersion must be 4 or 5')
     assertTrue(not isinstance(inPath, list), "we don't yet support multiple items")
     if not dictSize:
         dictSize = '256m' if formatVersion == '5' else '4096k'
@@ -39,6 +41,9 @@ def addAllToRar(
     runProcessThatCreatesOutput(args, inPath=inPath, outPath=outPath)
 
 def getContentsViaRar(archive, verbose, _silenceWarnings, pword=None):
+    """List contents of the zip, 7z, rar, or other type of archive.
+    Details are provided about each item: ``Path, Type, Modified,
+    CRC, Size, PackedSize, and Raw (raw data about the item)``"""
     from . import plugin_compression_7z
 
     assertTrue(files.isFile(archive))
@@ -71,6 +76,7 @@ def getContentsViaRar(archive, verbose, _silenceWarnings, pword=None):
     return [processAttributesRar(result) for result in results]
 
 def processAttributesRar(item):
+    "Standardize the data coming in from rar"
     return dict(
         Path=item.get('Path', ''),  # uses \ as dirsep
         Type=item.get('Type', '--no type found'),  # File or Directory
@@ -84,6 +90,7 @@ def processAttributesRar(item):
     )
 
 def getRarExecutablePath(throwIfNotFound=True):
+    ""
     from .plugin_configreader import getExecutablePathFromPrefs
     fallbackGuesses = [r"C:\Program Files\WinRAR\RAR.exe"]
     return getExecutablePathFromPrefs('rar', throwIfNotFound=throwIfNotFound,fallbacksToTry=fallbackGuesses)

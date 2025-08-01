@@ -96,6 +96,11 @@ def addAllToZip(
     recurse=True,
     **kwargs,
 ):
+    """Create a zip file. Input should be path to a file or directory.
+    I recommend ZipMethods.LZMA for better compression.
+    If you set the flag alreadyCompressedAsStore, known binary formats
+    like jpg and png will be set to STORE: this way you won't waste cpu cycles
+    trying to compress something that's already compressed."""
     if creatingNewArchive:
         assertTrue(not _files.exists(zipPath), 'already exists')
 
@@ -143,6 +148,9 @@ def addAllToZip(
 def getContents(
     archive, verbose=True, silenceWarnings=False, pword=None, okToFallbackTo7zForRar=False, alwaysUse7z=False
 ):
+    """List contents of the zip, 7z, rar, or other type of archive.
+    Details are provided about each item: ``Path, Type, Modified,
+    CRC, Size, PackedSize, and Raw (raw data about the item)``"""
     results = None
     if not alwaysUse7z and archive.lower().endswith('.rar'):
         rar = _plugin_compression_rar.getRarExecutablePath(throwIfNotFound=False)

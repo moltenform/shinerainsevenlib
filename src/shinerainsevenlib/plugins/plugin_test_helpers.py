@@ -4,6 +4,7 @@ import fnmatch as _fnmatch
 import inspect as _inspect
 
 def doTestSrssByLines(fn, sInput, exitAfterOneFailure=True):
+    "Help people write automated tests quickly by putting the tests in a string"
     from .. import core as _srss
     lines = _srss.strToList(sInput)
     failureSeen = False

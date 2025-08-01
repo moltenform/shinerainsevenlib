@@ -54,6 +54,9 @@ def imageTypeFromContents(path, treatMpoAsJpg=True):
     return imFormat
 
 def getAudAndVidCodec(inPath, ffmpegPath='ffmpeg'):
+    """Given a container format, determine the actual encoding.
+    For example, a .mp4 video could internally be x264 or x265,
+    and the audio could be aac or wav."""
     results = _srss.Bucket(audFormat=None, vidFormat=None, fullResults=None, err=None)
     try:
         _getAudAndVidCodecImpl(inPath, results, ffmpegPath=ffmpegPath)
