@@ -145,7 +145,7 @@ class SrssFileIterator:
     """
     Helpful for file iteration,
     adding some extra features to files.recurseFiles.
-    Very useful for skipping big node_modules directories.
+    Can be used to skip node_modules directories.
     """
     def __init__(self, rootOrListOfRoots, fnIncludeTheseFiles=None,
                  fnFilterDirs=None,
