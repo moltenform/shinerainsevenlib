@@ -7,6 +7,8 @@ import pprint as _pprint
 import random as _random
 import os as _os
 import sys as _sys
+import re as _re
+
 
 from .m2_core_data_structures import *
 
@@ -154,3 +156,127 @@ def startThread(fn, args=None):
     t.start()
 
 # endregion
+
+# region temp file helpers
+
+def _getTrashDirPath(originalFile):
+    from ..plugins.plugin_configreader import getSsrsInternalPrefs
+
+    prefs = getSsrsInternalPrefs()
+    trashDir = prefs.parsed.main.get('trashDir') or 'default'
+    
+    if trashDir == 'default':
+        # likely to be writable, which is good
+        return _os.path.expanduser('~/trash')
+    elif trashDir == 'recycleBin':
+        return 'recycleBin'
+    elif trashDir == 'currentDriveDataLocalTrash':
+        if _sys.platform.startswith('win'):
+            originalFileFull = _os.path.abspath(originalFile)
+            assertTrue(_re.match(r'^[a-zA-Z]:', originalFileFull), 'originalFileFull should be absolute path', originalFileFull)
+            driveLetter = originalFileFull[0]
+            return driveLetter + ':/data/local/trash'
+        else:
+            return _os.path.expanduser('~/data/local/trash')
+    else:
+        if _os.path.isabs(trashDir):
+            # it looks like an absolute path
+            return trashDir
+        else:
+            # it's a relative path or misspelling of a known option
+            raise ShineRainSevenLibError(longStr('''invalid trashDir, please fix shinerainsevenlib.cfg.
+                expected "default" or "recycleBin" or an absolute path'''), trashDir)
+
+def _getTrashDirAndCreateIfNeeded(originalFile):
+    from .. import files
+
+    trashDir = _getTrashDirPath(originalFile)
+    if trashDir != 'recycleBin':
+        try:
+            files.makeDirs(trashDir)
+        except:
+            raise ShineRainSevenLibError('failed to create trash dir', trashDir)
+    
+    return trashDir
+
+# use an independent rng, so that other random sequences aren't disrupted
+_rngForSoftDeleteFile = IndependentRNG()
+def _getTrashFullDest(path, trashDir):
+    from .. import files
+    randomString = getRandomString(rng=_rngForSoftDeleteFile.rng)
+    
+    # as a prefix, the first 2 chars of the parent directory
+    prefix = files.getName(files.getParent(path))[0:2] + '_'
+    newPath = trashDir + files.sep + prefix + files.getName(path) + randomString
+    assertTrue(not files.exists(newPath), 'already exists', newPath)
+    return newPath
+
+
+def softDeleteFile(path, allowDirs=False, doTrace=False):
+    "Delete a file in a recoverable way, either OS Trash or a designated folder"
+    from .. import files
+    from .m4_core_ui import warn
+
+    assertTrue(files.exists(path), 'file not found', path)
+    assertTrue(allowDirs or not files.isDir(path), 'you cannot softDelete a dir', path)
+    trashDir = _getTrashDirAndCreateIfNeeded(path)
+    if trashDir == 'recycleBin':
+        try:
+            from send2trash import send2trash
+        except ImportError:
+            raise ShineRainSevenLibError('shinerainsevenlib.cfg says recycleBin, but send2trash not installed')
+        
+        if doTrace:
+            trace(f'softDeleteFile |on| {path} to recycleBin')
+        
+        send2trash(path)
+        return '<sent-to-trash>'
+
+    destPath = _getTrashFullDest(path, trashDir)
+    if doTrace:
+        trace(f'softDeleteFile |on| {path} to {destPath}')
+    
+    files.move(path, destPath)
+    return destPath
+
+def _getSoftTempDir(originalPath, preferEphemeral):
+    import tempfile
+    from ..plugins.plugin_configreader import getSsrsInternalPrefs
+
+    prefs = getSsrsInternalPrefs()
+    tempDir = prefs.parsed.main.get('tempDir') or 'default'
+    tempEphemeralDir = prefs.parsed.main.get('tempEphemeralDir') or 'default'
+    
+    if preferEphemeral:
+        if tempEphemeralDir == 'default':
+            return tempfile.gettempdir() + '/srsstemp-ephemeral'
+        else:
+            assertTrue(_os.path.isabs(tempEphemeralDir), 'shinerainsevenlib.cfg, tempEphemeralDir should be absolute path')
+            return tempEphemeralDir
+    else:
+        if tempDir == 'default':
+            return tempfile.gettempdir() + '/srsstemp'
+        else:
+            assertTrue(_os.path.isabs(tempDir), 'shinerainsevenlib.cfg, tempDir should be absolute path')
+            return tempDir
+
+def _getTempDirAndCreateIfNeeded(originalPath, preferEphemeral):
+    from .. import files
+
+    tempDir = _getSoftTempDir(originalPath, preferEphemeral)
+    try:
+        files.makeDirs(tempDir)
+    except:
+        raise ShineRainSevenLibError('failed to create trash dir', tempDir)
+    return tempDir
+
+def getSoftTempDir(path='', preferEphemeral=False):
+    ret = _getTempDirAndCreateIfNeeded(path, preferEphemeral)
+    assertTrue(_os.path.isdir(ret), 'temp dir not a directory', ret)
+    return ret
+    
+
+
+# endregion
+
+

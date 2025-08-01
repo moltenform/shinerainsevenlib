@@ -1,6 +1,7 @@
 
 import os as _os
 import sys as _sys
+import re as _re
 import pprint as _pprint
 import unicodedata as _unicodedata
 import types as _types
@@ -9,7 +10,7 @@ import types as _types
 # region string helpers
 
 def strToList(s, replaceComments=True):
-    "Get a list of strings, useful for short scripts"
+    "When quickly writing code, get a list of strings, useful for short scripts"
     lines = standardNewlines(s).split('\n')
     if replaceComments:
         lines = [line for line in lines if not line.startswith('#')]
@@ -17,13 +18,20 @@ def strToList(s, replaceComments=True):
     return [line.strip() for line in lines if line.strip()]
 
 def strToSet(s, replaceComments=True):
-    "Get a set from a list of strings, useful for short scripts"
+    "When quickly writing code, get a set from a list of strings, useful for short scripts"
     lst = strToList(s, replaceComments=replaceComments)
     return set(lst)
 
 def standardNewlines(s):
     "Normalize newlines to \\n"
     return s.replace('\r\n', '\n').replace('\r', '\n')
+
+def longStr(s):
+    "When quickly writing code, get a string that spans multiple lines."
+    s = _re.sub(r'\r|\n', ' ', s)
+    s = _re.sub(r'\t', ' ', s)
+    s = _re.sub(r' +', ' ', s)
+    return s
 
 def easyToEnterFilepath(s, checkIfExists=True):
     '''Lets people easily copy/paste a filepath in, without worrying about quotes or extra whitespace.

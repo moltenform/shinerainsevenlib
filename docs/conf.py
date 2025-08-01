@@ -33,4 +33,13 @@ extensions = [
 autoapi_dirs = ['../src/shinerainsevenlib']
 autoapi_type = "python"
 
+def custom_skip(app, what, name, obj, skip, options):
+    # name is fully qualified, get only the last part
+    lastPartOfName = name.split(".")[-1]
+    if lastPartOfName.startswith("_"):
+        skip = True
+    return skip
+
+def setup(sphinx):
+    sphinx.connect("autoapi-skip-member", custom_skip)
 
