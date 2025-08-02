@@ -3,7 +3,7 @@
 # Released under the LGPLv2.1 License
 
 import pytest
-from src.shinerainsevenlib import *
+from src.shinerainsevenlib.standard import *
 
 class TestJslikeConcat:
     def testBasic(self):
@@ -208,5 +208,3 @@ class TestSplice:
         assert 'ab123ef' == jslike.splice('abcdef', 2, 2, '123')
         assert 'ab123def' == jslike.splice('abcdef', 2, 1, '123')
         assert 'ab123cdef' == jslike.splice('abcdef', 2, 0, '123')
-
-

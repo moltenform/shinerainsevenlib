@@ -167,7 +167,8 @@ def tracep(*args, always=False):
 
 class ShineRainSevenLibError(RuntimeError):
     def __init__(self, *args):
-        "You can pass in more than one string"
+        """For exceptions in the ShineRainSevenLib layer and not lower layers.
+        You can pass in more than one string"""
         combined = ' '.join(str(arg) for arg in args)
         super().__init__(combined)
 
