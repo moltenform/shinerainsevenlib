@@ -52,17 +52,5 @@
         d2['b'] = 3
         assert d1 != d2
 
-def dateParserAvailable():
-    "Checks if the dateparser module is available."
-    try:
-        import dateparser
-        return True
-    except ImportError:
-        return False
-
-if not dateParserAvailable:
-    print("We will skip dateparsing tests because the module dateparser is not found.")
-
-
 
     

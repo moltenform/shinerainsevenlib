@@ -341,8 +341,14 @@ class TestGetPrintable:
     def test_getPrintableBytes(self):
         assert 'abc' == getPrintable(b'abc')
 
+    def test_getPrintableWithUniCharsIgnore(self):
+        assert 'kuon' == getPrintable(u'\u1E31\u1E77\u1E53\u006E', okToIgnore=True)
+
     def test_getPrintableWithUniChars(self):
         assert 'k?u?o??n' == getPrintable(u'\u1E31\u1E77\u1E53\u006E')
+
+    def test_getPrintableWithUniCharsSimple(self):
+        assert 'de?f' == getPrintable(u'déf')
 
     def test_getPrintableWithUniCompositeSequence(self):
         assert 'k?u?o??n' == getPrintable(u'\u006B\u0301\u0075\u032D\u006F\u0304\u0301\u006E')

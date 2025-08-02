@@ -117,5 +117,7 @@ disable = "C0103,W0401,C0116,C0114, W0614,R0911,R0912,C0415,W0611,R0913,C0209,C0
 
 [tool.coverage.report]
 exclude_also = [
-    "def alert"
+    "def getTraceback",
+    "def assertWarn",
+    "def assertWarnEq"
 ]

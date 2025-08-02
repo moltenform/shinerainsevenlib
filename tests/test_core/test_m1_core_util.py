@@ -8,6 +8,7 @@ import pytest
 import time
 import os
 import re
+import datetime
 from src.shinerainsevenlib.standard import *
 from src.shinerainsevenlib.core import *
 from common import fixture_dir
@@ -284,6 +285,20 @@ class TestToValidFilename:
         with pytest.raises(AssertionError):
             toValidFilename(s, dirsepOk=True, maxLen=50)
 
+
+def dateParserAvailable():
+    "Checks if the dateparser module is available."
+    try:
+        import dateparser
+        return True
+    except ImportError:
+        return False
+
+if not dateParserAvailable:
+    print("We will skip dateparsing tests because the module dateparser is not found.")
+
+
+
 @pytest.mark.skipif('not dateParserAvailable()')
 class TestDateParsing:
     def test_spanish_dates_should_not_parsed(self):
@@ -365,12 +380,24 @@ class TestDateParsing:
         assert 1362456244000 - 86400000 == test2
         test3 = uu.getDaysBeforeInMilliseconds('3/5/2013 4:04:04 GMT', 100)
         assert 1362456244000 - 100 * 86400000 == test3
+    
+    def test_getDaysBefore(self):
+        dt = datetime.datetime(2013, 3, 5, 4, 4, 4)
+        uu = EnglishDateParserWrapper()
+        got = uu.getDaysBefore(dt, 5)
+        assert got == datetime.datetime(2013, 2, 28, 4, 4, 4)
+        
 
     def test_render_time(self):
         sampleMillisTime = 1676603866779
         assert '02/16/2023 07:17:46 PM' == renderMillisTime(sampleMillisTime)
         assert '2023-02-16 07:17:46' == renderMillisTimeStandard(sampleMillisTime)
 
+    def test_toUnixMillis(self):
+        uu = EnglishDateParserWrapper()
+        got = uu.toUnixMilliseconds('3/5/2013 4:04:04 GMT')
+        assert got == 1362456244000
+        
 
 class TestRegexWrappers:
     # replaceMustExist
@@ -389,6 +416,9 @@ class TestRegexWrappers:
 
     def test_replaceWholeWordWithCasing(self):
         assert 'and A fad pineapple A da' == reReplaceWholeWord('and a fad pineapple a da', 'a', 'A')
+
+    def test_replaceAll(self):
+        assert 'aBc B aBc' == reReplace('abc b abc', 'b', 'B')
 
     # searchWholeWord
     def test_searchWholeWordFound(self):
@@ -431,12 +461,25 @@ class TestStripHtml:
         assert 'a b c d e', stripHtmlTags('a b c<abc><b>d</abc>e')
 
 
+class TestReplaceAscii:
+    def testReplaceNonAsciiWith(self):
+        assert replaceNonAsciiWith('aéaé', '<>') == 'a<>a<>'
+        assert replaceNonAsciiWith('aeae', '<>') == 'aeae'
+        assert containsNonAscii('aéaé')
+        assert not containsNonAscii('aeae')
+
+
 class TestObjectHelpers:
     def testGetObjAttributes(self):
-        test = Bucket(a=1, b=2)
+        class BasicBucket:
+            def __init__(self, **kwargs):
+                for key, val in kwargs.items():
+                    object.__setattr__(self, key, val)
+
+        test = BasicBucket(a=1, b=2)
         assert sorted(getObjAttributes(test)) == ['a', 'b']
 
-        test = Bucket(a=1, c=3)
+        test = BasicBucket(a=1, c=3)
         test._hidden = 4
         assert sorted(getObjAttributes(test)) == ['a', 'c']
 
@@ -445,15 +488,26 @@ class TestObjectHelpers:
         assert getClassNameFromInstance(test) == 'Bucket'
 
 class TestCompatFunctions:
-    def testBasic(self):
-        assert endsWith('abc', 'bc')
-        assert not endsWith('abc', 'bd')
-        assert endsWith(b'abc', b'bc')
-        assert not endsWith(b'abc', b'bd')
+    def testStartswith(self):
         assert startsWith('abc', 'ab')
         assert not startsWith('abc', 'ac')
         assert startsWith(b'abc', b'ab')
         assert not startsWith(b'abc', b'ac')
+        assert startsWith(b'abc', 'ab')
+        assert not startsWith(b'abc', 'ac')
+        assert startsWith('abc', b'ab')
+        assert not startsWith('abc', b'ac')
+
+    def testEndwsith(self):
+        assert endsWith('abc', 'bc')
+        assert not endsWith('abc', 'bd')
+        assert endsWith(b'abc', b'bc')
+        assert not endsWith(b'abc', b'bd')
+        assert endsWith(b'abc', 'bc')
+        assert not endsWith(b'abc', 'bd')
+        assert endsWith('abc', b'bc')
+        assert not endsWith('abc', b'bd')
+
     
     def testBytesHelpers(self):
         assert list(iterBytes(b'abc')) == [b'a', b'b', b'c']

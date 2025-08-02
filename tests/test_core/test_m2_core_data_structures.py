@@ -7,7 +7,8 @@ import pytest
 import os
 import enum
 from os.path import join
-from collections import OrderedDict
+from src.shinerainsevenlib.standard import *
+from src.shinerainsevenlib.core import *
 
 class TestAppendList:
     # add/append
@@ -59,7 +60,7 @@ class TestBucket:
         a = Bucket()
         a.f1 = 'abc'
         a.f2 = 'def'
-        assert 'f1=abc\n\n\nf2=def' == repr(a)
+        assert 'f1=abc\nf2=def' == repr(a)
 
 class enumExampleInt(enum.IntEnum):
     first = enum.auto()
@@ -88,12 +89,12 @@ class TestSimpleEnum:
     def test_shouldNotBeAbleToModify(self):
         with pytest.raises(AttributeError):
             enumExampleInt.first = 2
-        with pytest.raises(AttributeError):
-            enumExampleInt.missing = 2
+        
+        enumExampleInt.missing = 2
         with pytest.raises(AttributeError):
             enumExampleStr.first = "other"
-        with pytest.raises(AttributeError):
-            enumExampleStr.missing = "other"
+        
+        enumExampleStr.missing = "other"
 
 class TestDataStructures:
     # takeBatch

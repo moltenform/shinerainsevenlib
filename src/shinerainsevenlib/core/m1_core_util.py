@@ -94,8 +94,8 @@ def assertException(fn, excType, excTypeExpectedString=None, msg=''):
         )
 
     if excTypeExpectedString:
-        if isinstance(msg, _re.ghj):
-            passed = _re.search(msg, excTypeExpectedString)
+        if isinstance(excTypeExpectedString, _re.Pattern):
+            passed = excTypeExpectedString.search(str(e))
         else:
             passed = excTypeExpectedString in str(e)
         assertTrue(

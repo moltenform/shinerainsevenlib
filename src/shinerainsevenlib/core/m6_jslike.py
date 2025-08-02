@@ -91,6 +91,6 @@ def splice(s, insertionPoint, lenToDelete=0, newText=''):
 
 def spliceSpan(s, span, newText):
     "Provide a span [startIndex, stopIndex] to be replaced with newText"
-    _m5_batch_util.assertEq(2, len(span), 'expected [startIndex, stopIndex]')
-    _m5_batch_util.assertTrue(span[1] >= span[0])
+    _m2_core_data_structures.assertEq(2, len(span), 'expected [startIndex, stopIndex]')
+    _m2_core_data_structures.assertTrue(span[1] >= span[0])
     return splice(s, span[0], span[1] - span[0], newText)
