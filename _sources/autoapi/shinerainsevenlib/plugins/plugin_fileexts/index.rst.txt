@@ -1,0 +1,84 @@
+shinerainsevenlib.plugins.plugin_fileexts
+=========================================
+
+.. py:module:: shinerainsevenlib.plugins.plugin_fileexts
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   shinerainsevenlib.plugins.plugin_fileexts.imageExtensions
+   shinerainsevenlib.plugins.plugin_fileexts.vidExtensions
+   shinerainsevenlib.plugins.plugin_fileexts.audExtensions
+   shinerainsevenlib.plugins.plugin_fileexts.archiveExtensions
+   shinerainsevenlib.plugins.plugin_fileexts.alreadyCompressedExt
+   shinerainsevenlib.plugins.plugin_fileexts.moreNonTextual
+   shinerainsevenlib.plugins.plugin_fileexts.documentExtensions
+   shinerainsevenlib.plugins.plugin_fileexts.exeExt
+   shinerainsevenlib.plugins.plugin_fileexts.warnExt
+   shinerainsevenlib.plugins.plugin_fileexts.mostCommonImageExt
+   shinerainsevenlib.plugins.plugin_fileexts.mostCommonImageExtAlternatives
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   shinerainsevenlib.plugins.plugin_fileexts.extensionPossiblyExecutable
+   shinerainsevenlib.plugins.plugin_fileexts.isCompressedTarExtension
+   shinerainsevenlib.plugins.plugin_fileexts.isSingleFileCompressionExtension
+   shinerainsevenlib.plugins.plugin_fileexts.removeDotsFromExts
+
+
+Module Contents
+---------------
+
+.. py:data:: imageExtensions
+
+.. py:data:: vidExtensions
+
+.. py:data:: audExtensions
+
+.. py:data:: archiveExtensions
+
+.. py:data:: alreadyCompressedExt
+
+.. py:data:: moreNonTextual
+
+.. py:data:: documentExtensions
+
+.. py:data:: exeExt
+
+.. py:data:: warnExt
+
+.. py:function:: extensionPossiblyExecutable(s)
+
+   Returns 'exe' if it looks executable,
+   Returns 'warn' if it is a document type that can include embedded scripts,
+   Returns False otherwise
+
+
+.. py:function:: isCompressedTarExtension(archive)
+
+   Is this a compressed tar archive, like example.tar.gz or example.tgz'
+   Not example.gz which should fall under isSingleFileCompressionExtension() instead
+
+
+.. py:function:: isSingleFileCompressionExtension(archive)
+
+   Is this a plain single-file-archive, like example.gz'
+   Not example.tar.gz which should fall under isCompressedTarExtension() instead
+
+
+.. py:data:: mostCommonImageExt
+
+.. py:data:: mostCommonImageExtAlternatives
+
+.. py:function:: removeDotsFromExts(obj)
+
+   Get a version of the dictionary without leading .
+
+

@@ -1,0 +1,121 @@
+shinerainsevenlib.plugins.plugin_compression
+============================================
+
+.. py:module:: shinerainsevenlib.plugins.plugin_compression
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   shinerainsevenlib.plugins.plugin_compression.paramsZip
+   shinerainsevenlib.plugins.plugin_compression.params7z
+   shinerainsevenlib.plugins.plugin_compression.checkArchiveIntegrity
+   shinerainsevenlib.plugins.plugin_compression.checkArchivePassword
+   shinerainsevenlib.plugins.plugin_compression.addAllTo7z
+   shinerainsevenlib.plugins.plugin_compression.addAllToRar
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   shinerainsevenlib.plugins.plugin_compression.ZipMethods
+   shinerainsevenlib.plugins.plugin_compression.Strength
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   shinerainsevenlib.plugins.plugin_compression.addAllToZip
+   shinerainsevenlib.plugins.plugin_compression.getContents
+   shinerainsevenlib.plugins.plugin_compression.runProcessThatCreatesOutput
+
+
+Module Contents
+---------------
+
+.. py:class:: ZipMethods
+
+   Bases: :py:obj:`enum.IntEnum`
+
+
+   Enum where members are also (and must be) ints
+
+
+   .. py:attribute:: Store
+      :value: 0
+
+
+
+   .. py:attribute:: Deflate
+      :value: 8
+
+
+
+   .. py:attribute:: Lzma
+      :value: 14
+
+
+
+.. py:class:: Strength
+
+   Bases: :py:obj:`enum.StrEnum`
+
+
+   Enum where members are also (and must be) strings
+
+
+   .. py:attribute:: Max
+
+
+   .. py:attribute:: Strong
+
+
+   .. py:attribute:: Default
+
+
+   .. py:attribute:: Store
+
+
+.. py:data:: paramsZip
+
+.. py:data:: params7z
+
+.. py:function:: addAllToZip(inPath, zipPath, method=ZipMethods.Deflate, alreadyCompressedAsStore=False, creatingNewArchive=True, pathPrefix=None, recurse=True, **kwargs)
+
+   Create a zip file. Input should be path to a file or directory.
+   I recommend ZipMethods.LZMA for better compression.
+   If you set the flag alreadyCompressedAsStore, known binary formats
+   like jpg and png will be set to STORE: this way you won't waste cpu cycles
+   trying to compress something that's already compressed.
+
+
+.. py:function:: getContents(archive, verbose=True, silenceWarnings=False, pword=None, okToFallbackTo7zForRar=False, alwaysUse7z=False)
+
+   List contents of the zip, 7z, rar, or other type of archive.
+   Details are provided about each item: ``Path, Type, Modified,
+   CRC, Size, PackedSize, and Raw (raw data about the item)``
+
+
+.. py:function:: runProcessThatCreatesOutput(listArgs, outPath, *, inPath=None, sizeMustBeGreaterThan=0, copyLastModTimeFromInput=False, handleUnicodeInputs=True)
+
+   Writes to a temp location first,
+   1) no risk of getting a half-made file (like if user hits ctrl-c halfway through).
+   2) handles unicode output names even if the external tool doesn't.
+   Example:
+   runProcessThatCreatesOutput(['magick', 'convert', '%input%', '%output%'], inPath='a.bmp', outPath='b.png')
+
+
+.. py:data:: checkArchiveIntegrity
+
+.. py:data:: checkArchivePassword
+
+.. py:data:: addAllTo7z
+
+.. py:data:: addAllToRar
+

@@ -1,0 +1,21 @@
+shinerainsevenlib.plugins
+=========================
+
+.. py:module:: shinerainsevenlib.plugins
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/shinerainsevenlib/plugins/plugin_compression/index
+   /autoapi/shinerainsevenlib/plugins/plugin_compression_7z/index
+   /autoapi/shinerainsevenlib/plugins/plugin_compression_rar/index
+   /autoapi/shinerainsevenlib/plugins/plugin_configreader/index
+   /autoapi/shinerainsevenlib/plugins/plugin_fileexts/index
+   /autoapi/shinerainsevenlib/plugins/plugin_media/index
+   /autoapi/shinerainsevenlib/plugins/plugin_store/index
+
+

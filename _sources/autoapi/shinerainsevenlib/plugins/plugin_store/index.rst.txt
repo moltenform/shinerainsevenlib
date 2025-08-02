@@ -1,0 +1,141 @@
+shinerainsevenlib.plugins.plugin_store
+======================================
+
+.. py:module:: shinerainsevenlib.plugins.plugin_store
+
+
+Exceptions
+----------
+
+.. autoapisummary::
+
+   shinerainsevenlib.plugins.plugin_store.SrssStoreException
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   shinerainsevenlib.plugins.plugin_store.SrssStoreBasic
+   shinerainsevenlib.plugins.plugin_store.SrssStore
+
+
+Module Contents
+---------------
+
+.. py:class:: SrssStoreBasic
+
+   SrssStore, a database abstraction layer
+
+   1) SrssStore should be about as simple as using pickle/jsonpickle, but scaling better
+   2) SrssStore handles common tasks like checking latest schema
+   3) SrssStore doesn't have pysqlite's unclear transaction semantics
+   4) better than jsonpickle because of indexes and reduced writing-to-disk
+   5) SrssStore is an abstract layer that can support different backends
+
+
+   .. py:attribute:: conn
+      :value: None
+
+
+
+   .. py:attribute:: in_txn
+      :value: False
+
+
+
+   .. py:method:: addSchema(cursor)
+      :abstractmethod:
+
+
+
+   .. py:method:: currentSchemaVersionNumber()
+      :abstractmethod:
+
+
+
+   .. py:method:: stampSchemaVersion(cursor)
+
+
+   .. py:method:: verifySchemaVersion()
+
+
+   .. py:method:: cursor()
+
+
+   .. py:method:: rowExists(cursor, *args)
+
+
+   .. py:method:: connectOrCreate(dbpath, flags=None)
+
+
+   .. py:method:: txnBegin()
+
+
+   .. py:method:: txnRollback()
+
+
+   .. py:method:: txnCommit()
+
+
+   .. py:method:: close()
+
+
+.. py:class:: SrssStore(dbpath=None, flags=None, autoConnect=True)
+
+   Bases: :py:obj:`SrssStoreBasic`
+
+
+   SrssStore, a database abstraction layer
+
+   1) SrssStore should be about as simple as using pickle/jsonpickle, but scaling better
+   2) SrssStore handles common tasks like checking latest schema
+   3) SrssStore doesn't have pysqlite's unclear transaction semantics
+   4) better than jsonpickle because of indexes and reduced writing-to-disk
+   5) SrssStore is an abstract layer that can support different backends
+
+
+   .. py:attribute:: re_check
+
+
+   .. py:attribute:: schema
+
+
+   .. py:attribute:: default_tbl
+
+
+   .. py:method:: getFieldNamesAndAttributes()
+      :abstractmethod:
+
+
+
+   .. py:method:: addSchema(cursor)
+
+
+   .. py:method:: insert(record_data, table=None)
+
+
+   .. py:method:: delete(conditions, table=None)
+
+
+   .. py:method:: update(conditions, updates, table=None)
+
+
+   .. py:method:: query(conditions, table=None, limit=None)
+
+
+   .. py:method:: queryOne(conditions, table=None)
+
+
+   .. py:method:: tupleToDict(tableSchema, tpl)
+
+
+.. py:exception:: SrssStoreException
+
+   Bases: :py:obj:`Exception`
+
+
+   Common base class for all non-exit exceptions.
+
+

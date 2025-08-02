@@ -1,0 +1,60 @@
+shinerainsevenlib.plugins.plugin_compression_7z
+===============================================
+
+.. py:module:: shinerainsevenlib.plugins.plugin_compression_7z
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   shinerainsevenlib.plugins.plugin_compression_7z.addAllTo7z
+   shinerainsevenlib.plugins.plugin_compression_7z.checkArchivePasswordVia7z
+   shinerainsevenlib.plugins.plugin_compression_7z.checkArchiveIntegrityVia7z
+   shinerainsevenlib.plugins.plugin_compression_7z.getPlaceholderPword
+   shinerainsevenlib.plugins.plugin_compression_7z.getContentsVia7z
+   shinerainsevenlib.plugins.plugin_compression_7z.get7zExecutablePath
+   shinerainsevenlib.plugins.plugin_compression_7z.getCksumExecutablePath
+
+
+Module Contents
+---------------
+
+.. py:function:: addAllTo7z(inPath, outPath, effort=None, multiThread='off', solid=True)
+
+   Create a zip or 7z file. Provide the path to a directory or file.
+
+
+.. py:function:: checkArchivePasswordVia7z(inPath, pword=None)
+
+   Check if password is correct
+
+
+.. py:function:: checkArchiveIntegrityVia7z(inPath, pword=None)
+
+   Check the integrity of a zip, rar, 7z, or other archive format
+
+
+.. py:function:: getPlaceholderPword(pword)
+
+   When sending commands to 7z, always provide a dummy password
+
+
+.. py:function:: getContentsVia7z(archive, verbose, silenceWarnings, pword=None)
+
+   List contents of the zip, 7z, rar, or other type of archive.
+   Details are provided about each item: ``Path, Type, Modified,
+   CRC, Size, PackedSize, and Raw (raw data about the item)``
+
+
+.. py:function:: get7zExecutablePath()
+
+   Get path to 7z binary
+
+
+.. py:function:: getCksumExecutablePath()
+
+   Get path to cksum binary
+
+

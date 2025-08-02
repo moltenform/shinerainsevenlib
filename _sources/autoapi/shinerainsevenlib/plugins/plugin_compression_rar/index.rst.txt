@@ -1,0 +1,39 @@
+shinerainsevenlib.plugins.plugin_compression_rar
+================================================
+
+.. py:module:: shinerainsevenlib.plugins.plugin_compression_rar
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   shinerainsevenlib.plugins.plugin_compression_rar.addAllToRar
+   shinerainsevenlib.plugins.plugin_compression_rar.getContentsViaRar
+   shinerainsevenlib.plugins.plugin_compression_rar.processAttributesRar
+   shinerainsevenlib.plugins.plugin_compression_rar.getRarExecutablePath
+
+
+Module Contents
+---------------
+
+.. py:function:: addAllToRar(inPath, outPath, effort=None, formatVersion='4', dictSize=None, solid=True, pword=None)
+
+   Create a rar or zip archive. inPath should be the path to a directory or file.
+
+
+.. py:function:: getContentsViaRar(archive, verbose, _silenceWarnings, pword=None)
+
+   List contents of the zip, 7z, rar, or other type of archive.
+   Details are provided about each item: ``Path, Type, Modified,
+   CRC, Size, PackedSize, and Raw (raw data about the item)``
+
+
+.. py:function:: processAttributesRar(item)
+
+   Standardize the data coming in from rar
+
+
+.. py:function:: getRarExecutablePath(throwIfNotFound=True)
+

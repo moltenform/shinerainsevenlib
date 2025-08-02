@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>shinerainsevenlib.files.m1_files_listing &#8212; shinerainsevenlib 1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+    <script src="../../../../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="shinerainsevenlib.files.m2_files_higher" href="../m2_files_higher/index.html" />
+    <link rel="prev" title="shinerainsevenlib.files.m0_files_wrappers" href="../m0_files_wrappers/index.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-shinerainsevenlib.files.m1_files_listing">
+<span id="shinerainsevenlib-files-m1-files-listing"></span><h1>shinerainsevenlib.files.m1_files_listing<a class="headerlink" href="#module-shinerainsevenlib.files.m1_files_listing" title="Link to this heading">¶</a></h1>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.files.m1_files_listing.exeSuffix" title="shinerainsevenlib.files.m1_files_listing.exeSuffix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">exeSuffix</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.files.m1_files_listing.FileInfoEntryWrapper" title="shinerainsevenlib.files.m1_files_listing.FileInfoEntryWrapper"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FileInfoEntryWrapper</span></code></a></p></td>
+<td><p>Helper class to make recurseFileInfo more convenient to use.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.files.m1_files_listing.listDirs" title="shinerainsevenlib.files.m1_files_listing.listDirs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">listDirs</span></code></a>(path, *[, filenamesOnly, recurse])</p></td>
+<td><p>Return directories within a directory</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.files.m1_files_listing.listFiles" title="shinerainsevenlib.files.m1_files_listing.listFiles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">listFiles</span></code></a>(path, *[, recurse, filenamesOnly])</p></td>
+<td><p>Return files within a directory</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.files.m1_files_listing.recurseFiles" title="shinerainsevenlib.files.m1_files_listing.recurseFiles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">recurseFiles</span></code></a>(root, *[, filenamesOnly, allowedExts, ...])</p></td>
+<td><p>Return files within a directory (recursively).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.files.m1_files_listing.recurseDirs" title="shinerainsevenlib.files.m1_files_listing.recurseDirs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">recurseDirs</span></code></a>(root, *[, filenamesOnly, fnFilterDirs, ...])</p></td>
+<td><p>Return directories within a directory (recursively).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.files.m1_files_listing.recurseFileInfo" title="shinerainsevenlib.files.m1_files_listing.recurseFileInfo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">recurseFileInfo</span></code></a>(root[, allowedExts])</p></td>
+<td><p>Convenient interface to python 3's file iterator.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.files.m1_files_listing.listFileInfo" title="shinerainsevenlib.files.m1_files_listing.listFileInfo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">listFileInfo</span></code></a>(root[, followSymlinks, filesOnly])</p></td>
+<td><p>Like recurseFileInfo, but does not recurse.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.files.m1_files_listing.getDirectorySizeRecurse" title="shinerainsevenlib.files.m1_files_listing.getDirectorySizeRecurse"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getDirectorySizeRecurse</span></code></a>(dirPath[, followSymlinks, ...])</p></td>
+<td><p>Return the total size of a directory</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m1_files_listing.listDirs">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.files.m1_files_listing.</span></span><span class="sig-name descname"><span class="pre">listDirs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">filenamesOnly</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recurse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m1_files_listing.listDirs" title="Link to this definition">¶</a></dt>
+<dd><p>Return directories within a directory</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m1_files_listing.listFiles">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.files.m1_files_listing.</span></span><span class="sig-name descname"><span class="pre">listFiles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">recurse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filenamesOnly</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m1_files_listing.listFiles" title="Link to this definition">¶</a></dt>
+<dd><p>Return files within a directory</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m1_files_listing.exeSuffix">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.files.m1_files_listing.</span></span><span class="sig-name descname"><span class="pre">exeSuffix</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'.exe'</span></em><a class="headerlink" href="#shinerainsevenlib.files.m1_files_listing.exeSuffix" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m1_files_listing.recurseFiles">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.files.m1_files_listing.</span></span><span class="sig-name descname"><span class="pre">recurseFiles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">filenamesOnly</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowedExts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fnFilterDirs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">includeFiles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">includeDirs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topDown</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">followSymlinks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m1_files_listing.recurseFiles" title="Link to this definition">¶</a></dt>
+<dd><p>Return files within a directory (recursively).
+You can provide a fnFilterDirs to filter out any directories not to traverse into.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m1_files_listing.recurseDirs">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.files.m1_files_listing.</span></span><span class="sig-name descname"><span class="pre">recurseDirs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">filenamesOnly</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fnFilterDirs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">topDown</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">followSymlinks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m1_files_listing.recurseDirs" title="Link to this definition">¶</a></dt>
+<dd><p>Return directories within a directory (recursively).
+You can provide a fnFilterDirs to filter out any directories not to traverse into.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m1_files_listing.FileInfoEntryWrapper">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.files.m1_files_listing.</span></span><span class="sig-name descname"><span class="pre">FileInfoEntryWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m1_files_listing.FileInfoEntryWrapper" title="Link to this definition">¶</a></dt>
+<dd><p>Helper class to make recurseFileInfo more convenient to use.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m1_files_listing.FileInfoEntryWrapper.obj">
+<span class="sig-name descname"><span class="pre">obj</span></span><a class="headerlink" href="#shinerainsevenlib.files.m1_files_listing.FileInfoEntryWrapper.obj" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m1_files_listing.FileInfoEntryWrapper.path">
+<span class="sig-name descname"><span class="pre">path</span></span><a class="headerlink" href="#shinerainsevenlib.files.m1_files_listing.FileInfoEntryWrapper.path" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m1_files_listing.FileInfoEntryWrapper.isDir">
+<span class="sig-name descname"><span class="pre">isDir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m1_files_listing.FileInfoEntryWrapper.isDir" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m1_files_listing.FileInfoEntryWrapper.isFile">
+<span class="sig-name descname"><span class="pre">isFile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m1_files_listing.FileInfoEntryWrapper.isFile" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m1_files_listing.FileInfoEntryWrapper.short">
+<span class="sig-name descname"><span class="pre">short</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m1_files_listing.FileInfoEntryWrapper.short" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m1_files_listing.FileInfoEntryWrapper.size">
+<span class="sig-name descname"><span class="pre">size</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m1_files_listing.FileInfoEntryWrapper.size" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m1_files_listing.FileInfoEntryWrapper.mtime">
+<span class="sig-name descname"><span class="pre">mtime</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m1_files_listing.FileInfoEntryWrapper.mtime" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m1_files_listing.FileInfoEntryWrapper.getLastModTime">
+<span class="sig-name descname"><span class="pre">getLastModTime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">TimeUnits.Seconds</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m1_files_listing.FileInfoEntryWrapper.getLastModTime" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m1_files_listing.FileInfoEntryWrapper.getMetadataChangeTime">
+<span class="sig-name descname"><span class="pre">getMetadataChangeTime</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m1_files_listing.FileInfoEntryWrapper.getMetadataChangeTime" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m1_files_listing.FileInfoEntryWrapper.getCreateTime">
+<span class="sig-name descname"><span class="pre">getCreateTime</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m1_files_listing.FileInfoEntryWrapper.getCreateTime" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m1_files_listing.recurseFileInfo">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.files.m1_files_listing.</span></span><span class="sig-name descname"><span class="pre">recurseFileInfo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowedExts</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m1_files_listing.recurseFileInfo" title="Link to this definition">¶</a></dt>
+<dd><p>Convenient interface to python 3’s file iterator.
+On Windows this can be very fast because calls to get file properties like size
+don’t require an extra system call.
+You can provide a fnFilterDirs to filter out any directories not to traverse into.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m1_files_listing.listFileInfo">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.files.m1_files_listing.</span></span><span class="sig-name descname"><span class="pre">listFileInfo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">followSymlinks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filesOnly</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m1_files_listing.listFileInfo" title="Link to this definition">¶</a></dt>
+<dd><p>Like recurseFileInfo, but does not recurse.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m1_files_listing.getDirectorySizeRecurse">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.files.m1_files_listing.</span></span><span class="sig-name descname"><span class="pre">getDirectorySizeRecurse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dirPath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">followSymlinks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fnFilterDirs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fnDirectExceptionsTo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m1_files_listing.getDirectorySizeRecurse" title="Link to this definition">¶</a></dt>
+<dd><p>Return the total size of a directory</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">shinerainsevenlib</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/example_usage.html">Example Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/optional_dependencies.html">Optional Dependencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/editing_this_project.html">Editing This Project</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">shinerainsevenlib</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">API Reference</a><ul>
+  <li><a href="../../index.html">shinerainsevenlib</a><ul>
+  <li><a href="../index.html">shinerainsevenlib.files</a><ul>
+      <li>Previous: <a href="../m0_files_wrappers/index.html" title="previous chapter">shinerainsevenlib.files.m0_files_wrappers</a></li>
+      <li>Next: <a href="../m2_files_higher/index.html" title="next chapter">shinerainsevenlib.files.m2_files_higher</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Ben Fisher.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../../../../_sources/autoapi/shinerainsevenlib/files/m1_files_listing/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

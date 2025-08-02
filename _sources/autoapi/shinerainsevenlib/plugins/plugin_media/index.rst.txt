@@ -1,0 +1,49 @@
+shinerainsevenlib.plugins.plugin_media
+======================================
+
+.. py:module:: shinerainsevenlib.plugins.plugin_media
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   shinerainsevenlib.plugins.plugin_media.aFormatsFfmpeg
+   shinerainsevenlib.plugins.plugin_media.vFormatsFfmpeg
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   shinerainsevenlib.plugins.plugin_media.imageTypeFromExtension
+   shinerainsevenlib.plugins.plugin_media.imageTypeFromContents
+   shinerainsevenlib.plugins.plugin_media.getAudAndVidCodec
+
+
+Module Contents
+---------------
+
+.. py:function:: imageTypeFromExtension(path)
+
+   Gets the image type like `jpg`, `png`, etc
+
+
+.. py:function:: imageTypeFromContents(path, treatMpoAsJpg=True)
+
+   Gets the image type like `jpg`, `png`, etc. Works even if extension is wrong.
+
+
+.. py:function:: getAudAndVidCodec(inPath, ffmpegPath='ffmpeg')
+
+   Given a container format, determine the actual encoding.
+   For example, a .mp4 video could internally be x264 or x265,
+   and the audio could be aac or wav.
+
+
+.. py:data:: aFormatsFfmpeg
+
+.. py:data:: vFormatsFfmpeg
+

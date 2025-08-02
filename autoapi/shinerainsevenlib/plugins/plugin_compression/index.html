@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>shinerainsevenlib.plugins.plugin_compression &#8212; shinerainsevenlib 1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+    <script src="../../../../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="shinerainsevenlib.plugins.plugin_compression_7z" href="../plugin_compression_7z/index.html" />
+    <link rel="prev" title="shinerainsevenlib.plugins" href="../index.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-shinerainsevenlib.plugins.plugin_compression">
+<span id="shinerainsevenlib-plugins-plugin-compression"></span><h1>shinerainsevenlib.plugins.plugin_compression<a class="headerlink" href="#module-shinerainsevenlib.plugins.plugin_compression" title="Link to this heading">¶</a></h1>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.plugins.plugin_compression.paramsZip" title="shinerainsevenlib.plugins.plugin_compression.paramsZip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paramsZip</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.plugins.plugin_compression.params7z" title="shinerainsevenlib.plugins.plugin_compression.params7z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">params7z</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.plugins.plugin_compression.checkArchiveIntegrity" title="shinerainsevenlib.plugins.plugin_compression.checkArchiveIntegrity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">checkArchiveIntegrity</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.plugins.plugin_compression.checkArchivePassword" title="shinerainsevenlib.plugins.plugin_compression.checkArchivePassword"><code class="xref py py-obj docutils literal notranslate"><span class="pre">checkArchivePassword</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.plugins.plugin_compression.addAllTo7z" title="shinerainsevenlib.plugins.plugin_compression.addAllTo7z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">addAllTo7z</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.plugins.plugin_compression.addAllToRar" title="shinerainsevenlib.plugins.plugin_compression.addAllToRar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">addAllToRar</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.plugins.plugin_compression.ZipMethods" title="shinerainsevenlib.plugins.plugin_compression.ZipMethods"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ZipMethods</span></code></a></p></td>
+<td><p>Enum where members are also (and must be) ints</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.plugins.plugin_compression.Strength" title="shinerainsevenlib.plugins.plugin_compression.Strength"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Strength</span></code></a></p></td>
+<td><p>Enum where members are also (and must be) strings</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.plugins.plugin_compression.addAllToZip" title="shinerainsevenlib.plugins.plugin_compression.addAllToZip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">addAllToZip</span></code></a>(inPath, zipPath[, method, ...])</p></td>
+<td><p>Create a zip file. Input should be path to a file or directory.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.plugins.plugin_compression.getContents" title="shinerainsevenlib.plugins.plugin_compression.getContents"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getContents</span></code></a>(archive[, verbose, silenceWarnings, ...])</p></td>
+<td><p>List contents of the zip, 7z, rar, or other type of archive.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.plugins.plugin_compression.runProcessThatCreatesOutput" title="shinerainsevenlib.plugins.plugin_compression.runProcessThatCreatesOutput"><code class="xref py py-obj docutils literal notranslate"><span class="pre">runProcessThatCreatesOutput</span></code></a>(listArgs, outPath, *[, ...])</p></td>
+<td><p>Writes to a temp location first,</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="shinerainsevenlib.plugins.plugin_compression.ZipMethods">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.plugins.plugin_compression.</span></span><span class="sig-name descname"><span class="pre">ZipMethods</span></span><a class="headerlink" href="#shinerainsevenlib.plugins.plugin_compression.ZipMethods" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">enum.IntEnum</span></code></p>
+<p>Enum where members are also (and must be) ints</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.plugins.plugin_compression.ZipMethods.Store">
+<span class="sig-name descname"><span class="pre">Store</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#shinerainsevenlib.plugins.plugin_compression.ZipMethods.Store" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.plugins.plugin_compression.ZipMethods.Deflate">
+<span class="sig-name descname"><span class="pre">Deflate</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">8</span></em><a class="headerlink" href="#shinerainsevenlib.plugins.plugin_compression.ZipMethods.Deflate" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.plugins.plugin_compression.ZipMethods.Lzma">
+<span class="sig-name descname"><span class="pre">Lzma</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">14</span></em><a class="headerlink" href="#shinerainsevenlib.plugins.plugin_compression.ZipMethods.Lzma" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="shinerainsevenlib.plugins.plugin_compression.Strength">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.plugins.plugin_compression.</span></span><span class="sig-name descname"><span class="pre">Strength</span></span><a class="headerlink" href="#shinerainsevenlib.plugins.plugin_compression.Strength" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">enum.StrEnum</span></code></p>
+<p>Enum where members are also (and must be) strings</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.plugins.plugin_compression.Strength.Max">
+<span class="sig-name descname"><span class="pre">Max</span></span><a class="headerlink" href="#shinerainsevenlib.plugins.plugin_compression.Strength.Max" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.plugins.plugin_compression.Strength.Strong">
+<span class="sig-name descname"><span class="pre">Strong</span></span><a class="headerlink" href="#shinerainsevenlib.plugins.plugin_compression.Strength.Strong" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.plugins.plugin_compression.Strength.Default">
+<span class="sig-name descname"><span class="pre">Default</span></span><a class="headerlink" href="#shinerainsevenlib.plugins.plugin_compression.Strength.Default" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.plugins.plugin_compression.Strength.Store">
+<span class="sig-name descname"><span class="pre">Store</span></span><a class="headerlink" href="#shinerainsevenlib.plugins.plugin_compression.Strength.Store" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="shinerainsevenlib.plugins.plugin_compression.paramsZip">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.plugins.plugin_compression.</span></span><span class="sig-name descname"><span class="pre">paramsZip</span></span><a class="headerlink" href="#shinerainsevenlib.plugins.plugin_compression.paramsZip" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="shinerainsevenlib.plugins.plugin_compression.params7z">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.plugins.plugin_compression.</span></span><span class="sig-name descname"><span class="pre">params7z</span></span><a class="headerlink" href="#shinerainsevenlib.plugins.plugin_compression.params7z" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.plugins.plugin_compression.addAllToZip">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.plugins.plugin_compression.</span></span><span class="sig-name descname"><span class="pre">addAllToZip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inPath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zipPath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ZipMethods.Deflate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alreadyCompressedAsStore</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">creatingNewArchive</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pathPrefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recurse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.plugins.plugin_compression.addAllToZip" title="Link to this definition">¶</a></dt>
+<dd><p>Create a zip file. Input should be path to a file or directory.
+I recommend ZipMethods.LZMA for better compression.
+If you set the flag alreadyCompressedAsStore, known binary formats
+like jpg and png will be set to STORE: this way you won’t waste cpu cycles
+trying to compress something that’s already compressed.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.plugins.plugin_compression.getContents">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.plugins.plugin_compression.</span></span><span class="sig-name descname"><span class="pre">getContents</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">archive</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">silenceWarnings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pword</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">okToFallbackTo7zForRar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alwaysUse7z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.plugins.plugin_compression.getContents" title="Link to this definition">¶</a></dt>
+<dd><p>List contents of the zip, 7z, rar, or other type of archive.
+Details are provided about each item: <code class="docutils literal notranslate"><span class="pre">Path,</span> <span class="pre">Type,</span> <span class="pre">Modified,</span>
+<span class="pre">CRC,</span> <span class="pre">Size,</span> <span class="pre">PackedSize,</span> <span class="pre">and</span> <span class="pre">Raw</span> <span class="pre">(raw</span> <span class="pre">data</span> <span class="pre">about</span> <span class="pre">the</span> <span class="pre">item)</span></code></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.plugins.plugin_compression.runProcessThatCreatesOutput">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.plugins.plugin_compression.</span></span><span class="sig-name descname"><span class="pre">runProcessThatCreatesOutput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">listArgs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outPath</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">inPath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sizeMustBeGreaterThan</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copyLastModTimeFromInput</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handleUnicodeInputs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.plugins.plugin_compression.runProcessThatCreatesOutput" title="Link to this definition">¶</a></dt>
+<dd><p>Writes to a temp location first,
+1) no risk of getting a half-made file (like if user hits ctrl-c halfway through).
+2) handles unicode output names even if the external tool doesn’t.
+Example:
+runProcessThatCreatesOutput([‘magick’, ‘convert’, ‘%input%’, ‘%output%’], inPath=’a.bmp’, outPath=’b.png’)</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="shinerainsevenlib.plugins.plugin_compression.checkArchiveIntegrity">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.plugins.plugin_compression.</span></span><span class="sig-name descname"><span class="pre">checkArchiveIntegrity</span></span><a class="headerlink" href="#shinerainsevenlib.plugins.plugin_compression.checkArchiveIntegrity" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="shinerainsevenlib.plugins.plugin_compression.checkArchivePassword">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.plugins.plugin_compression.</span></span><span class="sig-name descname"><span class="pre">checkArchivePassword</span></span><a class="headerlink" href="#shinerainsevenlib.plugins.plugin_compression.checkArchivePassword" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="shinerainsevenlib.plugins.plugin_compression.addAllTo7z">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.plugins.plugin_compression.</span></span><span class="sig-name descname"><span class="pre">addAllTo7z</span></span><a class="headerlink" href="#shinerainsevenlib.plugins.plugin_compression.addAllTo7z" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="shinerainsevenlib.plugins.plugin_compression.addAllToRar">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.plugins.plugin_compression.</span></span><span class="sig-name descname"><span class="pre">addAllToRar</span></span><a class="headerlink" href="#shinerainsevenlib.plugins.plugin_compression.addAllToRar" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">shinerainsevenlib</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/example_usage.html">Example Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/optional_dependencies.html">Optional Dependencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/editing_this_project.html">Editing This Project</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">shinerainsevenlib</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">API Reference</a><ul>
+  <li><a href="../../index.html">shinerainsevenlib</a><ul>
+  <li><a href="../index.html">shinerainsevenlib.plugins</a><ul>
+      <li>Previous: <a href="../index.html" title="previous chapter">shinerainsevenlib.plugins</a></li>
+      <li>Next: <a href="../plugin_compression_7z/index.html" title="next chapter">shinerainsevenlib.plugins.plugin_compression_7z</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Ben Fisher.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../../../../_sources/autoapi/shinerainsevenlib/plugins/plugin_compression/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

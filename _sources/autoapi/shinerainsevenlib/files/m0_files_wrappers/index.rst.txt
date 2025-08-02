@@ -1,0 +1,255 @@
+shinerainsevenlib.files.m0_files_wrappers
+=========================================
+
+.. py:module:: shinerainsevenlib.files.m0_files_wrappers
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   shinerainsevenlib.files.m0_files_wrappers.rename
+   shinerainsevenlib.files.m0_files_wrappers.exists
+   shinerainsevenlib.files.m0_files_wrappers.join
+   shinerainsevenlib.files.m0_files_wrappers.split
+   shinerainsevenlib.files.m0_files_wrappers.isDir
+   shinerainsevenlib.files.m0_files_wrappers.isFile
+   shinerainsevenlib.files.m0_files_wrappers.getSize
+   shinerainsevenlib.files.m0_files_wrappers.rmDir
+   shinerainsevenlib.files.m0_files_wrappers.chDir
+   shinerainsevenlib.files.m0_files_wrappers.sep
+   shinerainsevenlib.files.m0_files_wrappers.lineSep
+   shinerainsevenlib.files.m0_files_wrappers.absPath
+   shinerainsevenlib.files.m0_files_wrappers.rmTree
+
+
+Exceptions
+----------
+
+.. autoapisummary::
+
+   shinerainsevenlib.files.m0_files_wrappers.OSFileRelatedError
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   shinerainsevenlib.files.m0_files_wrappers.TimeUnits
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   shinerainsevenlib.files.m0_files_wrappers.getParent
+   shinerainsevenlib.files.m0_files_wrappers.getName
+   shinerainsevenlib.files.m0_files_wrappers.createdTime
+   shinerainsevenlib.files.m0_files_wrappers.getExt
+   shinerainsevenlib.files.m0_files_wrappers.getWithDifferentExt
+   shinerainsevenlib.files.m0_files_wrappers.splitExt
+   shinerainsevenlib.files.m0_files_wrappers.delete
+   shinerainsevenlib.files.m0_files_wrappers.deleteSure
+   shinerainsevenlib.files.m0_files_wrappers.makeDirs
+   shinerainsevenlib.files.m0_files_wrappers.ensureEmptyDirectory
+   shinerainsevenlib.files.m0_files_wrappers.copy
+   shinerainsevenlib.files.m0_files_wrappers.move
+   shinerainsevenlib.files.m0_files_wrappers.getLastModTime
+   shinerainsevenlib.files.m0_files_wrappers.getCTime
+   shinerainsevenlib.files.m0_files_wrappers.getATime
+   shinerainsevenlib.files.m0_files_wrappers.setLastModTime
+   shinerainsevenlib.files.m0_files_wrappers.readAll
+   shinerainsevenlib.files.m0_files_wrappers.writeAll
+   shinerainsevenlib.files.m0_files_wrappers.isEmptyDir
+   shinerainsevenlib.files.m0_files_wrappers.fileContentsEqual
+   shinerainsevenlib.files.m0_files_wrappers.acrossDir
+
+
+Module Contents
+---------------
+
+.. py:data:: rename
+
+.. py:data:: exists
+
+.. py:data:: join
+
+.. py:data:: split
+
+.. py:data:: isDir
+
+.. py:data:: isFile
+
+.. py:data:: getSize
+
+.. py:data:: rmDir
+
+.. py:data:: chDir
+
+.. py:data:: sep
+   :value: '/'
+
+
+.. py:data:: lineSep
+   :value: Multiline-String
+
+   .. raw:: html
+
+      <details><summary>Show Value</summary>
+
+   .. code-block:: python
+
+      """
+      """
+
+   .. raw:: html
+
+      </details>
+
+
+
+.. py:data:: absPath
+
+.. py:data:: rmTree
+
+.. py:class:: TimeUnits
+
+   Bases: :py:obj:`enum.StrEnum`
+
+
+   Specify milliseconds vs seconds
+
+
+   .. py:attribute:: Milliseconds
+
+
+   .. py:attribute:: Seconds
+
+
+   .. py:attribute:: Nanoseconds
+
+
+.. py:function:: getParent(path)
+
+   From /path/to/file.ext to /path/to
+
+
+.. py:function:: getName(path)
+
+   From /path/to/file.ext to file.ext
+
+
+.. py:function:: createdTime(path)
+
+   The 'ctime' of the file
+
+
+.. py:function:: getExt(s, removeDot=True)
+
+   Get extension. removeDot determines whether result is '.jpg' or 'jpg'
+
+
+.. py:function:: getWithDifferentExt(s, extWithDot, onesToPreserve=None)
+
+   From /a/b/c.ext1 to /a/b/c.ext1
+
+   onesToPreserve is a list like ['.l.jxl', '.j.jxl']
+
+
+.. py:function:: splitExt(path, onesToPreserve=None)
+
+   From /a/b/c.ext1 to '/a/b/c' and '.ext1'
+   onesToPreserve is a list like ['.l.jxl', '.j.jxl']
+   , in which case '/a/b/c.l.jxl' will return '/a/b/c' and '.l.jxl'
+
+
+.. py:function:: delete(s, doTrace=False)
+
+   Delete a file
+
+
+.. py:function:: deleteSure(s, doTrace=False)
+
+   Delete a file and confirm it is no longer there
+
+
+.. py:function:: makeDirs(s)
+
+   Make dirs, OK if dir already exists. also, creates parent directory(s) if needed.
+
+
+.. py:function:: ensureEmptyDirectory(d)
+
+   Delete all contents, or raise exception if that fails
+
+
+.. py:function:: copy(srcFile, destFile, overwrite, doTrace=False, keepSameModifiedTime=False, allowDirs=False, createParent=False, traceOnly=False)
+
+   If overwrite is True, always overwrites if destination already exists.
+   if overwrite is False, always raises exception if destination already exists.
+
+
+.. py:function:: move(srcFile, destFile, overwrite, warnBetweenDrives=False, doTrace=False, allowDirs=False, createParent=False, traceOnly=False)
+
+   If overwrite is True, always overwrites if destination already exists.
+   if overwrite is False, always raises exception if destination already exists.
+
+
+.. py:function:: getLastModTime(path, units=TimeUnits.Seconds)
+
+   Last-modified time
+
+
+.. py:function:: getCTime(path, units=TimeUnits.Seconds)
+
+   The 'ctime' of a file
+
+
+.. py:function:: getATime(path, units=TimeUnits.Seconds)
+
+   The 'atime' of a file. In modern systems this isn't usually the last-accessed time.
+
+
+.. py:function:: setLastModTime(path, newVal, units=TimeUnits.Seconds)
+
+   Set the last-modified time of a file
+
+
+.. py:function:: readAll(path, mode='r', encoding=None)
+
+   Read entire file into string (mode=='r') or bytes (mode=='rb')
+   When reading as text, defaults to utf-8.
+
+
+.. py:function:: writeAll(path, content, mode='w', encoding=None, skipIfSameContent=False, updateTimeIfSameContent=True)
+
+   Write entire file. When writing text, defaults to utf-8.
+
+
+.. py:function:: isEmptyDir(dirPath)
+
+   Is a directory empty
+
+
+.. py:function:: fileContentsEqual(f1, f2)
+
+   Efficiently tests if the content of two files is the same
+
+
+.. py:function:: acrossDir(path, directoryFrom, directoryTo)
+
+   Get the other version of a path.
+   If path is '/path1/to/file.ext' and directoryFrom is '/path1' and directoryTo is '/path2', then return '/path2/to2/file.ext'
+
+
+.. py:exception:: OSFileRelatedError
+
+   Bases: :py:obj:`OSError`
+
+
+   Indicates a file-related exception
+
+
