@@ -125,6 +125,7 @@ class TestParseOrFallback:
         assert parseIntOrFallback('123   ') == 123
         assert parseIntOrFallback('') is None
         assert parseIntOrFallback(' ') is None
+        assert parseIntOrFallback('ab') is None
 
     def testFloatBasic(self):
         assert parseFloatOrFallback('1') == pytest.approx(1)
@@ -141,6 +142,7 @@ class TestParseOrFallback:
         assert parseFloatOrFallback('12.3   ') == pytest.approx(12.3)
         assert parseFloatOrFallback('') is None
         assert parseFloatOrFallback(' ') is None
+        assert parseFloatOrFallback('ab') is None
 
 
 class TestClampNumber:
@@ -218,18 +220,21 @@ class TestCompareAsSets:
 
 class TestExpectEqualityAsSets:
     def testExpectEqualityTwoListsAsSets(self):
-        l1 = 'a,b,c'.split(',')
-        l2 = 'a,b,c'.split(',')
-        assert expectEqualityTwoListsAsSets(l1, l2) == True
+        try:
+            setRedirectTraceCalls(lambda x: None)
+            l1 = 'a,b,c'.split(',')
+            l2 = 'a,b,c'.split(',')
+            assert expectEqualityTwoListsAsSets(l1, l2) == True
 
-        l1 = 'a,b,c'.split(',')
-        l2 = 'a,b'.split(',')
-        assert expectEqualityTwoListsAsSets(l1, l2) == False
+            l1 = 'a,b,c'.split(',')
+            l2 = 'a,b'.split(',')
+            assert expectEqualityTwoListsAsSets(l1, l2) == False
 
-        l1 = 'a,b,c'.split(',')
-        l2 = 'a,b,c,d'.split(',')
-        assert expectEqualityTwoListsAsSets(l1, l2) == False
-
+            l1 = 'a,b,c'.split(',')
+            l2 = 'a,b,c,d'.split(',')
+            assert expectEqualityTwoListsAsSets(l1, l2) == False
+        finally:
+            setRedirectTraceCalls(None)
 
 
 class TestThrowIfDuplicates:
@@ -290,6 +295,38 @@ class TestMergeDict:
             a = Bucket(a=1, b=2, c=3)
             b = dict(a=100, d=6)
             mergeDictIntoBucket(a, b)
+    
+    def test_compareDict(self):
+        assert dict() == dict()
+        assert dict(a=1, b=2) == dict(a=1, b=2)
+        assert dict(b=2, a=1) == dict(a=1, b=2)
+        assert dict(a=1, b=2) != dict(a=1, b=3)
+        assert dict(a=1, b=2) != dict(a=1, aa=2)
+        assert dict(a=1, b=2) != dict(a=1, b=2, c=3)
+        assert dict(a=1, b=2) != dict(a=1)
+
+    def test_mergedBasic(self):
+        assert mergeDict(dict(), dict()) == dict()
+        assert mergeDict(dict(a=1), dict()) == dict(a=1)
+        assert mergeDict(dict(), dict(a=1)) == dict(a=1)
+        assert mergeDict(dict(a=1), dict(a=2)) == dict(a=2)
+        assert mergeDict(dict(a=2), dict(a=1)) == dict(a=1)
+        assert mergeDict(dict(a=1), dict(a=2, b=3)) == dict(a=2, b=3)
+        assert mergeDict(dict(a=2), dict(a=1, b=3)) == dict(a=1, b=3)
+        assert mergeDict(dict(a=1, b=3), dict(a=1, b=3)) == dict(a=1, b=3)
+        assert mergeDict(dict(a=1, b=3), dict(a=4, b=5)) == dict(a=4, b=5)
+        assert mergeDict(dict(a=1, b=3), dict(a=1)) == dict(a=1, b=3)
+        assert mergeDict(dict(a=1, b=3), dict(a=2)) == dict(a=2, b=3)
+        assert mergeDict(dict(a=1, b=3), dict()) == dict(a=1, b=3)
+        assert mergeDict(dict(a=1), dict(b=3)) == dict(a=1, b=3)
+
+    def test_mergedShouldNotModify(self):
+        a = dict(a=1, b=2, c=1)
+        b = dict(a=3, b=2)
+        out = mergeDict(a, b)
+        assert a == dict(a=1, b=2, c=1)
+        assert b == dict(a=3, b=2)
+        assert out == dict(a=3, b=2, c=1)
 
 class TestGetPrintable:
     def test_getPrintableEmpty(self):
@@ -311,27 +348,40 @@ class TestGetPrintable:
         assert 'k?u?o??n' == getPrintable(u'\u006B\u0301\u0075\u032D\u006F\u0304\u0301\u006E')
     
     def testRedirect(self):
-        captured = []
-        gRedirectTraceCalls['fnHook'] = lambda x: captured.append(x)
-        trace(u'\u1E31\u1E77\u1E53\u006E')
-        assert 'k?u?o??n' == captured[0]
+        try:
+            setRedirectTraceCalls(lambda x: captured.append(x))
+            captured = []
+            trace(u'\u1E31\u1E77\u1E53\u006E')
+            assert 'k?u?o??n' == captured[0]
+        finally:
+            setRedirectTraceCalls(None)
+        
 
     def testRedirectMultipleArgs(self):
-        captured = []
-        gRedirectTraceCalls['fnHook'] = lambda x: captured.append(x)
-        trace('abc', 12, True)
-        assert 'abc 12 True' == captured[0]
+        try:
+            setRedirectTraceCalls(lambda x: captured.append(x))
+            captured = []
+            trace('abc', 12, True)
+            assert 'abc 12 True' == captured[0]
+        finally:
+            setRedirectTraceCalls(None)
     
     def testRedirectPretty(self):
-        captured = []
-        gRedirectTraceCalls['fnHook'] = lambda x: captured.append(x)
-        tracep({'k': 'v'})
-        assert "{'k': 'v'}" == captured[0]
+        try:
+            setRedirectTraceCalls(lambda x: captured.append(x))
+            captured = []
+            tracep({'k': 'v'})
+            assert "{'k': 'v'}" == captured[0]
+        finally:
+            setRedirectTraceCalls(None)
 
     def testRedirectPrettyUnicode(self):
-        captured = []
-        gRedirectTraceCalls['fnHook'] = lambda x: captured.append(x)
-        tracep({'k': u'\u1E31\u1E77\u1E53\u006E'})
-        assert "{'k': 'k?u?o??n'}" == captured[0]
+        try:
+            setRedirectTraceCalls(lambda x: captured.append(x))
+            captured = []
+            tracep({'k': u'\u1E31\u1E77\u1E53\u006E'})
+            assert "{'k': 'k?u?o??n'}" == captured[0]
+        finally:
+            setRedirectTraceCalls(None)
 
 

@@ -151,8 +151,11 @@ def getPrintable(s, okToIgnore=False):
         return s.encode('ascii', 'replace').decode('ascii')
 
 
-gRedirectTraceCalls = {}
-gRedirectTraceCalls['fnHook'] = None
+_gRedirectTraceCalls = {}
+_gRedirectTraceCalls['fnHook'] = None
+
+def setRedirectTraceCalls(fnHook):
+    _gRedirectTraceCalls['fnHook'] = fnHook
 
 def trace(*args, always=False):
     """Similar to print, but
@@ -160,8 +163,8 @@ def trace(*args, always=False):
     2) can be redirected to fnHook, e.g. for testing
     3) certain terminals throw exceptions if given unicode characters"""
     val = ' '.join(map(getPrintable, args))
-    if gRedirectTraceCalls['fnHook'] and not always:
-        gRedirectTraceCalls['fnHook'](val)
+    if _gRedirectTraceCalls['fnHook'] and not always:
+        _gRedirectTraceCalls['fnHook'](val)
     else:
         print(val)
 
@@ -169,8 +172,8 @@ def tracep(*args, always=False):
     "Similar to print, but uses pprint to pretty-print"
     val = ' '.join(map(_pprint.pformat, args))
     val = getPrintable(val)
-    if gRedirectTraceCalls['fnHook'] and not always:
-        gRedirectTraceCalls['fnHook'](val)
+    if _gRedirectTraceCalls['fnHook'] and not always:
+        _gRedirectTraceCalls['fnHook'](val)
     else:
         print(val)
 

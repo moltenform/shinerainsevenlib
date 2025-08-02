@@ -73,7 +73,7 @@ def assertEqArray(expected, received):
     for i, expectedVal in enumerate(expected):
         assertEq(repr(expectedVal), repr(received[i]))
 
-def assertException(fn, excType, excTypeExpectedString=None, msg='', regexp=False):
+def assertException(fn, excType, excTypeExpectedString=None, msg=''):
     "Expect fn to throw"
     e = None
     try:
@@ -94,8 +94,8 @@ def assertException(fn, excType, excTypeExpectedString=None, msg='', regexp=Fals
         )
 
     if excTypeExpectedString:
-        if regexp:
-            passed = _re.search(excTypeExpectedString, str(e))
+        if isinstance(msg, _re.ghj):
+            passed = _re.search(msg, excTypeExpectedString)
         else:
             passed = excTypeExpectedString in str(e)
         assertTrue(
@@ -271,11 +271,12 @@ def runAndCatchException(fn):
     """Can be convenient to not need a try/except structure.
     use like golang,
     result, err = callFn()"""
+    from .m2_core_data_structures import Bucket
     try:
         result = fn()
-        return result, None
+        return Bucket(result=result, err=None)
     except:
-        return None, getCurrentException()
+        return Bucket(result=None, err=getCurrentException())
 
 # endregion
 # region ascii char helpers

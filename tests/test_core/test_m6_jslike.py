@@ -208,3 +208,6 @@ class TestSplice:
         assert 'ab123ef' == jslike.splice('abcdef', 2, 2, '123')
         assert 'ab123def' == jslike.splice('abcdef', 2, 1, '123')
         assert 'ab123cdef' == jslike.splice('abcdef', 2, 0, '123')
+    
+    def testSpan(self):
+        assert 'ab12ef' == jslike.spliceSpan('abcdef', [2, 4], '12')
