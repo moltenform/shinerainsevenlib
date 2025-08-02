@@ -19,4 +19,6 @@ Certain features can be lit up by installing one or more of these packages from 
 
 * if ``pyperclip`` is installed, you can access the clipboard
 
+* if ``pillow`` is installed, you can determine image type even if extension is unknown
+
 

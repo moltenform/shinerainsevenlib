@@ -21,11 +21,20 @@ jobs:
         with:
           python-version: ${{ matrix.version }}
 
+# also include optional dependencies for shinerainsevenlib
+
       - name: Install dependencies  
         run: |  
           python -m pip install --upgrade pip  
           python -m pip install pytest 
-          python -m pip install coverage 
+          python -m pip install coverage
+          python -m pip install crc64iso
+          python -m pip install xxhash
+          python -m pip install apsw
+          python -m pip install dateparser
+          python -m pip install parse
+          python -m pip install pyperclip
+          python -m pip install pillow
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi  
       - name: Test with pytest  
         run: |  

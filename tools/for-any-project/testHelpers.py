@@ -2,6 +2,7 @@
 
 import fnmatch as _fnmatch
 import inspect as _inspect
+from shinerainsevenlib import srss
 
 def doTestSrssByLines(fn, sInput, exitAfterOneFailure=True):
     "Help people write automated tests quickly by putting the tests in a string"
@@ -16,13 +17,14 @@ def doTestSrssByLines(fn, sInput, exitAfterOneFailure=True):
         raise AssertionError("One or more subtest failed.")
 
 def doTestSrss(fn, sInput, exitAfterOneFailure=True):
+    "Help people write automated tests quickly by putting the tests in a string. Runs one test."
     sInput, sExpected = sInput.split('=>')
     sInput = sInput.strip() 
     sExpected = sExpected.strip()
     try:
         got = fn(sInput)
     except Exception as e:
-        result = handleExceptionHit(sInput, sExpected, e,)
+        result = _handleExceptionHit(sInput, sExpected, e,)
     else:
         if str(got) != sInput:
             print(f"Test did not pass: input {sInput}\n expected {sExpected}\n got {got}")
@@ -35,11 +37,12 @@ def doTestSrss(fn, sInput, exitAfterOneFailure=True):
     return result
 
 def getClassChainAsStrings(obj):
+    "Show class names as strings"
     from .. import core as _srss
     chain = _inspect.getmro(obj.__class__)
     return _srss.jslike.map(chain, lambda item: repr(item).replace("<class '", '').replace("'>", ''))
 
-def handleExceptionHit(sInput, sExpected, e):
+def _handleExceptionHit(sInput, sExpected, e):
     if ' ' in sExpected:
         exceptionClass, expectPatternMatch = sExpected.split(' ', 1)
     else:
@@ -61,37 +64,7 @@ def handleExceptionHit(sInput, sExpected, e):
     return True
 
 def makeAsserts(s):
-    from shinerainsevenlib.standard import srss
+    "Generate test placeholders"
     lines = srss.strToList(s)
     for line in lines:
         print(f'assert fn("{line}") == "xxxxxx"')
-
-#~ def checkTestCoverage
-
-if __name__ == '__main__':
-    pass
-    makeAsserts(r'''
-feature_corrupt_minor.zip
-feature_password.rar
-otherformat.tar
-otherformat.tar.bz2
-otherformat.tar.gz
-otherformat.tar.xz
-singlefile.xml
-singlefile.xml.bz2
-singlefile.xml.gz
-test_7z.7z
-test_rar_nosolid_nostore.rar
-test_rar_nosolid_store.rar
-test_rar_solid_nostore.rar
-test_zip_made_with_7z.zip
-test_zip_made_with_7z_store.zip
-test_zip_made_with_py_default.zip
-test_zip_made_with_py_lzma.zip
-test_zip_made_with_winrar.zip
-unicode_and_zero_byte.7z
-unicode_and_zero_byte.rar
-unicode_and_zero_byte.zip
-
-                ''')
-

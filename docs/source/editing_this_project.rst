@@ -35,4 +35,4 @@ Features of this project include,
 * github actions verify PRs by running tests
 * can publish to pip
 
-This project avoids newer Python syntax like f-strings to remain functional running on old Python versions.
+This project avoids newer Python syntax to remain functional running on old Python versions.
