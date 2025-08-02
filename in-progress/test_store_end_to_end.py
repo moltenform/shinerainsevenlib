@@ -10,7 +10,7 @@ from .test_store import StoreWithCrudHelpersDemo, fixture_temp_db
 class TestCrudHelper:
     def test_opening_with_no_schema_version(self, fixture_temp_db):
         db, dbpath = fixture_temp_db
-        db.cursor().execute('DELETE FROM shinerainsoftsevencommon_store_properties WHERE 1')
+        db.cursor().execute('DELETE FROM shinerainsevenlib_store_properties WHERE 1')
         db.close()
         with pytest.raises(StoreException) as exc:
             db.connectOrCreate(dbpath)

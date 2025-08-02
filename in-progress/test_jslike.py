@@ -6,18 +6,6 @@ from .. import common_jslike as jslike
 from .. import Bucket
 
 
-
-class TestJslikeStringMethods:
-    def test_splice(self):
-        assert 'abef' == jslike.splice('abcdef', 2, 2, '')
-        assert 'ab1ef' == jslike.splice('abcdef', 2, 2, '1')
-        assert 'ab12ef' == jslike.splice('abcdef', 2, 2, '12')
-        assert 'ab123ef' == jslike.splice('abcdef', 2, 2, '123')
-        assert 'ab123def' == jslike.splice('abcdef', 2, 1, '123')
-        assert 'ab123cdef' == jslike.splice('abcdef', 2, 0, '123')
-
-        assert 'ab12ef' == jslike.spliceSpan('abcdef', [2, 4], '12')
-
 class TestJslikeDictMethods:
     def test_compareDict(self):
         assert dict() == dict()
@@ -60,4 +48,8 @@ class TestJslikeSimpleMethods:
         assert jslike.intOrNone('12') == 12
         assert jslike.intOrNone('-12') == -12
         assert jslike.intOrNone('ab') is None
+
+    def test_span(self):
+        assert 'ab12ef' == jslike.spliceSpan('abcdef', [2, 4], '12')
+
 

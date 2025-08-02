@@ -836,7 +836,7 @@ def listDirectoryToStringFileInfo(basedir, useFileInfo, kwargs):
 
 @pytest.fixture()
 def fixture_dir_with_many():
-    basedir = join(tempfile.gettempdir(), 'shinerainsoftsevenutil_test', 'many')
+    basedir = join(tempfile.gettempdir(), 'shinerainsevenlib_test', 'many')
     ensureEmptyDirectory(basedir)
     lst = [
         'foobar/a/foobar/a.txt',
@@ -862,7 +862,7 @@ def fixture_dir_with_many():
 
 @pytest.fixture()
 def fixture_dir():
-    basedir = join(tempfile.gettempdir(), 'shinerainsoftsevenutil_test', 'empty')
+    basedir = join(tempfile.gettempdir(), 'shinerainsevenlib_test', 'empty')
     ensureEmptyDirectory(basedir)
     chDir(basedir)
     yield basedir
@@ -870,7 +870,7 @@ def fixture_dir():
 
 @pytest.fixture(scope='module')
 def fixture_fulldir():
-    basedir = join(tempfile.gettempdir(), 'shinerainsoftsevenutil_test', 'full')
+    basedir = join(tempfile.gettempdir(), 'shinerainsevenlib_test', 'full')
     restoreDirectoryContents(basedir)
     yield basedir
     ensureEmptyDirectory(basedir)
