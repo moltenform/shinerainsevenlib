@@ -115,4 +115,7 @@ disable = "C0103,W0401,C0116,C0114, W0614,R0911,R0912,C0415,W0611,R0913,C0209,C0
 
 # The warning E1101 we want enabled because it's useful to catch missing functions.
 
-
+[tool.coverage.report]
+exclude_also = [
+    "def alert"
+]
