@@ -13,7 +13,7 @@ def strToList(s, replaceComments=True):
     "When quickly writing code, get a list of strings, useful for short scripts"
     lines = standardNewlines(s).split('\n')
     if replaceComments:
-        lines = [line for line in lines if not line.startswith('#')]
+        lines = [line for line in lines if not line.strip().startswith('#')]
 
     return [line.strip() for line in lines if line.strip()]
 
@@ -31,11 +31,12 @@ def longStr(s):
     s = _re.sub(r'\r|\n', ' ', s)
     s = _re.sub(r'\t', ' ', s)
     s = _re.sub(r' +', ' ', s)
+    s = s.strip()
     return s
 
 def easyToEnterFilepath(s, checkIfExists=True):
     '''Lets people easily copy/paste a filepath in, without worrying about quotes or extra whitespace.
-    see unit tests for examples.'''
+    See unit tests for examples.'''
     lines = [line.replace('"', '').replace("'", '').strip() for line in strToList(s)]
     candidateLines = [line for line in lines if line]
     if len(candidateLines) == 0:
@@ -66,6 +67,9 @@ def parseFloatOrFallback(s, fallBack=None):
 
 def clampNumber(value, minValue, maxValue):
     "If the input is bigger than maxValue, return maxValue, if smaller than minValue, return minValue"
+    if not minValue <= maxValue:
+        raise ValueError('minValue must be less than or equal to maxValue')
+
     return max(minValue, min(value, maxValue))
 
 # endregion
@@ -85,19 +89,23 @@ def compareTwoListsAsSets(l1, l2, transformFn1=None, transformFn2=None):
     if len(set2) != len(l2Transformed):
         raise ValueError('Duplicate item(s) seen in list 2.' + str(l2Transformed))
 
-    extraItems = list(set1 - set2)
-    missingItems = list(set2 - set1)
-    return Bucket(extraItems=extraItems, missingItems=missingItems)
+    addedItems = list(set2 - set1)
+    lostItems = list(set1 - set2)
+
+    # sort, or else the order is nondeterministic
+    addedItems.sort()
+    lostItems.sort()
+    return Bucket(addedItems=addedItems, lostItems=lostItems)
 
 def expectEqualityTwoListsAsSets(l1, l2, transformFn1=None, transformFn2=None):
     "Display differences between two lists of strings"
     result = compareTwoListsAsSets(l1, l2, transformFn1=transformFn1, transformFn2=transformFn2)
-    if len(result.extraItems):
-        trace('Extra items seen in list 1:', result.extraItems)
+    if len(result.addedItems):
+        trace('New items only in list 1:', result.addedItems)
         return False
 
-    if len(result.missingItems):
-        trace('Missing items not present in list 1:', result.missingItems)
+    if len(result.lostItems):
+        trace('Missing items not present in list 2:', result.lostItems)
         return False
 
     return True
@@ -109,16 +117,18 @@ def throwIfDuplicates(l1, transformFn1=None, context=''):
     for item in l1Transformed:
         if item in seen:
             raise ShineRainSevenLibError('duplicate seen:', item, context)
+        
+        seen[item] = True
 
 def mergeDict(dict1, dict2):
     "Merge two dictionaries"
     return dict1 | dict2
 
-def mergeDictIntoBucket(bucketConfigs, dictParams, disallowNewKeys=True):
+def mergeDictIntoBucket(bucketConfigs, dictParams, allowNewKeys=False):
     "Merge a dictionary into a bucket (see the Bucket class for more)"
     validKeys = set(dir(bucketConfigs))
     for key in dictParams:
-        if disallowNewKeys and not (key in validKeys and not key.startswith('_')):
+        if not allowNewKeys and not (key in validKeys and not key.startswith('_')):
             raise RuntimeError('not a supported config:', key)
         else:
             setattr(bucketConfigs, key, dictParams[key])
