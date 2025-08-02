@@ -12,23 +12,8 @@ from src.shinerainsevenlib.standard import *
 from src.shinerainsevenlib.core import *
 from tests.test_core.common import fixture_dir
 
-class TestStringHelpersSimple:
-    # getPrintable
-    def test_getPrintableEmpty(self):
-        assert '' == getPrintable('')
 
-    def test_getPrintableNormalAscii(self):
-        assert 'normal ascii' == getPrintable('normal ascii')
-
-    def test_getPrintableNormalUnicode(self):
-        assert 'normal unicode' == getPrintable(u'normal unicode')
-
-    def test_getPrintableWithUniChars(self):
-        assert 'k?u?o??n' == getPrintable(u'\u1E31\u1E77\u1E53\u006E')
-
-    def test_getPrintableWithUniCompositeSequence(self):
-        assert 'k?u?o??n' == getPrintable(u'\u006B\u0301\u0075\u032D\u006F\u0304\u0301\u006E')
-
+class TesttoValidFilename:
     # toValidFilename
     def test_toValidFilenameEmpty(self):
         assert '' == toValidFilename('')

@@ -168,6 +168,7 @@ def trace(*args, always=False):
 def tracep(*args, always=False):
     "Similar to print, but uses pprint to pretty-print"
     val = ' '.join(map(_pprint.pformat, args))
+    val = getPrintable(val)
     if gRedirectTraceCalls['fnHook'] and not always:
         gRedirectTraceCalls['fnHook'](val)
     else:

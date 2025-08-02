@@ -102,6 +102,12 @@ multiple lines  """)
             easyToEnterFilepath(f"""
         {nonExistingFile}          
         """)
+            
+        # forgot to escape backslashes
+        with pytest.raises(ValueError):
+            easyToEnterFilepath(f"""
+        C:\to\file         
+        """)
 
 
 class TestParseOrFallback:
@@ -204,8 +210,13 @@ class TestCompareAsSets:
         with pytest.raises(ValueError):
             compareTwoListsAsSets(l1, l2)
         
+        l1 = 'a,b,c'.split(',')
+        l2 = 'a,b,a'.split(',')
+        with pytest.raises(ValueError):
+            compareTwoListsAsSets(l1, l2)
+        
 
-class ExpectEqualityAsSets:
+class TestExpectEqualityAsSets:
     def testExpectEqualityTwoListsAsSets(self):
         l1 = 'a,b,c'.split(',')
         l2 = 'a,b,c'.split(',')
@@ -281,7 +292,46 @@ class TestMergeDict:
             mergeDictIntoBucket(a, b)
 
 class TestGetPrintable:
-    def testBasic(self):
-        pass
+    def test_getPrintableEmpty(self):
+        assert '' == getPrintable('')
+
+    def test_getPrintableNormalAscii(self):
+        assert 'normal ascii' == getPrintable('normal ascii')
+    
+    def test_getPrintableNormalUnicode(self):
+        assert u'normal unicode' == getPrintable(u'normal unicode')
+    
+    def test_getPrintableBytes(self):
+        assert 'abc' == getPrintable(b'abc')
+
+    def test_getPrintableWithUniChars(self):
+        assert 'k?u?o??n' == getPrintable(u'\u1E31\u1E77\u1E53\u006E')
+
+    def test_getPrintableWithUniCompositeSequence(self):
+        assert 'k?u?o??n' == getPrintable(u'\u006B\u0301\u0075\u032D\u006F\u0304\u0301\u006E')
+    
+    def testRedirect(self):
+        captured = []
+        gRedirectTraceCalls['fnHook'] = lambda x: captured.append(x)
+        trace(u'\u1E31\u1E77\u1E53\u006E')
+        assert 'k?u?o??n' == captured[0]
+
+    def testRedirectMultipleArgs(self):
+        captured = []
+        gRedirectTraceCalls['fnHook'] = lambda x: captured.append(x)
+        trace('abc', 12, True)
+        assert 'abc 12 True' == captured[0]
+    
+    def testRedirectPretty(self):
+        captured = []
+        gRedirectTraceCalls['fnHook'] = lambda x: captured.append(x)
+        tracep({'k': 'v'})
+        assert "{'k': 'v'}" == captured[0]
+
+    def testRedirectPrettyUnicode(self):
+        captured = []
+        gRedirectTraceCalls['fnHook'] = lambda x: captured.append(x)
+        tracep({'k': u'\u1E31\u1E77\u1E53\u006E'})
+        assert "{'k': 'k?u?o??n'}" == captured[0]
 
 
