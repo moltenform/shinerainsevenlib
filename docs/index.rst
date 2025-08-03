@@ -9,6 +9,20 @@ Useful unadorned utilities for powerful Python programming.
 
 A Python2 compatible version of this library can be found here, `shinerainsevenlib_prev <https://github.com/moltenform/scite-with-python/tree/main/src/scite/scite/bin/tools_internal/ben_python_common>`_.
 
+This project is useful for:
+
+* functionality that isn't yet in the standard library
+
+   * example: compressing and uncompressing .7z archives.
+
+* functionality that is in the standard library, but isn't as intuitive
+
+   * example: `files.run` is a convenient way to start a process.
+
+* functionality for quickly writing one-off scripts
+
+   * example: `files.writeAll` defaults to utf-8 and is quick to type and read.
+
 
 Contents
 ------------
