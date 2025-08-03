@@ -175,13 +175,13 @@ class ParsePlus:
         if not parseResult:
             return parseResult
 
-        ret = Bucket()
+        ret = Bucket(spans=None, getTotalSpan=None)
         lengthOfString = len(s)
         for name in parseResult.named:
             val = self._unreplaceEscapeSequences(parseResult.named[name])
             setattr(ret, name, val)
 
-        ret.spans = parseResult.spans
+        ret.spans = parseResult.get('spans')
         ret.getTotalSpan = lambda: self._getTotalSpan(parseResult, lengthOfString)
         return ret
 

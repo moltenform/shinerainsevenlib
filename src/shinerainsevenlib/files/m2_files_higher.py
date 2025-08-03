@@ -327,7 +327,7 @@ def run(
 def runPskill(args):
     """Use pskill to terminate a process"""
     import winerror
-    retcode, stderr, stdout = run(args, throwOnFailure=None)
+    retcode, stderr, _stdout = run(args, throwOnFailure=None)
     if retcode == 0:
         return winerror.S_OK
     else:

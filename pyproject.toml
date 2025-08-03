@@ -111,7 +111,9 @@ max-line-length = 999
 # R0903 too few methods, C0303 whitespace
 # R0401 cyclic import... too aggressive and fires even when the cycle is within a function call (safe)
 # R1732 use with to autoclose resources... consider fixing later
-disable = "C0103,W0401,C0116,C0114, W0614,R0911,R0912,C0415,W0611,R0913,C0209,C0305,W0702,C0115,R1705,R0902,R0903,E0401,C0303,C1802,R0401,R1720,R1732,R0914,R1735,R1737,W0603,R1716,W0718,W0108,R1703"
+# R0917 it's not that bad to have many arguments
+# W0201 attribute-defined-outside-init
+disable = "C0103,W0401,C0116,C0114, W0614,R0911,R0912,C0415,W0611,R0913,C0209,C0305,W0702,C0115,R1705,R0902,R0903,E0401,C0303,C1802,R0401,R1720,R1732,R0914,R1735,R1737,W0603,R1716,W0718,W0108,R1703,R0917,W0201"
 
 # The warning E1101 we want enabled because it's useful to catch missing functions.
 

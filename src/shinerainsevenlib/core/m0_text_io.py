@@ -100,12 +100,15 @@ def compareTwoListsAsSets(l1, l2, transformFn1=None, transformFn2=None):
 def expectEqualityTwoListsAsSets(l1, l2, transformFn1=None, transformFn2=None):
     "Display differences between two lists of strings"
     result = compareTwoListsAsSets(l1, l2, transformFn1=transformFn1, transformFn2=transformFn2)
-    if len(result.addedItems):
-        trace('New items only in list 1:', result.addedItems)
+    addedItems = result.get('addedItems')
+    lostItems = result.get('lostItems')
+
+    if len(addedItems):
+        trace('New items only in list 1:', addedItems)
         return False
 
-    if len(result.lostItems):
-        trace('Missing items not present in list 2:', result.lostItems)
+    if len(lostItems):
+        trace('Missing items not present in list 2:', lostItems)
         return False
 
     return True

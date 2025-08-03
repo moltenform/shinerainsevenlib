@@ -358,4 +358,3 @@ def acrossDir(path, directoryFrom, directoryTo):
 
 class OSFileRelatedError(OSError):
     "Indicates a file-related exception"
-    pass

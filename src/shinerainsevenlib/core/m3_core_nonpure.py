@@ -198,8 +198,8 @@ def _getTrashDirAndCreateIfNeeded(originalFile):
     if trashDir != 'recycleBin':
         try:
             files.makeDirs(trashDir)
-        except:
-            raise ShineRainSevenLibError('failed to create trash dir', trashDir)
+        except Exception as e:
+            raise ShineRainSevenLibError('failed to create trash dir', trashDir) from e
     
     return trashDir
 
@@ -230,8 +230,8 @@ def softDeleteFile(path, allowDirs=False, doTrace=False):
     if trashDir == 'recycleBin':
         try:
             from send2trash import send2trash
-        except ImportError:
-            raise ShineRainSevenLibError('shinerainsevenlib.cfg says recycleBin, but send2trash not installed')
+        except ImportError as e:
+            raise ShineRainSevenLibError('shinerainsevenlib.cfg says recycleBin, but send2trash not installed') from e
         
         if doTrace:
             trace(f'softDeleteFile |on| {path} to recycleBin')
@@ -243,10 +243,10 @@ def softDeleteFile(path, allowDirs=False, doTrace=False):
         if doTrace:
             trace(f'softDeleteFile |on| {path} to {destPath}')
         
-        files.move(path, destPath)
+        files.move(path, destPath, False)
         return destPath
 
-def _getSoftTempDir(originalPath, preferEphemeral):
+def _getSoftTempDir(_originalPath, preferEphemeral):
     import tempfile
     from ..plugins.plugin_configreader import getSsrsInternalPrefs
 
@@ -273,11 +273,12 @@ def _getTempDirAndCreateIfNeeded(originalPath, preferEphemeral):
     tempDir = _getSoftTempDir(originalPath, preferEphemeral)
     try:
         files.makeDirs(tempDir)
-    except:
-        raise ShineRainSevenLibError('failed to create trash dir', tempDir)
+    except Exception as e:
+        raise ShineRainSevenLibError('failed to create trash dir', tempDir) from e
+
     return tempDir
 
-def getSoftTempDir(path='', preferEphemeral=False, addRandomSuffix=False):
+def getSoftTempDir(path='', preferEphemeral=False):
     """
     Get a temporary directory. 
     Defaults to default OS temp directory, can be configured in shinerainsevenlib.cfg
@@ -288,9 +289,8 @@ def getSoftTempDir(path='', preferEphemeral=False, addRandomSuffix=False):
     """
     ret = _getTempDirAndCreateIfNeeded(path, preferEphemeral)
     assertTrue(_os.path.isdir(ret), 'temp dir not a directory', ret)
-    return ret
+    return _os.path.join(ret, path) if path else ret
     
-
 
 # endregion
 

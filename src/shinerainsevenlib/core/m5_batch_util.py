@@ -118,7 +118,7 @@ class SrssLooper:
         if percentage != self._prevPercentShown:
             self._prevPercentShown = percentage
             s = str(percentage) + '%'
-            if self._currentStateToPrint != None:
+            if self._currentStateToPrint is not None:
                 s = str(self._currentStateToPrint) + ' ' + s
 
             trace(self._showPercentages, s)
