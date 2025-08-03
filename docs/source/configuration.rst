@@ -10,7 +10,7 @@ Example contents,
 
 .. code-block:: INI
 
-    tempEphemeralDirectory=G:\data\local\temp
-    tempDirectory=D:\data\local\temp
-    softDeleteDirectory=D:\data\local\trash
+    trashDir = /path/to/trash
+    tempDir = /path/to/temp
+    tempEphemeralDir = /path/to/ramdrive
 

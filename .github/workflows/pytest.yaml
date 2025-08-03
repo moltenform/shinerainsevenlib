@@ -4,7 +4,7 @@ on:
   push:
   pull_request:
 
-#env:
+# env:
 #  COLUMNS: 120
 
 jobs:
@@ -38,7 +38,7 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi  
       - name: Test with pytest  
         run: |  
-          coverage run -m pytest  -v -s  
+          coverage run -m pytest --verbose --capture=no tests/ 
       - name: Generate Coverage Report  
         run: |  
           coverage report -m

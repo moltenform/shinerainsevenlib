@@ -9,7 +9,7 @@ Then you can run a script like this,
 
 .. code-block:: python
 
-    from shinerainsevenlib import *
+    from shinerainsevenlib.standard import *
 
     for f in files.recurseFileInfo('/path/to/files'):
         print(f.path)

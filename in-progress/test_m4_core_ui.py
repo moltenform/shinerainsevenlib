@@ -5,7 +5,6 @@
 import pytest
 from src.shinerainsevenlib.standard import *
 
-
 class TestCoreUIInteractive:
     def testSrssLooperInteractive(self):
         alert('you should now see a loop from 3 to 100 that pauses every 20')

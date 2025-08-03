@@ -1,6 +1,5 @@
 
 
-
 # shinerainsevenlib (Ben Fisher, moltenform.com)
 # Released under the LGPLv2.1 License
 
@@ -460,14 +459,12 @@ class TestStripHtml:
         assert 'a b c d e', stripHtmlTags('a b c<abc>d</abc>e')
         assert 'a b c d e', stripHtmlTags('a b c<abc><b>d</abc>e')
 
-
 class TestReplaceAscii:
     def testReplaceNonAsciiWith(self):
         assert replaceNonAsciiWith('aéaé', '<>') == 'a<>a<>'
         assert replaceNonAsciiWith('aeae', '<>') == 'aeae'
         assert containsNonAscii('aéaé')
         assert not containsNonAscii('aeae')
-
 
 class TestObjectHelpers:
     def testGetObjAttributes(self):
@@ -507,7 +504,6 @@ class TestCompatFunctions:
         assert not endsWith(b'abc', 'bd')
         assert endsWith('abc', b'bc')
         assert not endsWith('abc', b'bd')
-
     
     def testBytesHelpers(self):
         assert list(iterBytes(b'abc')) == [b'a', b'b', b'c']
