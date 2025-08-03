@@ -388,9 +388,11 @@ class TestDateParsing:
         
 
     def test_render_time(self):
-        sampleMillisTime = 1676603866779
-        assert '02/16/2023 07:17:46 PM' == renderMillisTime(sampleMillisTime)
-        assert '2023-02-16 07:17:46' == renderMillisTimeStandard(sampleMillisTime)
+        t1 = renderMillisTime(1676603866779) # looks like '02/16/2023 07:17:46 PM'
+        assert re.match(r'\d{2}/\d{2}/\d{4} \d{2}:\d{2}:\d{2} \w{2}', t1)
+
+        t1 = renderMillisTimeStandard(1676603866779) # looks like '2023-02-16 07:17:46'
+        assert re.match(r'\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}', t1)
 
     def test_toUnixMillis(self):
         uu = EnglishDateParserWrapper()

@@ -392,10 +392,10 @@ class TakeBatch:
             if len(self.batch):
                 self.callback(self.batch)
 
-def listToNPieces(l, nPieces):
+def listToNPieces(lst, nPieces):
     "Split a list into n pieces"
     for i in range(nPieces):
-        yield l[i::nPieces]
+        yield lst[i::nPieces]
 
 class RecentlyUsedList:
     "Keep a list of items. Doesn't store duplicates"

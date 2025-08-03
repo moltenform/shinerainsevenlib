@@ -136,10 +136,7 @@ class SimpleTimer:
         self.startedAt = self.getTime()
 
     def getTime(self):
-        if _sys.platform == 'win32':
-            return _time.time()
-        else:
-            return _time.clock()
+        return _time.time()
     
     def check(self):
         return self.getTime() - self.startedAt

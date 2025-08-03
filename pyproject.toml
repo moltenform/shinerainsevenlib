@@ -85,6 +85,7 @@ ignore = [
  "E713", # concanot in vs ints
  "ERA001", # commented out code
  "RUF015", # single element slice
+ "UP036", # it's ok to check for python2
 ]
 
 # these might also be useful to disable

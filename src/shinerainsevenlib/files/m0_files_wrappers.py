@@ -353,7 +353,7 @@ def acrossDir(path, directoryFrom, directoryTo):
     assertTrue(not directoryFrom.endswith(('/', '\\')))
     assertTrue(path.startswith(directoryFrom))
     remainder = path[len(directoryFrom):]
-    assertTrue(remainder == '' or remainder.startswith('/') or remainder.startswith('\\'))
+    assertTrue(remainder == '' or remainder.startswith(('/', '\\')))
     return directoryTo + remainder
 
 class OSFileRelatedError(OSError):

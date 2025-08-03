@@ -338,10 +338,10 @@ def _getFileDialogGui(fn, initialDir, types, title, directoryHistory=None):
 
 # get better arrowkey history in macos
 try:
-    import gnureadline  # noqa
+    import gnureadline
 except:
     try:
-        import readline  # noqa
+        import readline
     except:
         pass
 
