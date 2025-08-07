@@ -7,6 +7,8 @@
         "**/.pytest_cache": true,
         "**/.ruff_cache": true,
         "**/__pycache__": true,
+        "**/_build": true,
+        "**/htmlcov": true,
         "*.pyc": true,
     }
 }

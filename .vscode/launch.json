@@ -6,21 +6,26 @@
             "type": "debugpy",
             "request": "launch",
             "module": "pytest",
-            "args": ["tests/", "--maxfail=1"]
+            "args": ["--capture=no", "--maxfail=1", "tests/"],
+            "cwd": "${workspaceFolder}/shinerainsevenlib"
         },
         {
             "name": "Coverage",
             "type": "debugpy",
             "request": "launch",
             "module": "coverage",
-            "args": ["run", "-m", "pytest", "tests/", "--maxfail=1"]
+            "args": ["run", "-m", "pytest", "--capture=no", "--maxfail=1", "tests/"],
+            "cwd": "${workspaceFolder}/shinerainsevenlib"
+
         },
         {
             "name": "Explore (debug)",
             "type": "debugpy",
             "request": "launch",
             "program": "nocpy_explore.py",
-            "console": "integratedTerminal"
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/shinerainsevenlib"
+
         },
     ]
 }
