@@ -133,6 +133,22 @@ def copy(
     keepSameModifiedTime=False,
     allowDirs=False,
     createParent=False,
+    traceOnly=False):
+    try:
+        return copyImpl(srcFile, destFile, overwrite, 
+                        doTrace, keepSameModifiedTime, allowDirs, createParent, traceOnly)
+    except Exception:
+        print(f"Failed to copy {srcFile} to {destFile}", file=_sys.stderr)
+        raise
+
+def copyImpl(
+    srcFile,
+    destFile,
+    overwrite,
+    doTrace=False,
+    keepSameModifiedTime=False,
+    allowDirs=False,
+    createParent=False,
     traceOnly=False,
 ):
     """If overwrite is True, always overwrites if destination already exists.
@@ -140,9 +156,9 @@ def copy(
     if doTrace:
         trace('copy()', srcFile, destFile)
     if not isFile(srcFile):
-        raise OSFileRelatedError('source path does not exist or is not a file')
+        raise OSFileRelatedError('source path does not exist or is not a file' + srcFile)
     if not allowDirs and isDir(srcFile):
-        raise OSFileRelatedError('allowDirs is False but given a dir')
+        raise OSFileRelatedError('allowDirs is False but given a dir' + srcFile)
 
     toSetModTime = None
     if keepSameModifiedTime and exists(destFile):
@@ -175,6 +191,21 @@ def move(
     doTrace=False,
     allowDirs=False,
     createParent=False,
+    traceOnly=False,):
+    try:
+        return moveImpl(srcFile, destFile, overwrite, warnBetweenDrives, doTrace, allowDirs, createParent, traceOnly)
+    except Exception:
+        print(f"Failed to move {srcFile} to {destFile}", file=_sys.stderr)
+        raise
+
+def moveImpl(
+    srcFile,
+    destFile,
+    overwrite,
+    warnBetweenDrives=False,
+    doTrace=False,
+    allowDirs=False,
+    createParent=False,
     traceOnly=False,
 ):
     """If overwrite is True, always overwrites if destination already exists.
@@ -182,9 +213,9 @@ def move(
     if doTrace:
         trace('move()', srcFile, destFile)
     if not exists(srcFile):
-        raise OSFileRelatedError('source path does not exist ' + srcFile)
+        raise OSFileRelatedError('source path does not exist')
     if not allowDirs and not isFile(srcFile):
-        raise OSFileRelatedError('allowDirs is False but given a dir ' + srcFile)
+        raise OSFileRelatedError('allowDirs is False but given a dir')
 
     if traceOnly:
         # can be useful for temporary debugging
@@ -221,8 +252,7 @@ def _copyFileWin(srcFile, destFile, overwrite):
     if not res:
         err = GetLastError()
         raise OSFileRelatedError(
-            f'CopyFileW failed ({_winErrs.get(err, "unknown")}) err={err} ' +
-            srss.getPrintable(srcFile + '->' + destFile)
+            f'CopyFileW failed ({_winErrs.get(err, "unknown")}) err={err}'
         )
 
 def _moveFileWin(srcFile, destFile, overwrite, warnBetweenDrives):
@@ -243,8 +273,7 @@ def _moveFileWin(srcFile, destFile, overwrite, warnBetweenDrives):
             return _moveFileWin(srcFile, destFile, overwrite, warnBetweenDrives=False)
 
         raise OSFileRelatedError(
-            f'MoveFileExW failed ({_winErrs.get(err, "unknown")}) err={err} ' +
-            srss.getPrintable(srcFile + '->' + destFile)
+            f'MoveFileExW failed ({_winErrs.get(err, "unknown")}) err={err} '
         )
     return None
 

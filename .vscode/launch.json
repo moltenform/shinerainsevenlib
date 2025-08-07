@@ -1,4 +1,5 @@
 {
+    
     "version": "0.2.0",
     "configurations": [
         {
@@ -7,7 +8,7 @@
             "request": "launch",
             "module": "pytest",
             "args": ["--capture=no", "--maxfail=1", "tests/"],
-            "cwd": "${workspaceFolder}/shinerainsevenlib"
+            "cwd": "${workspaceFolder}"
         },
         {
             "name": "Coverage",
@@ -15,7 +16,7 @@
             "request": "launch",
             "module": "coverage",
             "args": ["run", "-m", "pytest", "--capture=no", "--maxfail=1", "tests/"],
-            "cwd": "${workspaceFolder}/shinerainsevenlib"
+            "cwd": "${workspaceFolder}"
 
         },
         {
@@ -24,8 +25,7 @@
             "request": "launch",
             "program": "nocpy_explore.py",
             "console": "integratedTerminal",
-            "cwd": "${workspaceFolder}/shinerainsevenlib"
-
+            "cwd": "${workspaceFolder}"
         },
     ]
 }

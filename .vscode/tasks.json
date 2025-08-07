@@ -1,8 +1,9 @@
 {
+    
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "pylint lint",
+            "label": "python lint",
             "type": "shell",
             "command": "python -m pylint ./src",
             "problemMatcher": [],
@@ -11,7 +12,7 @@
                 "isDefault": true
             },
             "options": {
-                "cwd": "${workspaceFolder}/shinerainsevenlib"
+                "cwd": "${workspaceFolder}"
             },
         },
         {
@@ -24,7 +25,7 @@
                 "isDefault": true
             },
             "options": {
-                "cwd": "${workspaceFolder}/shinerainsevenlib"
+                "cwd": "${workspaceFolder}"
             },
         },
         {
@@ -37,7 +38,7 @@
                 "isDefault": true
             },
             "options": {
-                "cwd": "${workspaceFolder}/shinerainsevenlib"
+                "cwd": "${workspaceFolder}"
             },
         },
         {
@@ -50,7 +51,7 @@
                 "isDefault": true
             },
             "options": {
-                "cwd": "${workspaceFolder}/shinerainsevenlib"
+                "cwd": "${workspaceFolder}"
             },
         }
     ]

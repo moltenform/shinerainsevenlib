@@ -68,16 +68,16 @@ class PersistedDict:
         self.data[key] = value
         self.afterUpdate()
 
-    def setSubDict(self, subdictname, key, value):
-        if subdictname not in self.data:
-            self.data[subdictname] = {}
-        self.data[subdictname][key] = value
+    def setSubDict(self, subDictName, key, value):
+        if subDictName not in self.data:
+            self.data[subDictName] = {}
+        self.data[subDictName][key] = value
         self.afterUpdate()
 
-    def setSubSubDict(self, subdictname, key1, key2, value):
-        if subdictname not in self.data:
-            self.data[subdictname] = {}
-        self.data[subdictname][key1][key2] = value
+    def setSubSubDict(self, subDictName, key1, key2, value):
+        if subDictName not in self.data:
+            self.data[subDictName] = {}
+        self.data[subDictName][key1][key2] = value
         self.afterUpdate()
 
 # endregion
@@ -181,7 +181,7 @@ class ParsePlus:
             val = self._unreplaceEscapeSequences(parseResult.named[name])
             setattr(ret, name, val)
 
-        ret.spans = parseResult.get('spans')
+        ret.spans = parseResult.spans
         ret.getTotalSpan = lambda: self._getTotalSpan(parseResult, lengthOfString)
         return ret
 
@@ -393,7 +393,11 @@ class TakeBatch:
                 self.callback(self.batch)
 
 def listToNPieces(lst, nPieces):
-    "Split a list into n pieces"
+    """Split a list into n pieces
+    listToNPieces([1, 2, 3, 4, 5, 6], 2) -> [[1, 2, 3], [4, 5, 6]]"""
+    if nPieces > len(lst):
+        raise ValueError('list is not long enough')
+    
     for i in range(nPieces):
         yield lst[i::nPieces]
 
@@ -426,12 +430,16 @@ class RecentlyUsedList:
 # endregion
 # region automatically memo-ize
 
-def BoundedMemoize(fn, limit=20):
-    "Inspired by http://code.activestate.com/recipes/496879-memoize-decorator-function-with-cache-size-limit/"
+def BoundedMemoize(fn, ):
+    """Inspired by http://code.activestate.com/recipes/496879-memoize-decorator-function-with-cache-size-limit/
+    The number of items cached defaults to 20.
+    You can adjust the number of items cached by setting the .limit expando property on the function itself."""
     from collections import OrderedDict
     import pickle
 
     cache = OrderedDict()
+
+    limit = 20
 
     def memoizeWrapper(*args, **kwargs):
         key = pickle.dumps((args, kwargs))

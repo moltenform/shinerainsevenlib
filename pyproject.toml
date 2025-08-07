@@ -122,5 +122,7 @@ disable = "C0103,W0401,C0116,C0114, W0614,R0911,R0912,C0415,W0611,R0913,C0209,C0
 exclude_also = [
     "def getTraceback",
     "def assertWarn",
-    "def assertWarnEq"
+    "def assertWarnEq",
+    "def __repr__",
+    "def __str__",
 ]

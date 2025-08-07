@@ -336,7 +336,8 @@ class TestDateParsing:
         assert 4 == got.month
         assert 2016 == got.year
 
-        got = uu.parse('18 feb 12')
+        # can't say 12 to mean 2012 anymore, deprecation warning shows
+        got = uu.parse('18 feb 2012')
         assert 18 == got.day
         assert 2 == got.month
         assert 2012 == got.year
