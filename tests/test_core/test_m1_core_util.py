@@ -293,43 +293,39 @@ def dateParserAvailable():
     except ImportError:
         return False
 
-if not dateParserAvailable:
-    print("We will skip dateparsing tests because the module dateparser is not found.")
-
-
 
 @pytest.mark.skipif('not dateParserAvailable()')
 class TestDateParsing:
-    def test_spanish_dates_should_not_parsed(self):
+    def test_spanish_dates_should_not_parsed(self, workAroundDateParserWarningFixture):
         uu = EnglishDateParserWrapper()
         assert uu.parse(u'Martes 21 de Octubre de 2014') is None
 
-    def test_spanish_dates_will_parse_if_we_hack_it_and_give_it_a_different_parser(self):
+    def test_spanish_dates_will_parse_if_we_hack_it_and_give_it_a_different_parser(self, workAroundDateParserWarningFixture):
         import dateparser
         uu = EnglishDateParserWrapper()
         uu.p = dateparser.date.DateDataParser()
         parsed = uu.parse(u'Martes 21 de Octubre de 2014')
         assert 2014 == parsed.year
 
-    def test_incomplete_dates_should_not_parsed(self):
+    def test_incomplete_dates_should_not_parsed(self, workAroundDateParserWarningFixture):
         uu = EnglishDateParserWrapper()
         assert uu.parse(u'December 2015') is None
 
-    def test_incomplete_dates_will_parse_if_we_hack_it_and_give_it_a_different_parser(self):
+    def test_incomplete_dates_will_parse_if_we_hack_it_and_give_it_a_different_parser(self, workAroundDateParserWarningFixture):
         import dateparser
         uuu = EnglishDateParserWrapper()
         uuu.p = dateparser.date.DateDataParser()
         parsed = uuu.parse(u'December 2015')
         assert 2015 == parsed.year
 
-    def test_dates_can_get_this(self):
+    def test_dates_can_get_this(self, workAroundDateParserWarningFixture):
         uu = EnglishDateParserWrapper()
         got = uu.parse('30 Jan 2018')
         assert 30 == got.day
         assert 1 == got.month
         assert 2018 == got.year
 
-    def test_and_confirm_MDY(self):
+    def test_and_confirm_MDY(self, workAroundDateParserWarningFixture):
         uu = EnglishDateParserWrapper()
         got = uu.parse('4/5/2016')
         assert 5 == got.day
@@ -357,7 +353,7 @@ class TestDateParsing:
         assert 3 == got.month
         assert 2011 == got.year
 
-    def test_twitter_api_format_we_needed_to_tweak_it_a_bit(self):
+    def test_twitter_api_format_we_needed_to_tweak_it_a_bit(self, workAroundDateParserWarningFixture):
         uu = EnglishDateParserWrapper()
         assert "Wed Nov 07 04:01:10 2018 +0000" == uu.fromFullWithTimezone("Wed Nov 07 04:01:10 +0000 2018")
         got = uu.parse(uu.fromFullWithTimezone("Wed Nov 07 04:01:10 +0000 2018"))
@@ -371,7 +367,7 @@ class TestDateParsing:
         assert 11 == got.month
         assert 2018 == got.year
 
-    def test_ensure_month_day_year(self):
+    def test_ensure_month_day_year(self, workAroundDateParserWarningFixture):
         # 1362456244 is 3(month)/5(day)/2013
         uu = EnglishDateParserWrapper()
         test1 = uu.getDaysBeforeInMilliseconds('3/5/2013 4:04:04 GMT', 0)
@@ -381,25 +377,32 @@ class TestDateParsing:
         test3 = uu.getDaysBeforeInMilliseconds('3/5/2013 4:04:04 GMT', 100)
         assert 1362456244000 - 100 * 86400000 == test3
     
-    def test_getDaysBefore(self):
+    def test_getDaysBefore(self, workAroundDateParserWarningFixture):
         dt = datetime.datetime(2013, 3, 5, 4, 4, 4)
         uu = EnglishDateParserWrapper()
         got = uu.getDaysBefore(dt, 5)
         assert got == datetime.datetime(2013, 2, 28, 4, 4, 4)
-        
 
-    def test_render_time(self):
+    def test_render_time(self, workAroundDateParserWarningFixture):
         t1 = renderMillisTime(1676603866779) # looks like '02/16/2023 07:17:46 PM'
         assert re.match(r'\d{2}/\d{2}/\d{4} \d{2}:\d{2}:\d{2} \w{2}', t1)
 
         t1 = renderMillisTimeStandard(1676603866779) # looks like '2023-02-16 07:17:46'
         assert re.match(r'\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}', t1)
 
-    def test_toUnixMillis(self):
+    def test_toUnixMillis(self, workAroundDateParserWarningFixture):
         uu = EnglishDateParserWrapper()
         got = uu.toUnixMilliseconds('3/5/2013 4:04:04 GMT')
         assert got == 1362456244000
         
+@pytest.fixture
+def workAroundDateParserWarningFixture():
+    # this a defect in the dateparser library, see 
+    # https://github.com/scrapinghub/dateparser/issues/1246
+    import warnings
+    warnings.filterwarnings("ignore", message=r'.*?without a year specified.*')
+    yield
+    warnings.resetwarnings()
 
 class TestRegexWrappers:
     # replaceMustExist

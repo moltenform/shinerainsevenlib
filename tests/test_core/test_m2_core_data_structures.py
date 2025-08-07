@@ -10,6 +10,7 @@ from os.path import join
 from src.shinerainsevenlib.standard import *
 from src.shinerainsevenlib.core import *
 from common import fixture_dir
+from collections import OrderedDict
 
 @pytest.mark.skipif('not isPy3OrNewer')
 class TestPersistedDict:
@@ -122,6 +123,35 @@ class TestPersistedDict:
         for i in range(6):
             assert 'val%d' % i == objRead.data['key%d' % i]
 
+class TestOrderedDict:
+    def test_checkOrderedDictEqualitySame(self):
+        d1 = OrderedDict()
+        d1['a'] = 1
+        d1['b'] = 2
+        d1same = OrderedDict()
+        d1same['a'] = 1
+        d1same['b'] = 2
+        assert d1 == d1
+        assert d1 == d1same
+        assert d1same == d1
+
+    def test_checkOrderedDictEqualityDifferentOrder(self):
+        d1 = OrderedDict()
+        d1['a'] = 1
+        d1['b'] = 2
+        d2 = OrderedDict()
+        d2['b'] = 2
+        d2['a'] = 1
+        assert d1 != d2
+
+    def test_checkOrderedDictEqualityDifferentValues(self):
+        d1 = OrderedDict()
+        d1['a'] = 1
+        d1['b'] = 2
+        d2 = OrderedDict()
+        d2['a'] = 1
+        d2['b'] = 3
+        assert d1 != d2
 
 class TestAppendList:
     # add/append

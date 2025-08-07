@@ -116,6 +116,27 @@ class TestStartThread:
         threading.Thread.start.assert_called_once()
 
 
+class TestClipboard:
+    def test_getClipboardTextWithNoUnicode(self):
+        # let's check that pyperclip is installed
+        import pyperclip  # NOQA
+        prev = getClipboardText()
+        try:
+            setClipboardText('normal ascii')
+            assert 'normal ascii' == getClipboardText()
+        finally:
+            setClipboardText(prev)
+
+    def test_getClipboardTextWithUnicode(self):
+        # let's check that pyperclip is installed
+        import pyperclip  # NOQA
+        prev = getClipboardText()
+        try:
+            setClipboardText(u'\u1E31\u1E77\u1E53\u006E')
+            assert u'\u1E31\u1E77\u1E53\u006E' == getClipboardText()
+        finally:
+            setClipboardText(prev)
+
 #~ class TestSoftDeleteFile:
     #~ def testSendToTrash(self, mocker):
         #~ import send2trash

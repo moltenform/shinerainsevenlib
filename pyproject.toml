@@ -123,11 +123,14 @@ exclude_also = [
     "def getTraceback",
     "def __repr__",
     "def __str__",
-    "def getClipboardText",
-    "def setClipboardText",
     "def DBG",
     "def registerDebughook",
     "def xxx",
     "def xxx",
     "def xxx",
+]
+
+omit = [
+    "*/__init__.py",
+    "*/m4_core_ui.py"
 ]

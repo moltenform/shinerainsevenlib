@@ -205,6 +205,14 @@ def getInputStringGui(prompt, initialvalue=None, title=' '):
     s = tkSimpleDialog.askstring(title, prompt, **options)
     return '' if s is None else s
 
+def findUnusedLetter(dictUsed, newWord):
+    for i, c in enumerate(newWord):
+        if c.isalnum() and c.lower() not in dictUsed:
+            dictUsed[c] = True
+            return i
+
+    return None
+
 def getInputFromChoicesGui(prompt, arOptions):
     """Allows user to choose from a list.
     return value is the tuple (index, text)
@@ -216,14 +224,6 @@ def getInputFromChoicesGui(prompt, arOptions):
 
     def setResult(v):
         retval[0] = v
-
-    def findUnusedLetter(dictUsed, newWord):
-        for i, c in enumerate(newWord):
-            if c.isalnum() and c.lower() not in dictUsed:
-                dictUsed[c] = True
-                return i
-
-        return None
 
     # http://effbot.org/tkinterbook/tkinter-dialog-windows.htm
     class ChoiceDialog:
