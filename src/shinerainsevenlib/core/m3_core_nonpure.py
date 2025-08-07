@@ -9,7 +9,6 @@ import os as _os
 import sys as _sys
 import re as _re
 
-
 from .m2_core_data_structures import *
 
 # region clipboard state
@@ -108,6 +107,7 @@ def registerDebughook(b=True):
 def getRandomString(maxVal=1000 * 1000, asHex=False, rng=_random):
     "Generate a random string of digits"
     if asHex:
+        assertTrue(rng == _random, "Can't provide a custom random for this one")
         return genUuid().split('-')[0]
     else:
         return '%s' % rng.randrange(maxVal)
