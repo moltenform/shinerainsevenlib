@@ -46,43 +46,52 @@ def getName(path):
 
 def createdTime(path):
     "The 'ctime' of the file"
-    return _os.stat(path).st_ctime
+    return _os.stat(path).st_birthtime
 
-def getExt(s, removeDot=True):
-    "Get extension. removeDot determines whether result is '.jpg' or 'jpg'"
-    _before, after = splitExt(s)
+def getExt(s, removeDot=True, onesToPreserve=None):
+    """Get extension. removeDot determines whether result is '.jpg' or 'jpg'"
+    onesToPreserve is a list like ['.l.jxl', '.j.jxl']
+    """
+    _before, after = splitExt(s, onesToPreserve=onesToPreserve)
     if removeDot and len(after) > 0 and after[0] == '.':
         return after[1:].lower()
     else:
         return after.lower()
+
+def splitExt(path, onesToPreserve=None):
+    """From /a/b/c.ext1 to '/a/b/c' and '.ext1'
+    onesToPreserve is a list like ['.l.jxl', '.j.jxl']
+    , in which case '/a/b/c.l.jxl' will return '/a/b/c' and '.l.jxl'
+    """
+    if onesToPreserve:
+        for item in onesToPreserve:
+            if path.endswith(item):
+                part1 = path[0:-len(item)]
+                part2 = item
+                return part1, part2
+        
+        return _os.path.splitext(path)
+    else:
+        return _os.path.splitext(path)
 
 def getWithDifferentExt(s, extWithDot, onesToPreserve=None):
     """From /a/b/c.ext1 to /a/b/c.ext1
     
     onesToPreserve is a list like ['.l.jxl', '.j.jxl']
     """
-    for attempt in (onesToPreserve or []):
-        if s.endswith(attempt):
-            name = s[0:-len(attempt)]
-            return name + extWithDot
-
-    name, ext = splitExt(s)
+    name, ext = splitExt(s, onesToPreserve=onesToPreserve)
     assertTrue(ext, s)
     return name + extWithDot
 
-def splitExt(path, onesToPreserve=None):
-    """
-    From /a/b/c.ext1 to '/a/b/c' and '.ext1'
-    onesToPreserve is a list like ['.l.jxl', '.j.jxl']
-    , in which case '/a/b/c.l.jxl' will return '/a/b/c' and '.l.jxl'
-    """
-    if onesToPreserve:
-        withNoExt = getWithDifferentExt(path, '', onesToPreserve)
-        first = path[0:len(withNoExt)]
-        second = path[len(withNoExt):]
-        return first, second
-    else:
-        return _os.path.splitext(path)
+def acrossDir(path, directoryFrom, directoryTo):
+    """Get the other version of a path.
+    If path is '/path1/to/file.ext' and directoryFrom is '/path1' and directoryTo is '/path2', then return '/path2/to2/file.ext'"""
+    assertTrue(not directoryTo.endswith(('/', '\\')))
+    assertTrue(not directoryFrom.endswith(('/', '\\')))
+    assertTrue(path.startswith(directoryFrom))
+    remainder = path[len(directoryFrom):]
+    assertTrue(remainder == '' or remainder.startswith(('/', '\\')))
+    return directoryTo + remainder
 
 
 def delete(s, doTrace=False):
@@ -316,12 +325,9 @@ def getLastModTime(path, units=TimeUnits.Seconds):
     "Last-modified time"
     return _getStatTime(path, 'st_mtime_ns', 'st_mtime', units)
 
-def getCTime(path, units=TimeUnits.Seconds):
-    "The 'ctime' of a file"
-    return _getStatTime(path, 'st_ctime_ns', 'st_ctime', units)
-
-def getATime(path, units=TimeUnits.Seconds):
-    "The 'atime' of a file. In modern systems this isn't usually the last-accessed time."
+def _getATime(path, units=TimeUnits.Seconds):
+    """The 'atime' of a file. In modern systems this isn't usually the last-accessed time.
+    Currently unexposed because it's only useful internaly"""
     return _getStatTime(path, 'st_atime_ns', 'st_atime', units)
 
 def setLastModTime(path, newVal, units=TimeUnits.Seconds):
@@ -335,7 +341,7 @@ def setLastModTime(path, newVal, units=TimeUnits.Seconds):
     else:
         raise ValueError('unknown unit')
 
-    atimeNs = getATime(path, units=TimeUnits.Nanoseconds)
+    atimeNs = _getATime(path, units=TimeUnits.Nanoseconds)
     _os.utime(path, ns=(atimeNs, newVal))
 
 def readAll(path, mode='r', encoding=None):
@@ -374,16 +380,6 @@ def fileContentsEqual(f1, f2):
     import filecmp
 
     return filecmp.cmp(f1, f2, shallow=False)
-
-def acrossDir(path, directoryFrom, directoryTo):
-    """Get the other version of a path.
-    If path is '/path1/to/file.ext' and directoryFrom is '/path1' and directoryTo is '/path2', then return '/path2/to2/file.ext'"""
-    assertTrue(not directoryTo.endswith(('/', '\\')))
-    assertTrue(not directoryFrom.endswith(('/', '\\')))
-    assertTrue(path.startswith(directoryFrom))
-    remainder = path[len(directoryFrom):]
-    assertTrue(remainder == '' or remainder.startswith(('/', '\\')))
-    return directoryTo + remainder
 
 class OSFileRelatedError(OSError):
     "Indicates a file-related exception"

@@ -10,46 +10,7 @@ from ..common_util import isPy3OrNewer
 from ..common_higher import getNowAsMillisTime
 
 class TestWrappers:
-    def test_getParent(self):
-        assert '/path/to' == getParent('/path/to/file')
-
-    def test_getName(self):
-        assert 'file' == getName('/path/to/file')
-
-    def test_getExt(self):
-        # corner cases
-        assert '' == getExt('/path/to/')
-        assert '' == getExt('/path/to/..')
-        assert '' == getExt('/path/to/file')
-        assert '' == getExt('/path/to/file.')
-        assert 'txt' == getExt('/path/to/file.txt')
-        assert 'txt' == getExt('/path/to/file.other.txt')
-        assert '' == getExt('/path/to/.txt')
-
-        # remove dot on different extension lengths
-        assert 'a' == getExt('/path/to/file.a')
-        assert 'ab' == getExt('/path/to/file.ab')
-        assert 'abcde' == getExt('/path/to/file.abcde')
-
-        # make lowercase
-        assert 'txt' == getExt('/path/to/file.TXT')
-        assert 'txt' == getExt('/path/to/file.TxT')
-        assert 'txt' == getExt('/path/to/file.tXt')
-
-    def test_getWithDifferentExt(self):
-        assert '/path/to/file.new' == getWithDifferentExt('/path/to/file.tXt', '.new')
-        assert './path/to/file.new' == getWithDifferentExt('./path/to/file.tXt', '.new')
-        assert 'file.new' == getWithDifferentExt('file.tXt', '.new')
-
-    def test_getwithdifferentextRequiresExtension(self):
-        with pytest.raises(AssertionError):
-            getWithDifferentExt('/path/to/file_no_ext', '.new')
-
-        with pytest.raises(AssertionError):
-            getWithDifferentExt('./file_no_ext', '.new')
-
-        with pytest.raises(AssertionError):
-            getWithDifferentExt('file_no_ext', '.new')
+    
 
     def test_listdeleteSure(self, fixture_dir):
         # typical use

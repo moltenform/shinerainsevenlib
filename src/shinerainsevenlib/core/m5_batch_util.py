@@ -209,10 +209,12 @@ class CleanupTempFilesOnClose(_contextlib.ExitStack):
     Example:
 
     with CleanupTempFilesOnClose() as cleanup:
-        cleanup.registerTempFile('out.tmp')
-        files.writeAll('out.tmp', 'abc')
+        cleanup.registerTempFile('temp.txt')
+        files.writeAll('temp.txt', 'abc')
         ...something that might throw
-        files.delete('out.tmp')
+    
+    ...when code reaches here, the temp file will be deleted,
+    even if an exception is thrown.
     """
 
     def registerTempFile(self, path):
@@ -223,9 +225,9 @@ class CleanupTempFilesOnClose(_contextlib.ExitStack):
         self.callback(fn)
 
 
-def removeEmptyFolders(path, removeRootIfEmpty=True, verbose=False):
+def removeEmptyDirs(path, removeRootIfEmpty=True, verbose=False):
     "Recursively removes empty directories"
-    def removeEmptyFoldersImpl(path, removeRootIfEmpty=True, _weAreRecursing=False, verbose=False):
+    def removeEmptyDirsImpl(path, removeRootIfEmpty=removeRootIfEmpty, verbose=False, _weAreRecursing=False):
         if not _os.path.isdir(path):
             return
 
@@ -235,7 +237,8 @@ def removeEmptyFolders(path, removeRootIfEmpty=True, verbose=False):
             for subpath in subPaths:
                 fullPath = _os.path.join(path, subpath)
                 if _os.path.isdir(fullPath):
-                    removeEmptyFoldersImpl(fullPath, removeRootIfEmpty=removeRootIfEmpty, _weAreRecursing=True)
+                    removeEmptyDirsImpl(fullPath, removeRootIfEmpty=removeRootIfEmpty, 
+                        verbose=verbose, _weAreRecursing=True)
 
         # if folder empty, delete it
         subPaths = _os.listdir(path)
@@ -248,5 +251,5 @@ def removeEmptyFolders(path, removeRootIfEmpty=True, verbose=False):
 
                 _os.rmdir(path)
 
-    return removeEmptyFoldersImpl(path, removeRootIfEmpty=removeRootIfEmpty, verbose=verbose)
+    return removeEmptyDirsImpl(path, removeRootIfEmpty=removeRootIfEmpty, verbose=verbose)
 

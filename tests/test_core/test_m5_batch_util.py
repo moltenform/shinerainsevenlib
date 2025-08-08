@@ -10,7 +10,6 @@ from src.shinerainsevenlib.standard import *
 from src.shinerainsevenlib.core import *
 from common import fileInfoListToList, fixture_dir, fixture_dir_with_many
 
-
 class TestSrssLooper:
     def testSrssLooperBasic(self):
         loop = srss.SrssLooper([1,2,3])
@@ -219,7 +218,7 @@ class TestCleanupEmptyDirs:
         files.delete(fixture_dir_with_many + '/foobar/a/foobar/c/c0.txt')
         files.delete(fixture_dir_with_many + '/foobar/a/foobar/c/c1.txt')
         files.delete(fixture_dir_with_many + '/foobar/a/baz/foobar/cc.txt')
-        removeEmptyFolders(fixture_dir_with_many)
+        removeEmptyDirs(fixture_dir_with_many)
         got = fileInfoListToList(fixture_dir_with_many, files.recurseDirs)
         assert got ==['', '/foobar', '/foobar/a', '/foobar/a/baz', 
                       '/foobar/a/foobar', '/foobar/foobar']
@@ -229,14 +228,14 @@ class TestCleanupEmptyDirs:
         files.delete(fixture_dir_with_many + '/foobar/a/foobar/c/c1.txt')
         files.delete(fixture_dir_with_many + '/foobar/a/baz/foobar/cc.txt')
         
-        removeEmptyFolders(fixture_dir_with_many + '/foobar/a/baz/foobar', 
+        removeEmptyDirs(fixture_dir_with_many + '/foobar/a/baz/foobar', 
                            removeRootIfEmpty=False)
         got = fileInfoListToList(fixture_dir_with_many, files.recurseDirs)
         assert got == ['', '/foobar', '/foobar/a', '/foobar/a/baz', 
                        '/foobar/a/baz/foobar', '/foobar/a/foobar', 
                        '/foobar/a/foobar/c', '/foobar/foobar']
         
-        removeEmptyFolders(fixture_dir_with_many + '/foobar/a/baz/foobar', 
+        removeEmptyDirs(fixture_dir_with_many + '/foobar/a/baz/foobar', 
                            removeRootIfEmpty=True)
         got = fileInfoListToList(fixture_dir_with_many, files.recurseDirs)
         assert got == ['', '/foobar', '/foobar/a', '/foobar/a/baz', 
@@ -245,10 +244,10 @@ class TestCleanupEmptyDirs:
 
     def testShouldIgnoreIfMissingOrIsFile(self, fixture_dir_with_many):
         assert files.exists(fixture_dir_with_many + '/foobar/a/foobar/c/c0.txt')
-        removeEmptyFolders(fixture_dir_with_many + '/foobar/a/foobar/c/c0.txt')
+        removeEmptyDirs(fixture_dir_with_many + '/foobar/a/foobar/c/c0.txt')
         assert files.exists(fixture_dir_with_many + '/foobar/a/foobar/c/c0.txt')
 
         assert not files.exists(fixture_dir_with_many + '/notexist')
-        removeEmptyFolders(fixture_dir_with_many + '/notexist')
+        removeEmptyDirs(fixture_dir_with_many + '/notexist')
         assert not files.exists(fixture_dir_with_many + '/notexist')
 
