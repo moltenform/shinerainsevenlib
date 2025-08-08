@@ -2,6 +2,7 @@
 # shinerainsevenlib (Ben Fisher, moltenform.com)
 # Released under the LGPLv2.1 License
 
+from collections import namedtuple
 import os as _os
 import sys as _sys
 import json as _json
@@ -175,14 +176,20 @@ class ParsePlus:
         if not parseResult:
             return parseResult
 
-        ret = Bucket(spans=None, getTotalSpan=None)
+        class _ParsePlusResults:
+            # namedtuple is sometimes useful, but immutable
+            def __init__(self, spans, getTotalSpan):
+                self.spans = spans
+                self.getTotalSpan = getTotalSpan
+
         lengthOfString = len(s)
+        ret = _ParsePlusResults(spans = parseResult.spans, getTotalSpan =
+            lambda: self._getTotalSpan(parseResult, lengthOfString))
+        
         for name in parseResult.named:
             val = self._unreplaceEscapeSequences(parseResult.named[name])
             setattr(ret, name, val)
 
-        ret.spans = parseResult.spans
-        ret.getTotalSpan = lambda: self._getTotalSpan(parseResult, lengthOfString)
         return ret
 
     def _getTotalSpan(self, parseResult, lenS):

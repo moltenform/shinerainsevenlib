@@ -7,6 +7,7 @@ import os as _os
 import re as _re
 import shutil as _shutil
 import contextlib as _contextlib
+from collections.abc import Iterable
 
 from .m4_core_ui import *
 
@@ -23,119 +24,125 @@ class SrssLooper:
     >>>         loop.flagDidNoMeaningfulWork()
     >>>     else:
     >>>         print('found an odd number', number)
+
+    input can be a
+        list 
+        iterable
+        lambda that returns an iterable
+            useful if you need to compute the length without producing the list
+    waitUntilValueSeen can be a
+        value
+        lambda that returns boolean- the first time it returns True,
+            we'll start the loop
     """
 
     def __init__(self, listOrLambda):
         self._showPercentages = False
         self._pauseEveryNTimes = None
         self._pauseEverySeconds = None
-        self._waitUntilValueSeen = None
-        self._input = listOrLambda
-        self._currentStateToPrint = None
+        self._waitUntilValueSeen = DefaultVal
+        self._fnFormatStateToPrint = DefaultVal
 
-        # reset state
-        self._didMeaningfulWork = True
-        self._currentIter = None
-        self._counter = 0
-        self._countMeaningfulWork = 0
-        self._estimateCount = None
-        self._prevPercentShown = None
-
-    def _resetState(self):
-        self._didMeaningfulWork = True
-        self._currentIter = None
-        self._counter = 0
-        self._countMeaningfulWork = 0
-        self._estimateCount = None
-        self._prevPercentShown = None
-
-    def _getIter(self):
-        if callable(self._input):
-            # _input must be a lambda that returns an iterable.
-            
-            # we wrap in iter so that we can call next. if it was
-            # already wrapped in iter, that's totally fine, same behavior.
-            newIter = iter(self._input())
+        # convert to iter
+        if isinstance(listOrLambda, list):
+            self._len = len(listOrLambda)
+            self._iter = iter(listOrLambda)
+        elif callable(listOrLambda):
+            tempIter = listOrLambda()
+            self._len = SrssLooper.countIterable(tempIter)
+            self._iter = listOrLambda()
+        elif isinstance(listOrLambda, Iterable):
+            # there might be some __getitem__ iterables
+            # that don't qualify as Iterable, but I've never needed to support them.
+            self._len = -1
+            self._iter = listOrLambda
         else:
-            # must be a list
-            assertTrue(isinstance(self._input, list))
-            newIter = self._input
-
-        if callable(self._waitUntilValueSeen):
-            return SrssLooper.skipForwardUntilTrue(
-                newIter, lambda item: self._waitUntilValueSeen(item)
-            )
-        elif self._waitUntilValueSeen:
-            return SrssLooper.skipForwardUntilTrue(
-                newIter, lambda item: item == self._waitUntilValueSeen
-            )
-        else:
-            return newIter
+            assertTrue(False, 'input must be list or iterable')
 
     def showPercentageEstimates(self, displayStr='\n...'):
         # it will be an estimate, since the iterable
         # might return a different number of items
         self._showPercentages = displayStr
 
-    def currentStateToPrint(self, currentStateToPrint):
-        self._currentStateToPrint = currentStateToPrint
+    def setFormatStateToPrint(self, fn):
+        self._fnFormatStateToPrint = fn
 
     def addPauses(self, pauseEveryNTimes=20, seconds=20):
         self._pauseEveryNTimes = pauseEveryNTimes
         self._pauseEverySeconds = seconds
 
-    def waitUntilValueSeen(self, v):
-        self._waitUntilValueSeen = v
+    def waitUntilValueSeen(self, valOrFn):
+        self._waitUntilValueSeen = valOrFn
 
     def flagDidNoMeaningfulWork(self):
         self._didMeaningfulWork = False
 
     def __iter__(self):
-        self._resetState()
-        self._currentIter = self._getIter()
-        self._estimateCount = SrssLooper.countIterable(self._getIter())
-        return self
-
-    def __next__(self):
-        self._counter += 1
-        self._showPercent()
-        if self._didMeaningfulWork:
-            self._countMeaningfulWork += 1
-            if self._pauseEveryNTimes and self._countMeaningfulWork % self._pauseEveryNTimes == 0:
-                trace('sleeping')
-                _time.sleep(self._pauseEverySeconds)
-                trace('waking')
-
+        countMeaningfulWork = 0 # we only want to pause when we've worked a lot
+        counter = 0
+        prevPercentShown = 0
+        isStillWaiting = True
+        shouldSkip = True
         self._didMeaningfulWork = True
-        return next(self._currentIter)
+        for v in self._iter:
+            counter += 1
+            counter, prevPercentShown = self._showPercent(v, counter, prevPercentShown)
+            isStillWaiting, shouldSkip = self._shouldSkip(v, isStillWaiting, shouldSkip)
+            if shouldSkip:
+                continue
 
-    def _showPercent(self):
+            if self._didMeaningfulWork:
+                countMeaningfulWork += 1
+                if self._pauseEveryNTimes and countMeaningfulWork % self._pauseEveryNTimes == 0:
+                    trace('sleeping')
+                    _time.sleep(self._pauseEverySeconds)
+                    trace('waking')
+
+            self._didMeaningfulWork = True
+            yield v
+
+    def _showPercent(self, v, counter, prevPercentShown):
         if not self._showPercentages:
-            return
+            return counter, prevPercentShown
 
-        percentage = int(100 * self._counter / (self._estimateCount or 1))
+        if self._len == -1:
+            # impossible to know the length of a raw iterator
+            return counter, prevPercentShown
+        elif self._len == 0:
+            # prevent divide by 0
+            self._len = 0.01
+
+        percentage = int(100 * counter / (self._len))
+        
+        # clamp to 99% - because _len might be inaccurate
         percentage = clampNumber(percentage, 0.0, 99.9)
-        if percentage != self._prevPercentShown:
-            self._prevPercentShown = percentage
+        if percentage != prevPercentShown:
+            prevPercentShown = percentage
             s = str(percentage) + '%'
-            if self._currentStateToPrint is not None:
-                s = str(self._currentStateToPrint) + ' ' + s
+            if self._fnFormatStateToPrint is not DefaultVal:
+                s += ' ' + str(self._fnFormatStateToPrint(v))
 
             trace(self._showPercentages, s)
 
-    @staticmethod
-    def skipForwardUntilTrue(itr, fnWaitUntil):
-        if isinstance(itr, list):
-            itr = (item for item in itr)
+        return counter, prevPercentShown
+    
+    def _shouldSkip(self, v, isStillWaiting, shouldSkip):
+        if not isStillWaiting:
+            isStillWaiting = False
+            shouldSkip = False
+            return isStillWaiting, shouldSkip
 
-        hasSeen = False
-        for value in itr:
-            if not hasSeen and fnWaitUntil(value):
-                hasSeen = True
-            if hasSeen:
-                yield value
-
-        assertTrue(hasSeen, 'Condition never seen.')
+        if self._waitUntilValueSeen is DefaultVal:
+            isStillWaiting = False
+            shouldSkip = False
+        elif callable(self._waitUntilValueSeen):
+            isStillWaiting = not self._waitUntilValueSeen(v)
+            shouldSkip = shouldSkip if isStillWaiting else False
+        else:
+            isStillWaiting = not self._waitUntilValueSeen == v
+            shouldSkip = shouldSkip if isStillWaiting else False
+        
+        return isStillWaiting, shouldSkip
 
     @staticmethod
     def countIterable(itr):

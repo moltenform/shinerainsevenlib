@@ -12,12 +12,76 @@ from common import fixture_dir
 
 
 class TestSrssLooper:
-    def testSrssLooperInteractive(self):
+    def testSrssLooperBasic(self):
+        loop = srss.SrssLooper([1,2,3])
+        numbersSeen = []
+        for number in loop:
+            numbersSeen.append(number)
+
+        assert numbersSeen == [1,2,3]
+    
+    def getIteratorOptions(self):
+        class GetIteratorWithUnreliableLength:
+            countCalls = 0
+            def get(self):
+                self.countCalls += 1
+                if self.countCalls > 1:
+                    return (x for x in [1, 2,3])
+                else:
+                    return (x for x in [])
+        
+        instance = GetIteratorWithUnreliableLength()
+        return {
+            'plain': [1,2,3],
+            'iter': (x for x in [1,2,3]),
+            # SrssLooper has a feature where it can estimate iter length,
+            'lambda': lambda: (x for x in [1,2,3]),
+            # SrssLooper should be resilient to inaccurate lengths
+            'lambdaUnreliableLen': lambda: instance.get(),
+        }
+
+    def getWaitUntilOptions(self):
+        return {
+            'default': DefaultVal,
+            'valNone': None, # literally waits until 'None' appears
+            'plain': 2,
+            'lambda': lambda item: item == 2,
+        }
+
+    def testSrssLooperTryOptions(self):
+        for listInputKey in self.getIteratorOptions().keys():
+            for waitUntilKey in self.getWaitUntilOptions().keys():
+                # important: generate a new instance each time through loop,
+                # since you can't re-use an iterator
+                listInput = self.getIteratorOptions()[listInputKey]
+                waitUntil = self.getWaitUntilOptions()[waitUntilKey]
+                numbersSeen = []
+                loop = srss.SrssLooper(listInput)
+                loop.waitUntilValueSeen(waitUntil)
+                for number in loop:
+                    numbersSeen.append(number)
+                
+                if listInputKey == 'iter':
+                    assert loop._len == -1
+                elif listInputKey == 'lambdaUnreliableLen':
+                    assert loop._len == 0
+                else:
+                    assert loop._len == 3
+                
+                if waitUntilKey == 'default':
+                    assert numbersSeen == [1,2,3]
+                elif waitUntilKey == 'valNone':
+                    assert numbersSeen == []
+                else:
+                    assert numbersSeen == [2,3]
+
+    def testSrssLooperAdvanced(self):
         # you should now see a loop from 3 to 100 that pauses every 20
         loop = srss.SrssLooper(list(range(100)))
         loop.showPercentageEstimates()
         loop.addPauses(10, seconds=2)
         loop.waitUntilValueSeen(3)
+        loop.setFormatStateToPrint(lambda x: f'currently at: {x}')
         timeStart = srss.getNowAsMillisTime()
         numbersSeen = []
         evensSeen = []
