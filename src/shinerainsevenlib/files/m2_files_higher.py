@@ -65,6 +65,9 @@ def openUrl(url, filterChars=True):
 
 def findBinaryOnPath(name):
     "This even knows about .bat and .exe on windows platforms"
+    if _os.path.isabs(name) and _os.path.isfile(name):
+        return name
+    
     return _shutil.which(name)
 
 def hasherFromString(s):
@@ -287,24 +290,26 @@ def run(
             stderr = stderr.rstrip()
 
     else:
-        with _ExitStack() as cleanupTasks:
+        stdoutArg = None
+        stderrArg = None
+        try:
             if silenceOutput:
                 stdoutArg = open(_os.devnull, 'wb')  # noqa
                 stderrArg = open(_os.devnull, 'wb')  # noqa
-                cleanupTasks.push(stdoutArg)
-                cleanupTasks.push(stderrArg)
-            else:
-                stdoutArg = None
-                stderrArg = None
 
-                if wait:
-                    retcode = _subprocess.call(
-                        listArgs, stdout=stdoutArg, stderr=stderrArg, shell=shell, **kwargs
-                    )
-                else:
-                    _subprocess.Popen(
-                        listArgs, stdout=stdoutArg, stderr=stderrArg, shell=shell, **kwargs
-                    )
+            if wait:
+                retcode = _subprocess.call(
+                    listArgs, stdout=stdoutArg, stderr=stderrArg, shell=shell, **kwargs
+                )
+            else:
+                _subprocess.Popen(
+                    listArgs, stdout=stdoutArg, stderr=stderrArg, shell=shell, **kwargs
+                )
+        finally:
+            if stdoutArg is not None:
+                stdoutArg.close()
+            if stderrArg is not None:
+                stderrArg.close()
 
     if throwOnFailure and retcode != 0:
         if throwOnFailure is True:

@@ -765,3 +765,4 @@ def fixture_fulldir():
     restoreDirectoryContents(basedir)
     yield basedir
     ensureEmptyDirectory(basedir)
+

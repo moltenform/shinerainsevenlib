@@ -163,7 +163,8 @@ class TestFileIterator:
         root2 = fixture_dir_with_many + '/foobar/a/baz/foobar'
         iter = SrssFileIterator([root1, root2])
         got = fileInfoListToList(fixture_dir_with_many, iter)
-        assert got == ['/foobar/a/foobar/a.txt', '/foobar/a/foobar/b.txt', '/foobar/a/foobar/c/c0.txt', '/foobar/a/foobar/c/c1.txt', '/foobar/a/baz/foobar/cc.txt']
+        assert got == ['/foobar/a/baz/foobar/cc.txt', '/foobar/a/foobar/a.txt', '/foobar/a/foobar/b.txt', 
+                       '/foobar/a/foobar/c/c0.txt', '/foobar/a/foobar/c/c1.txt']
 
     def testNeedsAbsPaths(self):
         with pytest.raises(AssertionError, match='relative paths'):

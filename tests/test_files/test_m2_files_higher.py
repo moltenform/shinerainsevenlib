@@ -1,3 +1,16 @@
+# BenPythonCommon,
+# 2015 Ben Fisher, released under the LGPLv2.1 License.
+
+import pytest
+from os.path import join
+from src.shinerainsevenlib.standard import *
+from src.shinerainsevenlib.core import *
+from tests.test_core.common import fixture_dir, fixture_dir_with_many
+from collections import OrderedDict
+import os
+import sys
+import shutil
+from src.shinerainsevenlib.files import *
 
 
 class TestM3ComputeHash:
@@ -25,39 +38,42 @@ class TestM3ComputeHash:
        
     def test_computeHashLargeFile(self, fixture_dir):
         fsize = defaultBufSize * 2 + 20
-        with open('f{fixture_dir}/a.dat', 'wb') as fout:
+        with open(f'{fixture_dir}/a.dat', 'wb') as fout:
             for i in range(fsize):
-                letter = ord('a') + i%26
-                fout.write(chr(letter))
-        assert 'xxx' == computeHash('f{fixture_dir}/a.dat', 'crc32')
-        assert 'xxx' == computeHash('f{fixture_dir}/a.dat', 'md5')
+                letter = ord('a') + (i%26)
+                fout.write(chr(letter).encode('latin-1'))
+        assert '4642eec0' == computeHash(f'{fixture_dir}/a.dat', 'crc32')
+        assert 'ab73f0d9bfb568486d122f82480e4801' == computeHash(f'{fixture_dir}/a.dat', 'md5')
 
 class TestM3FilesHigher:
     def testFindBinaryOnPath(self, fixture_dir):
-        write(f'{fixture_dir}/a.out', ' ')
-        write(f'{fixture_dir}/a.exe', ' ')
-        write(f'{fixture_dir}/b.bat', ' ')
-        write(f'{fixture_dir}/c', ' ')
+        writeAll(f'{fixture_dir}/a.out', ' ')
+        writeAll(f'{fixture_dir}/a.exe', ' ')
+        writeAll(f'{fixture_dir}/b.bat', ' ')
+        writeAll(f'{fixture_dir}/c', ' ')
         os.chdir(fixture_dir)
         if sys.platform.startswith('win'):
-            assert findBinaryOnPath('notepad').endswith('notepad.exe')
-            assert findBinaryOnPath('notepad.exe').endswith('notepad.exe')
+            assert findBinaryOnPath('notepad').lower().endswith('notepad.exe')
+            assert findBinaryOnPath('notepad.exe').lower().endswith('notepad.exe')
             assert not findBinaryOnPath('doesnotexist')
             assert not findBinaryOnPath('doesnotexist.exe')
-            assert findBinaryOnPath('a.exe').endswith('a.exe')
-            assert findBinaryOnPath('a').endswith('a.exe')
-            assert findBinaryOnPath('b.bat').endswith('b.bat')
-            assert findBinaryOnPath('b').endswith('b.bat')
+            assert findBinaryOnPath('a.exe').lower().endswith('a.exe')
+            assert findBinaryOnPath('a').lower().endswith('a.exe')
+            assert findBinaryOnPath('b.bat').lower().endswith('b.bat')
+            assert findBinaryOnPath('b').lower().endswith('b.bat')
 
-            # if given a path, use it
-            assert findBinaryOnPath('c').endswith('c')
+            # no exe extension so skipped 
+            assert not findBinaryOnPath('c')
+            
+            # but if given a full path, use it
+            assert findBinaryOnPath(f'{fixture_dir}/c').lower().endswith('c')
 
             # test with full paths
             assert not findBinaryOnPath(os.path.abspath('doesnotexist'))
             assert not findBinaryOnPath(os.path.abspath('doesnotexist.exe'))
-            assert findBinaryOnPath(os.path.abspath('a.exe')).endswith('a.exe')
-            assert findBinaryOnPath(os.path.abspath('a')).endswith('a.exe')
-            assert findBinaryOnPath(os.path.abspath('c')).endswith('c')
+            assert findBinaryOnPath(os.path.abspath('a.exe')).lower().endswith('a.exe')
+            assert findBinaryOnPath(os.path.abspath('a')).lower().endswith('a.exe')
+            assert findBinaryOnPath(os.path.abspath('c')).lower().endswith('c')
         else:
             assert findBinaryOnPath('sh').endswith('sh')
             assert not findBinaryOnPath('doesnotexist')

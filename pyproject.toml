@@ -133,5 +133,6 @@ exclude_also = [
 
 omit = [
     "*/__init__.py",
-    "*/m4_core_ui.py"
+    "*/m4_core_ui.py",
+    "**/tools_any_project/**",
 ]

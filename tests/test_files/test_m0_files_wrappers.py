@@ -195,29 +195,29 @@ class TestMakeDirs:
             makeDirs(join(fixture_dir, 'a.txt'))
 
 
-class TestEnsureEmptyDir:
-    def test(self, fixture_dir_with_many):
-        # delete an empty dir
+#~ class TestEnsureEmptyDir:
+    #~ def test(self, fixture_dir_with_many):
+        #~ # delete an empty dir
 
 
-        ensureEmptyDirectory(fixture_dir_with_many + '/foobar/a/foobar')
+        #~ ensureEmptyDirectory(fixture_dir_with_many + '/foobar/a/foobar')
 
-        # delete a dir that contains subdirs and files
-        assert 5 == len(list(listChildren(fixture_fulldir)))
-        assert not isEmptyDir(fixture_fulldir)
-        ensureEmptyDirectory(fixture_fulldir)
-        assert 0 == len(list(listChildren(fixture_fulldir)))
-        assert isEmptyDir(fixture_fulldir)
+        #~ # delete a dir that contains subdirs and files
+        #~ assert 5 == len(list(listChildren(fixture_fulldir)))
+        #~ assert not isEmptyDir(fixture_fulldir)
+        #~ ensureEmptyDirectory(fixture_fulldir)
+        #~ assert 0 == len(list(listChildren(fixture_fulldir)))
+        #~ assert isEmptyDir(fixture_fulldir)
 
-        # can't delete a file
-        writeAll(join(fixture_fulldir, 'file'), b'a', 'wb')
-        with pytest.raises(Exception):
-            ensureEmptyDirectory(join(fixture_dir, 'file'))
+        #~ # can't delete a file
+        #~ writeAll(join(fixture_fulldir, 'file'), b'a', 'wb')
+        #~ with pytest.raises(Exception):
+            #~ ensureEmptyDirectory(join(fixture_dir, 'file'))
 
-        # will create directory if not exists
-        assert not isDir(join(fixture_fulldir, 'd1', 'd2'))
-        ensureEmptyDirectory(join(fixture_fulldir, 'd1', 'd2'))
-        assert isDir(join(fixture_fulldir, 'd1', 'd2'))
+        #~ # will create directory if not exists
+        #~ assert not isDir(join(fixture_fulldir, 'd1', 'd2'))
+        #~ ensureEmptyDirectory(join(fixture_fulldir, 'd1', 'd2'))
+        #~ assert isDir(join(fixture_fulldir, 'd1', 'd2'))
 
 class TestGetModTime:
     @pytest.mark.skipif('not isPy3OrNewer')

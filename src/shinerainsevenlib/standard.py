@@ -5,8 +5,6 @@
 # don't add these broad imports to __init__.py, otherwise a module in
 # a directory that imported ..otherdir would bring in the entire project.
 
-# ruff: noqa
-
 # add the most-commonly-used items to the top scope
 from .core import (
     alert,
