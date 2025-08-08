@@ -9,58 +9,10 @@ from os.path import join
 from ..common_util import isPy3OrNewer
 from ..common_higher import getNowAsMillisTime
 
-class TestWrappers:
-    
-
-    def test_listdeleteSure(self, fixture_dir):
-        # typical use
-        writeAll(join(fixture_dir, 'file'), b'a', 'wb')
-        assert exists(join(fixture_dir, 'file'))
-        deleteSure(join(fixture_dir, 'file'))
-        assert not exists(join(fixture_dir, 'file'))
-
-        # ok to try to delete non existing
-        deleteSure(join(fixture_dir, 'non-existing-file'))
-
-        # attempt delete while held should fail
-        if sys.platform.startswith("win"):
-            hold = open(join(fixture_dir, 'file'), 'w')
-            with pytest.raises(Exception):
-                deleteSure(join(fixture_dir, 'file'))
-            hold.close()
-
-    def test_makeDirs(self, fixture_dir):
-        # one-deep
-        assert not isDir(join(fixture_dir, 'd'))
-        makeDirs(join(fixture_dir, 'd'))
-        assert isDir(join(fixture_dir, 'd'))
-
-        # two-deep
-        assert not isDir(join(fixture_dir, 'd1', 'd2'))
-        makeDirs(join(fixture_dir, 'd1', 'd2'))
-        assert isDir(join(fixture_dir, 'd1', 'd2'))
-
-        # ok if already exists
-        makeDirs(join(fixture_dir, 'd1', 'd2'))
-        assert isDir(join(fixture_dir, 'd1', 'd2'))
+        
 
     def test_ensureEmptyDirectory(self, fixture_fulldir):
-        # recursively delete
-        assert 5 == len(list(listchildren(fixture_fulldir)))
-        assert not isEmptyDir(fixture_fulldir)
-        ensureEmptyDirectory(fixture_fulldir)
-        assert 0 == len(list(listchildren(fixture_fulldir)))
-        assert isEmptyDir(fixture_fulldir)
-
-        # can't delete a file
-        writeAll(join(fixture_fulldir, 'file'), b'a', 'wb')
-        with pytest.raises(Exception):
-            ensureEmptyDirectory(join(fixture_dir, 'file'))
-
-        # will create directory if not exists
-        assert not isDir(join(fixture_fulldir, 'd1', 'd2'))
-        ensureEmptyDirectory(join(fixture_fulldir, 'd1', 'd2'))
-        assert isDir(join(fixture_fulldir, 'd1', 'd2'))
+        
 
         # necessary, since fixture_fulldir is built once per module
         restoreDirectoryContents(fixture_fulldir)
@@ -259,15 +211,15 @@ class TestDirectoryList:
     def test_listChildren(self, fixture_fulldir):
         expected = ['P1.PNG', 'a1.txt', 'a2png', 's1', 's2']
         expectedTuples = [(join(fixture_fulldir, s), s) for s in expected]
-        assert expectedTuples == sorted(list(listchildren(fixture_fulldir)))
+        assert expectedTuples == sorted(list(listChildren(fixture_fulldir)))
 
     def test_listChildrenFilenamesOnly(self, fixture_fulldir):
         expected = ['P1.PNG', 'a1.txt', 'a2png', 's1', 's2']
-        assert expected == sorted(list(listchildren(fixture_fulldir, filenamesOnly=True)))
+        assert expected == sorted(list(listChildren(fixture_fulldir, filenamesOnly=True)))
 
     def test_listChildrenCertainExtensions(self, fixture_fulldir):
         expected = ['P1.PNG', 'a1.txt']
-        assert expected == sorted(list(listchildren(fixture_fulldir, filenamesOnly=True, allowedExts=['png', 'txt'])))
+        assert expected == sorted(list(listChildren(fixture_fulldir, filenamesOnly=True, allowedExts=['png', 'txt'])))
 
     def test_listFiles(self, fixture_fulldir):
         expected = ['P1.PNG', 'a1.txt', 'a2png']
@@ -388,7 +340,7 @@ class TestDirectoryList:
 
     def test_checkNamedParameters(self, fixture_dir):
         with pytest.raises(ValueError) as exc:
-            list(listchildren(fixture_dir, True))
+            list(listChildren(fixture_dir, True))
         exc.match('please name parameters')
 
 class TestOtherUtilsActingOnFiles:

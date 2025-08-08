@@ -104,7 +104,7 @@ def delete(s, doTrace=False):
 
 def deleteSure(s, doTrace=False):
     "Delete a file and confirm it is no longer there"
-    delete(s, doTrace)
+    delete(s, doTrace=doTrace)
     assertTrue(not exists(s))
 
 def makeDirs(s):

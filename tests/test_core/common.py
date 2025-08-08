@@ -54,5 +54,6 @@ def fileInfoListToList(root, incoming):
 
     result = [srss.replaceMustExist(s, root, '') for s in result]
     result = [s.replace('\\', '/') for s in result]
+    result.sort() # important for non-windows platforms
     return result
 

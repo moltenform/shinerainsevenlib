@@ -134,25 +134,31 @@ class TestGetAltered:
 
 
 class TestDelete:
-    def test(self, fixture_dir_with_many):
+    def testDelete(self, fixture_dir_with_many):
+        self.runDeleteTests(files.delete, fixture_dir_with_many)
+    
+    def testDeleteSure(self, fixture_dir_with_many):
+        self.runDeleteTests(files.deleteSure, fixture_dir_with_many)
+    
+    def runDeleteTests(self, fnDelete, fixture_dir_with_many):
         # file
         assert os.path.isfile(fixture_dir_with_many + '/foobar/a/foobar/c/c0.txt')
-        delete(fixture_dir_with_many + '/foobar/a/foobar/c/c0.txt')
+        fnDelete(fixture_dir_with_many + '/foobar/a/foobar/c/c0.txt')
         assert not os.path.isfile(fixture_dir_with_many + '/foobar/a/foobar/c/c0.txt')
 
         # non existing file
         assert not os.path.isfile(fixture_dir_with_many + '/notexist.txt')
-        delete(fixture_dir_with_many + '/notexist.txt')
+        fnDelete(fixture_dir_with_many + '/notexist.txt')
         assert not os.path.isfile(fixture_dir_with_many + '/notexist.txt')
 
-        # cannot delete directories
+        # cannot fnDelete directories
         assert os.path.isdir(fixture_dir_with_many + '/foobar/a/foobar')
         with pytest.raises(PermissionError):
-            delete(fixture_dir_with_many + '/foobar/a/foobar')
+            fnDelete(fixture_dir_with_many + '/foobar/a/foobar')
 
         # trace
         assert not os.path.isfile(fixture_dir_with_many + '/notexist.txt')
-        delete(fixture_dir_with_many + '/notexist.txt', doTrace=True)
+        fnDelete(fixture_dir_with_many + '/notexist.txt', doTrace=True)
         assert not os.path.isfile(fixture_dir_with_many + '/notexist.txt')
 
         # file while lock is held
@@ -160,8 +166,58 @@ class TestDelete:
             with open(fixture_dir_with_many + '/foobar/a/foobar/c/c0.txt', 'w') as f:
                 assert os.path.isfile(fixture_dir_with_many + '/foobar/a/foobar/c/c0.txt')
                 with pytest.raises(PermissionError):
-                    delete(fixture_dir_with_many + '/foobar/a/foobar/c/c0.txt')
-            
+                    fnDelete(fixture_dir_with_many + '/foobar/a/foobar/c/c0.txt')
+
+
+class TestMakeDirs:
+    def test(self, fixture_dir):
+        # one-deep
+        assert not isDir(join(fixture_dir, 'd'))
+        makeDirs(join(fixture_dir, 'd'))
+        assert isDir(join(fixture_dir, 'd'))
+
+        # two-deep
+        assert not isDir(join(fixture_dir, 'd1', 'd2'))
+        makeDirs(join(fixture_dir, 'd1', 'd2'))
+        assert isDir(join(fixture_dir, 'd1', 'd2'))
+
+        # ok if already exists
+        makeDirs(join(fixture_dir, 'd1', 'd2'))
+        assert isDir(join(fixture_dir, 'd1', 'd2'))
+
+        # invalid path
+        with pytest.raises(Exception):
+            makeDirs('///')
+        
+        # exists as file
+        files.writeAll(join(fixture_dir, 'a.txt'), 'abc')
+        with pytest.raises(FileExistsError):
+            makeDirs(join(fixture_dir, 'a.txt'))
+
+
+class TestEnsureEmptyDir:
+    def test(self, fixture_dir_with_many):
+        # delete an empty dir
+
+
+        ensureEmptyDirectory(fixture_dir_with_many + '/foobar/a/foobar')
+
+        # delete a dir that contains subdirs and files
+        assert 5 == len(list(listChildren(fixture_fulldir)))
+        assert not isEmptyDir(fixture_fulldir)
+        ensureEmptyDirectory(fixture_fulldir)
+        assert 0 == len(list(listChildren(fixture_fulldir)))
+        assert isEmptyDir(fixture_fulldir)
+
+        # can't delete a file
+        writeAll(join(fixture_fulldir, 'file'), b'a', 'wb')
+        with pytest.raises(Exception):
+            ensureEmptyDirectory(join(fixture_dir, 'file'))
+
+        # will create directory if not exists
+        assert not isDir(join(fixture_fulldir, 'd1', 'd2'))
+        ensureEmptyDirectory(join(fixture_fulldir, 'd1', 'd2'))
+        assert isDir(join(fixture_fulldir, 'd1', 'd2'))
 
 class TestGetModTime:
     @pytest.mark.skipif('not isPy3OrNewer')
