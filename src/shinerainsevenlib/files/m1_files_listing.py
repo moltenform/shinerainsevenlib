@@ -148,7 +148,9 @@ def recurseFileInfo(
     """Convenient interface to python 3's file iterator.
     On Windows this can be very fast because calls to get file properties like size
     don't require an extra system call.
-    You can provide a fnFilterDirs to filter out any directories not to traverse into."""
+    You can provide a fnFilterDirs to filter out any directories not to traverse into.
+    
+    allowedExts in the form ['png', 'gif']"""
     if isinstance(allowedExts, list):
         allowedExts = set(allowedExts)
         
@@ -163,13 +165,13 @@ def _recurseFileInfoRecurse(
     fnDirectExceptionsTo=None,
     allowedExts=None
 ):
-    
     # note that scandir's resources are released in a destructor,
     # so do not create circular references holding it.
     for entry in _os.scandir(root):
         if entry.is_dir(follow_symlinks=followSymlinks):
             if not filesOnly:
                 yield FileInfoEntryWrapper(entry)
+                
             if recurse and (not fnFilterDirs or fnFilterDirs(entry.path)):
                 try:
                     for subentry in _recurseFileInfoRecurse(
@@ -179,6 +181,7 @@ def _recurseFileInfoRecurse(
                         filesOnly=filesOnly,
                         fnFilterDirs=fnFilterDirs,
                         fnDirectExceptionsTo=fnDirectExceptionsTo,
+                        allowedExts=allowedExts
                     ):
                         yield subentry
                 except:

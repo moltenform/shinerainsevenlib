@@ -42,6 +42,7 @@ class SrssLooper:
         self._pauseEverySeconds = None
         self._waitUntilValueSeen = DefaultVal
         self._fnFormatStateToPrint = DefaultVal
+        self._didMeaningfulWork = True
 
         # convert to iter
         if isinstance(listOrLambda, list):
@@ -149,11 +150,10 @@ class SrssLooper:
         return sum(1 for _item in itr)
 
 class SrssFileIterator:
-    """
-    Helpful for file iteration,
+    """Helpful for file iteration,
     adding some extra features to files.recurseFiles.
-    Can be used to skip node_modules directories.
-    """
+    Can be used to skip node_modules directories."""
+
     def __init__(self, rootOrListOfRoots, fnIncludeTheseFiles=None,
                  fnFilterDirs=None,
                allowRelativePaths=None,  excludeNodeModules=False, **params):
@@ -173,57 +173,42 @@ class SrssFileIterator:
                 'relative paths not allowed',
                 root,
             )
-
+    
+    def _filterDirs(self, path):
+        if self.excludeNodeModules and (
+            SrssFileIterator.pathContainsThisName(path, 'node_modules', )
+        ):
+            return False
+        elif self.fnFilterDirsFromUser and not self.fnFilterDirsFromUser(path):
+            return False
+        else:
+            return True
 
     def __iter__(self):
-        self._currentIter = self._getIterator()()
-        return self
-
-    def __next__(self):
-        return next(self._currentIter)
-
-    def _getIterator(self):
-        def fnFilterDirs(path):
-            if self.excludeNodeModules and (
-                SrssFileIterator.pathHasThisDirectory('node_modules', path)
+        from .. import files
+        for root in self.roots:
+            for obj in files.recurseFileInfo(
+                root,
+                fnFilterDirs=lambda path: self._filterDirs(path),
+                **self.paramsForIterating
             ):
-                return False
-            elif self.fnFilterDirsFromUser and not self.fnFilterDirsFromUser(path):
-                return False
-            else:
-                return True
-
-        def fnIterator():
-            from .. import files
-
-            for root in self.roots:
-                for obj in files.recurseFileInfo(
-                    root,
-                    fnFilterDirs=fnFilterDirs,
-                    **self.paramsForIterating
+                if self.fnIncludeTheseFiles and not self.fnIncludeTheseFiles(
+                    obj.path
                 ):
-                    if self.fnIncludeTheseFiles and not self.fnIncludeTheseFiles(
-                        obj.path
-                    ):
-                        continue
+                    continue
 
-                    yield obj
-
-        return fnIterator
-
-    def getCount(self):
-        return SrssLooper.countIterable(self._getIterator()())
+                yield obj
 
     @staticmethod
-    def pathHasThisDirectory(suffix, path):
-        regexp = _re.compile(r'[/\\]' + suffix + r'([/\\]|$)')
+    def pathContainsThisName(path, exclude, ):
+        regexp = _re.compile(r'[/\\]' + exclude + r'([/\\]|$)')
         return bool(regexp.search(path))
 
-class CleanupTempFilesOnException(_contextlib.ExitStack):
+class CleanupTempFilesOnClose(_contextlib.ExitStack):
     """Register temp files to be deleted later.
     Example:
 
-    with CleanupTempFilesOnException() as cleanup:
+    with CleanupTempFilesOnClose() as cleanup:
         cleanup.registerTempFile('out.tmp')
         files.writeAll('out.tmp', 'abc')
         ...something that might throw
@@ -238,27 +223,30 @@ class CleanupTempFilesOnException(_contextlib.ExitStack):
         self.callback(fn)
 
 
-def removeEmptyFolders(path, removeRootIfEmpty=True, isRecurse=False, verbose=False):
+def removeEmptyFolders(path, removeRootIfEmpty=True, verbose=False):
     "Recursively removes empty directories"
-    if not _os.path.isdir(path):
-        return
+    def removeEmptyFoldersImpl(path, removeRootIfEmpty=True, _weAreRecursing=False, verbose=False):
+        if not _os.path.isdir(path):
+            return
 
-    # remove empty subfolders
-    subPaths = _os.listdir(path)
-    if len(subPaths):
-        for subpath in subPaths:
-            fullPath = _os.path.join(path, subpath)
-            if _os.path.isdir(fullPath):
-                removeEmptyFolders(fullPath, removeRootIfEmpty=removeRootIfEmpty, isRecurse=True)
+        # remove empty subfolders
+        subPaths = _os.listdir(path)
+        if len(subPaths):
+            for subpath in subPaths:
+                fullPath = _os.path.join(path, subpath)
+                if _os.path.isdir(fullPath):
+                    removeEmptyFoldersImpl(fullPath, removeRootIfEmpty=removeRootIfEmpty, _weAreRecursing=True)
 
-    # if folder empty, delete it
-    subPaths = _os.listdir(path)
-    if len(subPaths) == 0:
-        if not isRecurse and not removeRootIfEmpty:
-            pass
-        else:
-            if verbose:
-                trace('Deleting empty dir', path)
+        # if folder empty, delete it
+        subPaths = _os.listdir(path)
+        if len(subPaths) == 0:
+            if not _weAreRecursing and not removeRootIfEmpty:
+                pass
+            else:
+                if verbose:
+                    trace('Deleting empty dir', path)
 
-            _os.rmdir(path)
+                _os.rmdir(path)
+
+    return removeEmptyFoldersImpl(path, removeRootIfEmpty=removeRootIfEmpty, verbose=verbose)
 

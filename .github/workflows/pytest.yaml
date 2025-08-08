@@ -36,11 +36,11 @@ jobs:
           python -m pip install parse
           python -m pip install pyperclip
           python -m pip install pillow
-          sudo apt-get install xclip
+          sudo apt-get install xselect
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi  
       - name: Test with pytest  
         run: |  
-          coverage run -m pytest --verbose --capture=no tests/ 
+          coverage run -m pytest --capture=no -v tests/ 
       - name: Generate Coverage Report  
         run: |  
           coverage report -m

@@ -349,7 +349,8 @@ class TestDirectoryList:
 
         def filter(d):
             return getName(d) != 's1'
-        assert expected == sorted(list(recurseFiles(fixture_fulldir, filenamesOnly=True, allowedExts=['txt'], fnFilterDirs=filter)))
+        assert expected == sorted(list(recurseFiles(fixture_fulldir, filenamesOnly=True, allowedExts=['txt'], 
+                                                    fnFilterDirs=filter)))
 
     def test_recurseDirs(self, fixture_fulldir):
         expected = ['/full', '/full/s1', '/full/s1/ss1', '/full/s1/ss2', '/full/s2']
@@ -365,7 +366,8 @@ class TestDirectoryList:
 
         def filter(d):
             return getName(d) != 's1'
-        assert expected == sorted(list(recurseDirs(fixture_fulldir, filenamesOnly=True, fnFilterDirs=filter)))
+        assert expected == sorted(list(recurseDirs(fixture_fulldir, filenamesOnly=True, 
+                                                   fnFilterDirs=filter)))
 
     def tupleFromObj(self, o):
         # x-platform differences in what is the size of a directory
@@ -834,31 +836,7 @@ def listDirectoryToStringFileInfo(basedir, useFileInfo, kwargs):
             out.append(item[0].replace(basedir, '').replace(os.sep, '/').lstrip('/'))
     return '|'.join(sorted(out))
 
-@pytest.fixture()
-def fixture_dir_with_many():
-    basedir = join(tempfile.gettempdir(), 'shinerainsevenlib_test', 'many')
-    ensureEmptyDirectory(basedir)
-    lst = [
-        'foobar/a/foobar/a.txt',
-        'foobar/a/foobar/b.txt',
-        'foobar/a/foobar/c/c0.txt',
-        'foobar/a/foobar/c/c1.txt',
-        'foobar/a/baz/aa.txt',
-        'foobar/a/baz/bb.txt',
-        'foobar/a/baz/foobar/cc.txt',
-        'foobar/a/baz/zz.txt',
-        'foobar/a/r1.txt',
-        'foobar/foobar/cc.txt',
-        'foobar/r2.txt',
-        'r3.txt'
-    ]
-    for item in lst:
-        fullpath = os.path.join(basedir, item)
-        makeDirs(getParent(fullpath))
-        writeAll(fullpath, 'test')
 
-    yield basedir
-    ensureEmptyDirectory(basedir)
 
 @pytest.fixture()
 def fixture_dir():

@@ -199,7 +199,7 @@ def runProcessThatCreatesOutput(
     Example:
     runProcessThatCreatesOutput(['magick', 'convert', '%input%', '%output%'], inPath='a.bmp', outPath='b.png')
     """
-    with _srss.CleanupTempFilesOnException() as cleanup:
+    with _srss.CleanupTempFilesOnClose() as cleanup:
         assertTrue(not _files.exists(outPath), 'output already there')
         tmpOutPath = _runProcessThatCreatesOutputGetTempFile(outPath)
         assertTrue(not _files.exists(tmpOutPath), 'tmpOutPath already there')

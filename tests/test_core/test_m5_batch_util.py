@@ -8,7 +8,7 @@ import random
 from os.path import join
 from src.shinerainsevenlib.standard import *
 from src.shinerainsevenlib.core import *
-from common import fixture_dir
+from common import fileInfoListToList, fixture_dir, fixture_dir_with_many
 
 
 class TestSrssLooper:
@@ -51,29 +51,36 @@ class TestSrssLooper:
     def testSrssLooperTryOptions(self):
         for listInputKey in self.getIteratorOptions().keys():
             for waitUntilKey in self.getWaitUntilOptions().keys():
-                # important: generate a new instance each time through loop,
-                # since you can't re-use an iterator
-                listInput = self.getIteratorOptions()[listInputKey]
-                waitUntil = self.getWaitUntilOptions()[waitUntilKey]
-                numbersSeen = []
-                loop = srss.SrssLooper(listInput)
-                loop.waitUntilValueSeen(waitUntil)
-                for number in loop:
-                    numbersSeen.append(number)
-                
-                if listInputKey == 'iter':
-                    assert loop._len == -1
-                elif listInputKey == 'lambdaUnreliableLen':
-                    assert loop._len == 0
-                else:
-                    assert loop._len == 3
-                
-                if waitUntilKey == 'default':
-                    assert numbersSeen == [1,2,3]
-                elif waitUntilKey == 'valNone':
-                    assert numbersSeen == []
-                else:
-                    assert numbersSeen == [2,3]
+                for showPercentageEstimates in [True, False]:
+                    self.runOne(listInputKey, waitUntilKey, showPercentageEstimates)
+    
+    def runOne(self, listInputKey, waitUntilKey, showPercentageEstimates):
+        # important: generate a new instance each time through loop,
+        # since you can't re-use an iterator
+        listInput = self.getIteratorOptions()[listInputKey]
+        waitUntil = self.getWaitUntilOptions()[waitUntilKey]
+        numbersSeen = []
+        loop = srss.SrssLooper(listInput)
+        loop.waitUntilValueSeen(waitUntil)
+        if showPercentageEstimates:
+            loop.showPercentageEstimates()
+        
+        for number in loop:
+            numbersSeen.append(number)
+        
+        if listInputKey == 'iter':
+            assert loop._len == -1
+        elif listInputKey == 'lambdaUnreliableLen':
+            assert loop._len == 0 or loop._len == 0.01
+        else:
+            assert loop._len == 3
+        
+        if waitUntilKey == 'default':
+            assert numbersSeen == [1,2,3]
+        elif waitUntilKey == 'valNone':
+            assert numbersSeen == []
+        else:
+            assert numbersSeen == [2,3]
 
     def testSrssLooperAdvanced(self):
         # you should now see a loop from 3 to 100 that pauses every 20
@@ -102,83 +109,146 @@ class TestSrssLooper:
         assert abs(timeTakenInSeconds - 2 * ((100-3)/20)) < 5
 
 
-#~ class TestskipForwardUntilTrue:
-    #~ def test_skipForwardUntilTrueArr(self):
-        #~ arr = [0, 1, 2, 3, 4, 5]
-        #~ results = [item for item in srss.SrssLooper.skipForwardUntilTrue(arr, lambda x: x == 3)]
-        #~ assert results == [3, 4, 5]
+class TestFileIterator:
+    def testPathContainsDirWithThisName(self):
+        for SEP in ('/', '\\'):
+            assert (not SrssFileIterator.pathContainsThisName('', 'node_modules'))
+            assert (not SrssFileIterator.pathContainsThisName('abcd', 'node_modules'))
+            assert (not SrssFileIterator.pathContainsThisName(f'ab{SEP}cd', 'node_modules'))
 
-    #~ def test_skipForwardUntilTrueIter(self):
-        #~ def exampleIter():
-            #~ for i in range(6):
-                #~ yield i
-
-        #~ results = [item for item in srss.SrssLooper.skipForwardUntilTrue(exampleIter(), lambda x: x == 3)]
-        #~ assert results == [3, 4, 5]
-
-    #~ def test_skipForwardUntilTrueArr_NeverSeen(self):
-        #~ arr = [0, 1, 2, 3, 4, 5]
-        #~ results = [item for item in srss.SrssLooper.skipForwardUntilTrue(arr, lambda x: x == 9)]
-        #~ assert results == []
-
-    #~ def test_skipForwardUntilTrueIter_NeverSeen(self):
-        #~ def exampleIter():
-            #~ for i in range(6):
-                #~ yield i
-
-        #~ results = [item for item in srss.SrssLooper.skipForwardUntilTrue(exampleIter(), lambda x: x == 9)]
-        #~ assert results == []
-
-#~ class TestTemporary:
-    #~ def testSrssFileIteratorDirectoryFilter(self):
-        #~ for SEP in ('/', '\\'):
-            #~ assert (not srss.SrssFileIterator.pathHasThisDirectory('node_modules', ''))
-            #~ assert (not srss.SrssFileIterator.pathHasThisDirectory('node_modules', 'abcd'))
-            #~ assert (not srss.SrssFileIterator.pathHasThisDirectory('node_modules', f'ab{SEP}cd'))
-
-            #~ assert (not srss.SrssFileIterator.pathHasThisDirectory('node_modules', f'a{SEP}node{SEP}_modules{SEP}b'))
-            #~ assert (not srss.SrssFileIterator.pathHasThisDirectory('node_modules', f'a{SEP}notnode_modules{SEP}b'))
-            #~ assert (not srss.SrssFileIterator.pathHasThisDirectory('node_modules', f'a{SEP}notnode_modules{SEP}'))
-            #~ assert (not srss.SrssFileIterator.pathHasThisDirectory('node_modules', f'a{SEP}notnode_modules'))
-            #~ assert (not srss.SrssFileIterator.pathHasThisDirectory('node_modules', f'a{SEP}node_modulesnot{SEP}b'))
-            #~ assert (not srss.SrssFileIterator.pathHasThisDirectory('node_modules', f'a{SEP}node_modulesnot{SEP}'))
-            #~ assert (not srss.SrssFileIterator.pathHasThisDirectory('node_modules', f'a{SEP}node_modulesnot'))
-            #~ assert (srss.SrssFileIterator.pathHasThisDirectory('node_modules', f'a{SEP}node_modules{SEP}b'))
-            #~ assert (srss.SrssFileIterator.pathHasThisDirectory('node_modules', f'a{SEP}node_modules{SEP}'))
-            #~ assert (srss.SrssFileIterator.pathHasThisDirectory('node_modules', f'a{SEP}node_modules'))
+            assert (not SrssFileIterator.pathContainsThisName(f'a{SEP}node{SEP}_modules{SEP}b', 'node_modules'))
+            assert (not SrssFileIterator.pathContainsThisName(f'a{SEP}notnode_modules{SEP}b', 'node_modules'))
+            assert (not SrssFileIterator.pathContainsThisName(f'a{SEP}notnode_modules{SEP}', 'node_modules'))
+            assert (not SrssFileIterator.pathContainsThisName(f'a{SEP}notnode_modules', 'node_modules'))
+            assert (not SrssFileIterator.pathContainsThisName(f'a{SEP}node_modulesnot{SEP}b', 'node_modules'))
+            assert (not SrssFileIterator.pathContainsThisName(f'a{SEP}node_modulesnot{SEP}', 'node_modules'))
+            assert (not SrssFileIterator.pathContainsThisName(f'a{SEP}node_modulesnot', 'node_modules'))
+            assert (SrssFileIterator.pathContainsThisName(f'a{SEP}node_modules{SEP}b', 'node_modules'))
+            assert (SrssFileIterator.pathContainsThisName(f'a{SEP}node_modules{SEP}', 'node_modules'))
+            assert (SrssFileIterator.pathContainsThisName(f'a{SEP}node_modules', 'node_modules'))
     
-    #~ def testCleanupTempFilesOnException(self, fixture_dir):
-        #~ files.writeAll(f'{fixture_dir}/a.txt', 'aaa')
-        #~ files.writeAll(f'{fixture_dir}/b.txt', 'bbb')
-        #~ files.writeAll(f'{fixture_dir}/c.txt', 'ccc')
-        #~ with srss.CleanupTempFilesOnException() as cleanup:
-            #~ # clean up a newly created file
-            #~ files.writeAll(f'{fixture_dir}/new.txt', 'new')
-            #~ cleanup.registerTempFile(f'{fixture_dir}/new.txt')
-            #~ assertTrue(files.exists(f'{fixture_dir}/new.txt'))
-
-            #~ # clean up a previously made file
-            #~ cleanup.registerTempFile(f'{fixture_dir}/a.txt')
-            #~ assertTrue(files.exists(f'{fixture_dir}/a.txt'))
-
-            #~ # should silently skip non-existant files
-            #~ cleanup.registerTempFile(f'{fixture_dir}/not-exist.txt')
-            #~ assertTrue(not files.exists(f'{fixture_dir}/not-exist.txt'))
+    def testWithFilters(self, fixture_dir_with_many):
+        files.makeDirs(fixture_dir_with_many + '/node_modules')
+        files.writeAll(fixture_dir_with_many + '/node_modules/a.txt', 'a')
+        iter = SrssFileIterator(fixture_dir_with_many, 
+            fnFilterDirs=lambda path: not path.replace('\\', '/').endswith('foobar/a/foobar'), excludeNodeModules=True)
+        expected = ['/foobar/a/baz/aa.txt', '/foobar/a/baz/bb.txt', '/foobar/a/baz/foobar/cc.txt', 
+                       '/foobar/a/baz/zz.txt', '/foobar/a/r1.txt', '/foobar/foobar/cc.txt', 
+                       '/foobar/r2.txt', '/r3.txt']
+        assert fileInfoListToList(fixture_dir_with_many, iter) == expected
         
-        #~ # check they were deleted
-        #~ assertTrue(not files.exists(f'{fixture_dir}/new.txt'))
-        #~ assertTrue(not files.exists(f'{fixture_dir}/a.txt'))
-        #~ assertTrue(not files.exists(f'{fixture_dir}/not-exist.txt'))
 
-        #~ # should also cleanup if exceptions occur
-        #~ def fn():
-            #~ with srss.CleanupTempFilesOnException() as cleanup:
-                #~ cleanup.registerTempFile(f'{fixture_dir}/b.txt')
-                #~ raise RuntimeError("cause exception")
+        iter = SrssFileIterator(fixture_dir_with_many,
+            fnFilterDirs=lambda path: not path.replace('\\', '/').endswith('foobar/a/baz'), excludeNodeModules=False)
+        expected = ['/foobar/a/foobar/a.txt', '/foobar/a/foobar/b.txt', '/foobar/a/foobar/c/c0.txt', 
+                       '/foobar/a/foobar/c/c1.txt', '/foobar/a/r1.txt', '/foobar/foobar/cc.txt', 
+                       '/foobar/r2.txt', '/node_modules/a.txt', '/r3.txt']
+        assert fileInfoListToList(fixture_dir_with_many, iter) == expected
 
-        #~ # should delete b but leave behind the other file(s)
-        #~ assertException(fn, RuntimeError, "cause exception")
-        #~ assertTrue(not files.exists(f'{fixture_dir}/b.txt'))
-        #~ assertTrue(files.exists(f'{fixture_dir}/c.txt'))
+    def testPassIterParams(self, fixture_dir_with_many):
+        files.writeAll(fixture_dir_with_many + '/foobar/a/foobar/a.mp3', 'a')
+        files.writeAll(fixture_dir_with_many + '/foobar/a/baz/b.mp3', 'a')
+        iter = SrssFileIterator(fixture_dir_with_many, allowedExts=['mp3'])
+        got = fileInfoListToList(fixture_dir_with_many, iter)
+        assert got == ['/foobar/a/baz/b.mp3', '/foobar/a/foobar/a.mp3']
 
+    def testIncludeTheseFiles(self, fixture_dir_with_many):
+        files.writeAll(fixture_dir_with_many + '/foobar/a/foobar/a.mp3', 'a')
+        files.writeAll(fixture_dir_with_many + '/foobar/a/baz/b.mp3', 'a')
+        iter = SrssFileIterator(fixture_dir_with_many, fnIncludeTheseFiles=lambda s: s.endswith('.mp3'))
+        got = fileInfoListToList(fixture_dir_with_many, iter)
+        assert got == ['/foobar/a/baz/b.mp3', '/foobar/a/foobar/a.mp3']
+    
+    def testMultipleRoots(self, fixture_dir_with_many):
+        root1 = fixture_dir_with_many + '/foobar/a/foobar'
+        root2 = fixture_dir_with_many + '/foobar/a/baz/foobar'
+        iter = SrssFileIterator([root1, root2])
+        got = fileInfoListToList(fixture_dir_with_many, iter)
+        assert got == ['/foobar/a/foobar/a.txt', '/foobar/a/foobar/b.txt', '/foobar/a/foobar/c/c0.txt', '/foobar/a/foobar/c/c1.txt', '/foobar/a/baz/foobar/cc.txt']
+
+    def testNeedsAbsPaths(self):
+        with pytest.raises(AssertionError, match='relative paths'):
+            _instance = SrssFileIterator('./directory')
+
+        with pytest.raises(AssertionError, match='relative paths'):
+            _instance = SrssFileIterator('..')
+
+class TestCleanupTempFiles:
+    def testCleanupTempFilesOnClose(self, fixture_dir):
+        files.writeAll(f'{fixture_dir}/a.txt', 'aaa')
+        files.writeAll(f'{fixture_dir}/b.txt', 'bbb')
+        files.writeAll(f'{fixture_dir}/c.txt', 'ccc')
+        with srss.CleanupTempFilesOnClose() as cleanup:
+            # clean up a newly created file
+            files.writeAll(f'{fixture_dir}/new.txt', 'new')
+            cleanup.registerTempFile(f'{fixture_dir}/new.txt')
+            assert files.exists(f'{fixture_dir}/new.txt')
+
+            # clean up a previously made file
+            cleanup.registerTempFile(f'{fixture_dir}/a.txt')
+            files.exists(f'{fixture_dir}/a.txt')
+
+            # should silently skip non-existant files
+            cleanup.registerTempFile(f'{fixture_dir}/not-exist.txt')
+            assert not files.exists(f'{fixture_dir}/not-exist.txt')
+        
+        # check they were deleted
+        assert not files.exists(f'{fixture_dir}/new.txt')
+        assert not files.exists(f'{fixture_dir}/a.txt')
+        assert not files.exists(f'{fixture_dir}/not-exist.txt')
+        assert files.exists(f'{fixture_dir}/b.txt')
+        assert files.exists(f'{fixture_dir}/c.txt')
+
+    def testCleanupTempFilesOnException(self, fixture_dir):
+        files.writeAll(f'{fixture_dir}/a.txt', 'aaa')
+        files.writeAll(f'{fixture_dir}/b.txt', 'bbb')
+        files.writeAll(f'{fixture_dir}/c.txt', 'ccc')
+        def fn():
+            with srss.CleanupTempFilesOnClose() as cleanup:
+                cleanup.registerTempFile(f'{fixture_dir}/b.txt')
+                raise RuntimeError("cause exception")
+
+        # should delete b but leave behind the other file(s)
+        assertException(fn, RuntimeError, "cause exception")
+        assert files.exists(f'{fixture_dir}/a.txt')
+        assert not files.exists(f'{fixture_dir}/b.txt')
+        assert files.exists(f'{fixture_dir}/c.txt')
+
+class TestCleanupEmptyDirs:
+    def testBasic(self, fixture_dir_with_many):
+        files.delete(fixture_dir_with_many + '/foobar/a/foobar/c/c0.txt')
+        files.delete(fixture_dir_with_many + '/foobar/a/foobar/c/c1.txt')
+        files.delete(fixture_dir_with_many + '/foobar/a/baz/foobar/cc.txt')
+        removeEmptyFolders(fixture_dir_with_many)
+        got = fileInfoListToList(fixture_dir_with_many, files.recurseDirs)
+        assert got ==['', '/foobar', '/foobar/a', '/foobar/a/baz', 
+                      '/foobar/a/foobar', '/foobar/foobar']
+    
+    def testRemoveRootToo(self, fixture_dir_with_many):
+        files.delete(fixture_dir_with_many + '/foobar/a/foobar/c/c0.txt')
+        files.delete(fixture_dir_with_many + '/foobar/a/foobar/c/c1.txt')
+        files.delete(fixture_dir_with_many + '/foobar/a/baz/foobar/cc.txt')
+        
+        removeEmptyFolders(fixture_dir_with_many + '/foobar/a/baz/foobar', 
+                           removeRootIfEmpty=False)
+        got = fileInfoListToList(fixture_dir_with_many, files.recurseDirs)
+        assert got == ['', '/foobar', '/foobar/a', '/foobar/a/baz', 
+                       '/foobar/a/baz/foobar', '/foobar/a/foobar', 
+                       '/foobar/a/foobar/c', '/foobar/foobar']
+        
+        removeEmptyFolders(fixture_dir_with_many + '/foobar/a/baz/foobar', 
+                           removeRootIfEmpty=True)
+        got = fileInfoListToList(fixture_dir_with_many, files.recurseDirs)
+        assert got == ['', '/foobar', '/foobar/a', '/foobar/a/baz', 
+                       '/foobar/a/foobar', '/foobar/a/foobar/c', 
+                       '/foobar/foobar']
+
+    def testShouldIgnoreIfMissingOrIsFile(self, fixture_dir_with_many):
+        assert files.exists(fixture_dir_with_many + '/foobar/a/foobar/c/c0.txt')
+        removeEmptyFolders(fixture_dir_with_many + '/foobar/a/foobar/c/c0.txt')
+        assert files.exists(fixture_dir_with_many + '/foobar/a/foobar/c/c0.txt')
+
+        assert not files.exists(fixture_dir_with_many + '/notexist')
+        removeEmptyFolders(fixture_dir_with_many + '/notexist')
+        assert not files.exists(fixture_dir_with_many + '/notexist')
 

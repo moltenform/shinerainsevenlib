@@ -81,7 +81,15 @@ class TestAssertWarn:
         assertWarnEq(2, 2, 'message')
         m4_core_ui.warn.assert_not_called()
         
+def requestsAvailable():
+    "Checks if the requests module is available."
+    try:
+        import requests
+        return True
+    except ImportError:
+        return False
 
+@pytest.mark.skipif('not requestsAvailable()')
 class TestDownloadUrl:
     def testBinary(self, mocker, fixture_dir):
         import requests
