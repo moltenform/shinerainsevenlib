@@ -187,7 +187,6 @@ def copyImpl(
 
     if arePathsSame(srcFile, destFile):
         trace('Paths equal, skipping.')
-        pass
     elif _sys.platform.startswith('win'):
         _copyFileWin(srcFile, destFile, overwrite)
     else:
@@ -240,24 +239,40 @@ def moveImpl(
 
     if arePathsSame(srcFile, destFile):
         trace('Paths equal, skipping.')
-        pass
     elif _sys.platform.startswith('win'):
         _moveFileWin(srcFile, destFile, overwrite, warnBetweenDrives)
-    elif _sys.platform.startswith('linux') and overwrite:
-        _os.rename(srcFile, destFile)
-    #~ make it safe
-    #~ else:
-        #~ # use tempfile to not have data loss if 
-        #~ # srcFile and destFile are mapped to same file
-        #~ import tempfile
-        #~ tmpPath = tempfile.gettempdir() + '/srsstmp'
-        #~ deleteSure(tmpPath)
-        #~ copy(srcFile, tmpPath, overwrite=True)
-        #~ copy(tmpPath, destFile, overwrite=True)
-        #~ assertTrue(exists(destFile))
-        #~ _os.unlink(srcFile)
+    else:
+        _moveFilePosixNoOverwrite(srcFile, destFile, overwrite)
 
     assertTrue(exists(destFile))
+
+def _moveFilePosixNoOverwrite(srcFile, destFile, overwrite):
+    if overwrite:
+        _shutil.move(srcFile, destFile)
+        return
+        
+    import tempfile
+    backupCopy = tempfile.gettempdir() + '/srsstmp'
+    deleteSure(backupCopy)
+    expectedLen = getSize(srcFile)
+    _copyFilePosixByContentsNoOverwrite(srcFile, backupCopy)
+    _copyFilePosixByContentsNoOverwrite(srcFile, destFile)
+    
+    needRestore = False
+    try:
+        delete(srcFile)
+        if not exists(destFile) or getSize(destFile) != expectedLen:
+            needRestore = OSFileRelatedError('Failed to move file')
+    except Exception as e:
+        needRestore = e
+    finally:
+        if needRestore:
+            _copyFilePosixByContentsNoOverwrite(backupCopy, srcFile)
+        delete(backupCopy)
+
+    if needRestore:
+        raise needRestore
+
 
 _winErrs = {
     3: 'Path not found',
@@ -269,6 +284,7 @@ _winErrs = {
 def _copyFileWin(srcFile, destFile, overwrite):
     from ctypes import windll, c_wchar_p, c_int, GetLastError
 
+    assertTrue(_sys.platform.startswith('win'))
     failIfExists = c_int(0) if overwrite else c_int(1)
     res = windll.kernel32.CopyFileW(c_wchar_p(srcFile), c_wchar_p(destFile), failIfExists)
     if not res:
@@ -299,11 +315,7 @@ def _moveFileWin(srcFile, destFile, overwrite, warnBetweenDrives):
         )
     return None
 
-def _copyFilePosix(srcFile, destFile, overwrite):
-    if overwrite:
-        _shutil.copy(srcFile, destFile)
-        return
-
+def _copyFilePosixByContentsNoOverwrite(srcFile, destFile):
     # fails if destination already exists. O_EXCL prevents other files from writing to location.
     # raises OSError on failure.
     flags = _os.O_CREAT | _os.O_EXCL | _os.O_WRONLY
@@ -316,6 +328,13 @@ def _copyFilePosix(srcFile, destFile, overwrite):
                 if not buffer:
                     break
                 fDest.write(buffer)
+
+def _copyFilePosix(srcFile, destFile, overwrite):
+    assertTrue(not _sys.platform.startswith('win'))
+    if overwrite:
+        _shutil.copy(srcFile, destFile)
+    else:
+        _copyFilePosixByContentsNoOverwrite(srcFile, destFile)
 
 def _getStatTime(path, key_ns, key_s, units):
     st = _os.stat(path)

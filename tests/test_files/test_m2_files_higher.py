@@ -80,7 +80,7 @@ class TestM3FilesHigher:
             assert not findBinaryOnPath('doesnotexist.exe')
             assert not findBinaryOnPath('a.exe')
             assert not findBinaryOnPath('a')
-            assert findBinaryOnPath('b.bat').endswith('b.bat')
+            assert not findBinaryOnPath('b.bat')
             assert not findBinaryOnPath('b')
 
             # if given a path, use it

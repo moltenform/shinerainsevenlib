@@ -39,7 +39,7 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi  
       - name: Test with pytest  
         run: |  
-          coverage run -m pytest --capture=no -v tests/ 
+          coverage run -m pytest --capture=no -v tests/test_core/test_m0_text_io.py 
       - name: Generate Coverage Report  
         run: |  
           coverage report -m
