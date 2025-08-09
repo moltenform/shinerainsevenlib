@@ -134,6 +134,10 @@ def ensureEmptyDirectory(d):
     else:
         _os.makedirs(d)
 
+def arePathsSame(path1, path2):
+    return _os.path.normcase(_os.path.normpath(_os.path.abspath(path1))) == \
+        _os.path.normcase(_os.path.normpath(_os.path.abspath(path2)))
+
 def copy(
     srcFile,
     destFile,
@@ -181,7 +185,8 @@ def copyImpl(
     if createParent and not exists(getParent(destFile)):
         makeDirs(getParent(destFile))
 
-    if srcFile == destFile:
+    if arePathsSame(srcFile, destFile):
+        trace('Paths equal, skipping.')
         pass
     elif _sys.platform.startswith('win'):
         _copyFileWin(srcFile, destFile, overwrite)
@@ -233,16 +238,24 @@ def moveImpl(
     if createParent and not exists(getParent(destFile)):
         makeDirs(getParent(destFile))
 
-    if srcFile == destFile:
+    if arePathsSame(srcFile, destFile):
+        trace('Paths equal, skipping.')
         pass
     elif _sys.platform.startswith('win'):
         _moveFileWin(srcFile, destFile, overwrite, warnBetweenDrives)
     elif _sys.platform.startswith('linux') and overwrite:
         _os.rename(srcFile, destFile)
-    else:
-        copy(srcFile, destFile, overwrite)
-        assertTrue(exists(destFile))
-        _os.unlink(srcFile)
+    #~ make it safe
+    #~ else:
+        #~ # use tempfile to not have data loss if 
+        #~ # srcFile and destFile are mapped to same file
+        #~ import tempfile
+        #~ tmpPath = tempfile.gettempdir() + '/srsstmp'
+        #~ deleteSure(tmpPath)
+        #~ copy(srcFile, tmpPath, overwrite=True)
+        #~ copy(tmpPath, destFile, overwrite=True)
+        #~ assertTrue(exists(destFile))
+        #~ _os.unlink(srcFile)
 
     assertTrue(exists(destFile))
 
