@@ -1,0 +1,136 @@
+shinerainsevenlib.core.m5_batch_util
+====================================
+
+.. py:module:: shinerainsevenlib.core.m5_batch_util
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   shinerainsevenlib.core.m5_batch_util.SrssLooper
+   shinerainsevenlib.core.m5_batch_util.SrssFileIterator
+   shinerainsevenlib.core.m5_batch_util.CleanupTempFilesOnClose
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   shinerainsevenlib.core.m5_batch_util.removeEmptyDirs
+
+
+Module Contents
+---------------
+
+.. py:class:: SrssLooper(listOrLambda)
+
+   Helpful for batch processing, when you want to add pauses every n iterations
+
+   >>> loop = SrssLooper(list(range(10)))
+   >>> loop.showPercentageEstimates()
+   >>> loop.addPauses(2, seconds=2)
+   >>> loop.waitUntilValueSeen(3)
+   >>> for number in loop:
+   >>>     if number % 2 == 0:
+   >>>         print('skipping even number', number)
+   >>>         loop.flagDidNoMeaningfulWork()
+   >>>     else:
+   >>>         print('found an odd number', number)
+
+   input can be a
+       list 
+       iterable
+       lambda that returns an iterable
+           useful if you need to compute the length without producing the list
+   waitUntilValueSeen can be a
+       value
+       lambda that returns boolean- the first time it returns True,
+           we'll start the loop
+
+
+   .. py:method:: showPercentageEstimates(displayStr='\n...')
+
+
+   .. py:method:: setFormatStateToPrint(fn)
+
+
+   .. py:method:: addPauses(pauseEveryNTimes=20, seconds=20)
+
+
+   .. py:method:: waitUntilValueSeen(valOrFn)
+
+
+   .. py:method:: flagDidNoMeaningfulWork()
+
+
+   .. py:method:: countIterable(itr)
+      :staticmethod:
+
+
+
+.. py:class:: SrssFileIterator(rootOrListOfRoots, fnIncludeTheseFiles=None, fnFilterDirs=None, allowRelativePaths=None, excludeNodeModules=False, **params)
+
+   Helpful for file iteration,
+   adding some extra features to files.recurseFiles.
+   Can be used to skip node_modules directories.
+
+
+   .. py:attribute:: fnIncludeTheseFiles
+      :value: None
+
+
+
+   .. py:attribute:: allowRelativePaths
+      :value: None
+
+
+
+   .. py:attribute:: excludeNodeModules
+      :value: False
+
+
+
+   .. py:attribute:: paramsForIterating
+
+
+   .. py:attribute:: fnFilterDirsFromUser
+      :value: None
+
+
+
+   .. py:attribute:: roots
+
+
+   .. py:method:: pathContainsThisName(path, exclude)
+      :staticmethod:
+
+
+
+.. py:class:: CleanupTempFilesOnClose
+
+   Bases: :py:obj:`contextlib.ExitStack`
+
+
+   Register temp files to be deleted later.
+   Example:
+
+   with CleanupTempFilesOnClose() as cleanup:
+       cleanup.registerTempFile('temp.txt')
+       files.writeAll('temp.txt', 'abc')
+       ...something that might throw
+
+   ...when code reaches here, the temp file will be deleted,
+   even if an exception is thrown.
+
+
+   .. py:method:: registerTempFile(path)
+
+
+.. py:function:: removeEmptyDirs(path, removeRootIfEmpty=True, verbose=False)
+
+   Recursively removes empty directories
+
+

@@ -1,0 +1,19 @@
+setFilenameOrders
+=================
+
+.. py:module:: setFilenameOrders
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   setFilenameOrders.reorderFilesWithPrefix
+
+
+Module Contents
+---------------
+
+.. py:function:: reorderFilesWithPrefix(d, newOrder, prefix)
+

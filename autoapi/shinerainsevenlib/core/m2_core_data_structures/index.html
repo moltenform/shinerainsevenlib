@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>shinerainsevenlib.core.m2_core_data_structures &#8212; shinerainsevenlib 1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+    <script src="../../../../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="shinerainsevenlib.core.m3_core_nonpure" href="../m3_core_nonpure/index.html" />
+    <link rel="prev" title="shinerainsevenlib.core.m1_core_util" href="../m1_core_util/index.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-shinerainsevenlib.core.m2_core_data_structures">
+<span id="shinerainsevenlib-core-m2-core-data-structures"></span><h1>shinerainsevenlib.core.m2_core_data_structures<a class="headerlink" href="#module-shinerainsevenlib.core.m2_core_data_structures" title="Link to this heading">¶</a></h1>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.m2_core_data_structures.DefaultVal" title="shinerainsevenlib.core.m2_core_data_structures.DefaultVal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DefaultVal</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.m2_core_data_structures.PersistedDict" title="shinerainsevenlib.core.m2_core_data_structures.PersistedDict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PersistedDict</span></code></a></p></td>
+<td><p>Store a dict (or dict of dicts) on disk.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.m2_core_data_structures.ParsePlus" title="shinerainsevenlib.core.m2_core_data_structures.ParsePlus"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ParsePlus</span></code></a></p></td>
+<td><p>Adds the following features to the &quot;parse&quot; module:</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.m2_core_data_structures.Bucket" title="shinerainsevenlib.core.m2_core_data_structures.Bucket"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Bucket</span></code></a></p></td>
+<td><p>Simple named-tuple; o.field looks nicer than o['field'].</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.m2_core_data_structures.SentinalIndicatingDefault" title="shinerainsevenlib.core.m2_core_data_structures.SentinalIndicatingDefault"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SentinalIndicatingDefault</span></code></a></p></td>
+<td><p>Use this with keyword args to see if an argument was passed vs. left to default, see pep 661</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.m2_core_data_structures.TakeBatch" title="shinerainsevenlib.core.m2_core_data_structures.TakeBatch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TakeBatch</span></code></a></p></td>
+<td><p>Run a callback on n-sized chunks from a list, like javascript's _.chunk.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.m2_core_data_structures.RecentlyUsedList" title="shinerainsevenlib.core.m2_core_data_structures.RecentlyUsedList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RecentlyUsedList</span></code></a></p></td>
+<td><p>Keep a list of items. Doesn't store duplicates</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.m2_core_data_structures.appendToListInDictOrStartNewList" title="shinerainsevenlib.core.m2_core_data_structures.appendToListInDictOrStartNewList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">appendToListInDictOrStartNewList</span></code></a>(d, key, val)</p></td>
+<td><p>Similar to setdefault, but easier to read in my opinion</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.m2_core_data_structures.takeBatchOnArbitraryIterable" title="shinerainsevenlib.core.m2_core_data_structures.takeBatchOnArbitraryIterable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">takeBatchOnArbitraryIterable</span></code></a>(iterable, size)</p></td>
+<td><p>Yield successive n-sized chunks from a list, like javascript's _.chunk</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.m2_core_data_structures.takeBatch" title="shinerainsevenlib.core.m2_core_data_structures.takeBatch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">takeBatch</span></code></a>(itr, n)</p></td>
+<td><p>Get successive n-sized chunks from a list, like javascript's _.chunk</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.m2_core_data_structures.listToNPieces" title="shinerainsevenlib.core.m2_core_data_structures.listToNPieces"><code class="xref py py-obj docutils literal notranslate"><span class="pre">listToNPieces</span></code></a>(lst, nPieces)</p></td>
+<td><p>Split a list into n pieces</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.m2_core_data_structures.BoundedMemoize" title="shinerainsevenlib.core.m2_core_data_structures.BoundedMemoize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BoundedMemoize</span></code></a>(fn)</p></td>
+<td><p>Inspired by <a class="reference external" href="http://code.activestate.com/recipes/496879-memoize-decorator-function-with-cache-size-limit/">http://code.activestate.com/recipes/496879-memoize-decorator-function-with-cache-size-limit/</a></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m2_core_data_structures.PersistedDict">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.m2_core_data_structures.</span></span><span class="sig-name descname"><span class="pre">PersistedDict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warnIfCreatingNew</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keepHandle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">persistEveryNWrites</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m2_core_data_structures.PersistedDict" title="Link to this definition">¶</a></dt>
+<dd><p>Store a dict (or dict of dicts) on disk.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m2_core_data_structures.PersistedDict.data">
+<span class="sig-name descname"><span class="pre">data</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#shinerainsevenlib.core.m2_core_data_structures.PersistedDict.data" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m2_core_data_structures.PersistedDict.handle">
+<span class="sig-name descname"><span class="pre">handle</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#shinerainsevenlib.core.m2_core_data_structures.PersistedDict.handle" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m2_core_data_structures.PersistedDict.counter">
+<span class="sig-name descname"><span class="pre">counter</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#shinerainsevenlib.core.m2_core_data_structures.PersistedDict.counter" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m2_core_data_structures.PersistedDict.persistEveryNWrites">
+<span class="sig-name descname"><span class="pre">persistEveryNWrites</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#shinerainsevenlib.core.m2_core_data_structures.PersistedDict.persistEveryNWrites" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m2_core_data_structures.PersistedDict.filename">
+<span class="sig-name descname"><span class="pre">filename</span></span><a class="headerlink" href="#shinerainsevenlib.core.m2_core_data_structures.PersistedDict.filename" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m2_core_data_structures.PersistedDict.load">
+<span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">encoding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'utf-8'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m2_core_data_structures.PersistedDict.load" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m2_core_data_structures.PersistedDict.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m2_core_data_structures.PersistedDict.close" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m2_core_data_structures.PersistedDict.persist">
+<span class="sig-name descname"><span class="pre">persist</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m2_core_data_structures.PersistedDict.persist" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m2_core_data_structures.PersistedDict.afterUpdate">
+<span class="sig-name descname"><span class="pre">afterUpdate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m2_core_data_structures.PersistedDict.afterUpdate" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m2_core_data_structures.PersistedDict.set">
+<span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m2_core_data_structures.PersistedDict.set" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m2_core_data_structures.PersistedDict.setSubDict">
+<span class="sig-name descname"><span class="pre">setSubDict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subDictName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m2_core_data_structures.PersistedDict.setSubDict" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m2_core_data_structures.PersistedDict.setSubSubDict">
+<span class="sig-name descname"><span class="pre">setSubSubDict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subDictName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m2_core_data_structures.PersistedDict.setSubSubDict" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m2_core_data_structures.ParsePlus">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.m2_core_data_structures.</span></span><span class="sig-name descname"><span class="pre">ParsePlus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pattern</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extraTypes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">escapeSequences</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">caseSensitive</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m2_core_data_structures.ParsePlus" title="Link to this definition">¶</a></dt>
+<dd><p>Adds the following features to the “parse” module:</p>
+<p>{s:NoNewlines} field type
+{s:NoSpaces} works like {s:S}
+remember that “{s} and {s}” matches “a and a” but not “a and b”,</p>
+<p>use “{s1} and {s2}” or “{} and {}” if the contents can differ.
+escapeSequences such as backslash-escapes (see examples in tests).
+replaceFieldWithText (see examples in tests).
+getTotalSpan.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m2_core_data_structures.ParsePlus.pattern">
+<span class="sig-name descname"><span class="pre">pattern</span></span><a class="headerlink" href="#shinerainsevenlib.core.m2_core_data_structures.ParsePlus.pattern" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m2_core_data_structures.ParsePlus.caseSensitive">
+<span class="sig-name descname"><span class="pre">caseSensitive</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#shinerainsevenlib.core.m2_core_data_structures.ParsePlus.caseSensitive" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m2_core_data_structures.ParsePlus.extraTypes">
+<span class="sig-name descname"><span class="pre">extraTypes</span></span><a class="headerlink" href="#shinerainsevenlib.core.m2_core_data_structures.ParsePlus.extraTypes" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m2_core_data_structures.ParsePlus.escapeSequences">
+<span class="sig-name descname"><span class="pre">escapeSequences</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#shinerainsevenlib.core.m2_core_data_structures.ParsePlus.escapeSequences" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m2_core_data_structures.ParsePlus.spans">
+<span class="sig-name descname"><span class="pre">spans</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#shinerainsevenlib.core.m2_core_data_structures.ParsePlus.spans" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m2_core_data_structures.ParsePlus.getTotalSpan">
+<span class="sig-name descname"><span class="pre">getTotalSpan</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#shinerainsevenlib.core.m2_core_data_structures.ParsePlus.getTotalSpan" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m2_core_data_structures.ParsePlus.match">
+<span class="sig-name descname"><span class="pre">match</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m2_core_data_structures.ParsePlus.match" title="Link to this definition">¶</a></dt>
+<dd><p>Entire string must match</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m2_core_data_structures.ParsePlus.search">
+<span class="sig-name descname"><span class="pre">search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m2_core_data_structures.ParsePlus.search" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m2_core_data_structures.ParsePlus.findAll">
+<span class="sig-name descname"><span class="pre">findAll</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m2_core_data_structures.ParsePlus.findAll" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m2_core_data_structures.ParsePlus.replaceFieldWithText">
+<span class="sig-name descname"><span class="pre">replaceFieldWithText</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">newValue</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">appendIfNotFound</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowOnlyOnce</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m2_core_data_structures.ParsePlus.replaceFieldWithText" title="Link to this definition">¶</a></dt>
+<dd><p>Example: &lt;title&gt;{title}&lt;/title&gt;</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m2_core_data_structures.ParsePlus.replaceFieldWithTextIntoFile">
+<span class="sig-name descname"><span class="pre">replaceFieldWithTextIntoFile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">newValue</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">appendIfNotFound</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowOnlyOnce</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'utf-8'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m2_core_data_structures.ParsePlus.replaceFieldWithTextIntoFile" title="Link to this definition">¶</a></dt>
+<dd><p>Convenience method to write the results to a file</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m2_core_data_structures.Bucket">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.m2_core_data_structures.</span></span><span class="sig-name descname"><span class="pre">Bucket</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m2_core_data_structures.Bucket" title="Link to this definition">¶</a></dt>
+<dd><p>Simple named-tuple; o.field looks nicer than o[‘field’].
+similar to standard library’s types.SimpleNamespace.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m2_core_data_structures.Bucket.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fallback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m2_core_data_structures.Bucket.get" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m2_core_data_structures.Bucket.set">
+<span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m2_core_data_structures.Bucket.set" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m2_core_data_structures.Bucket.getChildKeys">
+<span class="sig-name descname"><span class="pre">getChildKeys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m2_core_data_structures.Bucket.getChildKeys" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m2_core_data_structures.SentinalIndicatingDefault">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.m2_core_data_structures.</span></span><span class="sig-name descname"><span class="pre">SentinalIndicatingDefault</span></span><a class="headerlink" href="#shinerainsevenlib.core.m2_core_data_structures.SentinalIndicatingDefault" title="Link to this definition">¶</a></dt>
+<dd><p>Use this with keyword args to see if an argument was passed vs. left to default, see pep 661</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m2_core_data_structures.DefaultVal">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.m2_core_data_structures.</span></span><span class="sig-name descname"><span class="pre">DefaultVal</span></span><a class="headerlink" href="#shinerainsevenlib.core.m2_core_data_structures.DefaultVal" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m2_core_data_structures.appendToListInDictOrStartNewList">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.m2_core_data_structures.</span></span><span class="sig-name descname"><span class="pre">appendToListInDictOrStartNewList</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m2_core_data_structures.appendToListInDictOrStartNewList" title="Link to this definition">¶</a></dt>
+<dd><p>Similar to setdefault, but easier to read in my opinion</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m2_core_data_structures.takeBatchOnArbitraryIterable">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.m2_core_data_structures.</span></span><span class="sig-name descname"><span class="pre">takeBatchOnArbitraryIterable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m2_core_data_structures.takeBatchOnArbitraryIterable" title="Link to this definition">¶</a></dt>
+<dd><p>Yield successive n-sized chunks from a list, like javascript’s _.chunk</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m2_core_data_structures.takeBatch">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.m2_core_data_structures.</span></span><span class="sig-name descname"><span class="pre">takeBatch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">itr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m2_core_data_structures.takeBatch" title="Link to this definition">¶</a></dt>
+<dd><p>Get successive n-sized chunks from a list, like javascript’s _.chunk</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m2_core_data_structures.TakeBatch">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.m2_core_data_structures.</span></span><span class="sig-name descname"><span class="pre">TakeBatch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batchSize</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callback</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m2_core_data_structures.TakeBatch" title="Link to this definition">¶</a></dt>
+<dd><p>Run a callback on n-sized chunks from a list, like javascript’s _.chunk.
+The convenient part is that any leftover pieces will be automatically processed.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m2_core_data_structures.TakeBatch.batch">
+<span class="sig-name descname"><span class="pre">batch</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#shinerainsevenlib.core.m2_core_data_structures.TakeBatch.batch" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m2_core_data_structures.TakeBatch.batchSize">
+<span class="sig-name descname"><span class="pre">batchSize</span></span><a class="headerlink" href="#shinerainsevenlib.core.m2_core_data_structures.TakeBatch.batchSize" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m2_core_data_structures.TakeBatch.callback">
+<span class="sig-name descname"><span class="pre">callback</span></span><a class="headerlink" href="#shinerainsevenlib.core.m2_core_data_structures.TakeBatch.callback" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m2_core_data_structures.TakeBatch.append">
+<span class="sig-name descname"><span class="pre">append</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m2_core_data_structures.TakeBatch.append" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m2_core_data_structures.listToNPieces">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.m2_core_data_structures.</span></span><span class="sig-name descname"><span class="pre">listToNPieces</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nPieces</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m2_core_data_structures.listToNPieces" title="Link to this definition">¶</a></dt>
+<dd><p>Split a list into n pieces
+listToNPieces([1, 2, 3, 4, 5, 6], 2) -&gt; [[1, 2, 3], [4, 5, 6]]</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m2_core_data_structures.RecentlyUsedList">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.m2_core_data_structures.</span></span><span class="sig-name descname"><span class="pre">RecentlyUsedList</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">maxSize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startList</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m2_core_data_structures.RecentlyUsedList" title="Link to this definition">¶</a></dt>
+<dd><p>Keep a list of items. Doesn’t store duplicates</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m2_core_data_structures.RecentlyUsedList.list">
+<span class="sig-name descname"><span class="pre">list</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#shinerainsevenlib.core.m2_core_data_structures.RecentlyUsedList.list" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m2_core_data_structures.RecentlyUsedList.maxSize">
+<span class="sig-name descname"><span class="pre">maxSize</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#shinerainsevenlib.core.m2_core_data_structures.RecentlyUsedList.maxSize" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m2_core_data_structures.RecentlyUsedList.getList">
+<span class="sig-name descname"><span class="pre">getList</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m2_core_data_structures.RecentlyUsedList.getList" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m2_core_data_structures.RecentlyUsedList.add">
+<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m2_core_data_structures.RecentlyUsedList.add" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m2_core_data_structures.BoundedMemoize">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.m2_core_data_structures.</span></span><span class="sig-name descname"><span class="pre">BoundedMemoize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fn</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m2_core_data_structures.BoundedMemoize" title="Link to this definition">¶</a></dt>
+<dd><p>Inspired by <a class="reference external" href="http://code.activestate.com/recipes/496879-memoize-decorator-function-with-cache-size-limit/">http://code.activestate.com/recipes/496879-memoize-decorator-function-with-cache-size-limit/</a>
+The number of items cached defaults to 20.
+You can adjust the number of items cached by setting the .limit expando property on the function itself.</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">shinerainsevenlib</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/example_usage.html">Example Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/optional_dependencies.html">Optional Dependencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/editing_this_project.html">Editing This Project</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../../parseCode/index.html">parseCode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../ruffWrapper/index.html">ruffWrapper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../addCopyright/index.html">addCopyright</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">shinerainsevenlib</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../setFilenameOrders/index.html">setFilenameOrders</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">API Reference</a><ul>
+  <li><a href="../../index.html">shinerainsevenlib</a><ul>
+  <li><a href="../index.html">shinerainsevenlib.core</a><ul>
+      <li>Previous: <a href="../m1_core_util/index.html" title="previous chapter">shinerainsevenlib.core.m1_core_util</a></li>
+      <li>Next: <a href="../m3_core_nonpure/index.html" title="next chapter">shinerainsevenlib.core.m3_core_nonpure</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Ben Fisher.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../../../../_sources/autoapi/shinerainsevenlib/core/m2_core_data_structures/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

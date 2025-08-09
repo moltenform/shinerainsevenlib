@@ -1,0 +1,120 @@
+shinerainsevenlib.files.m1_files_listing
+========================================
+
+.. py:module:: shinerainsevenlib.files.m1_files_listing
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   shinerainsevenlib.files.m1_files_listing.exeSuffix
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   shinerainsevenlib.files.m1_files_listing.FileInfoEntryWrapper
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   shinerainsevenlib.files.m1_files_listing.listDirs
+   shinerainsevenlib.files.m1_files_listing.listFiles
+   shinerainsevenlib.files.m1_files_listing.recurseFiles
+   shinerainsevenlib.files.m1_files_listing.recurseDirs
+   shinerainsevenlib.files.m1_files_listing.recurseFileInfo
+   shinerainsevenlib.files.m1_files_listing.listFileInfo
+   shinerainsevenlib.files.m1_files_listing.getDirectorySizeRecurse
+
+
+Module Contents
+---------------
+
+.. py:function:: listDirs(path, *, filenamesOnly=False, recurse=False, **kwargs)
+
+   Return directories within a directory
+
+
+.. py:function:: listFiles(path, *, recurse=False, filenamesOnly=False, **kwargs)
+
+   Return files within a directory
+
+
+.. py:data:: exeSuffix
+   :value: '.exe'
+
+
+.. py:function:: recurseFiles(root, *, filenamesOnly=False, allowedExts=None, fnFilterDirs=None, includeFiles=True, includeDirs=False, topDown=True, followSymlinks=False)
+
+   Return files within a directory (recursively).
+   You can provide a fnFilterDirs to filter out any directories not to traverse into.
+
+
+.. py:function:: recurseDirs(root, *, filenamesOnly=False, fnFilterDirs=None, topDown=True, followSymlinks=False)
+
+   Return directories within a directory (recursively).
+   You can provide a fnFilterDirs to filter out any directories not to traverse into.
+
+
+.. py:class:: FileInfoEntryWrapper(obj)
+
+   Helper class to make recurseFileInfo more convenient to use.
+
+
+   .. py:attribute:: obj
+
+
+   .. py:attribute:: path
+
+
+   .. py:method:: isDir(*args)
+
+
+   .. py:method:: isFile(*args)
+
+
+   .. py:method:: short()
+
+
+   .. py:method:: size()
+
+
+   .. py:method:: mtime()
+
+
+   .. py:method:: getLastModTime(units=TimeUnits.Seconds)
+
+
+   .. py:method:: getMetadataChangeTime()
+
+
+   .. py:method:: getCreateTime()
+
+
+.. py:function:: recurseFileInfo(root, allowedExts=None, **kwargs)
+
+   Convenient interface to python 3's file iterator.
+   On Windows this can be very fast because calls to get file properties like size
+   don't require an extra system call.
+   You can provide a fnFilterDirs to filter out any directories not to traverse into.
+
+   allowedExts in the form ['png', 'gif']
+
+
+.. py:function:: listFileInfo(root, followSymlinks=False, filesOnly=True)
+
+   Like recurseFileInfo, but does not recurse.
+
+
+.. py:function:: getDirectorySizeRecurse(dirPath, followSymlinks=False, fnFilterDirs=None, fnDirectExceptionsTo=None)
+
+   Return the total size of a directory
+
+

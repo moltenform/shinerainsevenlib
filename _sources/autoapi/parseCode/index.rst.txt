@@ -1,0 +1,22 @@
+parseCode
+=========
+
+.. py:module:: parseCode
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   parseCode.parsePythonModuleIntoListOfFunctionsAndClasses
+   parseCode.getTopLevelConstantsAndImportFroms
+
+
+Module Contents
+---------------
+
+.. py:function:: parsePythonModuleIntoListOfFunctionsAndClasses(contents)
+
+.. py:function:: getTopLevelConstantsAndImportFroms(filename)
+

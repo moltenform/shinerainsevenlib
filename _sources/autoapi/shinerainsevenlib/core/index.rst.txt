@@ -1,0 +1,924 @@
+shinerainsevenlib.core
+======================
+
+.. py:module:: shinerainsevenlib.core
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/shinerainsevenlib/core/m0_text_io/index
+   /autoapi/shinerainsevenlib/core/m1_core_util/index
+   /autoapi/shinerainsevenlib/core/m2_core_data_structures/index
+   /autoapi/shinerainsevenlib/core/m3_core_nonpure/index
+   /autoapi/shinerainsevenlib/core/m4_core_ui/index
+   /autoapi/shinerainsevenlib/core/m5_batch_util/index
+   /autoapi/shinerainsevenlib/core/m6_jslike/index
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   shinerainsevenlib.core.gRedirectAlertCalls
+   shinerainsevenlib.core.DefaultVal
+
+
+Exceptions
+----------
+
+.. autoapisummary::
+
+   shinerainsevenlib.core.ShineRainSevenLibError
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   shinerainsevenlib.core.SrssLooper
+   shinerainsevenlib.core.SrssFileIterator
+   shinerainsevenlib.core.CleanupTempFilesOnClose
+   shinerainsevenlib.core.IndependentRNG
+   shinerainsevenlib.core.PersistedDict
+   shinerainsevenlib.core.ParsePlus
+   shinerainsevenlib.core.Bucket
+   shinerainsevenlib.core.SentinalIndicatingDefault
+   shinerainsevenlib.core.TakeBatch
+   shinerainsevenlib.core.RecentlyUsedList
+   shinerainsevenlib.core.SimpleTimer
+   shinerainsevenlib.core.EnglishDateParserWrapper
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   shinerainsevenlib.core.removeEmptyDirs
+   shinerainsevenlib.core.getInputBool
+   shinerainsevenlib.core.getInputYesNoExtended
+   shinerainsevenlib.core.getInputInt
+   shinerainsevenlib.core.getInputString
+   shinerainsevenlib.core.getInputFromChoices
+   shinerainsevenlib.core.getRawInput
+   shinerainsevenlib.core.err
+   shinerainsevenlib.core.alert
+   shinerainsevenlib.core.warn
+   shinerainsevenlib.core.getInputBoolGui
+   shinerainsevenlib.core.getInputYesNoCancelGui
+   shinerainsevenlib.core.getInputFloatGui
+   shinerainsevenlib.core.getInputStringGui
+   shinerainsevenlib.core.findUnusedLetter
+   shinerainsevenlib.core.getInputFromChoicesGui
+   shinerainsevenlib.core.errGui
+   shinerainsevenlib.core.alertGui
+   shinerainsevenlib.core.warnGui
+   shinerainsevenlib.core.getOpenFileGui
+   shinerainsevenlib.core.getSaveFileGui
+   shinerainsevenlib.core.getClipboardText
+   shinerainsevenlib.core.setClipboardText
+   shinerainsevenlib.core.DBG
+   shinerainsevenlib.core.registerDebughook
+   shinerainsevenlib.core.getRandomString
+   shinerainsevenlib.core.genUuid
+   shinerainsevenlib.core.downloadUrl
+   shinerainsevenlib.core.startThread
+   shinerainsevenlib.core.softDeleteFile
+   shinerainsevenlib.core.getSoftTempDir
+   shinerainsevenlib.core.appendToListInDictOrStartNewList
+   shinerainsevenlib.core.takeBatchOnArbitraryIterable
+   shinerainsevenlib.core.takeBatch
+   shinerainsevenlib.core.listToNPieces
+   shinerainsevenlib.core.BoundedMemoize
+   shinerainsevenlib.core.assertTrue
+   shinerainsevenlib.core.assertEq
+   shinerainsevenlib.core.assertWarn
+   shinerainsevenlib.core.assertWarnEq
+   shinerainsevenlib.core.assertFloatEq
+   shinerainsevenlib.core.assertEqArray
+   shinerainsevenlib.core.assertException
+   shinerainsevenlib.core.getTraceback
+   shinerainsevenlib.core.getCurrentException
+   shinerainsevenlib.core.renderMillisTime
+   shinerainsevenlib.core.renderMillisTimeStandard
+   shinerainsevenlib.core.getNowAsMillisTime
+   shinerainsevenlib.core.replaceMustExist
+   shinerainsevenlib.core.reSearchWholeWord
+   shinerainsevenlib.core.reReplaceWholeWord
+   shinerainsevenlib.core.reReplace
+   shinerainsevenlib.core.truncateWithEllipsis
+   shinerainsevenlib.core.formatSize
+   shinerainsevenlib.core.runAndCatchException
+   shinerainsevenlib.core.toValidFilename
+   shinerainsevenlib.core.stripHtmlTags
+   shinerainsevenlib.core.replaceNonAsciiWith
+   shinerainsevenlib.core.containsNonAscii
+   shinerainsevenlib.core.unused
+   shinerainsevenlib.core.getObjAttributes
+   shinerainsevenlib.core.getClassNameFromInstance
+   shinerainsevenlib.core.endsWith
+   shinerainsevenlib.core.strToList
+   shinerainsevenlib.core.strToSet
+   shinerainsevenlib.core.standardNewlines
+   shinerainsevenlib.core.longStr
+   shinerainsevenlib.core.easyToEnterFilepath
+   shinerainsevenlib.core.parseIntOrFallback
+   shinerainsevenlib.core.parseFloatOrFallback
+   shinerainsevenlib.core.clampNumber
+   shinerainsevenlib.core.compareTwoListsAsSets
+   shinerainsevenlib.core.expectEqualityTwoListsAsSets
+   shinerainsevenlib.core.throwIfDuplicates
+   shinerainsevenlib.core.mergeDict
+   shinerainsevenlib.core.mergeDictIntoBucket
+   shinerainsevenlib.core.getPrintable
+   shinerainsevenlib.core.setRedirectTraceCalls
+   shinerainsevenlib.core.trace
+   shinerainsevenlib.core.tracep
+
+
+Package Contents
+----------------
+
+.. py:class:: SrssLooper(listOrLambda)
+
+   Helpful for batch processing, when you want to add pauses every n iterations
+
+   >>> loop = SrssLooper(list(range(10)))
+   >>> loop.showPercentageEstimates()
+   >>> loop.addPauses(2, seconds=2)
+   >>> loop.waitUntilValueSeen(3)
+   >>> for number in loop:
+   >>>     if number % 2 == 0:
+   >>>         print('skipping even number', number)
+   >>>         loop.flagDidNoMeaningfulWork()
+   >>>     else:
+   >>>         print('found an odd number', number)
+
+   input can be a
+       list 
+       iterable
+       lambda that returns an iterable
+           useful if you need to compute the length without producing the list
+   waitUntilValueSeen can be a
+       value
+       lambda that returns boolean- the first time it returns True,
+           we'll start the loop
+
+
+   .. py:method:: showPercentageEstimates(displayStr='\n...')
+
+
+   .. py:method:: setFormatStateToPrint(fn)
+
+
+   .. py:method:: addPauses(pauseEveryNTimes=20, seconds=20)
+
+
+   .. py:method:: waitUntilValueSeen(valOrFn)
+
+
+   .. py:method:: flagDidNoMeaningfulWork()
+
+
+   .. py:method:: countIterable(itr)
+      :staticmethod:
+
+
+
+.. py:class:: SrssFileIterator(rootOrListOfRoots, fnIncludeTheseFiles=None, fnFilterDirs=None, allowRelativePaths=None, excludeNodeModules=False, **params)
+
+   Helpful for file iteration,
+   adding some extra features to files.recurseFiles.
+   Can be used to skip node_modules directories.
+
+
+   .. py:attribute:: fnIncludeTheseFiles
+      :value: None
+
+
+
+   .. py:attribute:: allowRelativePaths
+      :value: None
+
+
+
+   .. py:attribute:: excludeNodeModules
+      :value: False
+
+
+
+   .. py:attribute:: paramsForIterating
+
+
+   .. py:attribute:: fnFilterDirsFromUser
+      :value: None
+
+
+
+   .. py:attribute:: roots
+
+
+   .. py:method:: pathContainsThisName(path, exclude)
+      :staticmethod:
+
+
+
+.. py:class:: CleanupTempFilesOnClose
+
+   Bases: :py:obj:`contextlib.ExitStack`
+
+
+   Register temp files to be deleted later.
+   Example:
+
+   with CleanupTempFilesOnClose() as cleanup:
+       cleanup.registerTempFile('temp.txt')
+       files.writeAll('temp.txt', 'abc')
+       ...something that might throw
+
+   ...when code reaches here, the temp file will be deleted,
+   even if an exception is thrown.
+
+
+   .. py:method:: registerTempFile(path)
+
+
+.. py:function:: removeEmptyDirs(path, removeRootIfEmpty=True, verbose=False)
+
+   Recursively removes empty directories
+
+
+.. py:function:: getInputBool(prompt, defaultTo=None, flushOutput=True)
+
+   Ask yes or no. Returns True on yes and False on no
+
+
+.. py:function:: getInputYesNoExtended(prompt, addCancel=False, addAlwaysYes=False, addAlwaysNo=False, flushOutput=True)
+
+   Ask yes or no. Returns 'y', 'n', 'Y', 'N', or 'cancel'.
+
+
+.. py:function:: getInputInt(prompt, minVal=None, maxVal=None, defaultTo=None, flushOutput=True)
+
+   Validated to be an integer. Returns None on cancel.
+
+
+.. py:function:: getInputString(prompt, confirmation=True, defaultTo=None, flushOutput=True)
+
+   Ask for a string. If confirmation is True, ask for confirmation before continuing.
+
+
+.. py:function:: getInputFromChoices(prompt, arrChoices, fnOtherCommands=None, otherCommandsContext=None, flushOutput=True, cancelString='0) cancel', zeroBased=False)
+
+   Allows user to choose from a numbered list.
+   return value is the tuple (index, text)
+   if user cancels, return value is the tuple (-1, 'Cancel')
+
+
+.. py:function:: getRawInput(prompt, flushOutput=True)
+
+   Ask for input. Returns the input, or None on cancel.
+
+
+.. py:function:: err(*args)
+
+   Throw an exception
+
+
+.. py:data:: gRedirectAlertCalls
+
+.. py:function:: alert(*args, flushOutput=True, always=False)
+
+   Show an alert to the user (they can press Enter to continue).
+   can be suppressed for automated tests via gRedirectAlertCalls
+
+
+.. py:function:: warn(*args, flushOutput=True, always=False)
+
+   Show an alert to the user (they can choose if they want to continue).
+   can be suppressed for automated tests via gRedirectAlertCalls
+
+
+.. py:function:: getInputBoolGui(prompt)
+
+   Ask yes or no. Returns True on yes and False on no.
+
+
+.. py:function:: getInputYesNoCancelGui(prompt)
+
+   Ask yes, no, or cancel. Returns the string chosen.
+
+
+.. py:function:: getInputFloatGui(prompt, default=None, minVal=0.0, maxVal=100.0, title=' ')
+
+   Validated to be an float (decimal number). Returns None on cancel.
+
+
+.. py:function:: getInputStringGui(prompt, initialvalue=None, title=' ')
+
+   Returns '' on cancel
+
+
+.. py:function:: findUnusedLetter(dictUsed, newWord)
+
+.. py:function:: getInputFromChoicesGui(prompt, arOptions)
+
+   Allows user to choose from a list.
+   return value is the tuple (index, text)
+   if user cancels, return value is the tuple (-1, 'Cancel')
+
+
+.. py:function:: errGui(*args)
+
+   Display error message in GUI, then throw an exception
+
+
+.. py:function:: alertGui(*args)
+
+   Display message in GUI
+
+
+.. py:function:: warnGui(*args)
+
+   Display warning message in GUI
+
+
+.. py:function:: getOpenFileGui(initialDir=None, types=None, title='Open')
+
+   Specify types in the format ['.png|Png image','.gif|Gif image'] and so on.
+
+
+.. py:function:: getSaveFileGui(initialDir=None, types=None, title='Save As')
+
+   Specify types in the format ['.png|Png image','.gif|Gif image'] and so on.
+
+
+.. py:function:: getClipboardText()
+
+   Get clipboard text
+
+
+.. py:function:: setClipboardText(s)
+
+   Set clipboard text
+
+
+.. py:function:: DBG(obj=None)
+
+   Print values of local variables
+
+
+.. py:function:: registerDebughook(b=True)
+
+   Register callback for printing values of local variables
+
+
+.. py:function:: getRandomString(maxVal=1000 * 1000, asHex=False, rng=_random)
+
+   Generate a random string of digits
+
+
+.. py:function:: genUuid(asBase64=False)
+
+   Generate a UUID
+
+
+.. py:class:: IndependentRNG(seed=None)
+
+   Keep a separate random stream that won't get affected by someone else.
+   sometimes you want to set rng state to get a repeatable sequence of numbers back,
+   which would get thrown off by other parts of the program also getting rng values.
+
+
+   .. py:attribute:: rng
+
+
+.. py:function:: downloadUrl(url, toFile=None, timeout=30, asText=False)
+
+   Download a URL, if toFile is not specified returns the results as a string.
+
+
+.. py:function:: startThread(fn, args=None)
+
+   Start a thread
+
+
+.. py:function:: softDeleteFile(path, allowDirs=False, doTrace=False)
+
+   Delete a file in a recoverable way, either OS Trash or a designated folder.
+   Defaults to ~/trash
+   Configure behavior by editing shinerainsevenlib.cfg, 
+   trashDir='recycleBin' or 'currentDriveDataLocalTrash' or a path
+
+
+.. py:function:: getSoftTempDir(path='', preferEphemeral=False)
+
+   Get a temporary directory. 
+   Defaults to default OS temp directory, can be configured in shinerainsevenlib.cfg
+   tempDir = (path to dir)
+   tempEphemeralDir = (path to dir)
+   An ephemeral dir is one where data isn't kept long term. I often configure this
+   to be a RAM drive, which are useful for heavy read/write scenarios.
+
+
+.. py:class:: PersistedDict(filename, warnIfCreatingNew=True, keepHandle=False, persistEveryNWrites=5)
+
+   Store a dict (or dict of dicts) on disk.
+
+
+   .. py:attribute:: data
+      :value: None
+
+
+
+   .. py:attribute:: handle
+      :value: None
+
+
+
+   .. py:attribute:: counter
+      :value: 0
+
+
+
+   .. py:attribute:: persistEveryNWrites
+      :value: 1
+
+
+
+   .. py:attribute:: filename
+
+
+   .. py:method:: load(encoding='utf-8')
+
+
+   .. py:method:: close()
+
+
+   .. py:method:: persist()
+
+
+   .. py:method:: afterUpdate()
+
+
+   .. py:method:: set(key, value)
+
+
+   .. py:method:: setSubDict(subDictName, key, value)
+
+
+   .. py:method:: setSubSubDict(subDictName, key1, key2, value)
+
+
+.. py:class:: ParsePlus(pattern, extraTypes=None, escapeSequences=None, caseSensitive=True)
+
+   Adds the following features to the "parse" module:
+
+   {s:NoNewlines} field type
+   {s:NoSpaces} works like {s:S}
+   remember that "{s} and {s}" matches "a and a" but not "a and b",
+
+   use "{s1} and {s2}" or "{} and {}" if the contents can differ.
+   escapeSequences such as backslash-escapes (see examples in tests).
+   replaceFieldWithText (see examples in tests).
+   getTotalSpan.
+
+
+   .. py:attribute:: pattern
+
+
+   .. py:attribute:: caseSensitive
+      :value: True
+
+
+
+   .. py:attribute:: extraTypes
+
+
+   .. py:attribute:: escapeSequences
+      :value: []
+
+
+
+   .. py:attribute:: spans
+      :value: None
+
+
+
+   .. py:attribute:: getTotalSpan
+      :value: None
+
+
+
+   .. py:method:: match(s)
+
+      Entire string must match
+
+
+
+   .. py:method:: search(s)
+
+
+   .. py:method:: findAll(s)
+
+
+   .. py:method:: replaceFieldWithText(s, key, newValue, appendIfNotFound=None, allowOnlyOnce=False)
+
+      Example: <title>{title}</title>
+
+
+
+   .. py:method:: replaceFieldWithTextIntoFile(path, key, newValue, appendIfNotFound=None, allowOnlyOnce=False, encoding='utf-8')
+
+      Convenience method to write the results to a file
+
+
+
+.. py:class:: Bucket(**kwargs)
+
+   Simple named-tuple; o.field looks nicer than o['field'].
+   similar to standard library's types.SimpleNamespace.
+
+
+   .. py:method:: get(k, fallback=None)
+
+
+   .. py:method:: set(k, v)
+
+
+   .. py:method:: getChildKeys()
+
+
+.. py:class:: SentinalIndicatingDefault
+
+   Use this with keyword args to see if an argument was passed vs. left to default, see pep 661
+
+
+.. py:data:: DefaultVal
+
+.. py:function:: appendToListInDictOrStartNewList(d, key, val)
+
+   Similar to setdefault, but easier to read in my opinion
+
+
+.. py:function:: takeBatchOnArbitraryIterable(iterable, size)
+
+   Yield successive n-sized chunks from a list, like javascript's _.chunk
+
+
+.. py:function:: takeBatch(itr, n)
+
+   Get successive n-sized chunks from a list, like javascript's _.chunk
+
+
+.. py:class:: TakeBatch(batchSize, callback)
+
+   Run a callback on n-sized chunks from a list, like javascript's _.chunk.
+   The convenient part is that any leftover pieces will be automatically processed.
+
+
+   .. py:attribute:: batch
+      :value: []
+
+
+
+   .. py:attribute:: batchSize
+
+
+   .. py:attribute:: callback
+
+
+   .. py:method:: append(item)
+
+
+.. py:function:: listToNPieces(lst, nPieces)
+
+   Split a list into n pieces
+   listToNPieces([1, 2, 3, 4, 5, 6], 2) -> [[1, 2, 3], [4, 5, 6]]
+
+
+.. py:class:: RecentlyUsedList(maxSize=None, startList=None)
+
+   Keep a list of items. Doesn't store duplicates
+
+
+   .. py:attribute:: list
+      :value: []
+
+
+
+   .. py:attribute:: maxSize
+      :value: None
+
+
+
+   .. py:method:: getList()
+
+
+   .. py:method:: add(s)
+
+
+.. py:function:: BoundedMemoize(fn)
+
+   Inspired by http://code.activestate.com/recipes/496879-memoize-decorator-function-with-cache-size-limit/
+   The number of items cached defaults to 20.
+   You can adjust the number of items cached by setting the .limit expando property on the function itself.
+
+
+.. py:function:: assertTrue(condition, *messageArgs)
+
+   Throw if condition is false
+
+
+.. py:function:: assertEq(expected, received, *messageArgs)
+
+   Throw if values are not equal
+
+
+.. py:function:: assertWarn(condition, *messageArgs)
+
+   Show a message to user if condition is false
+
+
+.. py:function:: assertWarnEq(expected, received, *messageArgs)
+
+   Show a message to user if values are not equal
+
+
+.. py:function:: assertFloatEq(expected, received, *messageArgs)
+
+   Throw if values are not very close, use this if comparing floats
+
+
+.. py:function:: assertEqArray(expected, received)
+
+   Throw if arrays are not the same, with a convenient message
+
+
+.. py:function:: assertException(fn, excType, excTypeExpectedString=None, msg='')
+
+   Expect fn to throw
+
+
+.. py:function:: getTraceback(e)
+
+   Get _traceback from an exception
+
+
+.. py:function:: getCurrentException()
+
+   Get current exception
+
+
+.. py:function:: renderMillisTime(millisTime)
+
+   `millistime` is number of milliseconds past epoch (unix _time * 1000)
+
+
+.. py:function:: renderMillisTimeStandard(millisTime)
+
+   `millistime` is number of milliseconds past epoch (unix _time * 1000)
+
+
+.. py:function:: getNowAsMillisTime()
+
+   Gets the number of milliseconds past epoch (unix _time * 1000)
+
+
+.. py:class:: SimpleTimer
+
+   Simple timer to measure elapsed time
+
+
+   .. py:attribute:: startedAt
+
+
+   .. py:method:: getTime()
+
+
+   .. py:method:: check()
+
+
+   .. py:method:: print()
+
+
+.. py:class:: EnglishDateParserWrapper(dateOrder='MDY')
+
+   More convenient than directly calling dateparser
+   defaults to month-day-year
+   restrict to English, less possibility of accidentally parsing a non-date string
+
+
+   .. py:attribute:: p
+
+
+   .. py:method:: parse(s)
+
+
+   .. py:method:: fromFullWithTimezone(s)
+
+      Able to parse timestamps with a timezone
+      compensate for +0000
+      Wed Nov 07 04:01:10 +0000 2018
+
+
+
+   .. py:method:: getDaysBefore(baseDate, nDaysBefore)
+
+      Subtract n days (simple), return datetime object
+
+
+
+   .. py:method:: getDaysBeforeInMilliseconds(sBaseDate, nDaysBefore)
+
+      Subtract n days (simple), return number of milliseconds past epoch
+
+
+
+   .. py:method:: toUnixMilliseconds(s)
+
+      Conviently go straight from string to the number of milliseconds past epoch
+
+
+
+.. py:function:: replaceMustExist(haystack, needle, replace)
+
+   Replace needle in haystack, fail if needle not in haystack
+
+
+.. py:function:: reSearchWholeWord(haystack, needle)
+
+   Search haystack for needle, return match object
+
+
+.. py:function:: reReplaceWholeWord(haystack, needle, replace)
+
+   Replace needle in haystack with a 'whole word' style search
+
+
+.. py:function:: reReplace(haystack, reNeedle, replace)
+
+   Replace needle in haystack
+
+
+.. py:function:: truncateWithEllipsis(s, maxLength)
+
+   Truncate a string with an ellipsis if it is too long
+
+
+.. py:function:: formatSize(n)
+
+   Format a number of bytes into a human-readable string
+
+
+.. py:function:: runAndCatchException(fn)
+
+   Can be convenient to not need a try/except structure.
+   use like golang,
+   result, err = callFn()
+
+
+.. py:function:: toValidFilename(pathOrig, dirsepOk=False, maxLen=None)
+
+   Convert path to a valid filename, especially on Windows where many characters are not allowed
+
+
+.. py:function:: stripHtmlTags(s, removeRepeatedWhitespace=True)
+
+   Remove all html tags.
+   see also: html.escape, html.unescape
+   a (?:) is a non-capturing group
+
+
+.. py:function:: replaceNonAsciiWith(s, replaceWith)
+
+   Replace non-ascii or control chars.
+   printable is 32-126
+
+
+.. py:function:: containsNonAscii(s)
+
+   Does string contain non-ascii or control chars?
+   aka does string contain chars outside 32-126
+
+
+.. py:function:: unused(_obj)
+
+   Use this to tell linters the variable is intentionally unused
+
+
+.. py:function:: getObjAttributes(obj)
+
+   Get properties on an object
+
+
+.. py:function:: getClassNameFromInstance(obj)
+
+   Get class name from an instance
+
+
+.. py:function:: endsWith(a, b)
+
+   a endsWith that works with either str or bytes
+
+
+.. py:function:: strToList(s, replaceComments=True)
+
+   When quickly writing code, get a list of strings, useful for short scripts
+
+
+.. py:function:: strToSet(s, replaceComments=True)
+
+   When quickly writing code, get a set from a list of strings, useful for short scripts
+
+
+.. py:function:: standardNewlines(s)
+
+   Normalize newlines to \n
+
+
+.. py:function:: longStr(s)
+
+   When quickly writing code, get a string that spans multiple lines.
+
+
+.. py:function:: easyToEnterFilepath(s, checkIfExists=True)
+
+   Lets people easily copy/paste a filepath in, without worrying about quotes or extra whitespace.
+   See unit tests for examples.
+
+
+.. py:function:: parseIntOrFallback(s, fallBack=None)
+
+   Parse as an int, or return None
+
+
+.. py:function:: parseFloatOrFallback(s, fallBack=None)
+
+   Parse as a float, or return None
+
+
+.. py:function:: clampNumber(value, minValue, maxValue)
+
+   If the input is bigger than maxValue, return maxValue, if smaller than minValue, return minValue
+
+
+.. py:function:: compareTwoListsAsSets(l1, l2, transformFn1=None, transformFn2=None)
+
+   Compare two lists of strings
+
+
+.. py:function:: expectEqualityTwoListsAsSets(l1, l2, transformFn1=None, transformFn2=None)
+
+   Display differences between two lists of strings
+
+
+.. py:function:: throwIfDuplicates(l1, transformFn1=None, context='')
+
+   Detect duplicate items in a list
+
+
+.. py:function:: mergeDict(dict1, dict2)
+
+   Merge two dictionaries
+
+
+.. py:function:: mergeDictIntoBucket(bucketConfigs, dictParams, allowNewKeys=False)
+
+   Merge a dictionary into a bucket (see the Bucket class for more)
+
+
+.. py:function:: getPrintable(s, okToIgnore=False)
+
+   From a-with-accent to plain a, get closest visual ascii equivalent
+
+
+.. py:function:: setRedirectTraceCalls(fnHook)
+
+.. py:function:: trace(*args, always=False)
+
+   Similar to print, but
+   1) distinguish debugging prints vs intentional production prints
+   2) can be redirected to fnHook, e.g. for testing
+   3) certain terminals throw exceptions if given unicode characters
+
+
+.. py:function:: tracep(*args, always=False)
+
+   Similar to print, but uses pprint to pretty-print
+
+
+.. py:exception:: ShineRainSevenLibError(*args)
+
+   Bases: :py:obj:`RuntimeError`
+
+
+   Unspecified run-time error.
+
+

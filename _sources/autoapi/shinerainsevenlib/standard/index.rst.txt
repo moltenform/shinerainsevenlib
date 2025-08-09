@@ -1,0 +1,6 @@
+shinerainsevenlib.standard
+==========================
+
+.. py:module:: shinerainsevenlib.standard
+
+

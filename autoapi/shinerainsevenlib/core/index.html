@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>shinerainsevenlib.core &#8212; shinerainsevenlib 1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <script src="../../../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="shinerainsevenlib.core.m0_text_io" href="m0_text_io/index.html" />
+    <link rel="prev" title="shinerainsevenlib" href="../index.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-shinerainsevenlib.core">
+<span id="shinerainsevenlib-core"></span><h1>shinerainsevenlib.core<a class="headerlink" href="#module-shinerainsevenlib.core" title="Link to this heading">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="m0_text_io/index.html">shinerainsevenlib.core.m0_text_io</a></li>
+<li class="toctree-l1"><a class="reference internal" href="m1_core_util/index.html">shinerainsevenlib.core.m1_core_util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="m2_core_data_structures/index.html">shinerainsevenlib.core.m2_core_data_structures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="m3_core_nonpure/index.html">shinerainsevenlib.core.m3_core_nonpure</a></li>
+<li class="toctree-l1"><a class="reference internal" href="m4_core_ui/index.html">shinerainsevenlib.core.m4_core_ui</a></li>
+<li class="toctree-l1"><a class="reference internal" href="m5_batch_util/index.html">shinerainsevenlib.core.m5_batch_util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="m6_jslike/index.html">shinerainsevenlib.core.m6_jslike</a></li>
+</ul>
+</div>
+</section>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.gRedirectAlertCalls" title="shinerainsevenlib.core.gRedirectAlertCalls"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gRedirectAlertCalls</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.DefaultVal" title="shinerainsevenlib.core.DefaultVal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DefaultVal</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="exceptions">
+<h2>Exceptions<a class="headerlink" href="#exceptions" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.ShineRainSevenLibError" title="shinerainsevenlib.core.ShineRainSevenLibError"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ShineRainSevenLibError</span></code></a></p></td>
+<td><p>Unspecified run-time error.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.SrssLooper" title="shinerainsevenlib.core.SrssLooper"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SrssLooper</span></code></a></p></td>
+<td><p>Helpful for batch processing, when you want to add pauses every n iterations</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.SrssFileIterator" title="shinerainsevenlib.core.SrssFileIterator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SrssFileIterator</span></code></a></p></td>
+<td><p>Helpful for file iteration,</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.CleanupTempFilesOnClose" title="shinerainsevenlib.core.CleanupTempFilesOnClose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CleanupTempFilesOnClose</span></code></a></p></td>
+<td><p>Register temp files to be deleted later.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.IndependentRNG" title="shinerainsevenlib.core.IndependentRNG"><code class="xref py py-obj docutils literal notranslate"><span class="pre">IndependentRNG</span></code></a></p></td>
+<td><p>Keep a separate random stream that won't get affected by someone else.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.PersistedDict" title="shinerainsevenlib.core.PersistedDict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PersistedDict</span></code></a></p></td>
+<td><p>Store a dict (or dict of dicts) on disk.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.ParsePlus" title="shinerainsevenlib.core.ParsePlus"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ParsePlus</span></code></a></p></td>
+<td><p>Adds the following features to the &quot;parse&quot; module:</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.Bucket" title="shinerainsevenlib.core.Bucket"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Bucket</span></code></a></p></td>
+<td><p>Simple named-tuple; o.field looks nicer than o['field'].</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.SentinalIndicatingDefault" title="shinerainsevenlib.core.SentinalIndicatingDefault"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SentinalIndicatingDefault</span></code></a></p></td>
+<td><p>Use this with keyword args to see if an argument was passed vs. left to default, see pep 661</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.TakeBatch" title="shinerainsevenlib.core.TakeBatch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TakeBatch</span></code></a></p></td>
+<td><p>Run a callback on n-sized chunks from a list, like javascript's _.chunk.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.RecentlyUsedList" title="shinerainsevenlib.core.RecentlyUsedList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RecentlyUsedList</span></code></a></p></td>
+<td><p>Keep a list of items. Doesn't store duplicates</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.SimpleTimer" title="shinerainsevenlib.core.SimpleTimer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SimpleTimer</span></code></a></p></td>
+<td><p>Simple timer to measure elapsed time</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.EnglishDateParserWrapper" title="shinerainsevenlib.core.EnglishDateParserWrapper"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EnglishDateParserWrapper</span></code></a></p></td>
+<td><p>More convenient than directly calling dateparser</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.removeEmptyDirs" title="shinerainsevenlib.core.removeEmptyDirs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">removeEmptyDirs</span></code></a>(path[, removeRootIfEmpty, verbose])</p></td>
+<td><p>Recursively removes empty directories</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.getInputBool" title="shinerainsevenlib.core.getInputBool"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getInputBool</span></code></a>(prompt[, defaultTo, flushOutput])</p></td>
+<td><p>Ask yes or no. Returns True on yes and False on no</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.getInputYesNoExtended" title="shinerainsevenlib.core.getInputYesNoExtended"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getInputYesNoExtended</span></code></a>(prompt[, addCancel, ...])</p></td>
+<td><p>Ask yes or no. Returns 'y', 'n', 'Y', 'N', or 'cancel'.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.getInputInt" title="shinerainsevenlib.core.getInputInt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getInputInt</span></code></a>(prompt[, minVal, maxVal, defaultTo, ...])</p></td>
+<td><p>Validated to be an integer. Returns None on cancel.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.getInputString" title="shinerainsevenlib.core.getInputString"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getInputString</span></code></a>(prompt[, confirmation, defaultTo, ...])</p></td>
+<td><p>Ask for a string. If confirmation is True, ask for confirmation before continuing.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.getInputFromChoices" title="shinerainsevenlib.core.getInputFromChoices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getInputFromChoices</span></code></a>(prompt, arrChoices[, ...])</p></td>
+<td><p>Allows user to choose from a numbered list.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.getRawInput" title="shinerainsevenlib.core.getRawInput"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getRawInput</span></code></a>(prompt[, flushOutput])</p></td>
+<td><p>Ask for input. Returns the input, or None on cancel.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.err" title="shinerainsevenlib.core.err"><code class="xref py py-obj docutils literal notranslate"><span class="pre">err</span></code></a>(*args)</p></td>
+<td><p>Throw an exception</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.alert" title="shinerainsevenlib.core.alert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">alert</span></code></a>(*args[, flushOutput, always])</p></td>
+<td><p>Show an alert to the user (they can press Enter to continue).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.warn" title="shinerainsevenlib.core.warn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">warn</span></code></a>(*args[, flushOutput, always])</p></td>
+<td><p>Show an alert to the user (they can choose if they want to continue).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.getInputBoolGui" title="shinerainsevenlib.core.getInputBoolGui"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getInputBoolGui</span></code></a>(prompt)</p></td>
+<td><p>Ask yes or no. Returns True on yes and False on no.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.getInputYesNoCancelGui" title="shinerainsevenlib.core.getInputYesNoCancelGui"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getInputYesNoCancelGui</span></code></a>(prompt)</p></td>
+<td><p>Ask yes, no, or cancel. Returns the string chosen.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.getInputFloatGui" title="shinerainsevenlib.core.getInputFloatGui"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getInputFloatGui</span></code></a>(prompt[, default, minVal, maxVal, title])</p></td>
+<td><p>Validated to be an float (decimal number). Returns None on cancel.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.getInputStringGui" title="shinerainsevenlib.core.getInputStringGui"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getInputStringGui</span></code></a>(prompt[, initialvalue, title])</p></td>
+<td><p>Returns '' on cancel</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.findUnusedLetter" title="shinerainsevenlib.core.findUnusedLetter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">findUnusedLetter</span></code></a>(dictUsed, newWord)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.getInputFromChoicesGui" title="shinerainsevenlib.core.getInputFromChoicesGui"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getInputFromChoicesGui</span></code></a>(prompt, arOptions)</p></td>
+<td><p>Allows user to choose from a list.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.errGui" title="shinerainsevenlib.core.errGui"><code class="xref py py-obj docutils literal notranslate"><span class="pre">errGui</span></code></a>(*args)</p></td>
+<td><p>Display error message in GUI, then throw an exception</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.alertGui" title="shinerainsevenlib.core.alertGui"><code class="xref py py-obj docutils literal notranslate"><span class="pre">alertGui</span></code></a>(*args)</p></td>
+<td><p>Display message in GUI</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.warnGui" title="shinerainsevenlib.core.warnGui"><code class="xref py py-obj docutils literal notranslate"><span class="pre">warnGui</span></code></a>(*args)</p></td>
+<td><p>Display warning message in GUI</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.getOpenFileGui" title="shinerainsevenlib.core.getOpenFileGui"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getOpenFileGui</span></code></a>([initialDir, types, title])</p></td>
+<td><p>Specify types in the format ['.png|Png image','.gif|Gif image'] and so on.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.getSaveFileGui" title="shinerainsevenlib.core.getSaveFileGui"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getSaveFileGui</span></code></a>([initialDir, types, title])</p></td>
+<td><p>Specify types in the format ['.png|Png image','.gif|Gif image'] and so on.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.getClipboardText" title="shinerainsevenlib.core.getClipboardText"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getClipboardText</span></code></a>()</p></td>
+<td><p>Get clipboard text</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.setClipboardText" title="shinerainsevenlib.core.setClipboardText"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setClipboardText</span></code></a>(s)</p></td>
+<td><p>Set clipboard text</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.DBG" title="shinerainsevenlib.core.DBG"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DBG</span></code></a>([obj])</p></td>
+<td><p>Print values of local variables</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.registerDebughook" title="shinerainsevenlib.core.registerDebughook"><code class="xref py py-obj docutils literal notranslate"><span class="pre">registerDebughook</span></code></a>([b])</p></td>
+<td><p>Register callback for printing values of local variables</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.getRandomString" title="shinerainsevenlib.core.getRandomString"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getRandomString</span></code></a>([maxVal, asHex, rng])</p></td>
+<td><p>Generate a random string of digits</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.genUuid" title="shinerainsevenlib.core.genUuid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">genUuid</span></code></a>([asBase64])</p></td>
+<td><p>Generate a UUID</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.downloadUrl" title="shinerainsevenlib.core.downloadUrl"><code class="xref py py-obj docutils literal notranslate"><span class="pre">downloadUrl</span></code></a>(url[, toFile, timeout, asText])</p></td>
+<td><p>Download a URL, if toFile is not specified returns the results as a string.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.startThread" title="shinerainsevenlib.core.startThread"><code class="xref py py-obj docutils literal notranslate"><span class="pre">startThread</span></code></a>(fn[, args])</p></td>
+<td><p>Start a thread</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.softDeleteFile" title="shinerainsevenlib.core.softDeleteFile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">softDeleteFile</span></code></a>(path[, allowDirs, doTrace])</p></td>
+<td><p>Delete a file in a recoverable way, either OS Trash or a designated folder.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.getSoftTempDir" title="shinerainsevenlib.core.getSoftTempDir"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getSoftTempDir</span></code></a>([path, preferEphemeral])</p></td>
+<td><p>Get a temporary directory.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.appendToListInDictOrStartNewList" title="shinerainsevenlib.core.appendToListInDictOrStartNewList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">appendToListInDictOrStartNewList</span></code></a>(d, key, val)</p></td>
+<td><p>Similar to setdefault, but easier to read in my opinion</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.takeBatchOnArbitraryIterable" title="shinerainsevenlib.core.takeBatchOnArbitraryIterable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">takeBatchOnArbitraryIterable</span></code></a>(iterable, size)</p></td>
+<td><p>Yield successive n-sized chunks from a list, like javascript's _.chunk</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.takeBatch" title="shinerainsevenlib.core.takeBatch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">takeBatch</span></code></a>(itr, n)</p></td>
+<td><p>Get successive n-sized chunks from a list, like javascript's _.chunk</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.listToNPieces" title="shinerainsevenlib.core.listToNPieces"><code class="xref py py-obj docutils literal notranslate"><span class="pre">listToNPieces</span></code></a>(lst, nPieces)</p></td>
+<td><p>Split a list into n pieces</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.BoundedMemoize" title="shinerainsevenlib.core.BoundedMemoize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BoundedMemoize</span></code></a>(fn)</p></td>
+<td><p>Inspired by <a class="reference external" href="http://code.activestate.com/recipes/496879-memoize-decorator-function-with-cache-size-limit/">http://code.activestate.com/recipes/496879-memoize-decorator-function-with-cache-size-limit/</a></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.assertTrue" title="shinerainsevenlib.core.assertTrue"><code class="xref py py-obj docutils literal notranslate"><span class="pre">assertTrue</span></code></a>(condition, *messageArgs)</p></td>
+<td><p>Throw if condition is false</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.assertEq" title="shinerainsevenlib.core.assertEq"><code class="xref py py-obj docutils literal notranslate"><span class="pre">assertEq</span></code></a>(expected, received, *messageArgs)</p></td>
+<td><p>Throw if values are not equal</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.assertWarn" title="shinerainsevenlib.core.assertWarn"><code class="xref py py-obj docutils literal notranslate"><span class="pre">assertWarn</span></code></a>(condition, *messageArgs)</p></td>
+<td><p>Show a message to user if condition is false</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.assertWarnEq" title="shinerainsevenlib.core.assertWarnEq"><code class="xref py py-obj docutils literal notranslate"><span class="pre">assertWarnEq</span></code></a>(expected, received, *messageArgs)</p></td>
+<td><p>Show a message to user if values are not equal</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.assertFloatEq" title="shinerainsevenlib.core.assertFloatEq"><code class="xref py py-obj docutils literal notranslate"><span class="pre">assertFloatEq</span></code></a>(expected, received, *messageArgs)</p></td>
+<td><p>Throw if values are not very close, use this if comparing floats</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.assertEqArray" title="shinerainsevenlib.core.assertEqArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">assertEqArray</span></code></a>(expected, received)</p></td>
+<td><p>Throw if arrays are not the same, with a convenient message</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.assertException" title="shinerainsevenlib.core.assertException"><code class="xref py py-obj docutils literal notranslate"><span class="pre">assertException</span></code></a>(fn, excType[, excTypeExpectedString, msg])</p></td>
+<td><p>Expect fn to throw</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.getTraceback" title="shinerainsevenlib.core.getTraceback"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getTraceback</span></code></a>(e)</p></td>
+<td><p>Get _traceback from an exception</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.getCurrentException" title="shinerainsevenlib.core.getCurrentException"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getCurrentException</span></code></a>()</p></td>
+<td><p>Get current exception</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.renderMillisTime" title="shinerainsevenlib.core.renderMillisTime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">renderMillisTime</span></code></a>(millisTime)</p></td>
+<td><p><cite>millistime</cite> is number of milliseconds past epoch (unix _time * 1000)</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.renderMillisTimeStandard" title="shinerainsevenlib.core.renderMillisTimeStandard"><code class="xref py py-obj docutils literal notranslate"><span class="pre">renderMillisTimeStandard</span></code></a>(millisTime)</p></td>
+<td><p><cite>millistime</cite> is number of milliseconds past epoch (unix _time * 1000)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.getNowAsMillisTime" title="shinerainsevenlib.core.getNowAsMillisTime"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getNowAsMillisTime</span></code></a>()</p></td>
+<td><p>Gets the number of milliseconds past epoch (unix _time * 1000)</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.replaceMustExist" title="shinerainsevenlib.core.replaceMustExist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">replaceMustExist</span></code></a>(haystack, needle, replace)</p></td>
+<td><p>Replace needle in haystack, fail if needle not in haystack</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.reSearchWholeWord" title="shinerainsevenlib.core.reSearchWholeWord"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reSearchWholeWord</span></code></a>(haystack, needle)</p></td>
+<td><p>Search haystack for needle, return match object</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.reReplaceWholeWord" title="shinerainsevenlib.core.reReplaceWholeWord"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reReplaceWholeWord</span></code></a>(haystack, needle, replace)</p></td>
+<td><p>Replace needle in haystack with a 'whole word' style search</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.reReplace" title="shinerainsevenlib.core.reReplace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reReplace</span></code></a>(haystack, reNeedle, replace)</p></td>
+<td><p>Replace needle in haystack</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.truncateWithEllipsis" title="shinerainsevenlib.core.truncateWithEllipsis"><code class="xref py py-obj docutils literal notranslate"><span class="pre">truncateWithEllipsis</span></code></a>(s, maxLength)</p></td>
+<td><p>Truncate a string with an ellipsis if it is too long</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.formatSize" title="shinerainsevenlib.core.formatSize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">formatSize</span></code></a>(n)</p></td>
+<td><p>Format a number of bytes into a human-readable string</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.runAndCatchException" title="shinerainsevenlib.core.runAndCatchException"><code class="xref py py-obj docutils literal notranslate"><span class="pre">runAndCatchException</span></code></a>(fn)</p></td>
+<td><p>Can be convenient to not need a try/except structure.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.toValidFilename" title="shinerainsevenlib.core.toValidFilename"><code class="xref py py-obj docutils literal notranslate"><span class="pre">toValidFilename</span></code></a>(pathOrig[, dirsepOk, maxLen])</p></td>
+<td><p>Convert path to a valid filename, especially on Windows where many characters are not allowed</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.stripHtmlTags" title="shinerainsevenlib.core.stripHtmlTags"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stripHtmlTags</span></code></a>(s[, removeRepeatedWhitespace])</p></td>
+<td><p>Remove all html tags.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.replaceNonAsciiWith" title="shinerainsevenlib.core.replaceNonAsciiWith"><code class="xref py py-obj docutils literal notranslate"><span class="pre">replaceNonAsciiWith</span></code></a>(s, replaceWith)</p></td>
+<td><p>Replace non-ascii or control chars.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.containsNonAscii" title="shinerainsevenlib.core.containsNonAscii"><code class="xref py py-obj docutils literal notranslate"><span class="pre">containsNonAscii</span></code></a>(s)</p></td>
+<td><p>Does string contain non-ascii or control chars?</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.unused" title="shinerainsevenlib.core.unused"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unused</span></code></a>(_obj)</p></td>
+<td><p>Use this to tell linters the variable is intentionally unused</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.getObjAttributes" title="shinerainsevenlib.core.getObjAttributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getObjAttributes</span></code></a>(obj)</p></td>
+<td><p>Get properties on an object</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.getClassNameFromInstance" title="shinerainsevenlib.core.getClassNameFromInstance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getClassNameFromInstance</span></code></a>(obj)</p></td>
+<td><p>Get class name from an instance</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.endsWith" title="shinerainsevenlib.core.endsWith"><code class="xref py py-obj docutils literal notranslate"><span class="pre">endsWith</span></code></a>(a, b)</p></td>
+<td><p>a endsWith that works with either str or bytes</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.strToList" title="shinerainsevenlib.core.strToList"><code class="xref py py-obj docutils literal notranslate"><span class="pre">strToList</span></code></a>(s[, replaceComments])</p></td>
+<td><p>When quickly writing code, get a list of strings, useful for short scripts</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.strToSet" title="shinerainsevenlib.core.strToSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">strToSet</span></code></a>(s[, replaceComments])</p></td>
+<td><p>When quickly writing code, get a set from a list of strings, useful for short scripts</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.standardNewlines" title="shinerainsevenlib.core.standardNewlines"><code class="xref py py-obj docutils literal notranslate"><span class="pre">standardNewlines</span></code></a>(s)</p></td>
+<td><p>Normalize newlines to n</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.longStr" title="shinerainsevenlib.core.longStr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">longStr</span></code></a>(s)</p></td>
+<td><p>When quickly writing code, get a string that spans multiple lines.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.easyToEnterFilepath" title="shinerainsevenlib.core.easyToEnterFilepath"><code class="xref py py-obj docutils literal notranslate"><span class="pre">easyToEnterFilepath</span></code></a>(s[, checkIfExists])</p></td>
+<td><p>Lets people easily copy/paste a filepath in, without worrying about quotes or extra whitespace.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.parseIntOrFallback" title="shinerainsevenlib.core.parseIntOrFallback"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parseIntOrFallback</span></code></a>(s[, fallBack])</p></td>
+<td><p>Parse as an int, or return None</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.parseFloatOrFallback" title="shinerainsevenlib.core.parseFloatOrFallback"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parseFloatOrFallback</span></code></a>(s[, fallBack])</p></td>
+<td><p>Parse as a float, or return None</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.clampNumber" title="shinerainsevenlib.core.clampNumber"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clampNumber</span></code></a>(value, minValue, maxValue)</p></td>
+<td><p>If the input is bigger than maxValue, return maxValue, if smaller than minValue, return minValue</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.compareTwoListsAsSets" title="shinerainsevenlib.core.compareTwoListsAsSets"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compareTwoListsAsSets</span></code></a>(l1, l2[, transformFn1, transformFn2])</p></td>
+<td><p>Compare two lists of strings</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.expectEqualityTwoListsAsSets" title="shinerainsevenlib.core.expectEqualityTwoListsAsSets"><code class="xref py py-obj docutils literal notranslate"><span class="pre">expectEqualityTwoListsAsSets</span></code></a>(l1, l2[, transformFn1, ...])</p></td>
+<td><p>Display differences between two lists of strings</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.throwIfDuplicates" title="shinerainsevenlib.core.throwIfDuplicates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">throwIfDuplicates</span></code></a>(l1[, transformFn1, context])</p></td>
+<td><p>Detect duplicate items in a list</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.mergeDict" title="shinerainsevenlib.core.mergeDict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mergeDict</span></code></a>(dict1, dict2)</p></td>
+<td><p>Merge two dictionaries</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.mergeDictIntoBucket" title="shinerainsevenlib.core.mergeDictIntoBucket"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mergeDictIntoBucket</span></code></a>(bucketConfigs, dictParams[, ...])</p></td>
+<td><p>Merge a dictionary into a bucket (see the Bucket class for more)</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.getPrintable" title="shinerainsevenlib.core.getPrintable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getPrintable</span></code></a>(s[, okToIgnore])</p></td>
+<td><p>From a-with-accent to plain a, get closest visual ascii equivalent</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.setRedirectTraceCalls" title="shinerainsevenlib.core.setRedirectTraceCalls"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setRedirectTraceCalls</span></code></a>(fnHook)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.core.trace" title="shinerainsevenlib.core.trace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trace</span></code></a>(*args[, always])</p></td>
+<td><p>Similar to print, but</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.core.tracep" title="shinerainsevenlib.core.tracep"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tracep</span></code></a>(*args[, always])</p></td>
+<td><p>Similar to print, but uses pprint to pretty-print</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="package-contents">
+<h2>Package Contents<a class="headerlink" href="#package-contents" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.SrssLooper">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">SrssLooper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">listOrLambda</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.SrssLooper" title="Link to this definition">¶</a></dt>
+<dd><p>Helpful for batch processing, when you want to add pauses every n iterations</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">loop</span> <span class="o">=</span> <span class="n">SrssLooper</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">loop</span><span class="o">.</span><span class="n">showPercentageEstimates</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">loop</span><span class="o">.</span><span class="n">addPauses</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">seconds</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">loop</span><span class="o">.</span><span class="n">waitUntilValueSeen</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">number</span> <span class="ow">in</span> <span class="n">loop</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">if</span> <span class="n">number</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;skipping even number&#39;</span><span class="p">,</span> <span class="n">number</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="n">loop</span><span class="o">.</span><span class="n">flagDidNoMeaningfulWork</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="k">else</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;found an odd number&#39;</span><span class="p">,</span> <span class="n">number</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl>
+<dt>input can be a</dt><dd><p>list
+iterable
+lambda that returns an iterable</p>
+<blockquote>
+<div><p>useful if you need to compute the length without producing the list</p>
+</div></blockquote>
+</dd>
+<dt>waitUntilValueSeen can be a</dt><dd><p>value
+lambda that returns boolean- the first time it returns True,</p>
+<blockquote>
+<div><p>we’ll start the loop</p>
+</div></blockquote>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.SrssLooper.showPercentageEstimates">
+<span class="sig-name descname"><span class="pre">showPercentageEstimates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">displayStr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'\n...'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.SrssLooper.showPercentageEstimates" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.SrssLooper.setFormatStateToPrint">
+<span class="sig-name descname"><span class="pre">setFormatStateToPrint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fn</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.SrssLooper.setFormatStateToPrint" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.SrssLooper.addPauses">
+<span class="sig-name descname"><span class="pre">addPauses</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pauseEveryNTimes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.SrssLooper.addPauses" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.SrssLooper.waitUntilValueSeen">
+<span class="sig-name descname"><span class="pre">waitUntilValueSeen</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">valOrFn</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.SrssLooper.waitUntilValueSeen" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.SrssLooper.flagDidNoMeaningfulWork">
+<span class="sig-name descname"><span class="pre">flagDidNoMeaningfulWork</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.SrssLooper.flagDidNoMeaningfulWork" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.SrssLooper.countIterable">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">countIterable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">itr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.SrssLooper.countIterable" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.SrssFileIterator">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">SrssFileIterator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rootOrListOfRoots</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fnIncludeTheseFiles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fnFilterDirs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowRelativePaths</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">excludeNodeModules</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.SrssFileIterator" title="Link to this definition">¶</a></dt>
+<dd><p>Helpful for file iteration,
+adding some extra features to files.recurseFiles.
+Can be used to skip node_modules directories.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.SrssFileIterator.fnIncludeTheseFiles">
+<span class="sig-name descname"><span class="pre">fnIncludeTheseFiles</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#shinerainsevenlib.core.SrssFileIterator.fnIncludeTheseFiles" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.SrssFileIterator.allowRelativePaths">
+<span class="sig-name descname"><span class="pre">allowRelativePaths</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#shinerainsevenlib.core.SrssFileIterator.allowRelativePaths" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.SrssFileIterator.excludeNodeModules">
+<span class="sig-name descname"><span class="pre">excludeNodeModules</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#shinerainsevenlib.core.SrssFileIterator.excludeNodeModules" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.SrssFileIterator.paramsForIterating">
+<span class="sig-name descname"><span class="pre">paramsForIterating</span></span><a class="headerlink" href="#shinerainsevenlib.core.SrssFileIterator.paramsForIterating" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.SrssFileIterator.fnFilterDirsFromUser">
+<span class="sig-name descname"><span class="pre">fnFilterDirsFromUser</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#shinerainsevenlib.core.SrssFileIterator.fnFilterDirsFromUser" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.SrssFileIterator.roots">
+<span class="sig-name descname"><span class="pre">roots</span></span><a class="headerlink" href="#shinerainsevenlib.core.SrssFileIterator.roots" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.SrssFileIterator.pathContainsThisName">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pathContainsThisName</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.SrssFileIterator.pathContainsThisName" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.CleanupTempFilesOnClose">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">CleanupTempFilesOnClose</span></span><a class="headerlink" href="#shinerainsevenlib.core.CleanupTempFilesOnClose" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">contextlib.ExitStack</span></code></p>
+<p>Register temp files to be deleted later.
+Example:</p>
+<dl class="simple">
+<dt>with CleanupTempFilesOnClose() as cleanup:</dt><dd><p>cleanup.registerTempFile(‘temp.txt’)
+files.writeAll(‘temp.txt’, ‘abc’)
+…something that might throw</p>
+</dd>
+</dl>
+<p>…when code reaches here, the temp file will be deleted,
+even if an exception is thrown.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.CleanupTempFilesOnClose.registerTempFile">
+<span class="sig-name descname"><span class="pre">registerTempFile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.CleanupTempFilesOnClose.registerTempFile" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.removeEmptyDirs">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">removeEmptyDirs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">removeRootIfEmpty</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.removeEmptyDirs" title="Link to this definition">¶</a></dt>
+<dd><p>Recursively removes empty directories</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.getInputBool">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">getInputBool</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">defaultTo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flushOutput</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.getInputBool" title="Link to this definition">¶</a></dt>
+<dd><p>Ask yes or no. Returns True on yes and False on no</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.getInputYesNoExtended">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">getInputYesNoExtended</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">addCancel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">addAlwaysYes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">addAlwaysNo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flushOutput</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.getInputYesNoExtended" title="Link to this definition">¶</a></dt>
+<dd><p>Ask yes or no. Returns ‘y’, ‘n’, ‘Y’, ‘N’, or ‘cancel’.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.getInputInt">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">getInputInt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minVal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxVal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">defaultTo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flushOutput</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.getInputInt" title="Link to this definition">¶</a></dt>
+<dd><p>Validated to be an integer. Returns None on cancel.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.getInputString">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">getInputString</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">confirmation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">defaultTo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flushOutput</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.getInputString" title="Link to this definition">¶</a></dt>
+<dd><p>Ask for a string. If confirmation is True, ask for confirmation before continuing.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.getInputFromChoices">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">getInputFromChoices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arrChoices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fnOtherCommands</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">otherCommandsContext</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flushOutput</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cancelString</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'0)</span> <span class="pre">cancel'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zeroBased</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.getInputFromChoices" title="Link to this definition">¶</a></dt>
+<dd><p>Allows user to choose from a numbered list.
+return value is the tuple (index, text)
+if user cancels, return value is the tuple (-1, ‘Cancel’)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.getRawInput">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">getRawInput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flushOutput</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.getRawInput" title="Link to this definition">¶</a></dt>
+<dd><p>Ask for input. Returns the input, or None on cancel.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.err">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">err</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.err" title="Link to this definition">¶</a></dt>
+<dd><p>Throw an exception</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.gRedirectAlertCalls">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">gRedirectAlertCalls</span></span><a class="headerlink" href="#shinerainsevenlib.core.gRedirectAlertCalls" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.alert">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">alert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flushOutput</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">always</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.alert" title="Link to this definition">¶</a></dt>
+<dd><p>Show an alert to the user (they can press Enter to continue).
+can be suppressed for automated tests via gRedirectAlertCalls</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.warn">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">warn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flushOutput</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">always</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.warn" title="Link to this definition">¶</a></dt>
+<dd><p>Show an alert to the user (they can choose if they want to continue).
+can be suppressed for automated tests via gRedirectAlertCalls</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.getInputBoolGui">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">getInputBoolGui</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.getInputBoolGui" title="Link to this definition">¶</a></dt>
+<dd><p>Ask yes or no. Returns True on yes and False on no.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.getInputYesNoCancelGui">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">getInputYesNoCancelGui</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.getInputYesNoCancelGui" title="Link to this definition">¶</a></dt>
+<dd><p>Ask yes, no, or cancel. Returns the string chosen.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.getInputFloatGui">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">getInputFloatGui</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minVal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxVal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'</span> <span class="pre">'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.getInputFloatGui" title="Link to this definition">¶</a></dt>
+<dd><p>Validated to be an float (decimal number). Returns None on cancel.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.getInputStringGui">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">getInputStringGui</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initialvalue</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'</span> <span class="pre">'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.getInputStringGui" title="Link to this definition">¶</a></dt>
+<dd><p>Returns ‘’ on cancel</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.findUnusedLetter">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">findUnusedLetter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictUsed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">newWord</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.findUnusedLetter" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.getInputFromChoicesGui">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">getInputFromChoicesGui</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arOptions</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.getInputFromChoicesGui" title="Link to this definition">¶</a></dt>
+<dd><p>Allows user to choose from a list.
+return value is the tuple (index, text)
+if user cancels, return value is the tuple (-1, ‘Cancel’)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.errGui">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">errGui</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.errGui" title="Link to this definition">¶</a></dt>
+<dd><p>Display error message in GUI, then throw an exception</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.alertGui">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">alertGui</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.alertGui" title="Link to this definition">¶</a></dt>
+<dd><p>Display message in GUI</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.warnGui">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">warnGui</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.warnGui" title="Link to this definition">¶</a></dt>
+<dd><p>Display warning message in GUI</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.getOpenFileGui">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">getOpenFileGui</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initialDir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Open'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.getOpenFileGui" title="Link to this definition">¶</a></dt>
+<dd><p>Specify types in the format [‘.png|Png image’,’.gif|Gif image’] and so on.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.getSaveFileGui">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">getSaveFileGui</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initialDir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Save</span> <span class="pre">As'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.getSaveFileGui" title="Link to this definition">¶</a></dt>
+<dd><p>Specify types in the format [‘.png|Png image’,’.gif|Gif image’] and so on.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.getClipboardText">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">getClipboardText</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.getClipboardText" title="Link to this definition">¶</a></dt>
+<dd><p>Get clipboard text</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.setClipboardText">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">setClipboardText</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.setClipboardText" title="Link to this definition">¶</a></dt>
+<dd><p>Set clipboard text</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.DBG">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">DBG</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.DBG" title="Link to this definition">¶</a></dt>
+<dd><p>Print values of local variables</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.registerDebughook">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">registerDebughook</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.registerDebughook" title="Link to this definition">¶</a></dt>
+<dd><p>Register callback for printing values of local variables</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.getRandomString">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">getRandomString</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">maxVal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span> <span class="pre">*</span> <span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">asHex</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">_random</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.getRandomString" title="Link to this definition">¶</a></dt>
+<dd><p>Generate a random string of digits</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.genUuid">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">genUuid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">asBase64</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.genUuid" title="Link to this definition">¶</a></dt>
+<dd><p>Generate a UUID</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.IndependentRNG">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">IndependentRNG</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.IndependentRNG" title="Link to this definition">¶</a></dt>
+<dd><p>Keep a separate random stream that won’t get affected by someone else.
+sometimes you want to set rng state to get a repeatable sequence of numbers back,
+which would get thrown off by other parts of the program also getting rng values.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.IndependentRNG.rng">
+<span class="sig-name descname"><span class="pre">rng</span></span><a class="headerlink" href="#shinerainsevenlib.core.IndependentRNG.rng" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.downloadUrl">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">downloadUrl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">toFile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">asText</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.downloadUrl" title="Link to this definition">¶</a></dt>
+<dd><p>Download a URL, if toFile is not specified returns the results as a string.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.startThread">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">startThread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.startThread" title="Link to this definition">¶</a></dt>
+<dd><p>Start a thread</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.softDeleteFile">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">softDeleteFile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowDirs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">doTrace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.softDeleteFile" title="Link to this definition">¶</a></dt>
+<dd><p>Delete a file in a recoverable way, either OS Trash or a designated folder.
+Defaults to ~/trash
+Configure behavior by editing shinerainsevenlib.cfg,
+trashDir=’recycleBin’ or ‘currentDriveDataLocalTrash’ or a path</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.getSoftTempDir">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">getSoftTempDir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preferEphemeral</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.getSoftTempDir" title="Link to this definition">¶</a></dt>
+<dd><p>Get a temporary directory.
+Defaults to default OS temp directory, can be configured in shinerainsevenlib.cfg
+tempDir = (path to dir)
+tempEphemeralDir = (path to dir)
+An ephemeral dir is one where data isn’t kept long term. I often configure this
+to be a RAM drive, which are useful for heavy read/write scenarios.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.PersistedDict">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">PersistedDict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warnIfCreatingNew</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keepHandle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">persistEveryNWrites</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.PersistedDict" title="Link to this definition">¶</a></dt>
+<dd><p>Store a dict (or dict of dicts) on disk.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.PersistedDict.data">
+<span class="sig-name descname"><span class="pre">data</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#shinerainsevenlib.core.PersistedDict.data" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.PersistedDict.handle">
+<span class="sig-name descname"><span class="pre">handle</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#shinerainsevenlib.core.PersistedDict.handle" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.PersistedDict.counter">
+<span class="sig-name descname"><span class="pre">counter</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#shinerainsevenlib.core.PersistedDict.counter" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.PersistedDict.persistEveryNWrites">
+<span class="sig-name descname"><span class="pre">persistEveryNWrites</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#shinerainsevenlib.core.PersistedDict.persistEveryNWrites" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.PersistedDict.filename">
+<span class="sig-name descname"><span class="pre">filename</span></span><a class="headerlink" href="#shinerainsevenlib.core.PersistedDict.filename" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.PersistedDict.load">
+<span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">encoding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'utf-8'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.PersistedDict.load" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.PersistedDict.close">
+<span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.PersistedDict.close" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.PersistedDict.persist">
+<span class="sig-name descname"><span class="pre">persist</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.PersistedDict.persist" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.PersistedDict.afterUpdate">
+<span class="sig-name descname"><span class="pre">afterUpdate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.PersistedDict.afterUpdate" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.PersistedDict.set">
+<span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.PersistedDict.set" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.PersistedDict.setSubDict">
+<span class="sig-name descname"><span class="pre">setSubDict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subDictName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.PersistedDict.setSubDict" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.PersistedDict.setSubSubDict">
+<span class="sig-name descname"><span class="pre">setSubSubDict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subDictName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.PersistedDict.setSubSubDict" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.ParsePlus">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">ParsePlus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pattern</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extraTypes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">escapeSequences</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">caseSensitive</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.ParsePlus" title="Link to this definition">¶</a></dt>
+<dd><p>Adds the following features to the “parse” module:</p>
+<p>{s:NoNewlines} field type
+{s:NoSpaces} works like {s:S}
+remember that “{s} and {s}” matches “a and a” but not “a and b”,</p>
+<p>use “{s1} and {s2}” or “{} and {}” if the contents can differ.
+escapeSequences such as backslash-escapes (see examples in tests).
+replaceFieldWithText (see examples in tests).
+getTotalSpan.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.ParsePlus.pattern">
+<span class="sig-name descname"><span class="pre">pattern</span></span><a class="headerlink" href="#shinerainsevenlib.core.ParsePlus.pattern" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.ParsePlus.caseSensitive">
+<span class="sig-name descname"><span class="pre">caseSensitive</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#shinerainsevenlib.core.ParsePlus.caseSensitive" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.ParsePlus.extraTypes">
+<span class="sig-name descname"><span class="pre">extraTypes</span></span><a class="headerlink" href="#shinerainsevenlib.core.ParsePlus.extraTypes" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.ParsePlus.escapeSequences">
+<span class="sig-name descname"><span class="pre">escapeSequences</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#shinerainsevenlib.core.ParsePlus.escapeSequences" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.ParsePlus.spans">
+<span class="sig-name descname"><span class="pre">spans</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#shinerainsevenlib.core.ParsePlus.spans" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.ParsePlus.getTotalSpan">
+<span class="sig-name descname"><span class="pre">getTotalSpan</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#shinerainsevenlib.core.ParsePlus.getTotalSpan" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.ParsePlus.match">
+<span class="sig-name descname"><span class="pre">match</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.ParsePlus.match" title="Link to this definition">¶</a></dt>
+<dd><p>Entire string must match</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.ParsePlus.search">
+<span class="sig-name descname"><span class="pre">search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.ParsePlus.search" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.ParsePlus.findAll">
+<span class="sig-name descname"><span class="pre">findAll</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.ParsePlus.findAll" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.ParsePlus.replaceFieldWithText">
+<span class="sig-name descname"><span class="pre">replaceFieldWithText</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">newValue</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">appendIfNotFound</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowOnlyOnce</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.ParsePlus.replaceFieldWithText" title="Link to this definition">¶</a></dt>
+<dd><p>Example: &lt;title&gt;{title}&lt;/title&gt;</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.ParsePlus.replaceFieldWithTextIntoFile">
+<span class="sig-name descname"><span class="pre">replaceFieldWithTextIntoFile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">newValue</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">appendIfNotFound</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowOnlyOnce</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'utf-8'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.ParsePlus.replaceFieldWithTextIntoFile" title="Link to this definition">¶</a></dt>
+<dd><p>Convenience method to write the results to a file</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.Bucket">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">Bucket</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.Bucket" title="Link to this definition">¶</a></dt>
+<dd><p>Simple named-tuple; o.field looks nicer than o[‘field’].
+similar to standard library’s types.SimpleNamespace.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.Bucket.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fallback</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.Bucket.get" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.Bucket.set">
+<span class="sig-name descname"><span class="pre">set</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.Bucket.set" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.Bucket.getChildKeys">
+<span class="sig-name descname"><span class="pre">getChildKeys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.Bucket.getChildKeys" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.SentinalIndicatingDefault">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">SentinalIndicatingDefault</span></span><a class="headerlink" href="#shinerainsevenlib.core.SentinalIndicatingDefault" title="Link to this definition">¶</a></dt>
+<dd><p>Use this with keyword args to see if an argument was passed vs. left to default, see pep 661</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.DefaultVal">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">DefaultVal</span></span><a class="headerlink" href="#shinerainsevenlib.core.DefaultVal" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.appendToListInDictOrStartNewList">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">appendToListInDictOrStartNewList</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.appendToListInDictOrStartNewList" title="Link to this definition">¶</a></dt>
+<dd><p>Similar to setdefault, but easier to read in my opinion</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.takeBatchOnArbitraryIterable">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">takeBatchOnArbitraryIterable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iterable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.takeBatchOnArbitraryIterable" title="Link to this definition">¶</a></dt>
+<dd><p>Yield successive n-sized chunks from a list, like javascript’s _.chunk</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.takeBatch">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">takeBatch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">itr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.takeBatch" title="Link to this definition">¶</a></dt>
+<dd><p>Get successive n-sized chunks from a list, like javascript’s _.chunk</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.TakeBatch">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">TakeBatch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batchSize</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callback</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.TakeBatch" title="Link to this definition">¶</a></dt>
+<dd><p>Run a callback on n-sized chunks from a list, like javascript’s _.chunk.
+The convenient part is that any leftover pieces will be automatically processed.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.TakeBatch.batch">
+<span class="sig-name descname"><span class="pre">batch</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#shinerainsevenlib.core.TakeBatch.batch" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.TakeBatch.batchSize">
+<span class="sig-name descname"><span class="pre">batchSize</span></span><a class="headerlink" href="#shinerainsevenlib.core.TakeBatch.batchSize" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.TakeBatch.callback">
+<span class="sig-name descname"><span class="pre">callback</span></span><a class="headerlink" href="#shinerainsevenlib.core.TakeBatch.callback" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.TakeBatch.append">
+<span class="sig-name descname"><span class="pre">append</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.TakeBatch.append" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.listToNPieces">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">listToNPieces</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nPieces</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.listToNPieces" title="Link to this definition">¶</a></dt>
+<dd><p>Split a list into n pieces
+listToNPieces([1, 2, 3, 4, 5, 6], 2) -&gt; [[1, 2, 3], [4, 5, 6]]</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.RecentlyUsedList">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">RecentlyUsedList</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">maxSize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">startList</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.RecentlyUsedList" title="Link to this definition">¶</a></dt>
+<dd><p>Keep a list of items. Doesn’t store duplicates</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.RecentlyUsedList.list">
+<span class="sig-name descname"><span class="pre">list</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[]</span></em><a class="headerlink" href="#shinerainsevenlib.core.RecentlyUsedList.list" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.RecentlyUsedList.maxSize">
+<span class="sig-name descname"><span class="pre">maxSize</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#shinerainsevenlib.core.RecentlyUsedList.maxSize" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.RecentlyUsedList.getList">
+<span class="sig-name descname"><span class="pre">getList</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.RecentlyUsedList.getList" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.RecentlyUsedList.add">
+<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.RecentlyUsedList.add" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.BoundedMemoize">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">BoundedMemoize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fn</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.BoundedMemoize" title="Link to this definition">¶</a></dt>
+<dd><p>Inspired by <a class="reference external" href="http://code.activestate.com/recipes/496879-memoize-decorator-function-with-cache-size-limit/">http://code.activestate.com/recipes/496879-memoize-decorator-function-with-cache-size-limit/</a>
+The number of items cached defaults to 20.
+You can adjust the number of items cached by setting the .limit expando property on the function itself.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.assertTrue">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">assertTrue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">condition</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">messageArgs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.assertTrue" title="Link to this definition">¶</a></dt>
+<dd><p>Throw if condition is false</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.assertEq">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">assertEq</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expected</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">received</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">messageArgs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.assertEq" title="Link to this definition">¶</a></dt>
+<dd><p>Throw if values are not equal</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.assertWarn">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">assertWarn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">condition</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">messageArgs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.assertWarn" title="Link to this definition">¶</a></dt>
+<dd><p>Show a message to user if condition is false</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.assertWarnEq">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">assertWarnEq</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expected</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">received</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">messageArgs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.assertWarnEq" title="Link to this definition">¶</a></dt>
+<dd><p>Show a message to user if values are not equal</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.assertFloatEq">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">assertFloatEq</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expected</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">received</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">messageArgs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.assertFloatEq" title="Link to this definition">¶</a></dt>
+<dd><p>Throw if values are not very close, use this if comparing floats</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.assertEqArray">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">assertEqArray</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expected</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">received</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.assertEqArray" title="Link to this definition">¶</a></dt>
+<dd><p>Throw if arrays are not the same, with a convenient message</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.assertException">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">assertException</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">excType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">excTypeExpectedString</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">msg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.assertException" title="Link to this definition">¶</a></dt>
+<dd><p>Expect fn to throw</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.getTraceback">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">getTraceback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">e</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.getTraceback" title="Link to this definition">¶</a></dt>
+<dd><p>Get _traceback from an exception</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.getCurrentException">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">getCurrentException</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.getCurrentException" title="Link to this definition">¶</a></dt>
+<dd><p>Get current exception</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.renderMillisTime">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">renderMillisTime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">millisTime</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.renderMillisTime" title="Link to this definition">¶</a></dt>
+<dd><p><cite>millistime</cite> is number of milliseconds past epoch (unix _time * 1000)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.renderMillisTimeStandard">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">renderMillisTimeStandard</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">millisTime</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.renderMillisTimeStandard" title="Link to this definition">¶</a></dt>
+<dd><p><cite>millistime</cite> is number of milliseconds past epoch (unix _time * 1000)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.getNowAsMillisTime">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">getNowAsMillisTime</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.getNowAsMillisTime" title="Link to this definition">¶</a></dt>
+<dd><p>Gets the number of milliseconds past epoch (unix _time * 1000)</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.SimpleTimer">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">SimpleTimer</span></span><a class="headerlink" href="#shinerainsevenlib.core.SimpleTimer" title="Link to this definition">¶</a></dt>
+<dd><p>Simple timer to measure elapsed time</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.SimpleTimer.startedAt">
+<span class="sig-name descname"><span class="pre">startedAt</span></span><a class="headerlink" href="#shinerainsevenlib.core.SimpleTimer.startedAt" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.SimpleTimer.getTime">
+<span class="sig-name descname"><span class="pre">getTime</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.SimpleTimer.getTime" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.SimpleTimer.check">
+<span class="sig-name descname"><span class="pre">check</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.SimpleTimer.check" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.SimpleTimer.print">
+<span class="sig-name descname"><span class="pre">print</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.SimpleTimer.print" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.EnglishDateParserWrapper">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">EnglishDateParserWrapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dateOrder</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'MDY'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.EnglishDateParserWrapper" title="Link to this definition">¶</a></dt>
+<dd><p>More convenient than directly calling dateparser
+defaults to month-day-year
+restrict to English, less possibility of accidentally parsing a non-date string</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.EnglishDateParserWrapper.p">
+<span class="sig-name descname"><span class="pre">p</span></span><a class="headerlink" href="#shinerainsevenlib.core.EnglishDateParserWrapper.p" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.EnglishDateParserWrapper.parse">
+<span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.EnglishDateParserWrapper.parse" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.EnglishDateParserWrapper.fromFullWithTimezone">
+<span class="sig-name descname"><span class="pre">fromFullWithTimezone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.EnglishDateParserWrapper.fromFullWithTimezone" title="Link to this definition">¶</a></dt>
+<dd><p>Able to parse timestamps with a timezone
+compensate for +0000
+Wed Nov 07 04:01:10 +0000 2018</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.EnglishDateParserWrapper.getDaysBefore">
+<span class="sig-name descname"><span class="pre">getDaysBefore</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">baseDate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nDaysBefore</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.EnglishDateParserWrapper.getDaysBefore" title="Link to this definition">¶</a></dt>
+<dd><p>Subtract n days (simple), return datetime object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.EnglishDateParserWrapper.getDaysBeforeInMilliseconds">
+<span class="sig-name descname"><span class="pre">getDaysBeforeInMilliseconds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sBaseDate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nDaysBefore</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.EnglishDateParserWrapper.getDaysBeforeInMilliseconds" title="Link to this definition">¶</a></dt>
+<dd><p>Subtract n days (simple), return number of milliseconds past epoch</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.EnglishDateParserWrapper.toUnixMilliseconds">
+<span class="sig-name descname"><span class="pre">toUnixMilliseconds</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.EnglishDateParserWrapper.toUnixMilliseconds" title="Link to this definition">¶</a></dt>
+<dd><p>Conviently go straight from string to the number of milliseconds past epoch</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.replaceMustExist">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">replaceMustExist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">haystack</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">needle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">replace</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.replaceMustExist" title="Link to this definition">¶</a></dt>
+<dd><p>Replace needle in haystack, fail if needle not in haystack</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.reSearchWholeWord">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">reSearchWholeWord</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">haystack</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">needle</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.reSearchWholeWord" title="Link to this definition">¶</a></dt>
+<dd><p>Search haystack for needle, return match object</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.reReplaceWholeWord">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">reReplaceWholeWord</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">haystack</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">needle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">replace</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.reReplaceWholeWord" title="Link to this definition">¶</a></dt>
+<dd><p>Replace needle in haystack with a ‘whole word’ style search</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.reReplace">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">reReplace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">haystack</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reNeedle</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">replace</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.reReplace" title="Link to this definition">¶</a></dt>
+<dd><p>Replace needle in haystack</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.truncateWithEllipsis">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">truncateWithEllipsis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxLength</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.truncateWithEllipsis" title="Link to this definition">¶</a></dt>
+<dd><p>Truncate a string with an ellipsis if it is too long</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.formatSize">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">formatSize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.formatSize" title="Link to this definition">¶</a></dt>
+<dd><p>Format a number of bytes into a human-readable string</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.runAndCatchException">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">runAndCatchException</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fn</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.runAndCatchException" title="Link to this definition">¶</a></dt>
+<dd><p>Can be convenient to not need a try/except structure.
+use like golang,
+result, err = callFn()</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.toValidFilename">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">toValidFilename</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pathOrig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dirsepOk</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxLen</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.toValidFilename" title="Link to this definition">¶</a></dt>
+<dd><p>Convert path to a valid filename, especially on Windows where many characters are not allowed</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.stripHtmlTags">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">stripHtmlTags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">removeRepeatedWhitespace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.stripHtmlTags" title="Link to this definition">¶</a></dt>
+<dd><p>Remove all html tags.
+see also: html.escape, html.unescape
+a (?:) is a non-capturing group</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.replaceNonAsciiWith">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">replaceNonAsciiWith</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">replaceWith</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.replaceNonAsciiWith" title="Link to this definition">¶</a></dt>
+<dd><p>Replace non-ascii or control chars.
+printable is 32-126</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.containsNonAscii">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">containsNonAscii</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.containsNonAscii" title="Link to this definition">¶</a></dt>
+<dd><p>Does string contain non-ascii or control chars?
+aka does string contain chars outside 32-126</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.unused">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">unused</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.unused" title="Link to this definition">¶</a></dt>
+<dd><p>Use this to tell linters the variable is intentionally unused</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.getObjAttributes">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">getObjAttributes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.getObjAttributes" title="Link to this definition">¶</a></dt>
+<dd><p>Get properties on an object</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.getClassNameFromInstance">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">getClassNameFromInstance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.getClassNameFromInstance" title="Link to this definition">¶</a></dt>
+<dd><p>Get class name from an instance</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.endsWith">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">endsWith</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.endsWith" title="Link to this definition">¶</a></dt>
+<dd><p>a endsWith that works with either str or bytes</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.strToList">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">strToList</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">replaceComments</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.strToList" title="Link to this definition">¶</a></dt>
+<dd><p>When quickly writing code, get a list of strings, useful for short scripts</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.strToSet">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">strToSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">replaceComments</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.strToSet" title="Link to this definition">¶</a></dt>
+<dd><p>When quickly writing code, get a set from a list of strings, useful for short scripts</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.standardNewlines">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">standardNewlines</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.standardNewlines" title="Link to this definition">¶</a></dt>
+<dd><p>Normalize newlines to n</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.longStr">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">longStr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.longStr" title="Link to this definition">¶</a></dt>
+<dd><p>When quickly writing code, get a string that spans multiple lines.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.easyToEnterFilepath">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">easyToEnterFilepath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">checkIfExists</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.easyToEnterFilepath" title="Link to this definition">¶</a></dt>
+<dd><p>Lets people easily copy/paste a filepath in, without worrying about quotes or extra whitespace.
+See unit tests for examples.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.parseIntOrFallback">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">parseIntOrFallback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fallBack</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.parseIntOrFallback" title="Link to this definition">¶</a></dt>
+<dd><p>Parse as an int, or return None</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.parseFloatOrFallback">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">parseFloatOrFallback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fallBack</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.parseFloatOrFallback" title="Link to this definition">¶</a></dt>
+<dd><p>Parse as a float, or return None</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.clampNumber">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">clampNumber</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minValue</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxValue</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.clampNumber" title="Link to this definition">¶</a></dt>
+<dd><p>If the input is bigger than maxValue, return maxValue, if smaller than minValue, return minValue</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.compareTwoListsAsSets">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">compareTwoListsAsSets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">l1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transformFn1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transformFn2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.compareTwoListsAsSets" title="Link to this definition">¶</a></dt>
+<dd><p>Compare two lists of strings</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.expectEqualityTwoListsAsSets">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">expectEqualityTwoListsAsSets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">l1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transformFn1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transformFn2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.expectEqualityTwoListsAsSets" title="Link to this definition">¶</a></dt>
+<dd><p>Display differences between two lists of strings</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.throwIfDuplicates">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">throwIfDuplicates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">l1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transformFn1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.throwIfDuplicates" title="Link to this definition">¶</a></dt>
+<dd><p>Detect duplicate items in a list</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.mergeDict">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">mergeDict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dict1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dict2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.mergeDict" title="Link to this definition">¶</a></dt>
+<dd><p>Merge two dictionaries</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.mergeDictIntoBucket">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">mergeDictIntoBucket</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bucketConfigs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dictParams</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowNewKeys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.mergeDictIntoBucket" title="Link to this definition">¶</a></dt>
+<dd><p>Merge a dictionary into a bucket (see the Bucket class for more)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.getPrintable">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">getPrintable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">okToIgnore</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.getPrintable" title="Link to this definition">¶</a></dt>
+<dd><p>From a-with-accent to plain a, get closest visual ascii equivalent</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.setRedirectTraceCalls">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">setRedirectTraceCalls</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fnHook</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.setRedirectTraceCalls" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.trace">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">trace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">always</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.trace" title="Link to this definition">¶</a></dt>
+<dd><p>Similar to print, but
+1) distinguish debugging prints vs intentional production prints
+2) can be redirected to fnHook, e.g. for testing
+3) certain terminals throw exceptions if given unicode characters</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.tracep">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">tracep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">always</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.tracep" title="Link to this definition">¶</a></dt>
+<dd><p>Similar to print, but uses pprint to pretty-print</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.ShineRainSevenLibError">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.core.</span></span><span class="sig-name descname"><span class="pre">ShineRainSevenLibError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.ShineRainSevenLibError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">RuntimeError</span></code></p>
+<p>Unspecified run-time error.</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">shinerainsevenlib</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../source/example_usage.html">Example Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/optional_dependencies.html">Optional Dependencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/editing_this_project.html">Editing This Project</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../parseCode/index.html">parseCode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../ruffWrapper/index.html">ruffWrapper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../addCopyright/index.html">addCopyright</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">shinerainsevenlib</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../setFilenameOrders/index.html">setFilenameOrders</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">API Reference</a><ul>
+  <li><a href="../index.html">shinerainsevenlib</a><ul>
+      <li>Previous: <a href="../index.html" title="previous chapter">shinerainsevenlib</a></li>
+      <li>Next: <a href="m0_text_io/index.html" title="next chapter">shinerainsevenlib.core.m0_text_io</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Ben Fisher.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../../../_sources/autoapi/shinerainsevenlib/core/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
