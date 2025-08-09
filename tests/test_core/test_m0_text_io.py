@@ -6,7 +6,7 @@
 import pytest
 from src.shinerainsevenlib.standard import *
 from src.shinerainsevenlib.core import *
-from common import fixture_dir
+from common import fixtureDir
 
 class TestStrToListAndSet:
     def test_strToList(self):
@@ -51,9 +51,9 @@ multiple lines  """)
         fromLongStr = longStr("   \n")
         assert fromLongStr == ""
 
-    def testEasyToEnterFilepathBasic(self, fixture_dir):
-        existingFile = files.join(fixture_dir, 'a.txt')
-        nonExistingFile = files.join(fixture_dir, 'b.txt')
+    def testEasyToEnterFilepathBasic(self, fixtureDir):
+        existingFile = files.join(fixtureDir, 'a.txt')
+        nonExistingFile = files.join(fixtureDir, 'b.txt')
         files.writeAll(existingFile, 'contents')
 
         # no whitespace
@@ -72,9 +72,9 @@ multiple lines  """)
         # other comment
         """) == existingFile
 
-    def testEasyToEnterFilepathCornerCases(self, fixture_dir):
-        existingFile = files.join(fixture_dir, 'a.txt')
-        nonExistingFile = files.join(fixture_dir, 'b.txt')
+    def testEasyToEnterFilepathCornerCases(self, fixtureDir):
+        existingFile = files.join(fixtureDir, 'a.txt')
+        nonExistingFile = files.join(fixtureDir, 'b.txt')
         files.writeAll(existingFile, 'contents')
 
         # no content

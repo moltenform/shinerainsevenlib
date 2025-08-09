@@ -11,107 +11,85 @@ from ..common_higher import getNowAsMillisTime
 
         
 
-    def test_ensureEmptyDirectory(self, fixture_fulldir):
-        
-
-        # necessary, since fixture_fulldir is built once per module
-        restoreDirectoryContents(fixture_fulldir)
 
 class TestCopyingFiles:
-    def test_copyOverwrite_srcNotExist(self, fixture_dir):
+    def test_copyNoOverwrite_srcNotExist(self, fixtureDir):
         with pytest.raises(IOError):
-            copy(join(fixture_dir, u'1\u1101.txt'), join(fixture_dir, u'2\u1101.txt'), True)
+            copy(self.file1, self.file2, False)
 
-    def test_copyOverwrite_srcExists(self, fixture_dir):
-        writeAll(join(fixture_dir, u'1\u1101.txt'), 'contents')
-        copy(join(fixture_dir, u'1\u1101.txt'), join(fixture_dir, u'2\u1101.txt'), True)
-        assert 'contents' == readAll(join(fixture_dir, u'1\u1101.txt'))
-        assert 'contents' == readAll(join(fixture_dir, u'2\u1101.txt'))
+    def test_copyNoOverwrite_srcExists(self, fixtureDir):
+        writeAll(self.file1, 'contents')
+        copy(self.file1, self.file2, False)
+        assert 'contents' == readAll(self.file1)
+        assert 'contents' == readAll(self.file2)
 
-    def test_copyOverwrite_srcOverwrites(self, fixture_dir):
-        writeAll(join(fixture_dir, u'1\u1101.txt'), 'new')
-        writeAll(join(fixture_dir, u'2\u1101.txt'), 'old')
-        copy(join(fixture_dir, u'1\u1101.txt'), join(fixture_dir, u'2\u1101.txt'), True)
-        assert 'new' == readAll(join(fixture_dir, u'1\u1101.txt'))
-        assert 'new' == readAll(join(fixture_dir, u'2\u1101.txt'))
-
-    def test_copyNoOverwrite_srcNotExist(self, fixture_dir):
-        with pytest.raises(IOError):
-            copy(join(fixture_dir, u'1\u1101.txt'), join(fixture_dir, u'2\u1101.txt'), False)
-
-    def test_copyNoOverwrite_srcExists(self, fixture_dir):
-        writeAll(join(fixture_dir, u'1\u1101.txt'), 'contents')
-        copy(join(fixture_dir, u'1\u1101.txt'), join(fixture_dir, u'2\u1101.txt'), False)
-        assert 'contents' == readAll(join(fixture_dir, u'1\u1101.txt'))
-        assert 'contents' == readAll(join(fixture_dir, u'2\u1101.txt'))
-
-    def test_copyNoOverwrite_shouldNotOverwrite(self, fixture_dir):
-        writeAll(join(fixture_dir, u'1\u1101.txt'), 'new')
-        writeAll(join(fixture_dir, u'2\u1101.txt'), 'old')
+    def test_copyNoOverwrite_shouldNotOverwrite(self, fixtureDir):
+        writeAll(self.file1, 'new')
+        writeAll(self.file2, 'old')
         with pytest.raises((IOError, OSError)):
-            copy(join(fixture_dir, u'1\u1101.txt'), join(fixture_dir, u'2\u1101.txt'), False)
-        assert 'new' == readAll(join(fixture_dir, u'1\u1101.txt'))
-        assert 'old' == readAll(join(fixture_dir, u'2\u1101.txt'))
+            copy(self.file1, self.file2, False)
+        assert 'new' == readAll(self.file1)
+        assert 'old' == readAll(self.file2)
 
-    def test_shouldNotCopyDir(self, fixture_dir):
+    def test_shouldNotCopyDir(self, fixtureDir):
         # by default, copy is for copying files, not dirs
-        makeDirs(join(fixture_dir, 'tmpdir1'))
-        assert isDir(join(fixture_dir, 'tmpdir1'))
+        makeDirs(join(fixtureDir, 'tmpdir1'))
+        assert isDir(join(fixtureDir, 'tmpdir1'))
         try:
             with pytest.raises(IOError):
-                copy(join(fixture_dir, 'tmpdir1'), join(fixture_dir, 'tmpdir2'), False)
+                copy(join(fixtureDir, 'tmpdir1'), join(fixtureDir, 'tmpdir2'), False)
         finally:
-            rmDir(join(fixture_dir, 'tmpdir1'))
+            rmDir(join(fixtureDir, 'tmpdir1'))
 
 class TestMovingFiles:
-    def test_moveOverwrite_srcNotExist(self, fixture_dir):
+    def test_moveOverwrite_srcNotExist(self, fixtureDir):
         with pytest.raises(IOError):
-            move(join(fixture_dir, u'1\u1101.txt'), join(fixture_dir, u'2\u1101.txt'), True)
+            move(self.file1, self.file2, True)
 
-    def test_moveOverwrite_srcExists(self, fixture_dir):
-        writeAll(join(fixture_dir, u'1\u1101.txt'), 'contents')
-        move(join(fixture_dir, u'1\u1101.txt'), join(fixture_dir, u'2\u1101.txt'), True)
-        assert not isFile(join(fixture_dir, u'1\u1101.txt'))
-        assert 'contents' == readAll(join(fixture_dir, u'2\u1101.txt'))
+    def test_moveOverwrite_srcExists(self, fixtureDir):
+        writeAll(self.file1, 'contents')
+        move(self.file1, self.file2, True)
+        assert not isFile(self.file1)
+        assert 'contents' == readAll(self.file2)
 
-    def test_moveOverwrite_srcOverwrites(self, fixture_dir):
-        writeAll(join(fixture_dir, u'1\u1101.txt'), 'new')
-        writeAll(join(fixture_dir, u'2\u1101.txt'), 'old')
-        move(join(fixture_dir, u'1\u1101.txt'), join(fixture_dir, u'2\u1101.txt'), True)
-        assert not isFile(join(fixture_dir, u'1\u1101.txt'))
-        assert 'new' == readAll(join(fixture_dir, u'2\u1101.txt'))
+    def test_moveOverwrite_srcOverwrites(self, fixtureDir):
+        writeAll(self.file1, 'new')
+        writeAll(self.file2, 'old')
+        move(self.file1, self.file2, True)
+        assert not isFile(self.file1)
+        assert 'new' == readAll(self.file2)
 
-    def test_moveNoOverwrite_srcNotExist(self, fixture_dir):
+    def test_moveNoOverwrite_srcNotExist(self, fixtureDir):
         with pytest.raises(IOError):
-            move(join(fixture_dir, u'1\u1101.txt'), join(fixture_dir, u'2\u1101.txt'), False)
+            move(self.file1, self.file2, False)
 
-    def test_moveNoOverwrite_srcExists(self, fixture_dir):
-        writeAll(join(fixture_dir, u'1\u1101.txt'), 'contents')
-        move(join(fixture_dir, u'1\u1101.txt'), join(fixture_dir, u'2\u1101.txt'), False)
-        assert not isFile(join(fixture_dir, u'1\u1101.txt'))
-        assert 'contents' == readAll(join(fixture_dir, u'2\u1101.txt'))
+    def test_moveNoOverwrite_srcExists(self, fixtureDir):
+        writeAll(self.file1, 'contents')
+        move(self.file1, self.file2, False)
+        assert not isFile(self.file1)
+        assert 'contents' == readAll(self.file2)
 
-    def test_moveNoOverwrite_shouldNotOverwrite(self, fixture_dir):
-        writeAll(join(fixture_dir, u'1\u1101.txt'), 'new')
-        writeAll(join(fixture_dir, u'2\u1101.txt'), 'old')
+    def test_moveNoOverwrite_shouldNotOverwrite(self, fixtureDir):
+        writeAll(self.file1, 'new')
+        writeAll(self.file2, 'old')
         with pytest.raises((IOError, OSError)):
-            move(join(fixture_dir, u'1\u1101.txt'), join(fixture_dir, u'2\u1101.txt'), False)
-        assert 'new' == readAll(join(fixture_dir, u'1\u1101.txt'))
-        assert 'old' == readAll(join(fixture_dir, u'2\u1101.txt'))
+            move(self.file1, self.file2, False)
+        assert 'new' == readAll(self.file1)
+        assert 'old' == readAll(self.file2)
 
-    def test_shouldNotMoveDir(self, fixture_dir):
+    def test_shouldNotMoveDir(self, fixtureDir):
         # by default, move is for moving files, not dirs
-        makeDirs(join(fixture_dir, 'tmpdir1'))
-        assert isDir(join(fixture_dir, 'tmpdir1'))
+        makeDirs(join(fixtureDir, 'tmpdir1'))
+        assert isDir(join(fixtureDir, 'tmpdir1'))
         try:
             with pytest.raises(IOError):
-                move(join(fixture_dir, 'tmpdir1'), join(fixture_dir, 'tmpdir2'), False)
+                move(join(fixtureDir, 'tmpdir1'), join(fixtureDir, 'tmpdir2'), False)
         finally:
-            rmDir(join(fixture_dir, 'tmpdir1'))
+            rmDir(join(fixtureDir, 'tmpdir1'))
 
 class TestFiletimes:
     @pytest.mark.skipif('not isPy3OrNewer')
-    def test_modtimeIsUpdated(self, fixture_dir):
+    def test_modtimeIsUpdated(self, fixtureDir):
         tests = [
             [getFileLastModifiedTime, setFileLastModifiedTime],
             [getModTimeNs, setModTimeNs],
@@ -119,84 +97,84 @@ class TestFiletimes:
 
         for fnGet, fnSet in tests:
             # getting the time from the file twice
-            writeAll(join(fixture_dir, 'a.txt'), 'contents')
-            curtime1 = fnGet(join(fixture_dir, 'a.txt'))
-            curtime2 = fnGet(join(fixture_dir, 'a.txt'))
+            writeAll(join(fixtureDir, 'a.txt'), 'contents')
+            curtime1 = fnGet(join(fixtureDir, 'a.txt'))
+            curtime2 = fnGet(join(fixtureDir, 'a.txt'))
             assert curtime1 == curtime2
 
             # update the time by changing the file
             import time
             time.sleep(2)
-            with open(join(fixture_dir, 'a.txt'), 'a') as f:
+            with open(join(fixtureDir, 'a.txt'), 'a') as f:
                 f.write('changed')
-            curtime3 = fnGet(join(fixture_dir, 'a.txt'))
-            curtime4 = fnGet(join(fixture_dir, 'a.txt'))
+            curtime3 = fnGet(join(fixtureDir, 'a.txt'))
+            curtime4 = fnGet(join(fixtureDir, 'a.txt'))
             assert curtime3 == curtime4
             assert curtime3 > curtime2
 
             # update the time manually
-            fnSet(join(fixture_dir, 'a.txt'), curtime3 // 100)
-            curtime5 = fnGet(join(fixture_dir, 'a.txt'))
+            fnSet(join(fixtureDir, 'a.txt'), curtime3 // 100)
+            curtime5 = fnGet(join(fixtureDir, 'a.txt'))
             assert curtime5 < curtime4
 
 class TestWriteFiles:
-    def test_readAndWriteSimple(self, fixture_dir):
-        ret = writeAll(join(fixture_dir, 'a.txt'), 'abc', mode='w')
+    def test_readAndWriteSimple(self, fixtureDir):
+        ret = writeAll(join(fixtureDir, 'a.txt'), 'abc', mode='w')
         assert ret is True
-        assert u'abc' == readAll(join(fixture_dir, 'a.txt'), 'r')
-        ret = writeAll(join(fixture_dir, 'a.txt'), 'def', mode='w')
+        assert u'abc' == readAll(join(fixtureDir, 'a.txt'), 'r')
+        ret = writeAll(join(fixtureDir, 'a.txt'), 'def', mode='w')
         assert ret is True
-        assert u'def' == readAll(join(fixture_dir, 'a.txt'), 'r')
+        assert u'def' == readAll(join(fixtureDir, 'a.txt'), 'r')
 
-    def test_readAndWriteUtf8(self, fixture_dir):
-        path = join(fixture_dir, u'a\u1E31.txt')
+    def test_readAndWriteUtf8(self, fixtureDir):
+        path = join(fixtureDir, u'a\u1E31.txt')
         kwargs = dict(encoding='utf-8') if isPy3OrNewer else dict(unicodetype='utf-8')
         ret = writeAll(path, u'\u1E31\u1E77\u1E53\u006E', **kwargs)
         assert ret is True
         assert u'\u1E31\u1E77\u1E53\u006E' == readAll(path, **kwargs)
 
-    def test_readAndWriteUtf16(self, fixture_dir):
-        path = join(fixture_dir, u'a\u1E31.txt')
+    def test_readAndWriteUtf16(self, fixtureDir):
+        path = join(fixtureDir, u'a\u1E31.txt')
         kwargs = dict(encoding='utf-16le') if isPy3OrNewer else dict(unicodetype='utf-16le')
         ret = writeAll(path, u'\u1E31\u1E77\u1E53\u006E', **kwargs)
         assert ret is True
         assert u'\u1E31\u1E77\u1E53\u006E' == readAll(path, **kwargs)
 
-    def test_writeAllUnlessThereNewFile(self, fixture_dir):
-        path = join(fixture_dir, 'a.dat')
+    def test_writeAllUnlessThereNewFile(self, fixtureDir):
+        path = join(fixtureDir, 'a.dat')
         ret = writeAll(path, b'abc', mode='wb', skipIfSameContent=True)
         assert ret is True
         assert b'abc' == readAll(path, 'rb')
 
-    def test_writeAllUnlessThereChangedFile(self, fixture_dir):
-        path = join(fixture_dir, 'a.dat')
+    def test_writeAllUnlessThereChangedFile(self, fixtureDir):
+        path = join(fixtureDir, 'a.dat')
         writeAll(path, b'abcd', 'wb')
         ret = writeAll(path, b'abc', mode='wb', skipIfSameContent=True)
         assert ret is True
         assert b'abc' == readAll(path, 'rb')
 
-    def test_writeAllUnlessThereSameFile(self, fixture_dir):
-        path = join(fixture_dir, 'a.dat')
+    def test_writeAllUnlessThereSameFile(self, fixtureDir):
+        path = join(fixtureDir, 'a.dat')
         writeAll(path, b'abc', 'wb')
         ret = writeAll(path, b'abc', mode='wb', skipIfSameContent=True)
         assert ret is False
         assert b'abc' == readAll(path, 'rb')
 
-    def test_writeAllUnlessThereNewTxtFile(self, fixture_dir):
-        path = join(fixture_dir, 'a.txt')
+    def test_writeAllUnlessThereNewTxtFile(self, fixtureDir):
+        path = join(fixtureDir, 'a.txt')
         ret = writeAll(path, 'abc', mode='w', skipIfSameContent=True)
         assert ret is True
         assert 'abc' == readAll(path)
 
-    def test_writeAllUnlessThereChangedTxtFile(self, fixture_dir):
-        path = join(fixture_dir, 'a.txt')
+    def test_writeAllUnlessThereChangedTxtFile(self, fixtureDir):
+        path = join(fixtureDir, 'a.txt')
         writeAll(path, 'abcd')
         ret = writeAll(path, 'abc', mode='w', skipIfSameContent=True)
         assert ret is True
         assert 'abc' == readAll(path)
 
-    def test_writeAllUnlessThereSameTxtFile(self, fixture_dir):
-        path = join(fixture_dir, 'a.txt')
+    def test_writeAllUnlessThereSameTxtFile(self, fixtureDir):
+        path = join(fixtureDir, 'a.txt')
         writeAll(path, 'abc')
         ret = writeAll(path, 'abc', mode='w', skipIfSameContent=True)
         assert ret is False
@@ -319,28 +297,28 @@ class TestDirectoryList:
         assert expected == sorted(got)
 
     @pytest.mark.skipif('not isPy3OrNewer')
-    def test_recurseFilesMany(self, fixture_dir_with_many):
+    def test_recurseFilesMany(self, fixtureFileTree):
         # no filter
         expected = 'foobar/a/baz/aa.txt|foobar/a/baz/bb.txt|foobar/a/baz/foobar/cc.txt|' + \
             'foobar/a/baz/zz.txt|foobar/a/foobar/a.txt|foobar/a/foobar/b.txt|foobar/a/foobar' + \
             '/c/c0.txt|foobar/a/foobar/c/c1.txt|foobar/a/r1.txt|foobar/foobar/cc.txt|foobar/r2.txt|r3.txt'
-        assert expected == listDirectoryToStringFileInfo(fixture_dir_with_many, True, {})
-        assert expected == listDirectoryToStringFileInfo(fixture_dir_with_many, False, {})
+        assert expected == listDirectoryToStringFileInfo(fixtureFileTree, True, {})
+        assert expected == listDirectoryToStringFileInfo(fixtureFileTree, False, {})
 
         # filter out nearly everything
         def filter(p):
             return getName(p) != 'foobar'
-        assert 'r3.txt' == listDirectoryToStringFileInfo(fixture_dir_with_many, True, {'fnFilterDirs': filter})
-        assert 'r3.txt' == listDirectoryToStringFileInfo(fixture_dir_with_many, False, {'fnFilterDirs': filter})
+        assert 'r3.txt' == listDirectoryToStringFileInfo(fixtureFileTree, True, {'fnFilterDirs': filter})
+        assert 'r3.txt' == listDirectoryToStringFileInfo(fixtureFileTree, False, {'fnFilterDirs': filter})
 
         # intentionally can't filter out root dir
         expected = 'a/baz/aa.txt|a/baz/bb.txt|a/baz/zz.txt|a/r1.txt|r2.txt'
-        assert expected == listDirectoryToStringFileInfo(fixture_dir_with_many + '/foobar', True, {'fnFilterDirs': filter})
-        assert expected == listDirectoryToStringFileInfo(fixture_dir_with_many + '/foobar', False, {'fnFilterDirs': filter})
+        assert expected == listDirectoryToStringFileInfo(fixtureFileTree + '/foobar', True, {'fnFilterDirs': filter})
+        assert expected == listDirectoryToStringFileInfo(fixtureFileTree + '/foobar', False, {'fnFilterDirs': filter})
 
-    def test_checkNamedParameters(self, fixture_dir):
+    def test_checkNamedParameters(self, fixtureDir):
         with pytest.raises(ValueError) as exc:
-            list(listChildren(fixture_dir, True))
+            list(listChildren(fixtureDir, True))
         exc.match('please name parameters')
 
 class TestOtherUtilsActingOnFiles:
@@ -360,33 +338,33 @@ class TestOtherUtilsActingOnFiles:
         assert not fileContentsEqual(f1, f2)
 
 class TestFilesUtils:
-    def test_extensionPossiblyExecutableNoExt(self, fixture_dir):
+    def test_extensionPossiblyExecutableNoExt(self, fixtureDir):
         assert extensionPossiblyExecutable('noext') is False
         assert extensionPossiblyExecutable('/path/noext') is False
 
-    def test_extensionPossiblyExecutableExt(self, fixture_dir):
+    def test_extensionPossiblyExecutableExt(self, fixtureDir):
         assert extensionPossiblyExecutable('ext.jpg') is False
         assert extensionPossiblyExecutable('/path/ext.jpg') is False
 
-    def test_extensionPossiblyExecutableDirsep(self, fixture_dir):
+    def test_extensionPossiblyExecutableDirsep(self, fixtureDir):
         assert extensionPossiblyExecutable('dirsep/') is False
         assert extensionPossiblyExecutable('/path/dirsep/') is False
 
-    def test_extensionPossiblyExecutablePeriod(self, fixture_dir):
+    def test_extensionPossiblyExecutablePeriod(self, fixtureDir):
         assert 'exe' == extensionPossiblyExecutable('test.jpg.exe')
         assert 'exe' == extensionPossiblyExecutable('/path/test.jpg.exe')
 
-    def test_extensionPossiblyExecutablePeriodOk(self, fixture_dir):
+    def test_extensionPossiblyExecutablePeriodOk(self, fixtureDir):
         assert extensionPossiblyExecutable('test.exe.jpg') is False
         assert extensionPossiblyExecutable('/path/test.exe.jpg') is False
 
-    def test_extensionPossiblyExecutableOk(self, fixture_dir):
+    def test_extensionPossiblyExecutableOk(self, fixtureDir):
         assert extensionPossiblyExecutable('ext.c') is False
         assert extensionPossiblyExecutable('/path/ext.c') is False
         assert extensionPossiblyExecutable('ext.longer') is False
         assert extensionPossiblyExecutable('/path/ext.longer') is False
 
-    def test_extensionPossiblyExecutableExe(self, fixture_dir):
+    def test_extensionPossiblyExecutableExe(self, fixtureDir):
         assert 'exe' == extensionPossiblyExecutable('ext.exe')
         assert 'exe' == extensionPossiblyExecutable('/path/ext.exe')
         assert 'exe' == extensionPossiblyExecutable('ext.com')
@@ -394,7 +372,7 @@ class TestFilesUtils:
         assert 'exe' == extensionPossiblyExecutable('ext.vbScript')
         assert 'exe' == extensionPossiblyExecutable('/path/ext.vbScript')
 
-    def test_extensionPossiblyExecutableWarn(self, fixture_dir):
+    def test_extensionPossiblyExecutableWarn(self, fixtureDir):
         assert 'warn' == extensionPossiblyExecutable('ext.Url')
         assert 'warn' == extensionPossiblyExecutable('/path/ext.Url')
         assert 'warn' == extensionPossiblyExecutable('ext.doCM')
@@ -403,53 +381,53 @@ class TestFilesUtils:
         assert 'warn' == extensionPossiblyExecutable('/path/ext.EXOPC')
 
     
-    def test_computeHashDefaultHash(self, fixture_dir):
-        writeAll(join(fixture_dir, 'a.txt'), 'contents')
-        assert '4a756ca07e9487f482465a99e8286abc86ba4dc7' == computeHash(join(fixture_dir, 'a.txt'))
+    def test_computeHashDefaultHash(self, fixtureDir):
+        writeAll(join(fixtureDir, 'a.txt'), 'contents')
+        assert '4a756ca07e9487f482465a99e8286abc86ba4dc7' == computeHash(join(fixtureDir, 'a.txt'))
 
-    def test_computeHashMd5Specified(self, fixture_dir):
-        writeAll(join(fixture_dir, 'a.txt'), 'contents')
-        assert '4a756ca07e9487f482465a99e8286abc86ba4dc7' == computeHash(join(fixture_dir, 'a.txt'), 'sha1')
+    def test_computeHashMd5Specified(self, fixtureDir):
+        writeAll(join(fixtureDir, 'a.txt'), 'contents')
+        assert '4a756ca07e9487f482465a99e8286abc86ba4dc7' == computeHash(join(fixtureDir, 'a.txt'), 'sha1')
 
     
 
-    def test_windowsUrlFileGet(self, fixture_dir):
+    def test_windowsUrlFileGet(self, fixtureDir):
         # typical file
         example = '''[InternetShortcut]
 URL=https://example.net/
         '''
-        writeAll(join(fixture_dir, 'a.url'), example)
-        assert 'https://example.net/' == windowsUrlFileGet(join(fixture_dir, 'a.url'))
+        writeAll(join(fixtureDir, 'a.url'), example)
+        assert 'https://example.net/' == windowsUrlFileGet(join(fixtureDir, 'a.url'))
 
         # has different keys
         example = '''[InternetShortcut]
 Icon=12345
 URL=https://exampletwo.net/'''
-        writeAll(join(fixture_dir, 'a.url'), example)
-        assert 'https://exampletwo.net/' == windowsUrlFileGet(join(fixture_dir, 'a.url'))
+        writeAll(join(fixtureDir, 'a.url'), example)
+        assert 'https://exampletwo.net/' == windowsUrlFileGet(join(fixtureDir, 'a.url'))
 
         # has no url
         example = '''[InternetShortcut]
 Icon=12345'''
-        writeAll(join(fixture_dir, 'a.url'), example)
+        writeAll(join(fixtureDir, 'a.url'), example)
         with pytest.raises(RuntimeError):
-            windowsUrlFileGet(join(fixture_dir, 'a.url'))
+            windowsUrlFileGet(join(fixtureDir, 'a.url'))
 
-    def test_windowsUrlFileWrite(self, fixture_dir):
+    def test_windowsUrlFileWrite(self, fixtureDir):
         expected = '''[InternetShortcut]
 URL=https://example.net/
 '''
-        deleteSure(join(fixture_dir, 'a.url'))
-        windowsUrlFileWrite(join(fixture_dir, 'a.url'), 'https://example.net/')
-        assert expected.replace('\r\n', '\n') == readAll(join(fixture_dir, 'a.url'))
-        assert 'https://example.net/' == windowsUrlFileGet(join(fixture_dir, 'a.url'))
+        deleteSure(join(fixtureDir, 'a.url'))
+        windowsUrlFileWrite(join(fixtureDir, 'a.url'), 'https://example.net/')
+        assert expected.replace('\r\n', '\n') == readAll(join(fixtureDir, 'a.url'))
+        assert 'https://example.net/' == windowsUrlFileGet(join(fixtureDir, 'a.url'))
 
 class TestRunRSync:
-    def test_normal(self, fixture_fulldir, fixture_dir):
+    def test_normal(self, fixture_fulldir, fixtureDir):
         # typical usage
         expect = 'P1.PNG,15|a1.txt,15|a2png,14|s1,0|s1/ss1,0|s1/ss1/file.txt,17|s1/ss2,0|s2,0|s2/other.txt,18'
         assert expect == listDirectoryToString(fixture_fulldir)
-        dest = join(fixture_dir, 'dest')
+        dest = join(fixtureDir, 'dest')
         makeDirs(dest)
         runRsync(fixture_fulldir, dest, deleteExisting=True)
         assert expect == listDirectoryToString(dest)
@@ -458,20 +436,20 @@ class TestRunRSync:
         runRsync(fixture_fulldir, dest, deleteExisting=True)
         assert expect == listDirectoryToString(dest)
 
-    def test_empty(self, fixture_dir):
+    def test_empty(self, fixtureDir):
         # copying an empty folder should succeed
-        src = join(fixture_dir, 'src')
+        src = join(fixtureDir, 'src')
         makeDirs(src)
-        dest = join(fixture_dir, 'dest')
+        dest = join(fixtureDir, 'dest')
         makeDirs(dest)
         runRsync(src, dest, deleteExisting=True)
         assert '' == listDirectoryToString(dest)
 
-    def test_shouldOverwrite(self, fixture_dir):
+    def test_shouldOverwrite(self, fixtureDir):
         # create a modified dir
-        src = join(fixture_dir, 'src')
+        src = join(fixtureDir, 'src')
         restoreDirectoryContents(src)
-        dest = join(fixture_dir, 'dest')
+        dest = join(fixtureDir, 'dest')
         restoreDirectoryContents(dest)
         modifyDirectoryContents(src)
         expect = 'P1.PNG,15|a1.txt,15|a2png,14|s1,0|s1/ss1,0|s1/ss1/file.txt,17|s1/ss2,0|s2,0|s2/other.txt,18'
@@ -483,11 +461,11 @@ class TestRunRSync:
         runRsync(src, dest, deleteExisting=True)
         assert expect == listDirectoryToString(dest)
 
-    def test_shouldNotOverwrite(self, fixture_dir):
+    def test_shouldNotOverwrite(self, fixtureDir):
         # create a modified dir
-        src = join(fixture_dir, 'src')
+        src = join(fixtureDir, 'src')
         restoreDirectoryContents(src)
-        dest = join(fixture_dir, 'dest')
+        dest = join(fixtureDir, 'dest')
         restoreDirectoryContents(dest)
         modifyDirectoryContents(src)
         expect = 'P1.PNG,15|a1.txt,15|a2png,14|s1,0|s1/ss1,0|s1/ss1/file.txt,17|s1/ss2,0|s2,0|s2/other.txt,18'
@@ -500,11 +478,11 @@ class TestRunRSync:
         expect = 'P1.PNG,15|a1.txt,15|a2.txt,15|a2png,14|newfile,11|s1,0|s1/ss1,0|s1/ss1/file.txt,35|s1/ss2,0|s2,0|s2/other.txt,34'
         assert expect == listDirectoryToString(dest)
 
-    def test_winExcludes(self, fixture_dir):
+    def test_winExcludes(self, fixtureDir):
         # create a modified dir
-        src = join(fixture_dir, 'src')
+        src = join(fixtureDir, 'src')
         restoreDirectoryContents(src)
-        dest = join(fixture_dir, 'dest')
+        dest = join(fixtureDir, 'dest')
         restoreDirectoryContents(dest)
         modifyDirectoryContents(src)
         expect = 'P1.PNG,15|a1.txt,15|a2png,14|s1,0|s1/ss1,0|s1/ss1/file.txt,17|s1/ss2,0|s2,0|s2/other.txt,18'
@@ -518,10 +496,10 @@ class TestRunRSync:
             expect = 'P1.PNG,15|a1.txt,15|a2.txt,15|s1,0|s1/ss1,0|s1/ss1/file.txt,17|s1/ss2,0|s2,0|s2/other.txt,18'
             assert expect == listDirectoryToString(dest)
 
-    def test_dirExcludes(self, fixture_dir):
-        src = join(fixture_dir, 'src')
+    def test_dirExcludes(self, fixtureDir):
+        src = join(fixtureDir, 'src')
         restoreDirectoryContents(src)
-        dest = join(fixture_dir, 'dest')
+        dest = join(fixtureDir, 'dest')
         restoreDirectoryContents(dest)
 
         # modify a file
@@ -546,21 +524,21 @@ class TestRunRSync:
         expect = 'P1.PNG,15|a1.txt,15|a2png,2|s1,0|s1/ss1,0|s1/ss1/file.txt,17|s1/ss2,0|s2,0|s2/other.txt,18'
         assert expect == listDirectoryToString(dest)
 
-    def test_expectFailure(self, fixture_dir):
+    def test_expectFailure(self, fixtureDir):
         # try to copy non-existing directory
-        src = join(fixture_dir, 'src')
-        dest = join(fixture_dir, 'dest')
+        src = join(fixtureDir, 'src')
+        dest = join(fixtureDir, 'dest')
         with pytest.raises(Exception):
             runRsync(src, dest, deleteExisting=True, checkExist=False)
 
-    def test_nonWindowsError(self, fixture_dir):
+    def test_nonWindowsError(self, fixtureDir):
         assert (True, '') == runRsyncErrMap(0, 'linux')
         assert (False, 'Syntax or usage error') == runRsyncErrMap(1, 'linux')
         assert (False, 'Timeout waiting for daemon connection') == runRsyncErrMap(35, 'linux')
         assert (False, 'Unknown') == runRsyncErrMap(-1, 'linux')
         assert (False, 'Unknown') == runRsyncErrMap(100, 'linux')
 
-    def test_windowsError(self, fixture_dir):
+    def test_windowsError(self, fixtureDir):
         res = runRsyncErrMap(0x0, 'windows')
         assert res[0] is True and res[1] == ''
         res = runRsyncErrMap(0x1, 'windows')
@@ -576,120 +554,120 @@ class TestRunRSync:
 
 @pytest.mark.skipif('sys.platform.startswith("win")')
 class TestRunProcess:
-    def test_runShellScript(self, fixture_dir):
-        writeAll(join(fixture_dir, 'src.txt'), 'contents')
-        writeAll(join(fixture_dir, 's.sh'), 'cp src.txt dest.txt')
-        retcode, stdout, stderr = run(['/bin/bash', join(fixture_dir, 's.sh')])
-        assert retcode == 0 and isFile(join(fixture_dir, 'dest.txt'))
+    def test_runShellScript(self, fixtureDir):
+        writeAll(join(fixtureDir, 'src.txt'), 'contents')
+        writeAll(join(fixtureDir, 's.sh'), 'cp src.txt dest.txt')
+        retcode, stdout, stderr = run(['/bin/bash', join(fixtureDir, 's.sh')])
+        assert retcode == 0 and isFile(join(fixtureDir, 'dest.txt'))
 
-    def test_runShellScriptWithoutCapture(self, fixture_dir):
-        writeAll(join(fixture_dir, 'src.txt'), 'contents')
-        writeAll(join(fixture_dir, 's.sh'), 'cp src.txt dest.txt')
-        retcode, stdout, stderr = run(['/bin/bash', join(fixture_dir, 's.sh')], captureOutput=False)
-        assert retcode == 0 and isFile(join(fixture_dir, 'dest.txt'))
+    def test_runShellScriptWithoutCapture(self, fixtureDir):
+        writeAll(join(fixtureDir, 'src.txt'), 'contents')
+        writeAll(join(fixtureDir, 's.sh'), 'cp src.txt dest.txt')
+        retcode, stdout, stderr = run(['/bin/bash', join(fixtureDir, 's.sh')], captureOutput=False)
+        assert retcode == 0 and isFile(join(fixtureDir, 'dest.txt'))
 
-    def test_runShellScriptWithUnicodeChars(self, fixture_dir):
+    def test_runShellScriptWithUnicodeChars(self, fixtureDir):
         import time
-        writeAll(join(fixture_dir, 'src.txt'), 'contents')
-        writeAll(join(fixture_dir, u's\u1101.sh'), 'cp src.txt dest.txt')
-        runWithoutWaitUnicode(['/bin/bash', join(fixture_dir, u's\u1101.sh')])
+        writeAll(join(fixtureDir, 'src.txt'), 'contents')
+        writeAll(join(fixtureDir, u's\u1101.sh'), 'cp src.txt dest.txt')
+        runWithoutWaitUnicode(['/bin/bash', join(fixtureDir, u's\u1101.sh')])
         time.sleep(0.5)
-        assert isFile(join(fixture_dir, 'dest.txt'))
+        assert isFile(join(fixtureDir, 'dest.txt'))
 
-    def test_runGetExitCode(self, fixture_dir):
-        writeAll(join(fixture_dir, 's.sh'), '\nexit 123')
-        retcode, stdout, stderr = run(['/bin/bash', join(fixture_dir, 's.sh')], throwOnFailure=False)
+    def test_runGetExitCode(self, fixtureDir):
+        writeAll(join(fixtureDir, 's.sh'), '\nexit 123')
+        retcode, stdout, stderr = run(['/bin/bash', join(fixtureDir, 's.sh')], throwOnFailure=False)
         assert 123 == retcode
 
-    def test_runGetExitCodeWithoutCapture(self, fixture_dir):
-        writeAll(join(fixture_dir, 's.sh'), '\nexit 123')
-        retcode, stdout, stderr = run(['/bin/bash', join(fixture_dir, 's.sh')], throwOnFailure=False, captureOutput=False)
+    def test_runGetExitCodeWithoutCapture(self, fixtureDir):
+        writeAll(join(fixtureDir, 's.sh'), '\nexit 123')
+        retcode, stdout, stderr = run(['/bin/bash', join(fixtureDir, 's.sh')], throwOnFailure=False, captureOutput=False)
         assert 123 == retcode
 
-    def test_runNonZeroExitShouldThrow(self, fixture_dir):
-        writeAll(join(fixture_dir, 's.sh'), '\nexit 123')
+    def test_runNonZeroExitShouldThrow(self, fixtureDir):
+        writeAll(join(fixtureDir, 's.sh'), '\nexit 123')
         with pytest.raises(RuntimeError):
-            run(['/bin/bash', join(fixture_dir, 's.sh')])
+            run(['/bin/bash', join(fixtureDir, 's.sh')])
 
-    def test_runNonZeroExitShouldThrowWithoutCapture(self, fixture_dir):
-        writeAll(join(fixture_dir, 's.sh'), '\nexit 123')
+    def test_runNonZeroExitShouldThrowWithoutCapture(self, fixtureDir):
+        writeAll(join(fixtureDir, 's.sh'), '\nexit 123')
         with pytest.raises(RuntimeError):
-            run(['/bin/bash', join(fixture_dir, 's.sh')], captureOutput=False)
+            run(['/bin/bash', join(fixtureDir, 's.sh')], captureOutput=False)
 
-    def test_runSendArgument(self, fixture_dir):
-        writeAll(join(fixture_dir, 's.sh'), '\n@echo off\necho $1')
-        retcode, stdout, stderr = run(['/bin/bash', join(fixture_dir, 's.sh'), 'testarg'])
+    def test_runSendArgument(self, fixtureDir):
+        writeAll(join(fixtureDir, 's.sh'), '\n@echo off\necho $1')
+        retcode, stdout, stderr = run(['/bin/bash', join(fixtureDir, 's.sh'), 'testarg'])
         assert retcode == 0 and stdout == b'testarg'
 
-    def test_runSendArgumentContainingSpaces(self, fixture_dir):
-        writeAll(join(fixture_dir, 's.sh'), '\n@echo off\necho $1')
-        retcode, stdout, stderr = run(['/bin/bash', join(fixture_dir, 's.sh'), 'test arg'])
+    def test_runSendArgumentContainingSpaces(self, fixtureDir):
+        writeAll(join(fixtureDir, 's.sh'), '\n@echo off\necho $1')
+        retcode, stdout, stderr = run(['/bin/bash', join(fixtureDir, 's.sh'), 'test arg'])
         assert retcode == 0 and stdout == b'test arg'
 
-    def test_runGetOutput(self, fixture_dir):
+    def test_runGetOutput(self, fixtureDir):
         # the subprocess module uses threads to capture both stderr and stdout without deadlock
-        writeAll(join(fixture_dir, 's.sh'), 'echo testecho\necho testechoerr 1>&2')
-        retcode, stdout, stderr = run(['/bin/bash', join(fixture_dir, 's.sh')])
+        writeAll(join(fixtureDir, 's.sh'), 'echo testecho\necho testechoerr 1>&2')
+        retcode, stdout, stderr = run(['/bin/bash', join(fixtureDir, 's.sh')])
         assert retcode == 0
         assert stdout == b'testecho'
         assert stderr == b'testechoerr'
 
 @pytest.mark.skipif('not sys.platform.startswith("win")')
 class TestRunProcessWin:
-    def test_runShellScript(self, fixture_dir):
-        writeAll(join(fixture_dir, 'src.txt'), 'contents')
-        writeAll(join(fixture_dir, 's.bat'), 'copy src.txt dest.txt')
-        retcode, stdout, stderr = run([join(fixture_dir, 's.bat')])
-        assert retcode == 0 and isFile(join(fixture_dir, 'dest.txt'))
+    def test_runShellScript(self, fixtureDir):
+        writeAll(join(fixtureDir, 'src.txt'), 'contents')
+        writeAll(join(fixtureDir, 's.bat'), 'copy src.txt dest.txt')
+        retcode, stdout, stderr = run([join(fixtureDir, 's.bat')])
+        assert retcode == 0 and isFile(join(fixtureDir, 'dest.txt'))
 
-    def test_runShellScriptWithoutCapture(self, fixture_dir):
-        writeAll(join(fixture_dir, 'src.txt'), 'contents')
-        writeAll(join(fixture_dir, 's.bat'), 'copy src.txt dest.txt')
-        retcode, stdout, stderr = run([join(fixture_dir, 's.bat')], captureOutput=False)
-        assert retcode == 0 and isFile(join(fixture_dir, 'dest.txt'))
+    def test_runShellScriptWithoutCapture(self, fixtureDir):
+        writeAll(join(fixtureDir, 'src.txt'), 'contents')
+        writeAll(join(fixtureDir, 's.bat'), 'copy src.txt dest.txt')
+        retcode, stdout, stderr = run([join(fixtureDir, 's.bat')], captureOutput=False)
+        assert retcode == 0 and isFile(join(fixtureDir, 'dest.txt'))
 
-    def test_runShellScriptWithUnicodeChars(self, fixture_dir):
+    def test_runShellScriptWithUnicodeChars(self, fixtureDir):
         import time
-        writeAll(join(fixture_dir, 'src.txt'), 'contents')
-        writeAll(join(fixture_dir, u's\u1101.bat'), 'copy src.txt dest.txt')
-        runWithoutWaitUnicode([join(fixture_dir, u's\u1101.bat')])
+        writeAll(join(fixtureDir, 'src.txt'), 'contents')
+        writeAll(join(fixtureDir, u's\u1101.bat'), 'copy src.txt dest.txt')
+        runWithoutWaitUnicode([join(fixtureDir, u's\u1101.bat')])
         time.sleep(0.5)
-        assert isFile(join(fixture_dir, 'dest.txt'))
+        assert isFile(join(fixtureDir, 'dest.txt'))
 
-    def test_runGetExitCode(self, fixture_dir):
-        writeAll(join(fixture_dir, 's.bat'), '\nexit /b 123')
-        retcode, stdout, stderr = run([join(fixture_dir, 's.bat')], throwOnFailure=False)
+    def test_runGetExitCode(self, fixtureDir):
+        writeAll(join(fixtureDir, 's.bat'), '\nexit /b 123')
+        retcode, stdout, stderr = run([join(fixtureDir, 's.bat')], throwOnFailure=False)
         assert 123 == retcode
 
-    def test_runGetExitCodeWithoutCapture(self, fixture_dir):
-        writeAll(join(fixture_dir, 's.bat'), '\nexit /b 123')
-        retcode, stdout, stderr = run([join(fixture_dir, 's.bat')], throwOnFailure=False, captureOutput=False)
+    def test_runGetExitCodeWithoutCapture(self, fixtureDir):
+        writeAll(join(fixtureDir, 's.bat'), '\nexit /b 123')
+        retcode, stdout, stderr = run([join(fixtureDir, 's.bat')], throwOnFailure=False, captureOutput=False)
         assert 123 == retcode
 
-    def test_runNonZeroExitShouldThrow(self, fixture_dir):
-        writeAll(join(fixture_dir, 's.bat'), '\nexit /b 123')
+    def test_runNonZeroExitShouldThrow(self, fixtureDir):
+        writeAll(join(fixtureDir, 's.bat'), '\nexit /b 123')
         with pytest.raises(RuntimeError):
-            run([join(fixture_dir, 's.bat')])
+            run([join(fixtureDir, 's.bat')])
 
-    def test_runNonZeroExitShouldThrowWithoutCapture(self, fixture_dir):
-        writeAll(join(fixture_dir, 's.bat'), '\nexit /b 123')
+    def test_runNonZeroExitShouldThrowWithoutCapture(self, fixtureDir):
+        writeAll(join(fixtureDir, 's.bat'), '\nexit /b 123')
         with pytest.raises(RuntimeError):
-            run([join(fixture_dir, 's.bat')], captureOutput=False)
+            run([join(fixtureDir, 's.bat')], captureOutput=False)
 
-    def test_runSendArgument(self, fixture_dir):
-        writeAll(join(fixture_dir, 's.bat'), '\n@echo off\necho %1')
-        retcode, stdout, stderr = run([join(fixture_dir, 's.bat'), 'testarg'])
+    def test_runSendArgument(self, fixtureDir):
+        writeAll(join(fixtureDir, 's.bat'), '\n@echo off\necho %1')
+        retcode, stdout, stderr = run([join(fixtureDir, 's.bat'), 'testarg'])
         assert retcode == 0 and stdout == b'testarg'
 
-    def test_runSendArgumentContainingSpaces(self, fixture_dir):
-        writeAll(join(fixture_dir, 's.bat'), '\n@echo off\necho %1')
-        retcode, stdout, stderr = run([join(fixture_dir, 's.bat'), 'test arg'])
+    def test_runSendArgumentContainingSpaces(self, fixtureDir):
+        writeAll(join(fixtureDir, 's.bat'), '\n@echo off\necho %1')
+        retcode, stdout, stderr = run([join(fixtureDir, 's.bat'), 'test arg'])
         assert retcode == 0 and stdout == b'"test arg"'
 
-    def test_runGetOutput(self, fixture_dir):
+    def test_runGetOutput(self, fixtureDir):
         # the subprocess module uses threads to capture both stderr and stdout without deadlock
-        writeAll(join(fixture_dir, 's.bat'), '@echo off\necho testecho\necho testechoerr 1>&2')
-        retcode, stdout, stderr = run([join(fixture_dir, 's.bat')])
+        writeAll(join(fixtureDir, 's.bat'), '@echo off\necho testecho\necho testechoerr 1>&2')
+        retcode, stdout, stderr = run([join(fixtureDir, 's.bat')])
         assert retcode == 0
         assert stdout == b'testecho'
         assert stderr == b'testechoerr'
@@ -752,7 +730,7 @@ def listDirectoryToStringFileInfo(basedir, useFileInfo, kwargs):
 
 
 @pytest.fixture()
-def fixture_dir():
+def fixtureDir():
     basedir = join(tempfile.gettempdir(), 'shinerainsevenlib_test', 'empty')
     ensureEmptyDirectory(basedir)
     chDir(basedir)

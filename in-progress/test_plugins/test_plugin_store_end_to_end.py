@@ -7,7 +7,7 @@ from src.shinerainsevenlib.standard import *
 from src.shinerainsevenlib.core import assertException
 from src.shinerainsevenlib.plugins.plugin_store import SrssStoreBasic, SrssStoreException
 from src.shinerainsevenlib.files import join, getSize, writeAll, ensureEmptyDirectory
-from test.test_core.common import fixture_dir
+from test.test_core.common import fixtureDir
 
 from test_plugin_store import fixture_temp_db, MockCursor, StoreDemo, StoreOperationsDemo
 

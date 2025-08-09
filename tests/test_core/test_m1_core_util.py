@@ -10,7 +10,7 @@ import re
 import datetime
 from src.shinerainsevenlib.standard import *
 from src.shinerainsevenlib.core import *
-from common import fixture_dir
+from common import fixtureDir
 
 class TestAsserts:
     # assertTrue

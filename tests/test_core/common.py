@@ -6,16 +6,15 @@ from src.shinerainsevenlib.standard import *
 
 
 @pytest.fixture()
-def fixture_dir():
+def fixtureDir():
     "A fixture providing a empty directory for testing."
     basedir = files.join(tempfile.gettempdir(), 'shinerainsevenlib_test', 'empty')
     files.ensureEmptyDirectory(basedir)
     yield basedir
     files.ensureEmptyDirectory(basedir)
 
-@pytest.fixture()
-def fixture_dir_with_many():
-    basedir = files.join(tempfile.gettempdir(), 'shinerainsevenlib_test', 'many')
+def _fixtureFileTreeImpl():
+    basedir = files.join(tempfile.gettempdir(), 'shinerainsevenlib_test', 'tree')
     files.ensureEmptyDirectory(basedir)
     lst = [
         'foobar/a/foobar/a.txt',
@@ -35,7 +34,61 @@ def fixture_dir_with_many():
         fullpath = files.join(basedir, item)
         files.makeDirs(files.getParent(fullpath))
         files.writeAll(fullpath, 'test')
+    return basedir
 
+@pytest.fixture()
+def fxTree():
+    basedir = _fixtureFileTreeImpl()
+    ret = Bucket(basedir=basedir)
+    ret.pathSmallFile = basedir + '/r3.txt'
+    ret.pathFileExists = basedir + '/foobar/a/foobar/c/c0.txt'
+    ret.pathFileToLock = basedir + '/foobar/a/foobar/c/c1.txt'
+    ret.pathNotExist = basedir + '/notexist.txt'
+    ret.pathDir = basedir + '/foobar/a/foobar'
+    ret.pathFewChildren = basedir + '/foobar/foobar'
+    ret.pathManyChildren = basedir + '/foobar/a/foobar'
+    ret.pathDirNotExist = basedir + '/newdir'
+    yield ret
+    files.ensureEmptyDirectory(basedir)
+
+@pytest.fixture()
+def fixtureFileTree():
+    basedir = _fixtureFileTreeImpl()
+    yield basedir
+    files.ensureEmptyDirectory(basedir)
+
+def _fixtureFilesImpl():
+    basedir = files.join(tempfile.gettempdir(), 'shinerainsevenlib_test', 'files')
+    files.ensureEmptyDirectory(basedir)
+    lst = [
+        'a1.txt',
+        'bb2.txt',
+        'ccc3.txt',
+        'd4.txt',
+        'ee5.txt',
+        u'1\u1101.txt',
+        u'2\u1101.txt',
+    ]
+    for item in lst:
+        # contents are like the filname without the txt
+        fullpath = files.join(basedir, item)
+        files.writeAll(fullpath, item.replace('.txt', ''))
+
+    return basedir
+
+@pytest.fixture()
+def fxFiles():
+    basedir = _fixtureFilesImpl()
+    ret = Bucket(basedir=basedir)
+    ret.f1 = basedir + '/1\u1101.txt'
+    ret.f2 = basedir + '/2\u1101.txt'
+    ret.f3notExistYet = basedir + '/3\u1101.txt'
+    yield ret
+    files.ensureEmptyDirectory(basedir)
+
+@pytest.fixture()
+def fixtureFiles():
+    basedir = _fixtureFilesImpl()
     yield basedir
     files.ensureEmptyDirectory(basedir)
 

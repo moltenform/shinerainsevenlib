@@ -5,7 +5,7 @@
 import pytest
 from src.shinerainsevenlib.standard import *
 from src.shinerainsevenlib.core import assertException
-from test.test_core.common import fixture_dir
+from test.test_core.common import fixtureDir
 
 class TestTemporary:
     def testTemporary(self):

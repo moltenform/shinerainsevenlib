@@ -12,7 +12,7 @@ from src.shinerainsevenlib.plugins.plugin_configreader import getExecutablePathF
 from src.shinerainsevenlib.plugins.plugin_compression_rar import getRarExecutablePath
 from src.shinerainsevenlib.core import assertException
 
-from test.test_core.common import fixture_dir
+from test.test_core.common import fixtureDir
 
 
 class TestPluginCompression:
@@ -147,9 +147,9 @@ class TestPluginCompression:
         assert fn("feature_password.rar", pword='wrong') == r"failedOtherReason=False;failedWrongPword=True;success=False"
         assert fn("feature_password.rar", pword='abc') == r"failedOtherReason=False;failedWrongPword=False;success=True"
     
-    def test_runProcessThatCreatesOutput(self, fixture_dir):
+    def test_runProcessThatCreatesOutput(self, fixtureDir):
         cjxl = getExecutablePathFromPrefs('cjxl', throwIfNotFound=True,)
-        _tmpDir, dirToArchive = prepareForMakingArchives(fixture_dir)
+        _tmpDir, dirToArchive = prepareForMakingArchives(fixtureDir)
         def fn(listArgs, inName, expectFail=False, **kwargs):
             assert (not 'outPath' in kwargs and not 'inPath' in kwargs)
             inPath = f'{dirToArchive}/{inName}'
@@ -228,30 +228,30 @@ class TestPluginCompression:
         assert (files.getSize(f'{dirToArchive}/file.jpg.jxl') > 0)
         assert files.getLastModTime(f'{dirToArchive}/file.jpg') == files.getLastModTime(f'{dirToArchive}/file.jpg.jxl')
 
-    def test_createZipsWithPython(self, fixture_dir):
+    def test_createZipsWithPython(self, fixtureDir):
         def fn(s):
             return str(helperGetContentsViaPython(s))
         
-        path = helperMakeZip(fixture_dir, 'standard.zip')
+        path = helperMakeZip(fixtureDir, 'standard.zip')
         assert fn(path) == "['a/b/im.bmp;9;4d09f139;algorithm=8', 'a/b/im.png;10;6eb06c37;algorithm=8', 'a/noext;11;cdd8c08e;algorithm=8']"
 
-        path = helperMakeZip(fixture_dir, 'lzma.zip', method=SrssCompression.ZipMethods.Lzma)
+        path = helperMakeZip(fixtureDir, 'lzma.zip', method=SrssCompression.ZipMethods.Lzma)
         assert fn(path) == "['a/b/im.bmp;9;4d09f139;algorithm=14', 'a/b/im.png;10;6eb06c37;algorithm=14', 'a/noext;11;cdd8c08e;algorithm=14']"
 
-        path = helperMakeZip(fixture_dir, 'store.zip', method=SrssCompression.ZipMethods.Store)
+        path = helperMakeZip(fixtureDir, 'store.zip', method=SrssCompression.ZipMethods.Store)
         assert fn(path) == "['a/b/im.bmp;9;4d09f139;algorithm=0', 'a/b/im.png;10;6eb06c37;algorithm=0', 'a/noext;11;cdd8c08e;algorithm=0']"
 
-        path = helperMakeZip(fixture_dir, 'automatic.zip', alreadyCompressedAsStore=True)
+        path = helperMakeZip(fixtureDir, 'automatic.zip', alreadyCompressedAsStore=True)
         assert fn(path) == "['a/b/im.bmp;9;4d09f139;algorithm=8', 'a/b/im.png;10;6eb06c37;algorithm=0', 'a/noext;11;cdd8c08e;algorithm=8']"
 
-        path = helperMakeZip(fixture_dir, 'path_prefix.zip', pathPrefix='prefix')
+        path = helperMakeZip(fixtureDir, 'path_prefix.zip', pathPrefix='prefix')
         assert fn(path) == "['prefixb/im.bmp;9;4d09f139;algorithm=8', 'prefixb/im.png;10;6eb06c37;algorithm=8', 'prefixnoext;11;cdd8c08e;algorithm=8']"
 
-        path = helperMakeZip(fixture_dir, 'no_recurse.zip', recurse=False)
+        path = helperMakeZip(fixtureDir, 'no_recurse.zip', recurse=False)
         assert fn(path) == "['a/noext;11;cdd8c08e;algorithm=8']"
 
-    def test_createArchives(self, fixture_dir):
-        tmpDir, dirToArchive = prepareForMakingArchives(fixture_dir)
+    def test_createArchives(self, fixtureDir):
+        tmpDir, dirToArchive = prepareForMakingArchives(fixtureDir)
         archive = files.join(tmpDir, 'zip-7z-max.zip')
         SrssCompression.addAllTo7z(dirToArchive, archive, SrssCompression.Strength.Max, solid=False)
         checkSizeCloseToKB(archive, 96.5)
@@ -284,8 +284,8 @@ class TestPluginCompression:
         SrssCompression.addAllToZip(dirToArchive, archive, SrssCompression.ZipMethods.Lzma)
         checkSizeCloseToKB(archive, 92.3)
 
-    def test_create7zAndRar(self, fixture_dir):
-        tmpDir, dirToArchive = prepareForMakingArchives(fixture_dir)
+    def test_create7zAndRar(self, fixtureDir):
+        tmpDir, dirToArchive = prepareForMakingArchives(fixtureDir)
         self._createRar(tmpDir, dirToArchive, True)
         self._createRar(tmpDir, dirToArchive, False)
         self._create7z(tmpDir, dirToArchive, True)
@@ -367,19 +367,19 @@ def helperGetContents(path, alwaysUse7z=True, pword=None):
     
     return results
 
-def helperMakeZip(fixture_dir, outName, **zipArgs):
-    files.ensureEmptyDirectory(fixture_dir)
-    files.makeDirs(files.join(fixture_dir, 'a/b'))
-    files.writeAll(files.join(fixture_dir, 'a/b/im.bmp'), 'contents1')
-    files.writeAll(files.join(fixture_dir, 'a/b/im.png'), 'contents22')
-    files.writeAll(files.join(fixture_dir, 'a/noext'), 'contents333')
-    outPath = files.join(fixture_dir, outName)
-    SrssCompression.addAllToZip(files.join(fixture_dir, 'a'), outPath, **zipArgs)
+def helperMakeZip(fixtureDir, outName, **zipArgs):
+    files.ensureEmptyDirectory(fixtureDir)
+    files.makeDirs(files.join(fixtureDir, 'a/b'))
+    files.writeAll(files.join(fixtureDir, 'a/b/im.bmp'), 'contents1')
+    files.writeAll(files.join(fixtureDir, 'a/b/im.png'), 'contents22')
+    files.writeAll(files.join(fixtureDir, 'a/noext'), 'contents333')
+    outPath = files.join(fixtureDir, outName)
+    SrssCompression.addAllToZip(files.join(fixtureDir, 'a'), outPath, **zipArgs)
     return outPath
 
 
-def prepareForMakingArchives(fixture_dir):
-    tempDir = fixture_dir + '/tmp'
+def prepareForMakingArchives(fixtureDir):
+    tempDir = fixtureDir + '/tmp'
     dirToArchive = tempDir + '/dir-within-archive'
     # create a directory called 'dir-within-archive' with the contents:
     # unicodes.bmp -- compressible and has unicode filename

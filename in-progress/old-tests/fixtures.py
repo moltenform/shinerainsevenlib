@@ -58,7 +58,7 @@ def listDirectoryToStringFileInfo(basedir, useFileInfo, kwargs):
     return '|'.join(sorted(out))
 
 @pytest.fixture()
-def fixture_dir_with_many():
+def fixtureFileTree():
     basedir = join(tempfile.gettempdir(), 'shinerainsevenlib_test', 'many')
     basedir = files.ustr(basedir)
     files.ensureEmptyDirectory(basedir)
@@ -85,7 +85,7 @@ def fixture_dir_with_many():
     files.ensureEmptyDirectory(basedir)
 
 @pytest.fixture()
-def fixture_dir():
+def fixtureDir():
     basedir = join(tempfile.gettempdir(), 'shinerainsevenlib_test', 'empty')
     basedir = files.ustr(basedir)
     files.ensureEmptyDirectory(basedir)
