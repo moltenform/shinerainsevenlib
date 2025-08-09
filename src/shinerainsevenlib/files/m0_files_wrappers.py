@@ -45,7 +45,7 @@ def getName(path):
     return _os.path.split(path)[1]
 
 def createdTime(path):
-    "The 'ctime' of the file"
+    "The created time of the file"
     return _os.stat(path).st_birthtime
 
 def getExt(s, removeDot=True, onesToPreserve=None):
@@ -164,9 +164,9 @@ def copyImpl(
     if overwrite is False, always raises exception if destination already exists."""
     if doTrace:
         trace('copy()', srcFile, destFile)
-    if not isFile(srcFile):
-        raise OSFileRelatedError('source path does not exist or is not a file' + srcFile)
-    if not allowDirs and isDir(srcFile):
+    if not exists(srcFile):
+        raise OSFileRelatedError('source path does not exist' + srcFile)
+    if not allowDirs and not isFile(srcFile):
         raise OSFileRelatedError('allowDirs is False but given a dir' + srcFile)
 
     toSetModTime = None

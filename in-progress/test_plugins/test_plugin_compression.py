@@ -342,7 +342,7 @@ class TestPluginCompression:
 
 def checkSizeCloseToKB(archive, expectedSize):
     gotInKb = files.getSize(archive) / 1024
-    assert abs(expectedSize - gotInKb) < 5, f'Difference is more than 5kb {abs(expectedSize - gotInKb)} {gotInKb}'
+    assert expectedSize == pytest.approx(gotInKb, abs=5)
 
 
 def helperGetContentsViaPython(path):

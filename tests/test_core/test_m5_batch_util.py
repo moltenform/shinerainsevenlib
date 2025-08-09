@@ -105,8 +105,8 @@ class TestSrssLooper:
         assert numbersSeen == list(range(3, 100))
         assert evensSeen == list(range(4, 100, 2))
         assert oddsSeen == list(range(3, 100, 2))
-        assert abs(timeTakenInSeconds - 2 * ((100-3)/20)) < 5
-
+        expectedTime = 2 * ((100-3)/20)
+        assert timeTakenInSeconds == pytest.approx(expectedTime, abs=5)
 
 class TestFileIterator:
     def testPathContainsDirWithThisName(self):

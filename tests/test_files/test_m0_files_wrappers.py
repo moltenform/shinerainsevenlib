@@ -254,6 +254,7 @@ class TestCopy:
         assert exists(fxFiles.f2)
 
         # check contents after
+        # (in py2, check correctness for nonascii paths+contents)
         assert '1\u1101' == readAll(fxFiles.f1)
         assert '1\u1101' == readAll(fxFiles.f2)
 
@@ -280,6 +281,130 @@ class TestCopy:
         # check contents after
         assert '1\u1101' == readAll(fxFiles.f1)
         assert '2\u1101' == readAll(fxFiles.f2)
+    
+    def test_trace(self, fxFiles):
+        assert not exists(fxFiles.f3notExistYet)
+        copy(fxFiles.f1, fxFiles.f3notExistYet, False, doTrace=True, traceOnly=True)
+        assert not exists(fxFiles.f3notExistYet)
+        
+        assert not exists(fxFiles.f3notExistYet)
+        copy(fxFiles.f1, fxFiles.f3notExistYet, False, doTrace=True)
+        assert exists(fxFiles.f3notExistYet)
+        assert '1\u1101' == readAll(fxFiles.f3notExistYet)
+
+    def test_allowDirs(self, fxFiles):
+        with pytest.raises(OSFileRelatedError):
+            copy(fxFiles.basedir, fxFiles.basedir + '2', False)
+    
+    def test_autoCreateParent(self, fxTree):
+        with pytest.raises(OSFileRelatedError):
+            copy(fxTree.pathFileExists, fxTree.basedir + '/newdir/a.txt', False)
+        
+        assert not exists(fxTree.basedir + '/newdir/a.txt')
+        
+        copy(fxTree.pathFileExists, fxTree.basedir + '/newdir/a.txt', False, createParent=True)
+        assert readAll(fxTree.pathFileExists) == readAll(fxTree.basedir + '/newdir/a.txt')
+    
+    def test_keepSameModifiedTime(self, fxFiles):
+        # check contents before
+        assert '1\u1101' == readAll(fxFiles.f1)
+        assert '2\u1101' == readAll(fxFiles.f2)
+
+        files.setLastModTime(fxFiles.f2, 1754712000)
+        
+        # replace a file
+        assert exists(fxFiles.f2)
+        copy(fxFiles.f1, fxFiles.f2, True, keepSameModifiedTime=True)
+        assert exists(fxFiles.f2)
+
+        assert files.getLastModTime(fxFiles.f2) == pytest.approx(1754712000, abs=10)
+
+#~ class TestMove:
+    #~ def test_overWriteMode_srcNotExist(self, fxFiles):
+        #~ with pytest.raises(IOError):
+            #~ move(fxFiles.f1 + '.notexist', fxFiles.f2, True)
+        
+    #~ def test_overWriteMode_noOverwrite(self, fxFiles):
+        #~ assert not exists(fxFiles.f3notExistYet)
+        #~ move(fxFiles.f1, fxFiles.f3notExistYet, True)
+        #~ assert exists(fxFiles.f3notExistYet)
+        #~ assert '1\u1101' == readAll(fxFiles.f3notExistYet)
+
+    #~ def test_overWriteMode_overwrite(self, fxFiles):
+        #~ # check contents before
+        #~ assert '1\u1101' == readAll(fxFiles.f1)
+        #~ assert '2\u1101' == readAll(fxFiles.f2)
+        
+        #~ # replace a file
+        #~ assert exists(fxFiles.f2)
+        #~ move(fxFiles.f1, fxFiles.f2, True)
+        #~ assert exists(fxFiles.f2)
+
+        #~ # check contents after
+        #~ # (in py2, check correctness for nonascii paths+contents)
+        #~ assert '1\u1101' == readAll(fxFiles.f1)
+        #~ assert '1\u1101' == readAll(fxFiles.f2)
+
+    #~ def test_overWriteModeOff_srcNotExist(self, fxFiles):
+        #~ with pytest.raises(IOError):
+            #~ move(fxFiles.f1 + '.notexist', fxFiles.f2, False)
+        
+    #~ def test_overWriteModeOff_noOverwrite(self, fxFiles):
+        #~ assert not exists(fxFiles.f3notExistYet)
+        #~ move(fxFiles.f1, fxFiles.f3notExistYet, False)
+        #~ assert exists(fxFiles.f3notExistYet)
+        #~ assert '1\u1101' == readAll(fxFiles.f3notExistYet)
+
+    #~ def test_overWriteModeOff_overwrite(self, fxFiles):
+        #~ # check contents before
+        #~ assert '1\u1101' == readAll(fxFiles.f1)
+        #~ assert '2\u1101' == readAll(fxFiles.f2)
+        
+        #~ # replace a file (fails)
+        #~ assert exists(fxFiles.f2)
+        #~ with pytest.raises(IOError):
+            #~ move(fxFiles.f1, fxFiles.f2, False)
+
+        #~ # check contents after
+        #~ assert '1\u1101' == readAll(fxFiles.f1)
+        #~ assert '2\u1101' == readAll(fxFiles.f2)
+    
+    #~ def test_trace(self, fxFiles):
+        #~ assert not exists(fxFiles.f3notExistYet)
+        #~ move(fxFiles.f1, fxFiles.f3notExistYet, False, doTrace=True, traceOnly=True)
+        #~ assert not exists(fxFiles.f3notExistYet)
+        
+        #~ assert not exists(fxFiles.f3notExistYet)
+        #~ move(fxFiles.f1, fxFiles.f3notExistYet, False, doTrace=True)
+        #~ assert exists(fxFiles.f3notExistYet)
+        #~ assert '1\u1101' == readAll(fxFiles.f3notExistYet)
+
+    #~ def test_allowDirs(self, fxFiles):
+        #~ with pytest.raises(OSFileRelatedError):
+            #~ move(fxFiles.basedir, fxFiles.basedir + '2', False)
+    
+    #~ def test_autoCreateParent(self, fxTree):
+        #~ with pytest.raises(OSFileRelatedError):
+            #~ move(fxTree.pathFileExists, fxTree.basedir + '/newdir/a.txt', False)
+        
+        #~ assert not exists(fxTree.basedir + '/newdir/a.txt')
+        
+        #~ move(fxTree.pathFileExists, fxTree.basedir + '/newdir/a.txt', False, createParent=True)
+        #~ assert readAll(fxTree.pathFileExists) == readAll(fxTree.basedir + '/newdir/a.txt')
+    
+    #~ def test_keepSameModifiedTime(self, fxFiles):
+        #~ # check contents before
+        #~ assert '1\u1101' == readAll(fxFiles.f1)
+        #~ assert '2\u1101' == readAll(fxFiles.f2)
+
+        #~ files.setLastModTime(fxFiles.f2, 1754712000)
+        
+        #~ # replace a file
+        #~ assert exists(fxFiles.f2)
+        #~ move(fxFiles.f1, fxFiles.f2, True, keepSameModifiedTime=True)
+        #~ assert exists(fxFiles.f2)
+
+        #~ assert files.getLastModTime(fxFiles.f2) == pytest.approx(1754712000, abs=10)
 
 
 class TestGetModTime:
@@ -291,7 +416,7 @@ class TestGetModTime:
 
         # we expect it to be at least within 1 day
         dayMilliseconds = 24 * 60 * 60 * 1000
-        assert abs(curtimeWritten - curtimeNow) < dayMilliseconds
+        assert curtimeWritten == pytest.approx(curtimeNow, abs=dayMilliseconds)
 
         # so we expect at least the date to match
         nCharsInDate = 10
@@ -299,4 +424,3 @@ class TestGetModTime:
         scurtimeNow = renderMillisTime(curtimeNow)
         assert scurtimeWritten[0:nCharsInDate] == scurtimeNow[0:nCharsInDate]
 
-    
