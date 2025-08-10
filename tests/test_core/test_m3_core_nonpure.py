@@ -8,7 +8,7 @@ import random
 from os.path import join
 from src.shinerainsevenlib.standard import *
 from src.shinerainsevenlib.core import *
-from common import fixtureDir
+from common import fxDirPlain
 from src.shinerainsevenlib.core import m4_core_ui
 
 class TestRngHelpers:
@@ -91,17 +91,17 @@ def requestsAvailable():
 
 @pytest.mark.skipif('not requestsAvailable()')
 class TestDownloadUrl:
-    def testBinary(self, mocker, fixtureDir):
+    def testBinary(self, mocker, fxDirPlain):
         import requests
         mocker.patch('requests.get', return_value=Bucket(text='abc', content=b'abc'))
-        outPath = join(fixtureDir, 'out.txt')
+        outPath = join(fxDirPlain, 'out.txt')
         got = downloadUrl('http://test.com', toFile=outPath)
         assert files.readAll(outPath) == 'abc'
         requests.get.assert_called_once_with('http://test.com', timeout=30)
         assert got == b'abc'
         assert isinstance(got, bytes)
     
-    def testText(self, mocker, fixtureDir):
+    def testText(self, mocker, fxDirPlain):
         import requests
         mocker.patch('requests.get', return_value=Bucket(text='abc', content=b'abc'))
         got = downloadUrl('http://test.com', toFile=None, asText=True)

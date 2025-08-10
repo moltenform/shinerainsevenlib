@@ -7,7 +7,7 @@ import pytest
 from os.path import join
 from src.shinerainsevenlib.standard import *
 from src.shinerainsevenlib.core import *
-from tests.test_core.common import fixtureDir, fixtureFileTree, fixtureFiles, fxTree, fxFiles
+from tests.test_core.common import fxDirPlain, fxTreePlain, fxFilesPlain, fxTree, fxFiles
 from collections import OrderedDict
 import os
 import sys
@@ -132,29 +132,29 @@ class TestGetAltered:
         assertException(lambda: files.acrossDir('/home/fff/def', '/home/abc', '/home/xyz'), AssertionError)
 
 class TestMakeDirs:
-    def test(self, fixtureDir):
+    def test(self, fxDirPlain):
         # one-deep
-        assert not isDir(join(fixtureDir, 'd'))
-        makeDirs(join(fixtureDir, 'd'))
-        assert isDir(join(fixtureDir, 'd'))
+        assert not isDir(join(fxDirPlain, 'd'))
+        makeDirs(join(fxDirPlain, 'd'))
+        assert isDir(join(fxDirPlain, 'd'))
 
         # two-deep
-        assert not isDir(join(fixtureDir, 'd1', 'd2'))
-        makeDirs(join(fixtureDir, 'd1', 'd2'))
-        assert isDir(join(fixtureDir, 'd1', 'd2'))
+        assert not isDir(join(fxDirPlain, 'd1', 'd2'))
+        makeDirs(join(fxDirPlain, 'd1', 'd2'))
+        assert isDir(join(fxDirPlain, 'd1', 'd2'))
 
         # ok if already exists
-        makeDirs(join(fixtureDir, 'd1', 'd2'))
-        assert isDir(join(fixtureDir, 'd1', 'd2'))
+        makeDirs(join(fxDirPlain, 'd1', 'd2'))
+        assert isDir(join(fxDirPlain, 'd1', 'd2'))
 
         # invalid path
         with pytest.raises(OSError):
             makeDirs('?' if sys.platform.startswith("win") else '')
         
         # exists as file
-        files.writeAll(join(fixtureDir, 'a.txt'), 'abc')
+        files.writeAll(join(fxDirPlain, 'a.txt'), 'abc')
         with pytest.raises(OSError):
-            makeDirs(join(fixtureDir, 'a.txt'))
+            makeDirs(join(fxDirPlain, 'a.txt'))
 
 class TestDelete:
     def testDelete(self, fxTree):
@@ -417,9 +417,9 @@ class TestMove:
 
 class TestGetModTime:
     @pytest.mark.skipif('not isPy3OrNewer')
-    def test_modtimeRendered(self, fixtureDir):
-        files.writeAll(join(fixtureDir, 'a.txt'), 'contents')
-        curtimeWritten = files.getLastModTime(join(fixtureDir, 'a.txt'), files.TimeUnits.Milliseconds)
+    def test_modtimeRendered(self, fxDirPlain):
+        files.writeAll(join(fxDirPlain, 'a.txt'), 'contents')
+        curtimeWritten = files.getLastModTime(join(fxDirPlain, 'a.txt'), files.TimeUnits.Milliseconds)
         curtimeNow = getNowAsMillisTime()
 
         # we expect it to be at least within 1 day
@@ -431,4 +431,77 @@ class TestGetModTime:
         scurtimeWritten = renderMillisTime(curtimeWritten)
         scurtimeNow = renderMillisTime(curtimeNow)
         assert scurtimeWritten[0:nCharsInDate] == scurtimeNow[0:nCharsInDate]
+
+
+class TestWriteFiles:
+    def test_readAndWriteSimple(self, fxDirPlain):
+        ret = writeAll(join(fxDirPlain, 'a.txt'), 'abc', mode='w')
+        assert ret is True
+        assert u'abc' == readAll(join(fxDirPlain, 'a.txt'), 'r')
+        ret = writeAll(join(fxDirPlain, 'a.txt'), 'def', mode='w')
+        assert ret is True
+        assert u'def' == readAll(join(fxDirPlain, 'a.txt'), 'r')
+
+    def test_readAndWriteUtf8(self, fxDirPlain):
+        path = join(fxDirPlain, u'a\u1E31.txt')
+        kwargs = dict(encoding='utf-8') if isPy3OrNewer else dict(unicodetype='utf-8')
+        ret = writeAll(path, u'\u1E31\u1E77\u1E53\u006E', **kwargs)
+        assert ret is True
+        assert u'\u1E31\u1E77\u1E53\u006E' == readAll(path, **kwargs)
+
+    def test_readAndWriteUtf16(self, fxDirPlain):
+        path = join(fxDirPlain, u'a\u1E31.txt')
+        kwargs = dict(encoding='utf-16le') if isPy3OrNewer else dict(unicodetype='utf-16le')
+        ret = writeAll(path, u'\u1E31\u1E77\u1E53\u006E', **kwargs)
+        assert ret is True
+        assert u'\u1E31\u1E77\u1E53\u006E' == readAll(path, **kwargs)
+
+    def test_writeAllUnlessThereNewFile(self, fxDirPlain):
+        path = join(fxDirPlain, 'a.dat')
+        ret = writeAll(path, b'abc', mode='wb', skipIfSameContent=True)
+        assert ret is True
+        assert b'abc' == readAll(path, 'rb')
+
+    def test_writeAllUnlessThereChangedFile(self, fxDirPlain):
+        path = join(fxDirPlain, 'a.dat')
+        writeAll(path, b'abcd', 'wb')
+        ret = writeAll(path, b'abc', mode='wb', skipIfSameContent=True)
+        assert ret is True
+        assert b'abc' == readAll(path, 'rb')
+
+    def test_writeAllUnlessThereSameFile(self, fxDirPlain):
+        path = join(fxDirPlain, 'a.dat')
+        writeAll(path, b'abc', 'wb')
+        ret = writeAll(path, b'abc', mode='wb', skipIfSameContent=True)
+        assert ret is False
+        assert b'abc' == readAll(path, 'rb')
+
+    def test_writeAllUnlessThereNewTxtFile(self, fxDirPlain):
+        path = join(fxDirPlain, 'a.txt')
+        ret = writeAll(path, 'abc', mode='w', skipIfSameContent=True)
+        assert ret is True
+        assert 'abc' == readAll(path)
+
+    def test_writeAllUnlessThereChangedTxtFile(self, fxDirPlain):
+        path = join(fxDirPlain, 'a.txt')
+        writeAll(path, 'abcd')
+        ret = writeAll(path, 'abc', mode='w', skipIfSameContent=True)
+        assert ret is True
+        assert 'abc' == readAll(path)
+
+    def test_writeAllUnlessThereSameTxtFile(self, fxDirPlain):
+        path = join(fxDirPlain, 'a.txt')
+        writeAll(path, 'abc')
+        ret = writeAll(path, 'abc', mode='w', skipIfSameContent=True)
+        assert ret is False
+        assert 'abc' == readAll(path)
+
+    def test_updateTimeIfSameContent(self, fxDirPlain):
+        path = join(fxDirPlain, 'a.txt')
+        writeAll(path, 'abc')
+        setLastModTime(path, 1754712000, units=TimeUnits.Seconds)
+        ret = writeAll(path, 'abc', mode='w', skipIfSameContent=True, updateTimeIfSameContent=True)
+        assert ret is False
+        assert 'abc' == readAll(path)
+        assert getLastModTime(path, units=TimeUnits.Seconds ) != pytest.approx(1754712000, abs=5)
 

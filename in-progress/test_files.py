@@ -117,68 +117,7 @@ class TestFiletimes:
             curtime5 = fnGet(join(fixtureDir, 'a.txt'))
             assert curtime5 < curtime4
 
-class TestWriteFiles:
-    def test_readAndWriteSimple(self, fixtureDir):
-        ret = writeAll(join(fixtureDir, 'a.txt'), 'abc', mode='w')
-        assert ret is True
-        assert u'abc' == readAll(join(fixtureDir, 'a.txt'), 'r')
-        ret = writeAll(join(fixtureDir, 'a.txt'), 'def', mode='w')
-        assert ret is True
-        assert u'def' == readAll(join(fixtureDir, 'a.txt'), 'r')
 
-    def test_readAndWriteUtf8(self, fixtureDir):
-        path = join(fixtureDir, u'a\u1E31.txt')
-        kwargs = dict(encoding='utf-8') if isPy3OrNewer else dict(unicodetype='utf-8')
-        ret = writeAll(path, u'\u1E31\u1E77\u1E53\u006E', **kwargs)
-        assert ret is True
-        assert u'\u1E31\u1E77\u1E53\u006E' == readAll(path, **kwargs)
-
-    def test_readAndWriteUtf16(self, fixtureDir):
-        path = join(fixtureDir, u'a\u1E31.txt')
-        kwargs = dict(encoding='utf-16le') if isPy3OrNewer else dict(unicodetype='utf-16le')
-        ret = writeAll(path, u'\u1E31\u1E77\u1E53\u006E', **kwargs)
-        assert ret is True
-        assert u'\u1E31\u1E77\u1E53\u006E' == readAll(path, **kwargs)
-
-    def test_writeAllUnlessThereNewFile(self, fixtureDir):
-        path = join(fixtureDir, 'a.dat')
-        ret = writeAll(path, b'abc', mode='wb', skipIfSameContent=True)
-        assert ret is True
-        assert b'abc' == readAll(path, 'rb')
-
-    def test_writeAllUnlessThereChangedFile(self, fixtureDir):
-        path = join(fixtureDir, 'a.dat')
-        writeAll(path, b'abcd', 'wb')
-        ret = writeAll(path, b'abc', mode='wb', skipIfSameContent=True)
-        assert ret is True
-        assert b'abc' == readAll(path, 'rb')
-
-    def test_writeAllUnlessThereSameFile(self, fixtureDir):
-        path = join(fixtureDir, 'a.dat')
-        writeAll(path, b'abc', 'wb')
-        ret = writeAll(path, b'abc', mode='wb', skipIfSameContent=True)
-        assert ret is False
-        assert b'abc' == readAll(path, 'rb')
-
-    def test_writeAllUnlessThereNewTxtFile(self, fixtureDir):
-        path = join(fixtureDir, 'a.txt')
-        ret = writeAll(path, 'abc', mode='w', skipIfSameContent=True)
-        assert ret is True
-        assert 'abc' == readAll(path)
-
-    def test_writeAllUnlessThereChangedTxtFile(self, fixtureDir):
-        path = join(fixtureDir, 'a.txt')
-        writeAll(path, 'abcd')
-        ret = writeAll(path, 'abc', mode='w', skipIfSameContent=True)
-        assert ret is True
-        assert 'abc' == readAll(path)
-
-    def test_writeAllUnlessThereSameTxtFile(self, fixtureDir):
-        path = join(fixtureDir, 'a.txt')
-        writeAll(path, 'abc')
-        ret = writeAll(path, 'abc', mode='w', skipIfSameContent=True)
-        assert ret is False
-        assert 'abc' == readAll(path)
 
 class TestDirectoryList:
     def test_listDirs(self, fixture_fulldir):
@@ -526,19 +465,19 @@ class TestRunRSync:
 
     def test_expectFailure(self, fixtureDir):
         # try to copy non-existing directory
-        src = join(fixtureDir, 'src')
-        dest = join(fixtureDir, 'dest')
+        src = join(fixtureDir, 'srcnotexist')
+        dest = join(fixtureDir, 'destnotexist')
         with pytest.raises(Exception):
             runRsync(src, dest, deleteExisting=True, checkExist=False)
 
-    def test_nonWindowsError(self, fixtureDir):
+    def test_nonWindowsError(self, ):
         assert (True, '') == runRsyncErrMap(0, 'linux')
         assert (False, 'Syntax or usage error') == runRsyncErrMap(1, 'linux')
         assert (False, 'Timeout waiting for daemon connection') == runRsyncErrMap(35, 'linux')
         assert (False, 'Unknown') == runRsyncErrMap(-1, 'linux')
         assert (False, 'Unknown') == runRsyncErrMap(100, 'linux')
 
-    def test_windowsError(self, fixtureDir):
+    def test_windowsError(self, ):
         res = runRsyncErrMap(0x0, 'windows')
         assert res[0] is True and res[1] == ''
         res = runRsyncErrMap(0x1, 'windows')

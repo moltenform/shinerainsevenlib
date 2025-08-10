@@ -246,33 +246,57 @@ def moveImpl(
 
     assertTrue(exists(destFile))
 
+confirmedMvOpts = None
 def _moveFilePosixNoOverwrite(srcFile, destFile, overwrite):
+    from . import m2_files_higher
+    global confirmedMvOpts
     if overwrite:
         _shutil.move(srcFile, destFile)
         return
-        
-    import tempfile
-    backupCopy = tempfile.gettempdir() + '/srsstmp'
-    deleteSure(backupCopy)
-    expectedLen = getSize(srcFile)
-    _copyFilePosixByContentsNoOverwrite(srcFile, backupCopy)
-    _copyFilePosixByContentsNoOverwrite(srcFile, destFile)
+
+    # why not use do a copy with an exclusive lock, like we do for copy()?
+    # because the implementation of copy that way would look like this:
+    # 1) copy src to dest 2) delete src
+    # so if for some reason src and dest pointed to the same data, this could
+    # lead to data loss. we do prevent this in arePathsSame() but there could be
+    # some type of scenario like hardlinks where we'd still be in trouble.
+    # could potentially build a solution by copying to temp file, but slow.
+    # so let's shell out to mv just to be safe.
+
+    if confirmedMvOpts is None:
+        confirmedMvOpts = _confirmMvOpts()
+
+    if confirmedMvOpts is not True:
+        raise OSFileRelatedError("Could not move, " + confirmedMvOpts)
+    else:
+        m2_files_higher.run(['mv', '--no-clobber', srcFile, destFile])
     
-    needRestore = False
+def _confirmMvOpts():
+    from . import m2_files_higher
+    import tempfile as _tmpfile
+    err = None
+    f1 = _tmpfile.gettempdir() + '/f1.txt'
+    f2 = _tmpfile.gettempdir() + '/f2.txt'
+    writeAll(f1, 'f1')
+    writeAll(f2, 'f2')
+    didClobber = False
     try:
-        delete(srcFile)
-        if not exists(destFile) or getSize(destFile) != expectedLen:
-            needRestore = OSFileRelatedError('Failed to move file')
-    except Exception as e:
-        needRestore = e
+        # coreutils that support this include: gnu, toybox, rust uutils
+        # coreutils that don't support this include: busybox, heirloom, sbase
+        # coreutils where I didn't see mv: 9base, ubase
+        m2_files_higher.run(['mv', '--no-clobber', f1, f2])
+        didClobber = readAll(f2) == 'f1'
+    except Exception as err:
+        return f'failed to run no-clobber test, please use gnu coreutils or rust uutils {err}'
     finally:
-        if needRestore:
-            _copyFilePosixByContentsNoOverwrite(backupCopy, srcFile)
-        delete(backupCopy)
-
-    if needRestore:
-        raise needRestore
-
+        delete(f1)
+        delete(f2)
+    
+    if didClobber:
+        return f'mv still overwrote even with --no-clobber, please use gnu coreutils or rust uutils'
+    else:
+        return True
+        
 
 _winErrs = {
     3: 'Path not found',
@@ -313,6 +337,7 @@ def _moveFileWin(srcFile, destFile, overwrite, warnBetweenDrives):
         raise OSFileRelatedError(
             f'MoveFileExW failed ({_winErrs.get(err, "unknown")}) err={err} '
         )
+    
     return None
 
 def _copyFilePosixByContentsNoOverwrite(srcFile, destFile):

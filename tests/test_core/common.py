@@ -6,14 +6,14 @@ from src.shinerainsevenlib.standard import *
 
 
 @pytest.fixture()
-def fixtureDir():
+def fxDirPlain():
     "A fixture providing a empty directory for testing."
     basedir = files.join(tempfile.gettempdir(), 'shinerainsevenlib_test', 'empty')
     files.ensureEmptyDirectory(basedir)
     yield basedir
     files.ensureEmptyDirectory(basedir)
 
-def _fixtureFileTreeImpl():
+def _fxTreeImpl():
     basedir = files.join(tempfile.gettempdir(), 'shinerainsevenlib_test', 'tree')
     files.ensureEmptyDirectory(basedir)
     lst = [
@@ -38,7 +38,7 @@ def _fixtureFileTreeImpl():
 
 @pytest.fixture()
 def fxTree():
-    basedir = _fixtureFileTreeImpl()
+    basedir = _fxTreeImpl()
     ret = Bucket(basedir=basedir)
     ret.pathSmallFile = basedir + '/r3.txt'
     ret.pathFileExists = basedir + '/foobar/a/foobar/c/c0.txt'
@@ -52,12 +52,12 @@ def fxTree():
     files.ensureEmptyDirectory(basedir)
 
 @pytest.fixture()
-def fixtureFileTree():
-    basedir = _fixtureFileTreeImpl()
+def fxTreePlain():
+    basedir = _fxTreeImpl()
     yield basedir
     files.ensureEmptyDirectory(basedir)
 
-def _fixtureFilesImpl():
+def _fxFilesImpl():
     basedir = files.join(tempfile.gettempdir(), 'shinerainsevenlib_test', 'files')
     files.ensureEmptyDirectory(basedir)
     lst = [
@@ -78,7 +78,7 @@ def _fixtureFilesImpl():
 
 @pytest.fixture()
 def fxFiles():
-    basedir = _fixtureFilesImpl()
+    basedir = _fxFilesImpl()
     ret = Bucket(basedir=basedir)
     ret.f1 = basedir + '/1\u1101.txt'
     ret.f2 = basedir + '/2\u1101.txt'
@@ -87,8 +87,8 @@ def fxFiles():
     files.ensureEmptyDirectory(basedir)
 
 @pytest.fixture()
-def fixtureFiles():
-    basedir = _fixtureFilesImpl()
+def fxFilesPlain():
+    basedir = _fxFilesImpl()
     yield basedir
     files.ensureEmptyDirectory(basedir)
 

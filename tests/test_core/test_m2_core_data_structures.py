@@ -9,22 +9,22 @@ import enum
 from os.path import join
 from src.shinerainsevenlib.standard import *
 from src.shinerainsevenlib.core import *
-from common import fixtureDir
+from common import fxDirPlain
 from collections import OrderedDict
 
 @pytest.mark.skipif('not isPy3OrNewer')
 class TestPersistedDict:
-    def test_noPersistYet(self, fixtureDir):
+    def test_noPersistYet(self, fxDirPlain):
         # won't persist since 5 things haven't been written
-        path = join(fixtureDir, 'test.json')
+        path = join(fxDirPlain, 'test.json')
         obj = PersistedDict(path, warnIfCreatingNew=False, persistEveryNWrites=5)
         obj.set('key1', 'val1')
         assert 1 == len(obj.data)
         objRead = PersistedDict(path)
         assert 0 == len(objRead.data)
 
-    def test_willPersist(self, fixtureDir):
-        path = join(fixtureDir, 'test.json')
+    def test_willPersist(self, fxDirPlain):
+        path = join(fxDirPlain, 'test.json')
         obj = PersistedDict(path, warnIfCreatingNew=False, persistEveryNWrites=5)
         for i in range(6):
             obj.set('key%d' % i, 'val%d' % i)
@@ -34,24 +34,24 @@ class TestPersistedDict:
         for i in range(5):
             assert 'val%d' % i == objRead.data['key%d' % i]
 
-    def test_canLoadEmpty(self, fixtureDir):
-        path = join(fixtureDir, 'test.json')
+    def test_canLoadEmpty(self, fxDirPlain):
+        path = join(fxDirPlain, 'test.json')
         obj = PersistedDict(path, warnIfCreatingNew=False, persistEveryNWrites=5)
         obj.persist()
         assertTrue(files.isFile(path))
         objRead = PersistedDict(path, warnIfCreatingNew=True)
         assert 0 == len(objRead.data)
 
-    def test_canWriteUnicode(self, fixtureDir):
-        path = join(fixtureDir, u'test\u1101.json')
+    def test_canWriteUnicode(self, fxDirPlain):
+        path = join(fxDirPlain, u'test\u1101.json')
         obj = PersistedDict(path, warnIfCreatingNew=False, persistEveryNWrites=1)
         obj.set('key\u1101', '\u1101val')
         objRead = PersistedDict(path, warnIfCreatingNew=True)
         assert 1 == len(objRead.data)
         assert '\u1101val' == objRead.data['key\u1101']
 
-    def test_canWriteDataTypes(self, fixtureDir):
-        path = join(fixtureDir, u'test.json')
+    def test_canWriteDataTypes(self, fxDirPlain):
+        path = join(fxDirPlain, u'test.json')
         obj = PersistedDict(path, warnIfCreatingNew=False, persistEveryNWrites=1)
         obj.set('testInt', 123)
         obj.set('testString', 'abc')
@@ -65,8 +65,8 @@ class TestPersistedDict:
         assert [12, 34, 56] == objRead.data['testList']
         assertFloatEq(1.2345, objRead.data['testFloat'])
 
-    def test_canWriteDataTypesAsKeys(self, fixtureDir):
-        path = join(fixtureDir, u'test.json')
+    def test_canWriteDataTypesAsKeys(self, fxDirPlain):
+        path = join(fxDirPlain, u'test.json')
         obj = PersistedDict(path, warnIfCreatingNew=False, persistEveryNWrites=1)
         obj.set(123, 'testInt')
         obj.set('abc', 'testString')
@@ -76,8 +76,8 @@ class TestPersistedDict:
         assert 'testString' == objRead.data['abc']
         assert 'testBool' == objRead.data['true']
 
-    def test_twoDeep(self, fixtureDir):
-        path = join(fixtureDir, u'test.json')
+    def test_twoDeep(self, fxDirPlain):
+        path = join(fxDirPlain, u'test.json')
         obj = PersistedDict(path, warnIfCreatingNew=False, persistEveryNWrites=1)
         obj.set('rkey1', {})
         obj.set('rkey2', {})
@@ -92,8 +92,8 @@ class TestPersistedDict:
         assert 'v21' == objRead.data['rkey2']['k1']
         assert 'v22' == objRead.data['rkey2']['k2']
 
-    def test_threeDeep(self, fixtureDir):
-        path = join(fixtureDir, u'test.json')
+    def test_threeDeep(self, fxDirPlain):
+        path = join(fxDirPlain, u'test.json')
         obj = PersistedDict(path, warnIfCreatingNew=False, persistEveryNWrites=1)
         obj.set('rrkey1', {})
         obj.set('rrkey2', {})
@@ -110,8 +110,8 @@ class TestPersistedDict:
         assert {} == objRead.data['rrkey2']['rkey1']
         assert 'vb' == objRead.data['rrkey2']['rkey2']['rkeyb']
 
-    def test_keepHandle(self, fixtureDir):
-        path = join(fixtureDir, 'test.json')
+    def test_keepHandle(self, fxDirPlain):
+        path = join(fxDirPlain, 'test.json')
         obj = PersistedDict(path, warnIfCreatingNew=False, persistEveryNWrites=1, keepHandle=True)
         for i in range(6):
             obj.set('key%d' % i, 'val%d' % i)
@@ -361,8 +361,8 @@ class TestParsePlus:
         assert found.c1 == 'ff'
         assert found.c2 == 'ss'
 
-    def test_replaceTextFailsIfNotExists(self, fixtureDir):
-        path = files.join(fixtureDir, 'testreplace.txt')
+    def test_replaceTextFailsIfNotExists(self, fxDirPlain):
+        path = files.join(fxDirPlain, 'testreplace.txt')
         contentsFail = '<tag> Target</b> </tag>'
         files.writeAll(path, contentsFail)
         with pytest.raises(RuntimeError) as exc:
@@ -370,8 +370,8 @@ class TestParsePlus:
                 's', 'o')
         exc.match('pattern not found')
 
-    def test_replaceTextFailsIfMultiple(self, fixtureDir):
-        path = files.join(fixtureDir, 'testreplace.txt')
+    def test_replaceTextFailsIfMultiple(self, fxDirPlain):
+        path = files.join(fxDirPlain, 'testreplace.txt')
         contentsFail = '<tag> <b>Target</b> <b>Other</b></tag>'
         files.writeAll(path, contentsFail)
         with pytest.raises(RuntimeError) as exc:
@@ -379,8 +379,8 @@ class TestParsePlus:
                 's', 'o', allowOnlyOnce=True)
         exc.match('only once')
 
-    def test_replaceTextFailsIfMultipleOpen(self, fixtureDir):
-        path = files.join(fixtureDir, 'testreplace.txt')
+    def test_replaceTextFailsIfMultipleOpen(self, fxDirPlain):
+        path = files.join(fxDirPlain, 'testreplace.txt')
         contentsFail = '<tag> <b>Target</b> <b>Other</tag></b>'
         files.writeAll(path, contentsFail)
         with pytest.raises(RuntimeError) as exc:
@@ -388,8 +388,8 @@ class TestParsePlus:
                 's', 'o', allowOnlyOnce=True)
         exc.match('only once')
 
-    def test_replaceTextFailsIfMultipleClose(self, fixtureDir):
-        path = files.join(fixtureDir, 'testreplace.txt')
+    def test_replaceTextFailsIfMultipleClose(self, fxDirPlain):
+        path = files.join(fxDirPlain, 'testreplace.txt')
         contentsFail = '<tag> <b>Target</b> Othe<b>r</b></tag>'
         files.writeAll(path, contentsFail)
         with pytest.raises(RuntimeError) as exc:
@@ -397,8 +397,8 @@ class TestParsePlus:
                 's', 'o', allowOnlyOnce=True)
         exc.match('only once')
 
-    def test_replaceTextAppendsIfNotExists(self, fixtureDir):
-        path = files.join(fixtureDir, 'testreplace.txt')
+    def test_replaceTextAppendsIfNotExists(self, fxDirPlain):
+        path = files.join(fxDirPlain, 'testreplace.txt')
         contents = '<tag>Target</b> </tag>'
         files.writeAll(path, contents)
         ParsePlus('<b>{s}</b>').replaceFieldWithTextIntoFile(path,
@@ -407,8 +407,8 @@ class TestParsePlus:
         newContents = files.readAll(path)
         assert newContents == '<tag>Target</b> </tag>:append:'
 
-    def test_replaceTextSucceeds(self, fixtureDir):
-        path = files.join(fixtureDir, 'testreplace.txt')
+    def test_replaceTextSucceeds(self, fxDirPlain):
+        path = files.join(fxDirPlain, 'testreplace.txt')
         contents = '<tag> <b>Target</b> </tag>'
         files.writeAll(path, contents)
         ParsePlus('<b>{s}</b>').replaceFieldWithTextIntoFile(path,
@@ -416,24 +416,24 @@ class TestParsePlus:
         newContents = files.readAll(path)
         assert newContents == '<tag> <b>out</b> </tag>'
 
-    def test_replaceTextSucceedsManyClosers(self, fixtureDir):
-        path = files.join(fixtureDir, 'testreplace.txt')
+    def test_replaceTextSucceedsManyClosers(self, fxDirPlain):
+        path = files.join(fxDirPlain, 'testreplace.txt')
         contents = '<tag> <b>Target</b> and</b></tag>'
         files.writeAll(path, contents)
         ParsePlus('<b>{s}</b>').replaceFieldWithTextIntoFile(path, 's', 'o')
         newContents = files.readAll(path)
         assert newContents == '<tag> <b>o</b> and</b></tag>'
 
-    def test_replaceTextSucceedsManyBoth(self, fixtureDir):
-        path = files.join(fixtureDir, 'testreplace.txt')
+    def test_replaceTextSucceedsManyBoth(self, fxDirPlain):
+        path = files.join(fxDirPlain, 'testreplace.txt')
         contents = '<tag> <b>Target</b> <b>other</b></tag>'
         files.writeAll(path, contents)
         ParsePlus('<b>{s}</b>').replaceFieldWithTextIntoFile(path, 's', 'o')
         newContents = files.readAll(path)
         assert newContents == '<tag> <b>o</b> <b>other</b></tag>'
 
-    def test_replaceTextSucceedsLonger(self, fixtureDir):
-        path = files.join(fixtureDir, 'testreplace.txt')
+    def test_replaceTextSucceedsLonger(self, fxDirPlain):
+        path = files.join(fxDirPlain, 'testreplace.txt')
         contents = '<tag> <look>LongerTextIsHere</look> </tag>'
         files.writeAll(path, contents)
         ParsePlus('<look>{s}</look>').replaceFieldWithTextIntoFile(path,

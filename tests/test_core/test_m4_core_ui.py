@@ -8,7 +8,7 @@ import random
 from os.path import join
 from src.shinerainsevenlib.standard import *
 from src.shinerainsevenlib.core import *
-from common import fixtureDir
+from common import fxDirPlain
 from src.shinerainsevenlib.core import m4_core_ui
 
 class TestGetRawInput:
