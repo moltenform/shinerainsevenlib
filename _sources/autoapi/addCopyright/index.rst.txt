@@ -1,0 +1,6 @@
+addCopyright
+============
+
+.. py:module:: addCopyright
+
+

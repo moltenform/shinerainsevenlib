@@ -1,0 +1,114 @@
+shinerainsevenlib.files.m2_files_higher
+=======================================
+
+.. py:module:: shinerainsevenlib.files.m2_files_higher
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   shinerainsevenlib.files.m2_files_higher.defaultBufSize
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   shinerainsevenlib.files.m2_files_higher.openDirectoryInExplorer
+   shinerainsevenlib.files.m2_files_higher.openUrl
+   shinerainsevenlib.files.m2_files_higher.findBinaryOnPath
+   shinerainsevenlib.files.m2_files_higher.hasherFromString
+   shinerainsevenlib.files.m2_files_higher.computeHashBytes
+   shinerainsevenlib.files.m2_files_higher.computeHash
+   shinerainsevenlib.files.m2_files_higher.windowsUrlFileGet
+   shinerainsevenlib.files.m2_files_higher.windowsUrlFileWrite
+   shinerainsevenlib.files.m2_files_higher.runWithoutWait
+   shinerainsevenlib.files.m2_files_higher.runWithTimeout
+   shinerainsevenlib.files.m2_files_higher.run
+   shinerainsevenlib.files.m2_files_higher.runPskill
+   shinerainsevenlib.files.m2_files_higher.makeShortcut
+
+
+Module Contents
+---------------
+
+.. py:function:: openDirectoryInExplorer(path)
+
+   Open directory in operating system, like finder or windows explorer.
+
+
+.. py:function:: openUrl(url, filterChars=True)
+
+   Open a url in the default browser
+
+
+.. py:function:: findBinaryOnPath(name)
+
+   This even knows about .bat and .exe on windows platforms
+
+
+.. py:function:: hasherFromString(s)
+
+   Get a hash function from a string. If you've
+   installed xxhash, you can use 'xxhash_32' and 'xxhash_64' here.
+
+
+.. py:data:: defaultBufSize
+   :value: 262144
+
+
+.. py:function:: computeHashBytes(b, hasher='sha1', buffersize=defaultBufSize)
+
+   Get hash of a bytes object, or a crc32
+
+
+.. py:function:: computeHash(path, hasher='sha1', buffersize=defaultBufSize)
+
+   Get hash of file, or a crc32
+
+
+.. py:function:: windowsUrlFileGet(path)
+
+   Extract the url from a windows .url file
+
+
+.. py:function:: windowsUrlFileWrite(path, url)
+
+   Create a windows .url file
+
+
+.. py:function:: runWithoutWait(listArgs)
+
+   Run process without waiting for completion
+
+
+.. py:function:: runWithTimeout(args, *, shell=False, createNoWindow=True, throwOnFailure=True, captureOutput=True, timeoutSeconds=None, addArgs=None)
+
+   Run a process, with a timeout.
+   on some windows IDEs, starting a process visually shows a black window appearing,
+   so can pass createNoWindow to prevent this.
+   returns tuple (returncode, stdout, stderr)
+
+
+.. py:function:: run(listArgs, *, shell=False, createNoWindow=True, throwOnFailure=RuntimeError, stripText=True, captureOutput=True, silenceOutput=False, wait=True, confirmExists=False)
+
+   Run a process.
+   on some windows IDEs, starting a process visually shows a black window appearing,
+   so can pass createNoWindow to prevent this.
+   by default throws if the process fails (return code is nonzero).
+   returns tuple (returncode, stdout, stderr)
+
+
+.. py:function:: runPskill(args)
+
+   Use pskill to terminate a process
+
+
+.. py:function:: makeShortcut(sourcePath, targetPath)
+
+   Create a symlink (or .lnk shortcut on Windows)
+
+

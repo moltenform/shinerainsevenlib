@@ -1,0 +1,246 @@
+shinerainsevenlib.core.m2_core_data_structures
+==============================================
+
+.. py:module:: shinerainsevenlib.core.m2_core_data_structures
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   shinerainsevenlib.core.m2_core_data_structures.DefaultVal
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   shinerainsevenlib.core.m2_core_data_structures.PersistedDict
+   shinerainsevenlib.core.m2_core_data_structures.ParsePlus
+   shinerainsevenlib.core.m2_core_data_structures.Bucket
+   shinerainsevenlib.core.m2_core_data_structures.SentinalIndicatingDefault
+   shinerainsevenlib.core.m2_core_data_structures.TakeBatch
+   shinerainsevenlib.core.m2_core_data_structures.RecentlyUsedList
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   shinerainsevenlib.core.m2_core_data_structures.appendToListInDictOrStartNewList
+   shinerainsevenlib.core.m2_core_data_structures.takeBatchOnArbitraryIterable
+   shinerainsevenlib.core.m2_core_data_structures.takeBatch
+   shinerainsevenlib.core.m2_core_data_structures.listToNPieces
+   shinerainsevenlib.core.m2_core_data_structures.BoundedMemoize
+
+
+Module Contents
+---------------
+
+.. py:class:: PersistedDict(filename, warnIfCreatingNew=True, keepHandle=False, persistEveryNWrites=5)
+
+   Store a dict (or dict of dicts) on disk.
+
+
+   .. py:attribute:: data
+      :value: None
+
+
+
+   .. py:attribute:: handle
+      :value: None
+
+
+
+   .. py:attribute:: counter
+      :value: 0
+
+
+
+   .. py:attribute:: persistEveryNWrites
+      :value: 1
+
+
+
+   .. py:attribute:: filename
+
+
+   .. py:method:: load(encoding='utf-8')
+
+
+   .. py:method:: close()
+
+
+   .. py:method:: persist()
+
+
+   .. py:method:: afterUpdate()
+
+
+   .. py:method:: set(key, value)
+
+
+   .. py:method:: setSubDict(subDictName, key, value)
+
+
+   .. py:method:: setSubSubDict(subDictName, key1, key2, value)
+
+
+.. py:class:: ParsePlus(pattern, extraTypes=None, escapeSequences=None, caseSensitive=True)
+
+   Adds the following features to the "parse" module:
+
+   {s:NoNewlines} field type
+   {s:NoSpaces} works like {s:S}
+   remember that "{s} and {s}" matches "a and a" but not "a and b",
+
+   use "{s1} and {s2}" or "{} and {}" if the contents can differ.
+   escapeSequences such as backslash-escapes (see examples in tests).
+   replaceFieldWithText (see examples in tests).
+   getTotalSpan.
+
+
+   .. py:attribute:: pattern
+
+
+   .. py:attribute:: caseSensitive
+      :value: True
+
+
+
+   .. py:attribute:: extraTypes
+
+
+   .. py:attribute:: escapeSequences
+      :value: []
+
+
+
+   .. py:attribute:: spans
+      :value: None
+
+
+
+   .. py:attribute:: getTotalSpan
+      :value: None
+
+
+
+   .. py:method:: match(s)
+
+      Entire string must match
+
+
+
+   .. py:method:: search(s)
+
+
+   .. py:method:: findAll(s)
+
+
+   .. py:method:: replaceFieldWithText(s, key, newValue, appendIfNotFound=None, allowOnlyOnce=False)
+
+      Example: <title>{title}</title>
+
+
+
+   .. py:method:: replaceFieldWithTextIntoFile(path, key, newValue, appendIfNotFound=None, allowOnlyOnce=False, encoding='utf-8')
+
+      Convenience method to write the results to a file
+
+
+
+.. py:class:: Bucket(**kwargs)
+
+   Simple named-tuple; o.field looks nicer than o['field'].
+   similar to standard library's types.SimpleNamespace.
+
+
+   .. py:method:: get(k, fallback=None)
+
+
+   .. py:method:: set(k, v)
+
+
+   .. py:method:: getChildKeys()
+
+
+.. py:class:: SentinalIndicatingDefault
+
+   Use this with keyword args to see if an argument was passed vs. left to default, see pep 661
+
+
+.. py:data:: DefaultVal
+
+.. py:function:: appendToListInDictOrStartNewList(d, key, val)
+
+   Similar to setdefault, but easier to read in my opinion
+
+
+.. py:function:: takeBatchOnArbitraryIterable(iterable, size)
+
+   Yield successive n-sized chunks from a list, like javascript's _.chunk
+
+
+.. py:function:: takeBatch(itr, n)
+
+   Get successive n-sized chunks from a list, like javascript's _.chunk
+
+
+.. py:class:: TakeBatch(batchSize, callback)
+
+   Run a callback on n-sized chunks from a list, like javascript's _.chunk.
+   The convenient part is that any leftover pieces will be automatically processed.
+
+
+   .. py:attribute:: batch
+      :value: []
+
+
+
+   .. py:attribute:: batchSize
+
+
+   .. py:attribute:: callback
+
+
+   .. py:method:: append(item)
+
+
+.. py:function:: listToNPieces(lst, nPieces)
+
+   Split a list into n pieces
+   listToNPieces([1, 2, 3, 4, 5, 6], 2) -> [[1, 2, 3], [4, 5, 6]]
+
+
+.. py:class:: RecentlyUsedList(maxSize=None, startList=None)
+
+   Keep a list of items. Doesn't store duplicates
+
+
+   .. py:attribute:: list
+      :value: []
+
+
+
+   .. py:attribute:: maxSize
+      :value: None
+
+
+
+   .. py:method:: getList()
+
+
+   .. py:method:: add(s)
+
+
+.. py:function:: BoundedMemoize(fn)
+
+   Inspired by http://code.activestate.com/recipes/496879-memoize-decorator-function-with-cache-size-limit/
+   The number of items cached defaults to 20.
+   You can adjust the number of items cached by setting the .limit expando property on the function itself.
+
+
