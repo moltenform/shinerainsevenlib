@@ -43,152 +43,6 @@ class TestFiletimes:
 
 
 
-class TestDirectoryList:
-    def test_listDirs(self, fixture_fulldir):
-        expected = ['s1', 's2']
-        expectedTuples = [(join(fixture_fulldir, s), s) for s in expected]
-        assert expectedTuples == sorted(list(listDirs(fixture_fulldir)))
-
-    def test_listChildren(self, fixture_fulldir):
-        expected = ['P1.PNG', 'a1.txt', 'a2png', 's1', 's2']
-        expectedTuples = [(join(fixture_fulldir, s), s) for s in expected]
-        assert expectedTuples == sorted(list(listChildren(fixture_fulldir)))
-
-    def test_listChildrenFilenamesOnly(self, fixture_fulldir):
-        expected = ['P1.PNG', 'a1.txt', 'a2png', 's1', 's2']
-        assert expected == sorted(list(listChildren(fixture_fulldir, filenamesOnly=True)))
-
-    def test_listChildrenCertainExtensions(self, fixture_fulldir):
-        expected = ['P1.PNG', 'a1.txt']
-        assert expected == sorted(list(listChildren(fixture_fulldir, filenamesOnly=True, allowedExts=['png', 'txt'])))
-
-    def test_listFiles(self, fixture_fulldir):
-        expected = ['P1.PNG', 'a1.txt', 'a2png']
-        expectedTuples = [(join(fixture_fulldir, s), s) for s in expected]
-        assert expectedTuples == sorted(list(listFiles(fixture_fulldir)))
-
-    def test_listFilesFilenamesOnly(self, fixture_fulldir):
-        expected = ['P1.PNG', 'a1.txt', 'a2png']
-        assert expected == sorted(list(listFiles(fixture_fulldir, filenamesOnly=True)))
-
-    def test_listFilesCertainExtensions(self, fixture_fulldir):
-        expected = ['P1.PNG', 'a1.txt']
-        assert expected == sorted(list(listFiles(fixture_fulldir, filenamesOnly=True, allowedExts=['png', 'txt'])))
-
-    def test_recurseFiles(self, fixture_fulldir):
-        expected = ['/P1.PNG', '/a1.txt', '/a2png', '/s1/ss1/file.txt', '/s2/other.txt']
-        expectedTuples = [(fixture_fulldir + s.replace('/', sep), getName(s)) for s in expected]
-        assert expectedTuples == sorted(list(recurseFiles(fixture_fulldir)))
-
-    def test_recurseFilesFilenamesOnly(self, fixture_fulldir):
-        expected = ['P1.PNG', 'a1.txt', 'a2png', 'file.txt', 'other.txt']
-        assert expected == sorted(list(recurseFiles(fixture_fulldir, filenamesOnly=True)))
-
-    def test_recurseFilesCertainExtensions(self, fixture_fulldir):
-        expected = ['a1.txt', 'file.txt', 'other.txt']
-        assert expected == sorted(list(recurseFiles(fixture_fulldir, filenamesOnly=True, allowedExts=['txt'])))
-
-    def test_recurseFilesAcceptAllSubDirs(self, fixture_fulldir):
-        expected = ['a1.txt', 'file.txt', 'other.txt']
-        assert expected == sorted(list(
-            recurseFiles(fixture_fulldir, filenamesOnly=True, allowedExts=['txt'], fnFilterDirs=lambda d: True)))
-
-    def test_recurseFilesAcceptNoSubDirs(self, fixture_fulldir):
-        expected = ['a1.txt']
-        assert expected == sorted(list(
-            recurseFiles(fixture_fulldir, filenamesOnly=True, allowedExts=['txt'], fnFilterDirs=lambda d: False)))
-
-    def test_recurseFilesExcludeOneSubdir(self, fixture_fulldir):
-        expected = ['a1.txt', 'other.txt']
-
-        def filter(d):
-            return getName(d) != 's1'
-        assert expected == sorted(list(recurseFiles(fixture_fulldir, filenamesOnly=True, allowedExts=['txt'], 
-                                                    fnFilterDirs=filter)))
-
-    def test_recurseDirs(self, fixture_fulldir):
-        expected = ['/full', '/full/s1', '/full/s1/ss1', '/full/s1/ss2', '/full/s2']
-        expectedTuples = [(getParent(fixture_fulldir) + s.replace('/', sep), getName(s)) for s in expected]
-        assert expectedTuples == sorted(list(recurseDirs(fixture_fulldir)))
-
-    def test_recurseDirsNamesOnly(self, fixture_fulldir):
-        expected = ['full', 's1', 's2', 'ss1', 'ss2']
-        assert expected == sorted(list(recurseDirs(fixture_fulldir, filenamesOnly=True)))
-
-    def test_recurseDirsExcludeOneSubdir(self, fixture_fulldir):
-        expected = ['full', 's2']
-
-        def filter(d):
-            return getName(d) != 's1'
-        assert expected == sorted(list(recurseDirs(fixture_fulldir, filenamesOnly=True, 
-                                                   fnFilterDirs=filter)))
-
-    def tupleFromObj(self, o):
-        # x-platform differences in what is the size of a directory
-        size = 0 if isDir(o.path) else o.size()
-        return (getName(getParent(o.path)), o.short(), size)
-
-    @pytest.mark.skipif('not isPy3OrNewer')
-    def test_listFileInfo(self, fixture_fulldir):
-        expected = [('full', 'P1.PNG', 15), ('full', 'a1.txt', 15), ('full', 'a2png', 14)]
-        got = [self.tupleFromObj(o) for o in listFileInfo(fixture_fulldir)]
-        assert expected == sorted(got)
-
-    @pytest.mark.skipif('not isPy3OrNewer')
-    def test_listFileInfoIncludeDirs(self, fixture_fulldir):
-        expected = [('full', 'P1.PNG', 15), ('full', 'a1.txt', 15), ('full', 'a2png', 14),
-            ('full', 's1', 0), ('full', 's2', 0)]
-        got = [self.tupleFromObj(o)
-            for o in listFileInfo(fixture_fulldir, filesOnly=False)]
-        assert expected == sorted(got)
-
-    @pytest.mark.skipif('not isPy3OrNewer')
-    def test_recurseFileInfo(self, fixture_fulldir):
-        expected = [('full', 'P1.PNG', 15), ('full', 'a1.txt', 15), ('full', 'a2png', 14),
-            ('s2', 'other.txt', 18), ('ss1', 'file.txt', 17)]
-        got = [self.tupleFromObj(o)
-            for o in recurseFileInfo(fixture_fulldir)]
-        assert expected == sorted(got)
-
-    @pytest.mark.skipif('not isPy3OrNewer')
-    def test_recurseFileInfoIncludeDirs(self, fixture_fulldir):
-        expected = [('full', 'P1.PNG', 15), ('full', 'a1.txt', 15), ('full', 'a2png', 14),
-            ('full', 's1', 0), ('full', 's2', 0), ('s1', 'ss1', 0), ('s1', 'ss2', 0),
-            ('s2', 'other.txt', 18), ('ss1', 'file.txt', 17)]
-        got = [self.tupleFromObj(o)
-            for o in recurseFileInfo(fixture_fulldir, filesOnly=False)]
-        assert expected == sorted(got)
-
-    @pytest.mark.skipif('not isPy3OrNewer')
-    def test_recurseFilesMany(self, fixtureFileTree):
-        # no filter
-        expected = 'fb/a/bz/aa.txt|fb/a/bz/bb.txt|fb/a/bz/fb/cc.txt|' + \
-            'fb/a/bz/zz.txt|fb/a/fb/a.txt|fb/a/fb/b.txt|fb/a/fb' + \
-            '/c/c0.txt|fb/a/fb/c/c1.txt|fb/a/r1.txt|fb/fb/cc.txt|fb/r2.txt|r3.txt'
-        assert expected == listDirectoryToStringFileInfo(fixtureFileTree, True, {})
-        assert expected == listDirectoryToStringFileInfo(fixtureFileTree, False, {})
-
-        # filter out nearly everything
-        def filter(p):
-            return getName(p) != 'fb'
-        assert 'r3.txt' == listDirectoryToStringFileInfo(fixtureFileTree, True, {'fnFilterDirs': filter})
-        assert 'r3.txt' == listDirectoryToStringFileInfo(fixtureFileTree, False, {'fnFilterDirs': filter})
-
-        # intentionally can't filter out root dir
-        expected = 'a/bz/aa.txt|a/bz/bb.txt|a/bz/zz.txt|a/r1.txt|r2.txt'
-        assert expected == listDirectoryToStringFileInfo(fixtureFileTree + '/fb', True, {'fnFilterDirs': filter})
-        assert expected == listDirectoryToStringFileInfo(fixtureFileTree + '/fb', False, {'fnFilterDirs': filter})
-
-    def test_checkNamedParameters(self, fixtureDir):
-        with pytest.raises(ValueError) as exc:
-            list(listChildren(fixtureDir, True))
-        exc.match('please name parameters')
-
-class TestOtherUtilsActingOnFiles:
-    def test_getSizeRecurse(self, fixture_fulldir):
-        assert getSizeRecurse(fixture_fulldir) == 79
-
-
 class TestFilesUtils:
     def test_extensionPossiblyExecutableNoExt(self, fixtureDir):
         assert extensionPossiblyExecutable('noext') is False
@@ -275,17 +129,17 @@ URL=https://example.net/
         assert 'https://example.net/' == windowsUrlFileGet(join(fixtureDir, 'a.url'))
 
 class TestRunRSync:
-    def test_normal(self, fixture_fulldir, fixtureDir):
+    def test_normal(self, fxFullDirPlain, fixtureDir):
         # typical usage
         expect = 'P1.PNG,15|a1.txt,15|a2png,14|s1,0|s1/ss1,0|s1/ss1/file.txt,17|s1/ss2,0|s2,0|s2/other.txt,18'
-        assert expect == listDirectoryToString(fixture_fulldir)
+        assert expect == listDirectoryToString(fxFullDirPlain)
         dest = join(fixtureDir, 'dest')
         makeDirs(dest)
-        runRsync(fixture_fulldir, dest, deleteExisting=True)
+        runRsync(fxFullDirPlain, dest, deleteExisting=True)
         assert expect == listDirectoryToString(dest)
 
         # copy it again, nothing to change
-        runRsync(fixture_fulldir, dest, deleteExisting=True)
+        runRsync(fxFullDirPlain, dest, deleteExisting=True)
         assert expect == listDirectoryToString(dest)
 
     def test_empty(self, fixtureDir):
@@ -559,26 +413,6 @@ def modifyDirectoryContents(basedir):
     # renamed file
     move(join(basedir, 'a1.txt'), join(basedir, 'a2.txt'), True)
 
-def listDirectoryToString(basedir):
-    out = []
-    for f, short in recurseFiles(basedir, includeDirs=True):
-        s = f.replace(basedir, '').replace(os.sep, '/').lstrip('/')
-        if s:
-            # don't include the root
-            size = 0 if isDir(f) else getSize(f)
-            out.append(s + ',' + str(size))
-    return '|'.join(sorted(out))
-
-def listDirectoryToStringFileInfo(basedir, useFileInfo, kwargs):
-    iter = recurseFileInfo(basedir, **kwargs) if useFileInfo else recurseFiles(basedir, **kwargs)
-    out = []
-    for item in iter:
-        if useFileInfo:
-            out.append(item.path.replace(basedir, '').replace(os.sep, '/').lstrip('/'))
-        else:
-            out.append(item[0].replace(basedir, '').replace(os.sep, '/').lstrip('/'))
-    return '|'.join(sorted(out))
-
 
 
 @pytest.fixture()
@@ -590,7 +424,7 @@ def fixtureDir():
     ensureEmptyDirectory(basedir)
 
 @pytest.fixture(scope='module')
-def fixture_fulldir():
+def fxFullDirPlain():
     basedir = join(tempfile.gettempdir(), 'shinerainsevenlib_test', 'full')
     restoreDirectoryContents(basedir)
     yield basedir

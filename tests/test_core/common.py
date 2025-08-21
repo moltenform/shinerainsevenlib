@@ -1,6 +1,7 @@
 
 
 import pytest
+import os
 import tempfile
 from src.shinerainsevenlib.standard import *
 
@@ -71,7 +72,7 @@ def _fxFilesImpl():
         u'2\u1101.txt',
     ]
     for item in lst:
-        # contents are like the filname without the txt
+        # contents are like the filename without the txt
         fullpath = files.join(basedir, item)
         files.writeAll(fullpath, item.replace('.txt', ''))
 
@@ -92,6 +93,30 @@ def fxFilesPlain():
     basedir = _fxFilesImpl()
     yield basedir
     files.ensureEmptyDirectory(basedir)
+
+@pytest.fixture()
+def fxFullDirPlain():
+    basedir = files.join(tempfile.gettempdir(), 'shinerainsevenlib_test', 'full')
+    basedir = srss.ustr(basedir)
+    
+    files.ensureEmptyDirectory(basedir)
+
+    # create every combination:
+    # full						contains files and dirs
+    # full/s1					contains dirs but no files
+    # full/s1/ss1 			contains files but no dirs
+    # full/s1/ss2 			contains no files or dirs
+    dirsToCreate = ['s1', 's2', 's1/ss1', 's1/ss2']
+    for dir in dirsToCreate:
+        os.makedirs(files.join(basedir, dir).replace('/', files.sep))
+
+    filesToCreate = ['P1.PNG', 'a1.txt', 'a2png', 's1/ss1/file.txt', 's2/other.txt']
+    for file in filesToCreate:
+        files.writeAll(files.join(basedir, file).replace('/', files.sep), 'contents_' + files.getName(file))
+    
+    yield basedir
+    files.ensureEmptyDirectory(basedir)
+
 
 def fileInfoListToList(root, incoming):
     """Supports files.recurseFiles, files.recurseDirs, files.recurseFileInfo

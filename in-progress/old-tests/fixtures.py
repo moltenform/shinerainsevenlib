@@ -3,20 +3,7 @@ import tempfile
 import os
 
 def restoreDirectoryContents(basedir):
-    files.ensureEmptyDirectory(basedir)
-
-    # create every combination:
-    # full						contains files and dirs
-    # full/s1					contains dirs but no files
-    # full/s1/ss1 			contains files but no dirs
-    # full/s1/ss2 			contains no files or dirs
-    dirsToCreate = ['s1', 's2', 's1/ss1', 's1/ss2']
-    for dir in dirsToCreate:
-        os.makedirs(join(basedir, dir).replace('/', files.sep))
-
-    filesToCreate = ['P1.PNG', 'a1.txt', 'a2png', 's1/ss1/file.txt', 's2/other.txt']
-    for file in filesToCreate:
-        files.writeAll(join(basedir, file).replace('/', files.sep), 'contents_' + files.getName(file))
+    
 
 def modifyDirectoryContents(basedir):
     # deleted file
@@ -60,7 +47,7 @@ def listDirectoryToStringFileInfo(basedir, useFileInfo, kwargs):
 @pytest.fixture()
 def fixtureFileTree():
     basedir = join(tempfile.gettempdir(), 'shinerainsevenlib_test', 'many')
-    basedir = files.ustr(basedir)
+    basedir = ustr(basedir)
     files.ensureEmptyDirectory(basedir)
     lst = [
         'fb/a/fb/a.txt',
@@ -87,17 +74,10 @@ def fixtureFileTree():
 @pytest.fixture()
 def fixtureDir():
     basedir = join(tempfile.gettempdir(), 'shinerainsevenlib_test', 'empty')
-    basedir = files.ustr(basedir)
+    basedir = ustr(basedir)
     files.ensureEmptyDirectory(basedir)
     os.chdir(basedir)
     yield basedir
     files.ensureEmptyDirectory(basedir)
 
-@pytest.fixture(scope='module')
-def fixture_fulldir():
-    basedir = join(tempfile.gettempdir(), 'shinerainsevenlib_test', 'full')
-    basedir = files.ustr(basedir)
-    restoreDirectoryContents(basedir)
-    yield basedir
-    files.ensureEmptyDirectory(basedir)
 

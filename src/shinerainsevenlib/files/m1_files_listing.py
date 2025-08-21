@@ -18,7 +18,7 @@ def listDirs(path, *, filenamesOnly=False, recurse=False, **kwargs):
         return listChildren(path, filenamesOnly=filenamesOnly, 
                             includeFiles=False, includeDirs=True, **kwargs)
 
-def listFiles(path, *, recurse=False, filenamesOnly=False, **kwargs):
+def listFiles(path, *, filenamesOnly=False, recurse=False, **kwargs):
     "Return files within a directory"
     if recurse:
         return recurseFiles(path, filenamesOnly=filenamesOnly, **kwargs)
@@ -50,6 +50,16 @@ else:
     def listChildren(*args, **kwargs):
         return sorted(_listChildrenUnsorted(*args, **kwargs))
 
+def checkAllowedExts(allowedExts):
+    if isinstance(allowedExts, list):
+        for ext in allowedExts:
+            assertTrue(not '.' in ext, 'provide a list like ["png", "gif"]')
+        allowedExts = set(allowedExts)
+    elif allowedExts and not isinstance(allowedExts, set):
+        assertTrue(False, 'allowedExts must be a list or set')
+
+    return allowedExts
+
 def recurseFiles(
     root,
     *,
@@ -64,9 +74,7 @@ def recurseFiles(
     """Return files within a directory (recursively).
     You can provide a fnFilterDirs to filter out any directories not to traverse into."""
     assert isDir(root)
-
-    if isinstance(allowedExts, list):
-        allowedExts = set(allowedExts)
+    allowedExts = checkAllowedExts(allowedExts)
 
     for dirPath, dirNames, fileNames in _os.walk(root, topdown=topDown, followlinks=followSymlinks):
         if fnFilterDirs:
@@ -123,7 +131,7 @@ class FileInfoEntryWrapper:
         return self.obj.stat().st_mtime
 
     def getLastModTime(self, units=TimeUnits.Seconds):
-        mtime = self.obj.stat().st_mtime
+        mtime = self.mtime()
 
         if units == TimeUnits.Nanoseconds:
             return int(mtime * 1.0e6)
@@ -133,14 +141,6 @@ class FileInfoEntryWrapper:
             return int(mtime)
         else:
             raise ValueError('unknown unit')
-
-    def getMetadataChangeTime(self):
-        assertTrue(not _sys.platform.startswith('win'))
-        return self.obj.stat().st_ctime
-
-    def getCreateTime(self):
-        assertTrue(_sys.platform.startswith('win'))
-        return self.obj.stat().st_ctime
 
 def recurseFileInfo(
     root,
@@ -152,17 +152,27 @@ def recurseFileInfo(
     don't require an extra system call.
     You can provide a fnFilterDirs to filter out any directories not to traverse into.
     
-    allowedExts in the form ['png', 'gif']"""
-    if isinstance(allowedExts, list):
-        allowedExts = set(allowedExts)
-        
+    allowedExts in the form ['png', 'gif']
+    
+    recurse=True,
+    followSymlinks=False,
+    includeFiles=True,
+    includeDirs=False,
+    fnFilterDirs=None,
+    fnDirectExceptionsTo=None,
+    allowedExts=None
+
+    Does not include root directory."""
+    allowedExts = checkAllowedExts(allowedExts)
     return _recurseFileInfoRecurse(root, allowedExts=allowedExts, **kwargs)
 
 def _recurseFileInfoRecurse(
     root,
+    *,
     recurse=True,
     followSymlinks=False,
-    filesOnly=True,
+    includeFiles=True,
+    includeDirs=False,
     fnFilterDirs=None,
     fnDirectExceptionsTo=None,
     allowedExts=None
@@ -171,7 +181,7 @@ def _recurseFileInfoRecurse(
     # so do not create circular references holding it.
     for entry in _os.scandir(root):
         if entry.is_dir(follow_symlinks=followSymlinks):
-            if not filesOnly:
+            if includeDirs and (not fnFilterDirs or fnFilterDirs(entry.path)):
                 yield FileInfoEntryWrapper(entry)
                 
             if recurse and (not fnFilterDirs or fnFilterDirs(entry.path)):
@@ -180,7 +190,8 @@ def _recurseFileInfoRecurse(
                         entry.path,
                         recurse=recurse,
                         followSymlinks=followSymlinks,
-                        filesOnly=filesOnly,
+                        includeFiles=includeFiles,
+                        includeDirs=includeDirs,
                         fnFilterDirs=fnFilterDirs,
                         fnDirectExceptionsTo=fnDirectExceptionsTo,
                         allowedExts=allowedExts
@@ -195,14 +206,16 @@ def _recurseFileInfoRecurse(
 
         if entry.is_file():
             if not allowedExts or (getExt(entry.path, removeDot=True) in allowedExts):
-                yield FileInfoEntryWrapper(entry)
+                if includeFiles:
+                    yield FileInfoEntryWrapper(entry)
 
-def listFileInfo(root, followSymlinks=False, filesOnly=True):
+def listFileInfo(root, *, recurse=False, followSymlinks=False, includeFiles=True, includeDirs=False, ):
     "Like recurseFileInfo, but does not recurse."
-    return recurseFileInfo(root, recurse=False, followSymlinks=followSymlinks, filesOnly=filesOnly)
+    return recurseFileInfo(root, recurse=recurse, followSymlinks=followSymlinks,
+                           includeFiles=includeFiles, includeDirs=includeDirs)
 
 def getDirectorySizeRecurse(
-    dirPath, followSymlinks=False, fnFilterDirs=None, fnDirectExceptionsTo=None
+    dirPath, *, followSymlinks=False, fnFilterDirs=None, fnDirectExceptionsTo=None
 ):
     "Return the total size of a directory"
     total = 0

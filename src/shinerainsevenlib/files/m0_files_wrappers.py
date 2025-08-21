@@ -367,7 +367,7 @@ def _getStatTime(path, key_ns, key_s, units):
         timeNs = getattr(st, key_ns)
     else:
         # fall back to seconds in case it is not available (like some py2)
-        timeNs = getattr(st, key_s) * 1000 * 1000
+        timeNs = getattr(st, key_s) * 1.0e9
 
     if units == TimeUnits.Nanoseconds:
         return int(timeNs)

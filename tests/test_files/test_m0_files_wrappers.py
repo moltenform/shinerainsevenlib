@@ -441,6 +441,26 @@ class TestGetModTime:
         files.setLastModTime(join(fxDirPlain, 'a.txt'), tm, files.TimeUnits.Seconds)
         with pytest.raises(ValueError):
             files.setLastModTime(join(fxDirPlain, 'a.txt'), tm, 'Days')
+    
+    def test_getModtimeWithDifferentUnits(self, fxTree):
+        files.writeAll(fxTree.pathSmallFile, 'contents')
+        tmS = files.getLastModTime(fxTree.pathSmallFile, files.TimeUnits.Seconds)
+        tmMs = files.getLastModTime(fxTree.pathSmallFile, files.TimeUnits.Milliseconds)
+        tmNs = files.getLastModTime(fxTree.pathSmallFile, files.TimeUnits.Nanoseconds)
+        assert tmMs == pytest.approx(tmS * 1000, rel=0.1)
+        assert tmNs == pytest.approx(tmS * 1.0e9, rel=0.1)
+    
+    def test_setModtimeWithDifferentUnits(self, fxTree):
+        files.writeAll(fxTree.pathSmallFile, 'contents')
+        tmBase = files.getLastModTime(fxTree.pathSmallFile, files.TimeUnits.Seconds)
+        tmBase -= 555
+
+        files.setLastModTime(fxTree.pathSmallFile, tmBase, files.TimeUnits.Seconds)
+        assert files.getLastModTime(fxTree.pathSmallFile) == pytest.approx(tmBase, rel=0.1)
+        files.setLastModTime(fxTree.pathSmallFile, tmBase*1000, files.TimeUnits.Milliseconds)
+        assert files.getLastModTime(fxTree.pathSmallFile) == pytest.approx(tmBase, rel=0.1)
+        files.setLastModTime(fxTree.pathSmallFile, tmBase*1.0e9, files.TimeUnits.Nanoseconds)
+        assert files.getLastModTime(fxTree.pathSmallFile) == pytest.approx(tmBase, rel=0.1)
 
 class TestFilesEqual:
     def testSameContentAndSameTimes(self, fxTree):
