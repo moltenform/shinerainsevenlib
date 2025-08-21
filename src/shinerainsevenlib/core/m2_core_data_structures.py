@@ -101,10 +101,8 @@ class ParsePlus:
     def __init__(self, pattern, extraTypes=None, escapeSequences=None, caseSensitive=True):
         try:
             import parse
-        except Exception as e:
-            raise ImportError(
-                'needs "parse" module from pip, https://pypi.org/project/parse/'
-            ) from e
+        except ImportError as e:
+            raise ImportError('Please run "pip install parse"') from e
 
         self.pattern = pattern
         self.caseSensitive = caseSensitive

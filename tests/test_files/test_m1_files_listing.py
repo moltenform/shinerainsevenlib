@@ -19,22 +19,30 @@ class TestListing:
     def testFullResults(self, fxTreePlain):
         iter = recurseFiles(fxTreePlain)
         got = sorted(list(iter))
-        assert all(os.path.isabs(item[0]) and files.exists(item[0]) for item in got)
+        assert got ==  sorted(list(listFiles(fxTreePlain, recurse=True)))
+        assert all(os.path.isabs(item[0]) and exists(item[0]) for item in got)
         assert all(not os.path.isabs(item[1]) for item in got)
+        assert sorted([item[1] for item in got]) == sorted(list(listFiles(fxTreePlain, recurse=True, filenamesOnly=True)))
         assert [item[1] for item in got] == ['aa.txt', 'bb.txt', 'cc.txt', 'zz.txt', 'a.txt', 'b.txt', 'c0.txt', 'c1.txt', 'r1.txt', 'cc.txt', 'r2.txt', 'r3.txt']
-        assert [item[0].replace(fxTreePlain, '').replace('\\', '/') for item in got] == ['/foobar/a/baz/aa.txt', '/foobar/a/baz/bb.txt', '/foobar/a/baz/foobar/cc.txt', '/foobar/a/baz/zz.txt', '/foobar/a/foobar/a.txt', '/foobar/a/foobar/b.txt', '/foobar/a/foobar/c/c0.txt', '/foobar/a/foobar/c/c1.txt', '/foobar/a/r1.txt', '/foobar/foobar/cc.txt', '/foobar/r2.txt', '/r3.txt']
+        assert [item[0].replace(fxTreePlain, '').replace('\\', '/') for item in got] == ['/fb/a/bz/aa.txt', '/fb/a/bz/bb.txt', '/fb/a/bz/fb/cc.txt', '/fb/a/bz/zz.txt', '/fb/a/fb/a.txt', '/fb/a/fb/b.txt', '/fb/a/fb/c/c0.txt', '/fb/a/fb/c/c1.txt', '/fb/a/r1.txt', '/fb/fb/cc.txt', '/fb/r2.txt', '/r3.txt']
         
         iter = recurseDirs(fxTreePlain)
         got = sorted(list(iter))
-        assert all(os.path.isabs(item[0]) and files.exists(item[0]) for item in got)
+        assert got ==  sorted(list(listDirs(fxTreePlain, recurse=True, )))
+        assert all(os.path.isabs(item[0]) and exists(item[0]) for item in got)
         assert all(not os.path.isabs(item[1]) for item in got)
-        assert [item[1] for item in got] ==  ['tree', 'foobar', 'a', 'baz', 'foobar', 'foobar', 'c', 'foobar']
-        assert [item[0].replace(fxTreePlain, '').replace('\\', '/') for item in got] ==  ['', '/foobar', '/foobar/a', '/foobar/a/baz', '/foobar/a/baz/foobar', '/foobar/a/foobar', '/foobar/a/foobar/c', '/foobar/foobar']
+        assert sorted([item[1] for item in got]) == sorted(list(listDirs(fxTreePlain, recurse=True, filenamesOnly=True, )))
+        assert [item[1] for item in got] ==  ['tree', 'fb', 'a', 'bz', 'fb', 'fb', 'c', 'fb']
+        assert [item[0].replace(fxTreePlain, '').replace('\\', '/') for item in got] ==  ['', '/fb', '/fb/a', '/fb/a/bz', '/fb/a/bz/fb', '/fb/a/fb', '/fb/a/fb/c', '/fb/fb']
 
     def testNoRecurse(self, fxTreePlain):
+        print(fxTreePlain)
+        print(sorted(list(recurseDirs(fxTreePlain,  ))))
+        print(sorted(list(listDirs(fxTreePlain, recurse=True, ))))
+        print(sorted(list(listDirs(fxTreePlain, recurse=False, ))))
         iter = listDirs(fxTreePlain, filenamesOnly=False, recurse=False)
-        #~ got = fileInfoListToList(fxTreePlain, iter)
-        #~ assert got == 'xxx'
+        got = fileInfoListToList(fxTreePlain, iter)
+        assert got == ['/fb']
         
         #~ iter = listDirs(fxTreePlain, filenamesOnly=True, recurse=False)
         #~ got = sorted(list(iter))

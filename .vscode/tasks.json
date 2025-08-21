@@ -31,7 +31,7 @@
         {
             "label": "ruff lint-and-fix",
             "type": "shell",
-            "command": "python -m ruff format ./src",
+            "command": "python -m ruff format ./src && python shinerainsevenlib/tools_this_project/srssRuffWrapper.py",
             "problemMatcher": [],
             "group": {
                 "kind": "build",

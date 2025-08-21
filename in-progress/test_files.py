@@ -11,82 +11,6 @@ from ..common_higher import getNowAsMillisTime
 
         
 
-
-class TestCopyingFiles:
-    def test_copyNoOverwrite_srcNotExist(self, fixtureDir):
-        with pytest.raises(IOError):
-            copy(self.file1, self.file2, False)
-
-    def test_copyNoOverwrite_srcExists(self, fixtureDir):
-        writeAll(self.file1, 'contents')
-        copy(self.file1, self.file2, False)
-        assert 'contents' == readAll(self.file1)
-        assert 'contents' == readAll(self.file2)
-
-    def test_copyNoOverwrite_shouldNotOverwrite(self, fixtureDir):
-        writeAll(self.file1, 'new')
-        writeAll(self.file2, 'old')
-        with pytest.raises((IOError, OSError)):
-            copy(self.file1, self.file2, False)
-        assert 'new' == readAll(self.file1)
-        assert 'old' == readAll(self.file2)
-
-    def test_shouldNotCopyDir(self, fixtureDir):
-        # by default, copy is for copying files, not dirs
-        makeDirs(join(fixtureDir, 'tmpdir1'))
-        assert isDir(join(fixtureDir, 'tmpdir1'))
-        try:
-            with pytest.raises(IOError):
-                copy(join(fixtureDir, 'tmpdir1'), join(fixtureDir, 'tmpdir2'), False)
-        finally:
-            rmDir(join(fixtureDir, 'tmpdir1'))
-
-class TestMovingFiles:
-    def test_moveOverwrite_srcNotExist(self, fixtureDir):
-        with pytest.raises(IOError):
-            move(self.file1, self.file2, True)
-
-    def test_moveOverwrite_srcExists(self, fixtureDir):
-        writeAll(self.file1, 'contents')
-        move(self.file1, self.file2, True)
-        assert not isFile(self.file1)
-        assert 'contents' == readAll(self.file2)
-
-    def test_moveOverwrite_srcOverwrites(self, fixtureDir):
-        writeAll(self.file1, 'new')
-        writeAll(self.file2, 'old')
-        move(self.file1, self.file2, True)
-        assert not isFile(self.file1)
-        assert 'new' == readAll(self.file2)
-
-    def test_moveNoOverwrite_srcNotExist(self, fixtureDir):
-        with pytest.raises(IOError):
-            move(self.file1, self.file2, False)
-
-    def test_moveNoOverwrite_srcExists(self, fixtureDir):
-        writeAll(self.file1, 'contents')
-        move(self.file1, self.file2, False)
-        assert not isFile(self.file1)
-        assert 'contents' == readAll(self.file2)
-
-    def test_moveNoOverwrite_shouldNotOverwrite(self, fixtureDir):
-        writeAll(self.file1, 'new')
-        writeAll(self.file2, 'old')
-        with pytest.raises((IOError, OSError)):
-            move(self.file1, self.file2, False)
-        assert 'new' == readAll(self.file1)
-        assert 'old' == readAll(self.file2)
-
-    def test_shouldNotMoveDir(self, fixtureDir):
-        # by default, move is for moving files, not dirs
-        makeDirs(join(fixtureDir, 'tmpdir1'))
-        assert isDir(join(fixtureDir, 'tmpdir1'))
-        try:
-            with pytest.raises(IOError):
-                move(join(fixtureDir, 'tmpdir1'), join(fixtureDir, 'tmpdir2'), False)
-        finally:
-            rmDir(join(fixtureDir, 'tmpdir1'))
-
 class TestFiletimes:
     @pytest.mark.skipif('not isPy3OrNewer')
     def test_modtimeIsUpdated(self, fixtureDir):
@@ -238,22 +162,22 @@ class TestDirectoryList:
     @pytest.mark.skipif('not isPy3OrNewer')
     def test_recurseFilesMany(self, fixtureFileTree):
         # no filter
-        expected = 'foobar/a/baz/aa.txt|foobar/a/baz/bb.txt|foobar/a/baz/foobar/cc.txt|' + \
-            'foobar/a/baz/zz.txt|foobar/a/foobar/a.txt|foobar/a/foobar/b.txt|foobar/a/foobar' + \
-            '/c/c0.txt|foobar/a/foobar/c/c1.txt|foobar/a/r1.txt|foobar/foobar/cc.txt|foobar/r2.txt|r3.txt'
+        expected = 'fb/a/bz/aa.txt|fb/a/bz/bb.txt|fb/a/bz/fb/cc.txt|' + \
+            'fb/a/bz/zz.txt|fb/a/fb/a.txt|fb/a/fb/b.txt|fb/a/fb' + \
+            '/c/c0.txt|fb/a/fb/c/c1.txt|fb/a/r1.txt|fb/fb/cc.txt|fb/r2.txt|r3.txt'
         assert expected == listDirectoryToStringFileInfo(fixtureFileTree, True, {})
         assert expected == listDirectoryToStringFileInfo(fixtureFileTree, False, {})
 
         # filter out nearly everything
         def filter(p):
-            return getName(p) != 'foobar'
+            return getName(p) != 'fb'
         assert 'r3.txt' == listDirectoryToStringFileInfo(fixtureFileTree, True, {'fnFilterDirs': filter})
         assert 'r3.txt' == listDirectoryToStringFileInfo(fixtureFileTree, False, {'fnFilterDirs': filter})
 
         # intentionally can't filter out root dir
-        expected = 'a/baz/aa.txt|a/baz/bb.txt|a/baz/zz.txt|a/r1.txt|r2.txt'
-        assert expected == listDirectoryToStringFileInfo(fixtureFileTree + '/foobar', True, {'fnFilterDirs': filter})
-        assert expected == listDirectoryToStringFileInfo(fixtureFileTree + '/foobar', False, {'fnFilterDirs': filter})
+        expected = 'a/bz/aa.txt|a/bz/bb.txt|a/bz/zz.txt|a/r1.txt|r2.txt'
+        assert expected == listDirectoryToStringFileInfo(fixtureFileTree + '/fb', True, {'fnFilterDirs': filter})
+        assert expected == listDirectoryToStringFileInfo(fixtureFileTree + '/fb', False, {'fnFilterDirs': filter})
 
     def test_checkNamedParameters(self, fixtureDir):
         with pytest.raises(ValueError) as exc:
@@ -264,17 +188,6 @@ class TestOtherUtilsActingOnFiles:
     def test_getSizeRecurse(self, fixture_fulldir):
         assert getSizeRecurse(fixture_fulldir) == 79
 
-    def test_fileContentsEqual_Equal(self, fixture_fulldir):
-        f1 = join(fixture_fulldir, 'P1.PNG')
-        f2 = join(fixture_fulldir, 'P1-copy.PNG')
-        copy(f1, f2, True)
-        assert fileContentsEqual(f1, f2)
-        deleteSure(f2)
-
-    def test_fileContentsEqual_NotEqual(self, fixture_fulldir):
-        f1 = join(fixture_fulldir, 'P1.PNG')
-        f2 = join(fixture_fulldir, 'a1.txt')
-        assert not fileContentsEqual(f1, f2)
 
 class TestFilesUtils:
     def test_extensionPossiblyExecutableNoExt(self, fixtureDir):

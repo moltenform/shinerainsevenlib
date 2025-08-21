@@ -17,17 +17,17 @@ def _fxTreeImpl():
     basedir = files.join(tempfile.gettempdir(), 'shinerainsevenlib_test', 'tree')
     files.ensureEmptyDirectory(basedir)
     lst = [
-        'foobar/a/foobar/a.txt',
-        'foobar/a/foobar/b.txt',
-        'foobar/a/foobar/c/c0.txt',
-        'foobar/a/foobar/c/c1.txt',
-        'foobar/a/baz/aa.txt',
-        'foobar/a/baz/bb.txt',
-        'foobar/a/baz/foobar/cc.txt',
-        'foobar/a/baz/zz.txt',
-        'foobar/a/r1.txt',
-        'foobar/foobar/cc.txt',
-        'foobar/r2.txt',
+        'fb/a/fb/a.txt',
+        'fb/a/fb/b.txt',
+        'fb/a/fb/c/c0.txt',
+        'fb/a/fb/c/c1.txt',
+        'fb/a/bz/aa.txt',
+        'fb/a/bz/bb.txt',
+        'fb/a/bz/fb/cc.txt',
+        'fb/a/bz/zz.txt',
+        'fb/a/r1.txt',
+        'fb/fb/cc.txt',
+        'fb/r2.txt',
         'r3.txt'
     ]
     for item in lst:
@@ -41,13 +41,14 @@ def fxTree():
     basedir = _fxTreeImpl()
     ret = Bucket(basedir=basedir)
     ret.pathSmallFile = basedir + '/r3.txt'
-    ret.pathFileExists = basedir + '/foobar/a/foobar/c/c0.txt'
-    ret.pathFileToLock = basedir + '/foobar/a/foobar/c/c1.txt'
+    ret.pathFileExists = basedir + '/fb/a/fb/c/c0.txt'
+    ret.pathFileToLock = basedir + '/fb/a/fb/c/c1.txt'
     ret.pathNotExist = basedir + '/notexist.txt'
-    ret.pathDir = basedir + '/foobar/a/foobar'
-    ret.pathFewChildren = basedir + '/foobar/foobar'
-    ret.pathManyChildren = basedir + '/foobar/a/foobar'
+    ret.pathDir = basedir + '/fb/a/fb'
+    ret.pathFewChildren = basedir + '/fb/fb'
+    ret.pathManyChildren = basedir + '/fb/a/fb'
     ret.pathDirNotExist = basedir + '/newdir'
+    ret.pathExample = basedir + '/example.txt'
     yield ret
     files.ensureEmptyDirectory(basedir)
 

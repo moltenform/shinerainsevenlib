@@ -130,41 +130,41 @@ class TestFileIterator:
         files.makeDirs(fxTreePlain + '/node_modules')
         files.writeAll(fxTreePlain + '/node_modules/a.txt', 'a')
         iter = SrssFileIterator(fxTreePlain, 
-            fnFilterDirs=lambda path: not path.replace('\\', '/').endswith('foobar/a/foobar'), excludeNodeModules=True)
-        expected = ['/foobar/a/baz/aa.txt', '/foobar/a/baz/bb.txt', '/foobar/a/baz/foobar/cc.txt', 
-                       '/foobar/a/baz/zz.txt', '/foobar/a/r1.txt', '/foobar/foobar/cc.txt', 
-                       '/foobar/r2.txt', '/r3.txt']
+            fnFilterDirs=lambda path: not path.replace('\\', '/').endswith('fb/a/fb'), excludeNodeModules=True)
+        expected = ['/fb/a/bz/aa.txt', '/fb/a/bz/bb.txt', '/fb/a/bz/fb/cc.txt', 
+                       '/fb/a/bz/zz.txt', '/fb/a/r1.txt', '/fb/fb/cc.txt', 
+                       '/fb/r2.txt', '/r3.txt']
         assert fileInfoListToList(fxTreePlain, iter) == expected
         
 
         iter = SrssFileIterator(fxTreePlain,
-            fnFilterDirs=lambda path: not path.replace('\\', '/').endswith('foobar/a/baz'), excludeNodeModules=False)
-        expected = ['/foobar/a/foobar/a.txt', '/foobar/a/foobar/b.txt', '/foobar/a/foobar/c/c0.txt', 
-                       '/foobar/a/foobar/c/c1.txt', '/foobar/a/r1.txt', '/foobar/foobar/cc.txt', 
-                       '/foobar/r2.txt', '/node_modules/a.txt', '/r3.txt']
+            fnFilterDirs=lambda path: not path.replace('\\', '/').endswith('fb/a/bz'), excludeNodeModules=False)
+        expected = ['/fb/a/fb/a.txt', '/fb/a/fb/b.txt', '/fb/a/fb/c/c0.txt', 
+                       '/fb/a/fb/c/c1.txt', '/fb/a/r1.txt', '/fb/fb/cc.txt', 
+                       '/fb/r2.txt', '/node_modules/a.txt', '/r3.txt']
         assert fileInfoListToList(fxTreePlain, iter) == expected
 
     def testPassIterParams(self, fxTreePlain):
-        files.writeAll(fxTreePlain + '/foobar/a/foobar/a.mp3', 'a')
-        files.writeAll(fxTreePlain + '/foobar/a/baz/b.mp3', 'a')
+        files.writeAll(fxTreePlain + '/fb/a/fb/a.mp3', 'a')
+        files.writeAll(fxTreePlain + '/fb/a/bz/b.mp3', 'a')
         iter = SrssFileIterator(fxTreePlain, allowedExts=['mp3'])
         got = fileInfoListToList(fxTreePlain, iter)
-        assert got == ['/foobar/a/baz/b.mp3', '/foobar/a/foobar/a.mp3']
+        assert got == ['/fb/a/bz/b.mp3', '/fb/a/fb/a.mp3']
 
     def testIncludeTheseFiles(self, fxTreePlain):
-        files.writeAll(fxTreePlain + '/foobar/a/foobar/a.mp3', 'a')
-        files.writeAll(fxTreePlain + '/foobar/a/baz/b.mp3', 'a')
+        files.writeAll(fxTreePlain + '/fb/a/fb/a.mp3', 'a')
+        files.writeAll(fxTreePlain + '/fb/a/bz/b.mp3', 'a')
         iter = SrssFileIterator(fxTreePlain, fnIncludeTheseFiles=lambda s: s.endswith('.mp3'))
         got = fileInfoListToList(fxTreePlain, iter)
-        assert got == ['/foobar/a/baz/b.mp3', '/foobar/a/foobar/a.mp3']
+        assert got == ['/fb/a/bz/b.mp3', '/fb/a/fb/a.mp3']
     
     def testMultipleRoots(self, fxTreePlain):
-        root1 = fxTreePlain + '/foobar/a/foobar'
-        root2 = fxTreePlain + '/foobar/a/baz/foobar'
+        root1 = fxTreePlain + '/fb/a/fb'
+        root2 = fxTreePlain + '/fb/a/bz/fb'
         iter = SrssFileIterator([root1, root2])
         got = fileInfoListToList(fxTreePlain, iter)
-        assert got == ['/foobar/a/baz/foobar/cc.txt', '/foobar/a/foobar/a.txt', '/foobar/a/foobar/b.txt', 
-                       '/foobar/a/foobar/c/c0.txt', '/foobar/a/foobar/c/c1.txt']
+        assert got == ['/fb/a/bz/fb/cc.txt', '/fb/a/fb/a.txt', '/fb/a/fb/b.txt', 
+                       '/fb/a/fb/c/c0.txt', '/fb/a/fb/c/c1.txt']
 
     def testNeedsAbsPaths(self):
         with pytest.raises(AssertionError, match='relative paths'):
@@ -216,37 +216,37 @@ class TestCleanupTempFiles:
 
 class TestCleanupEmptyDirs:
     def testBasic(self, fxTreePlain):
-        files.delete(fxTreePlain + '/foobar/a/foobar/c/c0.txt')
-        files.delete(fxTreePlain + '/foobar/a/foobar/c/c1.txt')
-        files.delete(fxTreePlain + '/foobar/a/baz/foobar/cc.txt')
+        files.delete(fxTreePlain + '/fb/a/fb/c/c0.txt')
+        files.delete(fxTreePlain + '/fb/a/fb/c/c1.txt')
+        files.delete(fxTreePlain + '/fb/a/bz/fb/cc.txt')
         removeEmptyDirs(fxTreePlain)
         got = fileInfoListToList(fxTreePlain, files.recurseDirs)
-        assert got ==['', '/foobar', '/foobar/a', '/foobar/a/baz', 
-                      '/foobar/a/foobar', '/foobar/foobar']
+        assert got ==['', '/fb', '/fb/a', '/fb/a/bz', 
+                      '/fb/a/fb', '/fb/fb']
     
     def testRemoveRootToo(self, fxTreePlain):
-        files.delete(fxTreePlain + '/foobar/a/foobar/c/c0.txt')
-        files.delete(fxTreePlain + '/foobar/a/foobar/c/c1.txt')
-        files.delete(fxTreePlain + '/foobar/a/baz/foobar/cc.txt')
+        files.delete(fxTreePlain + '/fb/a/fb/c/c0.txt')
+        files.delete(fxTreePlain + '/fb/a/fb/c/c1.txt')
+        files.delete(fxTreePlain + '/fb/a/bz/fb/cc.txt')
         
-        removeEmptyDirs(fxTreePlain + '/foobar/a/baz/foobar', 
+        removeEmptyDirs(fxTreePlain + '/fb/a/bz/fb', 
                            removeRootIfEmpty=False)
         got = fileInfoListToList(fxTreePlain, files.recurseDirs)
-        assert got == ['', '/foobar', '/foobar/a', '/foobar/a/baz', 
-                       '/foobar/a/baz/foobar', '/foobar/a/foobar', 
-                       '/foobar/a/foobar/c', '/foobar/foobar']
+        assert got == ['', '/fb', '/fb/a', '/fb/a/bz', 
+                       '/fb/a/bz/fb', '/fb/a/fb', 
+                       '/fb/a/fb/c', '/fb/fb']
         
-        removeEmptyDirs(fxTreePlain + '/foobar/a/baz/foobar', 
+        removeEmptyDirs(fxTreePlain + '/fb/a/bz/fb', 
                            removeRootIfEmpty=True)
         got = fileInfoListToList(fxTreePlain, files.recurseDirs)
-        assert got == ['', '/foobar', '/foobar/a', '/foobar/a/baz', 
-                       '/foobar/a/foobar', '/foobar/a/foobar/c', 
-                       '/foobar/foobar']
+        assert got == ['', '/fb', '/fb/a', '/fb/a/bz', 
+                       '/fb/a/fb', '/fb/a/fb/c', 
+                       '/fb/fb']
 
     def testShouldIgnoreIfMissingOrIsFile(self, fxTreePlain):
-        assert files.exists(fxTreePlain + '/foobar/a/foobar/c/c0.txt')
-        removeEmptyDirs(fxTreePlain + '/foobar/a/foobar/c/c0.txt')
-        assert files.exists(fxTreePlain + '/foobar/a/foobar/c/c0.txt')
+        assert files.exists(fxTreePlain + '/fb/a/fb/c/c0.txt')
+        removeEmptyDirs(fxTreePlain + '/fb/a/fb/c/c0.txt')
+        assert files.exists(fxTreePlain + '/fb/a/fb/c/c0.txt')
 
         assert not files.exists(fxTreePlain + '/notexist')
         removeEmptyDirs(fxTreePlain + '/notexist')

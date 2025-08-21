@@ -128,6 +128,9 @@ exclude_also = [
     "def _dbgHookCallback",
     "def _getClipboardTextTk",
     "def _setClipboardTextTk",
+    "raise NotImplementedError",
+    "except ImportError:",
+    "except ImportError as e:",
     "def xxx",
 ]
 
@@ -135,4 +138,12 @@ omit = [
     "*/__init__.py",
     "*/m4_core_ui.py",
     "**/tools_any_project/**",
+    # temporarily skip these - they are done!
+    "m0_text_io.py",
+    "m1_core_util.py",
+    "m2_core_data_structures.py",
+    "m5_batch_util.py",
+    "m6_jslike.py",
+    "xxxxx",
+    "xxxxx",
 ]

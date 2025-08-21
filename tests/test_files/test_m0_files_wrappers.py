@@ -431,7 +431,49 @@ class TestGetModTime:
         scurtimeWritten = renderMillisTime(curtimeWritten)
         scurtimeNow = renderMillisTime(curtimeNow)
         assert scurtimeWritten[0:nCharsInDate] == scurtimeNow[0:nCharsInDate]
+    
+    def test_modtimeWithInvalidUnits(self, fxDirPlain):
+        files.writeAll(join(fxDirPlain, 'a.txt'), 'contents')
+        tm = files.getLastModTime(join(fxDirPlain, 'a.txt'), files.TimeUnits.Seconds)
+        with pytest.raises(ValueError):
+            files.getLastModTime(join(fxDirPlain, 'a.txt'), 'Days')
+        
+        files.setLastModTime(join(fxDirPlain, 'a.txt'), tm, files.TimeUnits.Seconds)
+        with pytest.raises(ValueError):
+            files.setLastModTime(join(fxDirPlain, 'a.txt'), tm, 'Days')
 
+class TestFilesEqual:
+    def testSameContentAndSameTimes(self, fxTree):
+        files.writeAll(fxTree.pathSmallFile, 'contents')
+        files.writeAll(fxTree.pathExample, 'contents')
+        tm = files.getLastModTime(fxTree.pathExample)
+        files.setLastModTime(fxTree.pathSmallFile, tm)
+        files.setLastModTime(fxTree.pathExample, tm)
+        assert files.fileContentsEqual(fxTree.pathSmallFile, fxTree.pathExample)
+
+    def testSameContentAndDifferentTimes(self, fxTree):
+        files.writeAll(fxTree.pathSmallFile, 'contents')
+        files.writeAll(fxTree.pathExample, 'contents')
+        tm = files.getLastModTime(fxTree.pathExample)
+        files.setLastModTime(fxTree.pathSmallFile, tm)
+        files.setLastModTime(fxTree.pathExample, tm - 10)
+        assert files.fileContentsEqual(fxTree.pathSmallFile, fxTree.pathExample)
+
+    def testDiffContentAndSameTimes(self, fxTree):
+        files.writeAll(fxTree.pathSmallFile, 'contents')
+        files.writeAll(fxTree.pathExample, 'contentS')
+        tm = files.getLastModTime(fxTree.pathExample)
+        files.setLastModTime(fxTree.pathSmallFile, tm)
+        files.setLastModTime(fxTree.pathExample, tm)
+        assert not files.fileContentsEqual(fxTree.pathSmallFile, fxTree.pathExample)
+
+    def testDiffContentAndDiffTimes(self, fxTree):
+        files.writeAll(fxTree.pathSmallFile, 'contents')
+        files.writeAll(fxTree.pathExample, 'contentS')
+        tm = files.getLastModTime(fxTree.pathExample)
+        files.setLastModTime(fxTree.pathSmallFile, tm)
+        files.setLastModTime(fxTree.pathExample, tm - 10)
+        assert not files.fileContentsEqual(fxTree.pathSmallFile, fxTree.pathExample)
 
 class TestWriteFiles:
     def test_readAndWriteSimple(self, fxDirPlain):

@@ -7,7 +7,8 @@ import sys as _sys
 from .m0_files_wrappers import *
 
 def listDirs(path, *, filenamesOnly=False, recurse=False, **kwargs):
-    "Return directories within a directory"
+    """Return subdirectories within a directory. Doesn't include the root,
+    unless recurse=True."""
     if recurse:
         return recurseDirs(
             path,
@@ -87,7 +88,8 @@ def recurseDirs(
     root, *, filenamesOnly=False, fnFilterDirs=None, topDown=True, followSymlinks=False
 ):
     """Return directories within a directory (recursively).
-    You can provide a fnFilterDirs to filter out any directories not to traverse into."""
+    You can provide a fnFilterDirs to filter out any directories not to traverse into.
+    Includes the root directory."""
     return recurseFiles(
         root,
         filenamesOnly=filenamesOnly,

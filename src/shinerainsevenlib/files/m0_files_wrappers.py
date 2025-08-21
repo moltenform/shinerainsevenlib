@@ -269,7 +269,7 @@ def _moveFilePosixNoOverwrite(srcFile, destFile, overwrite):
     if confirmedMvOpts is not True:
         raise OSFileRelatedError("Could not move, " + confirmedMvOpts)
     else:
-        m2_files_higher.run(['mv', '--no-clobber', srcFile, destFile])
+        m2_files_higher.run(['mv', '--no-clobber', srcFile, destFile], shell=True)
     
 def _confirmMvOpts():
     from . import m2_files_higher
@@ -284,7 +284,7 @@ def _confirmMvOpts():
         # coreutils that support this include: gnu, toybox, rust uutils
         # coreutils that don't support this include: busybox, heirloom, sbase
         # coreutils where I didn't see mv: 9base, ubase
-        m2_files_higher.run(['mv', '--no-clobber', f1, f2])
+        m2_files_higher.run(['mv', '--no-clobber', f1, f2], shell=True)
         didClobber = readAll(f2) == 'f1'
     except Exception as err:
         return f'failed to run no-clobber test, please use gnu coreutils or rust uutils {err}'
@@ -436,6 +436,7 @@ def fileContentsEqual(f1, f2):
     "Efficiently tests if the content of two files is the same"
     import filecmp
 
+    filecmp.clear_cache()
     return filecmp.cmp(f1, f2, shallow=False)
 
 class OSFileRelatedError(OSError):
