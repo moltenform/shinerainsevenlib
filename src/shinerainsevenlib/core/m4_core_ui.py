@@ -206,6 +206,7 @@ def getInputStringGui(prompt, initialvalue=None, title=' '):
     return '' if s is None else s
 
 def findUnusedLetter(dictUsed, newWord):
+    "Returns the index of the first unused letter in newWord, or None if all letters are used"
     for i, c in enumerate(newWord):
         if c.isalnum() and c.lower() not in dictUsed:
             dictUsed[c] = True

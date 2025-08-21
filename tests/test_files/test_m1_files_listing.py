@@ -255,6 +255,7 @@ class TestFilteringWithInfo:
 
         def filter(d):
             return getName(d) != 's1'
+        
         assert expected == sorted(recurseFileInfoWithResultsLikeRecurseFiles(
             fxFullDirPlain, filenamesOnly=True, 
             includeFiles=False, includeDirs=True,

@@ -29,11 +29,10 @@ class SrssLooper:
         list 
         iterable
         lambda that returns an iterable
-            useful if you need to compute the length without producing the list
+        (the lambda one is useful because we can estimate length by generating iter twice)
     waitUntilValueSeen can be a
         value
-        lambda that returns boolean- the first time it returns True,
-            we'll start the loop
+        lambda that returns boolean- the first time it returns True, we'll start the loop
     """
 
     def __init__(self, listOrLambda):

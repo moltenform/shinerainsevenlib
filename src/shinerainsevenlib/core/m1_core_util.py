@@ -10,6 +10,7 @@ import re as _re
 import time as _time
 import datetime as _datetime
 import math as _math
+import collections as _collections
 
 from .m0_text_io import *
 
@@ -267,12 +268,12 @@ def runAndCatchException(fn):
     """Can be convenient to not need a try/except structure.
     use like golang,
     result, err = callFn()"""
-    from .m2_core_data_structures import Bucket
+    Result = _collections.namedtuple('Result', ['result', 'err'])
     try:
         result = fn()
-        return Bucket(result=result, err=None)
+        return Result(result=result, err=None)
     except:
-        return Bucket(result=None, err=getCurrentException())
+        return Result(result=None, err=getCurrentException())
 
 # endregion
 # region ascii char helpers

@@ -5,6 +5,7 @@ import re as _re
 import pprint as _pprint
 import unicodedata as _unicodedata
 import types as _types
+import collections as _collections
 
 
 # region string helpers
@@ -28,27 +29,33 @@ def standardNewlines(s):
 
 def longStr(s):
     "When quickly writing code, get a string that spans multiple lines."
-    s = _re.sub(r'\r|\n', ' ', s)
-    s = _re.sub(r'\t', ' ', s)
+    s = _re.sub(r'\r|\n|\t', ' ', s)
     s = _re.sub(r' +', ' ', s)
     s = s.strip()
     return s
 
 def easyToEnterFilepath(s, checkIfExists=True):
-    '''Lets people easily copy/paste a filepath in, without worrying about quotes or extra whitespace.
-    See unit tests for examples.'''
+    '''When writing a quick script, you'll often copy a filepath and paste it in.
+    Sometimes that filepath will have quotes around it, or sometimes there will be newlines.
+    If you use easyToEnterFilepath, it will
+    1) remove quotes and extra whitespace
+    2) confirm that the path exists
+    3) also support commenting out lines with #'''
     lines = [line.replace('"', '').replace("'", '').strip() for line in strToList(s)]
     candidateLines = [line for line in lines if line]
     if len(candidateLines) == 0:
         raise ValueError("No input given")
     elif len(candidateLines) > 1:
         raise ValueError("More than one input given. You can comment-out extra lines with #")
+    
     s = candidateLines[0]
     for c in s:
         if ord(c) < ord(' '):
             raise ValueError(f'Non-ascii character found {ord(c)}, do you have a backslash without a r""?')
+        
     if checkIfExists and not _os.path.exists(s):
         raise ValueError(f"easyToEnterFilepath, path {s} not found")
+    
     return s
 
 def parseIntOrFallback(s, fallBack=None):
@@ -78,7 +85,7 @@ def clampNumber(value, minValue, maxValue):
 
 def compareTwoListsAsSets(l1, l2, transformFn1=None, transformFn2=None):
     "Compare two lists of strings"
-    from .m2_core_data_structures import Bucket
+    Result = _collections.namedtuple('Result', ['addedItems', 'lostItems'])
     
     l1Transformed = l1 if not transformFn1 else [transformFn1(item) for item in l1]
     l2Transformed = l2 if not transformFn2 else [transformFn2(item) for item in l2]
@@ -95,20 +102,18 @@ def compareTwoListsAsSets(l1, l2, transformFn1=None, transformFn2=None):
     # sort, or else the order is nondeterministic
     addedItems.sort()
     lostItems.sort()
-    return Bucket(addedItems=addedItems, lostItems=lostItems)
+    return Result(addedItems=addedItems, lostItems=lostItems)
 
 def expectEqualityTwoListsAsSets(l1, l2, transformFn1=None, transformFn2=None):
     "Display differences between two lists of strings"
     result = compareTwoListsAsSets(l1, l2, transformFn1=transformFn1, transformFn2=transformFn2)
-    addedItems = result.get('addedItems')
-    lostItems = result.get('lostItems')
 
-    if len(addedItems):
-        trace('New items only in list 1:', addedItems)
+    if len(result.addedItems):
+        trace('New items only in list 1:', result.addedItems)
         return False
 
-    if len(lostItems):
-        trace('Missing items not present in list 2:', lostItems)
+    if len(result.lostItems):
+        trace('Missing items not present in list 2:', result.lostItems)
         return False
 
     return True
@@ -158,6 +163,7 @@ _gRedirectTraceCalls = {}
 _gRedirectTraceCalls['fnHook'] = None
 
 def setRedirectTraceCalls(fnHook):
+    """Redirect trace() calls to a callback function instead"""
     _gRedirectTraceCalls['fnHook'] = fnHook
 
 def trace(*args, always=False):

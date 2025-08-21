@@ -2,12 +2,14 @@
    sphinx-quickstart on Thu Jul 31 13:28:00 2025.
 .. see also, https://bylr.info/articles/2022/05/10/api-doc-with-sphinx-autoapi/
 
-shinerainsevenlib documentation
+Overview
 ===============================
 
 Useful unadorned utilities for powerful Python programming.
 
-A Python2 compatible version of this library can be found here, `shinerainsevenlib_prev <https://github.com/moltenform/scite-with-python/tree/main/src/scite/scite/bin/tools_internal/ben_python_common>`_.
+`python -m pip install shinerainsevenlib`
+
+|
 
 This project is useful for:
 
@@ -17,11 +19,11 @@ This project is useful for:
 
 * functionality that is in the standard library, but isn't as intuitive
 
-   * example: `files.run` is a convenient way to start a process.
+   * example: files.run is a convenient way to start a process.
 
 * functionality for quickly writing one-off scripts
 
-   * example: `files.writeAll` defaults to utf-8 and is quick to type and read.
+   * example: files.writeAll defaults to utf-8 and is quick to type and read.
 
 
 Contents

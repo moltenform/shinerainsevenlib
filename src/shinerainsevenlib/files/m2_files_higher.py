@@ -18,7 +18,7 @@ def openDirectoryInExplorer(path):
         args = ['cmd', '/c', 'start', 'explorer.exe', path]
         run(args, shell=True, captureOutput=False, throwOnFailure=False, wait=False)
     else:
-        # on mac_os, open should work.
+        # on mac_os, thre's usually 'open'.
         for candidate in ['xdg-open', 'nautilus', 'open']:
             pathBin = findBinaryOnPath(candidate)
             if pathBin:

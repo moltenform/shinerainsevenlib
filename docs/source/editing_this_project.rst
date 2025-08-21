@@ -3,7 +3,7 @@
 Editing This Project
 =======================
 
-If you open this project in VSCode, there will be some defined tasks and launchors, to make it easy to run tests and attach a debugger.
+If you open this project in VSCode, there will be some defined tasks and launchers, to make it easy to run tests and attach a debugger.
 
 To get full features editing this project, do the following:
 
@@ -19,11 +19,11 @@ To get full features editing this project, do the following:
     code .
     (now vscode will have the correct context and path.)
     (when you open a .py file, an icon saying something 
-    like "3.13" will appear in the lower right of vscode,
+    like "3.12.3" or "3.13.1" will appear in the lower right of vscode,
     click that icon and confirm that you are in the context
     of the virtual environment.)
-    (you can now go to Run and Debug to run tests.)
-    (you can now hit ctrl+shift+b and run a task like linting.)
+    (you can go to the Run tab to run tests. breakpoints work.)
+    (you can hit ctrl+shift+b and run a task like linting.)
 
 Features of this project include,
 
@@ -35,4 +35,3 @@ Features of this project include,
 * github actions verify PRs by running tests
 * can publish to pip
 
-This project avoids newer Python syntax to remain functional running on old Python versions.

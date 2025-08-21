@@ -7,6 +7,13 @@ Useful unadorned utilities for powerful Python programming.
 
 [![License: LGPL v2.1](https://img.shields.io/badge/License-LGPL_v2.1-blue.svg)](https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html)
 
+`python -m pip install shinerainsevenlib`
+
+or
+
+`py -m pip install shinerainsevenlib`
+
+
 This project is useful for:
 
 * functionality that isn't yet in the standard library

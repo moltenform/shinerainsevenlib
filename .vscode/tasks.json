@@ -44,7 +44,7 @@
         {
             "label": "build documentation",
             "type": "shell",
-            "command": "sphinx-build -M html ./docs ./docs/_build",
+            "command": "sphinx-build -M html ./docs ./docs/_build && python docs/postProcess.py",
             "problemMatcher": [],
             "group": {
                 "kind": "build",

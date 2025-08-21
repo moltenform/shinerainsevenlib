@@ -33,4 +33,5 @@ from . import core as srss
 #~ from .plugins import plugin_compression as SrssCompression
 #~ from .plugins import plugin_fileexts as SrssFileExts
 #~ from .plugins import plugin_media as SrssMedia
+from .plugins import tools_any_project as tools_any_project
 from . import files

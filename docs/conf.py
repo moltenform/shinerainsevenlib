@@ -38,6 +38,11 @@ def custom_skip(app, what, name, obj, skip, options):
     lastPartOfName = name.split(".")[-1]
     if lastPartOfName.startswith("_"):
         skip = True
+    if name == 'shinerainsevenlib.standard':
+        skip = True
+    if name == 'shinerainsevenlib.core.m0_text_io.ShineRainSevenLibError':
+        skip = True
+
     return skip
 
 def setup(sphinx):

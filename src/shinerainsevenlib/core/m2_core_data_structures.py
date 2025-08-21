@@ -352,7 +352,7 @@ DefaultVal = SentinalIndicatingDefault()
 # region data structure helpers
 
 def appendToListInDictOrStartNewList(d, key, val):
-    "Similar to setdefault, but easier to read in my opinion"
+    "Could use setdefault, but this is easier to read in my opinion"
     got = d.get(key, None)
     if got:
         got.append(val)
