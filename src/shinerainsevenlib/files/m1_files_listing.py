@@ -50,7 +50,7 @@ else:
     def listChildren(*args, **kwargs):
         return sorted(_listChildrenUnsorted(*args, **kwargs))
 
-def checkAllowedExts(allowedExts):
+def _checkAllowedExts(allowedExts):
     if isinstance(allowedExts, list):
         for ext in allowedExts:
             assertTrue(not '.' in ext, 'provide a list like ["png", "gif"]')
@@ -74,7 +74,7 @@ def recurseFiles(
     """Return files within a directory (recursively).
     You can provide a fnFilterDirs to filter out any directories not to traverse into."""
     assert isDir(root)
-    allowedExts = checkAllowedExts(allowedExts)
+    allowedExts = _checkAllowedExts(allowedExts)
 
     for dirPath, dirNames, fileNames in _os.walk(root, topdown=topDown, followlinks=followSymlinks):
         if fnFilterDirs:
@@ -109,28 +109,34 @@ def recurseDirs(
     )
 
 class FileInfoEntryWrapper:
-    "Helper class to make recurseFileInfo more convenient to use."
+    "When you call recurseFileInfo, the results are instances of this class."
 
     def __init__(self, obj):
         self.obj = obj
         self.path = obj.path
 
     def isDir(self, *args):
+        "Is this a directory?"
         return self.obj.is_dir(*args)
 
     def isFile(self, *args):
+        "Is this a file?"
         return self.obj.is_file(*args)
 
     def short(self):
+        "The short name aka leaf of the file"
         return _os.path.split(self.path)[1]
 
     def size(self):
+        "The size of the file, in bytes"
         return self.obj.stat().st_size
 
     def mtime(self):
+        "The modified time of the file, in unix seconds"
         return self.obj.stat().st_mtime
 
     def getLastModTime(self, units=TimeUnits.Seconds):
+        "The last-modified time, in units that you specify"
         mtime = self.mtime()
 
         if units == TimeUnits.Nanoseconds:
@@ -152,6 +158,10 @@ def recurseFileInfo(
     don't require an extra system call.
     You can provide a fnFilterDirs to filter out any directories not to traverse into.
     
+    >>> for f in recurseFileInfo('/path/to/files'):
+    >>>     print("For the file", f.path)
+    >>>     print("The size is", str(f.size()))
+
     allowedExts in the form ['png', 'gif']
     
     recurse=True,
@@ -163,7 +173,7 @@ def recurseFileInfo(
     allowedExts=None
 
     Does not include root directory."""
-    allowedExts = checkAllowedExts(allowedExts)
+    allowedExts = _checkAllowedExts(allowedExts)
     return _recurseFileInfoRecurse(root, allowedExts=allowedExts, **kwargs)
 
 def _recurseFileInfoRecurse(

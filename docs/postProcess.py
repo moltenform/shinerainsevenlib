@@ -34,12 +34,31 @@ r'''
 <li class="toctree-l1"><a class="reference internal" href="core/m4_core_ui/index.html">Section 4, ui utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="core/m5_batch_util/index.html">Section 5, batch processing utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="core/m6_jslike/index.html">Section 6, javascript-like utils</a></li>
-<li class="toctree-l1">Files section 0, wrappers</li>
-<li class="toctree-l1">Files section 1, iteration</li>
-<li class="toctree-l1">Files section 2, higher-level utils</li>
+<li class="toctree-l1"><a class="reference internal" href="files/m0_files_wrappers/index.html">Files section 0, wrappers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="files/m1_files_listing/index.html">Files section 1, iteration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="files/m2_files_higher/index.html">Files section 2, higher-level utils</a></li>
+</ul>
+</div>
+</section>
+<section id="submodulesplugins">
+<h2>Plugins<a class="headerlink" href="#submodulesplugins" title="Link to this heading">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="files/xxxx/index.html">plugin</a></li>
+</ul>
+</div>
+</section>
+<section id="submodulestools">
+<h2>Tools<a class="headerlink" href="#submodulestools" title="Link to this heading">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="files/xxxx/index.html">tool</a></li>
 '''
-
 )
+
+postProcessReplace('autoapi/shinerainsevenlib/index.html', '<h2>Submodules<a class="headerlink',
+                   '<h2>Core<a class="headerlink')
+
 postProcessReplace('autoapi/index.html',
                      r'<li class="toctree-l[2-9]">.*', '', useRe=True)
 

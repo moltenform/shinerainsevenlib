@@ -18,8 +18,8 @@ Then you can run a script like this,
             print(f.size())
 
     # ask yes/no
-    if srss.getInputBool('Convert file to jpg?'):
-        files.run(['cjpeg', 'image.png'])
+    if srss.getInputBool('Show the crc32 of a file?'):
+        print(files.computeHash('file.jpg'), 'crc32')
     
 
 .. # convert a png to a jpg

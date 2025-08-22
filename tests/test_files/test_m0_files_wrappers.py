@@ -413,7 +413,43 @@ class TestMove:
         assert contents == readAll(fxTree.basedir + '/newdir/a.txt')
         assert not exists(fxTree.pathFileExists)
     
+class TestPosixSpecificCopy:
+    def test_overWriteFile(self, fxFiles, mocker):
+        mocker.patch('sys.platform', return_value='linux')
+        # replace a file
+        copy(fxFiles.f1, fxFiles.f2, True)
 
+        # check contents after
+        assert '1\u1101' == readAll(fxFiles.f1)
+        assert '1\u1101' == readAll(fxFiles.f2)
+
+    def test_overWriteFileBlocked(self, fxFiles, mocker):
+        mocker.patch('sys.platform', return_value='linux')
+        with pytest.raises(OSError):
+            copy(fxFiles.f1, fxFiles.f2, False)
+    
+    def test_overWriteCapableButNotNeeded(self, fxFiles, mocker):
+        mocker.patch('sys.platform', return_value='linux')
+        copy(fxFiles.f1, fxFiles.f2 + '.new', False)
+        assert '1\u1101' == readAll(fxFiles.f2 + '.new')
+
+    def test_overWriteCapableButNotNeededBigFile(self, fxFiles, mocker):
+        # test with a large file to make the loop happen
+        mocker.patch('sys.platform', return_value='linux')
+        oneMbOfAs = 'a' * 1024 * 1024
+        files.writeAll(fxFiles.f1, oneMbOfAs)
+        copy(fxFiles.f1, fxFiles.f2 + '.new', False)
+        assert oneMbOfAs == readAll(fxFiles.f2 + '.new')
+
+#~ class TestPosixSpecificMove:
+    #~ def test_overWriteFile(self, fxFiles, mocker):
+        #~ mocker.patch('sys.platform', return_value='linux')
+        #~ # replace a file
+        #~ move(fxFiles.f1, fxFiles.f2, True)
+
+        #~ # check contents after
+        #~ assert not exists(fxFiles.f1)
+        #~ assert '1\u1101' == readAll(fxFiles.f2)
 
 class TestGetModTime:
     @pytest.mark.skipif('not isPy3OrNewer')
