@@ -11,11 +11,7 @@ To get full features editing this project, do the following:
 .. code-block:: console
 
     (in a virtual environment,)
-    python -m pip install pylint
-    python -m pip install ruff
-    python -m pip install coverage
-    python -m pip install sphinx sphinx-autoapi
-    python -m pip install pytest pytest-mock
+    python -m pip install shinerainsevenlib[development]
     code .
     (now vscode will have the correct context and path.)
     (when you open a .py file, an icon saying something 

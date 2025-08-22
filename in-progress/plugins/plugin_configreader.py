@@ -43,6 +43,7 @@ class SrssConfigReader:
         self._caseSensitive = caseSensitive
 
     def setSchemaForSection(self, sectionName, schemaData):
+        "Provide a schema for a section, so that type-checking can be performed."
         self._schema[sectionName] = schemaData
 
     def _lookupSchemaSection(self, sectionName):
@@ -81,12 +82,14 @@ class SrssConfigReader:
                 self.setVal(sectionName, colName, colDefaultVal)
 
     def setVal(self, section, col, v):
+        "Set a value in a section."
         if not self.parsed.get(section):
             setattr(self.parsed, section, Bucket())
         parsedSection = self.parsed.get(section)
         setattr(parsedSection, col, v)
 
     def getValOrNone(self, section, col):
+        "Get a value in a section."
         if not self.parsed.get(section):
             setattr(self.parsed, section, Bucket())
         parsedSection = self.parsed.get(section)
@@ -96,6 +99,7 @@ class SrssConfigReader:
             return None
 
     def checkSchemaCol(self, sectionName, colName, val):
+        "Ensure value is of correct type"
         if not self._checkSchema:
             return val
         colData = self._lookupSchemaCol(sectionName, colName)
@@ -104,6 +108,7 @@ class SrssConfigReader:
         return self.interpretValue(val, colType, context=f'col {colName}')
 
     def interpretValue(self, val, colType, context):
+        "Get a value, and convert to the correct type. For example 'yes' gets read as True"
         if colType is bool:
             val = SrssConfigReader.strToBool(val)
         else:
@@ -112,10 +117,12 @@ class SrssConfigReader:
         return val
 
     def parse(self, path):
+        "Load a file, and check validity against schema."
         text = files.readAll(path)
         return self.parseText(text)
 
     def parseText(self, text):
+        "Load cfg from a string, and check validity against schema."
         # different versions of python have different configparser behavior
         assertTrue(srss.isPy3OrNewer, 'Py2 not supported')
 
@@ -178,6 +185,7 @@ class SrssConfigReader:
 
     @staticmethod
     def strToBool(s, context=''):
+        "Interpret string as a boolean, for example 'yes' gets read as True"
         if not s:
             return False
         elif s in (True, False):

@@ -26,13 +26,18 @@ class SrssLooper:
     >>>         print('found an odd number', number)
 
     input can be a
-        list 
-        iterable
-        lambda that returns an iterable
-        (the lambda one is useful because we can estimate length by generating iter twice)
+    
+    * list 
+    
+    * iterable
+    
+    * lambda that returns iterable (useful because we can estimate length by generating iter twice)
+    
     waitUntilValueSeen can be a
-        value
-        lambda that returns boolean- the first time it returns True, we'll start the loop
+    
+    * value- we'll skip the loop until we see that value come up
+    
+    * lambda that returns boolean- we'll skip the loop until the lambda returns True
     """
 
     def __init__(self, listOrLambda):
@@ -60,21 +65,25 @@ class SrssLooper:
             assertTrue(False, 'input must be list or iterable')
 
     def showPercentageEstimates(self, displayStr='\n...'):
-        # it will be an estimate, since the iterable
-        # might return a different number of items
+        """Print progress to the user. It will be an estimate, since the iterable
+        might return a different number of items"""
         self._showPercentages = displayStr
 
     def setFormatStateToPrint(self, fn):
+        "You can optionally provide a callback for showing progress"
         self._fnFormatStateToPrint = fn
 
     def addPauses(self, pauseEveryNTimes=20, seconds=20):
+        "Add pauses every n times. Can be good to help a laptop not overheat."
         self._pauseEveryNTimes = pauseEveryNTimes
         self._pauseEverySeconds = seconds
 
     def waitUntilValueSeen(self, valOrFn):
+        "If you specify a value, we'll skip the loop until we see that value come up"
         self._waitUntilValueSeen = valOrFn
 
     def flagDidNoMeaningfulWork(self):
+        "You can call this to signal that you did no meaningful work, and so we don't need to pause"
         self._didMeaningfulWork = False
 
     def __iter__(self):
@@ -146,6 +155,7 @@ class SrssLooper:
 
     @staticmethod
     def countIterable(itr):
+        "Helper method for counting the length of an iterable"
         return sum(1 for _item in itr)
 
 class SrssFileIterator:
@@ -199,24 +209,26 @@ class SrssFileIterator:
                 yield obj
 
     @staticmethod
-    def pathContainsThisName(path, exclude, ):
-        regexp = _re.compile(r'[/\\]' + exclude + r'([/\\]|$)')
+    def pathContainsThisName(path, s, ):
+        "Returns True if path contains a directory named exactly s"
+        regexp = _re.compile(r'[/\\]' + s + r'([/\\]|$)')
         return bool(regexp.search(path))
 
 class CleanupTempFilesOnClose(_contextlib.ExitStack):
     """Register temp files to be deleted later.
     Example:
 
-    with CleanupTempFilesOnClose() as cleanup:
-        cleanup.registerTempFile('temp.txt')
-        files.writeAll('temp.txt', 'abc')
-        ...something that might throw
+    >>> with CleanupTempFilesOnClose() as cleanup:
+    >>>     cleanup.registerTempFile('temp.txt')
+    >>>     files.writeAll('temp.txt', 'abc')
+    >>>     ...something that might throw
     
     ...when code reaches here, the temp file will be deleted,
     even if an exception is thrown.
     """
 
     def registerTempFile(self, path):
+        "Registers a temp file, we'll delete it soon"
         def fn():
             if _os.path.exists(path):
                 _os.unlink(path)

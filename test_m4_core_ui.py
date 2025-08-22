@@ -22,11 +22,11 @@ class TestAlert:
     def test(self):
         calls = []
         try:
-            gRedirectAlertCalls['fnHook'] = lambda s: calls.append(s)
+            setRedirectAlertCalls(lambda s: calls.append(s))
             alert('a', 'b', 'c')
             assert calls == ['a b c']
         finally:
-            gRedirectAlertCalls['fnHook'] = None
+            setRedirectAlertCalls(None)
 
 class TestCoreUIHelpers:
     def test_checkIsDigit(self):

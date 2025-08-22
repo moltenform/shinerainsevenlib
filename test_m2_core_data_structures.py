@@ -19,20 +19,20 @@ class TestPersistedDict:
         path = join(fxDirPlain, 'test.json')
         obj = PersistedDict(path, warnIfCreatingNew=False, persistEveryNWrites=5)
         obj.set('key1', 'val1')
-        assert 1 == len(obj.data)
+        assert 1 == len(obj._data)
         objRead = PersistedDict(path)
-        assert 0 == len(objRead.data)
+        assert 0 == len(objRead._data)
 
     def test_willPersist(self, fxDirPlain):
         path = join(fxDirPlain, 'test.json')
         obj = PersistedDict(path, warnIfCreatingNew=False, persistEveryNWrites=5)
         for i in range(6):
             obj.set('key%d' % i, 'val%d' % i)
-        assertEq(6, len(obj.data))
+        assertEq(6, len(obj._data))
         objRead = PersistedDict(path)
-        assertEq(5, len(objRead.data))
+        assertEq(5, len(objRead._data))
         for i in range(5):
-            assert 'val%d' % i == objRead.data['key%d' % i]
+            assert 'val%d' % i == objRead._data['key%d' % i]
 
     def test_canLoadEmpty(self, fxDirPlain):
         path = join(fxDirPlain, 'test.json')
@@ -40,15 +40,15 @@ class TestPersistedDict:
         obj.persist()
         assertTrue(files.isFile(path))
         objRead = PersistedDict(path, warnIfCreatingNew=True)
-        assert 0 == len(objRead.data)
+        assert 0 == len(objRead._data)
 
     def test_canWriteUnicode(self, fxDirPlain):
         path = join(fxDirPlain, u'test\u1101.json')
         obj = PersistedDict(path, warnIfCreatingNew=False, persistEveryNWrites=1)
         obj.set('key\u1101', '\u1101val')
         objRead = PersistedDict(path, warnIfCreatingNew=True)
-        assert 1 == len(objRead.data)
-        assert '\u1101val' == objRead.data['key\u1101']
+        assert 1 == len(objRead._data)
+        assert '\u1101val' == objRead._data['key\u1101']
 
     def test_canWriteDataTypes(self, fxDirPlain):
         path = join(fxDirPlain, u'test.json')
@@ -59,11 +59,11 @@ class TestPersistedDict:
         obj.set('testList', [12, 34, 56])
         obj.set('testFloat', 1.2345)
         objRead = PersistedDict(path, warnIfCreatingNew=True)
-        assert 123 == objRead.data['testInt']
-        assert 'abc' == objRead.data['testString']
-        assert True is objRead.data['testBool']
-        assert [12, 34, 56] == objRead.data['testList']
-        assertFloatEq(1.2345, objRead.data['testFloat'])
+        assert 123 == objRead._data['testInt']
+        assert 'abc' == objRead._data['testString']
+        assert True is objRead._data['testBool']
+        assert [12, 34, 56] == objRead._data['testList']
+        assertFloatEq(1.2345, objRead._data['testFloat'])
 
     def test_canWriteDataTypesAsKeys(self, fxDirPlain):
         path = join(fxDirPlain, u'test.json')
@@ -72,9 +72,9 @@ class TestPersistedDict:
         obj.set('abc', 'testString')
         obj.set(True, 'testBool')
         objRead = PersistedDict(path, warnIfCreatingNew=True)
-        assert 'testInt' == objRead.data['123']
-        assert 'testString' == objRead.data['abc']
-        assert 'testBool' == objRead.data['true']
+        assert 'testInt' == objRead._data['123']
+        assert 'testString' == objRead._data['abc']
+        assert 'testBool' == objRead._data['true']
 
     def test_twoDeep(self, fxDirPlain):
         path = join(fxDirPlain, u'test.json')
@@ -86,11 +86,11 @@ class TestPersistedDict:
         obj.setSubDict('rkey2', 'k1', 'v21')
         obj.setSubDict('rkey2', 'k2', 'v22')
         objRead = PersistedDict(path, warnIfCreatingNew=True)
-        assert 2 == len(objRead.data)
-        assert 'v11' == objRead.data['rkey1']['k1']
-        assert 'v12' == objRead.data['rkey1']['k2']
-        assert 'v21' == objRead.data['rkey2']['k1']
-        assert 'v22' == objRead.data['rkey2']['k2']
+        assert 2 == len(objRead._data)
+        assert 'v11' == objRead._data['rkey1']['k1']
+        assert 'v12' == objRead._data['rkey1']['k2']
+        assert 'v21' == objRead._data['rkey2']['k1']
+        assert 'v22' == objRead._data['rkey2']['k2']
 
     def test_threeDeep(self, fxDirPlain):
         path = join(fxDirPlain, u'test.json')
@@ -104,24 +104,24 @@ class TestPersistedDict:
         obj.setSubSubDict('rrkey1', 'rkey2', 'rkeya', 'va')
         obj.setSubSubDict('rrkey2', 'rkey2', 'rkeyb', 'vb')
         objRead = PersistedDict(path, warnIfCreatingNew=True)
-        assert 2 == len(objRead.data)
-        assert {} == objRead.data['rrkey1']['rkey1']
-        assert 'va' == objRead.data['rrkey1']['rkey2']['rkeya']
-        assert {} == objRead.data['rrkey2']['rkey1']
-        assert 'vb' == objRead.data['rrkey2']['rkey2']['rkeyb']
+        assert 2 == len(objRead._data)
+        assert {} == objRead._data['rrkey1']['rkey1']
+        assert 'va' == objRead._data['rrkey1']['rkey2']['rkeya']
+        assert {} == objRead._data['rrkey2']['rkey1']
+        assert 'vb' == objRead._data['rrkey2']['rkey2']['rkeyb']
 
     def test_keepHandle(self, fxDirPlain):
         path = join(fxDirPlain, 'test.json')
         obj = PersistedDict(path, warnIfCreatingNew=False, persistEveryNWrites=1, keepHandle=True)
         for i in range(6):
             obj.set('key%d' % i, 'val%d' % i)
-        assertEq(6, len(obj.data))
+        assertEq(6, len(obj._data))
         obj.close()
         del obj
         objRead = PersistedDict(path)
-        assertEq(6, len(objRead.data))
+        assertEq(6, len(objRead._data))
         for i in range(6):
-            assert 'val%d' % i == objRead.data['key%d' % i]
+            assert 'val%d' % i == objRead._data['key%d' % i]
 
 class TestOrderedDict:
     def test_checkOrderedDictEqualitySame(self):

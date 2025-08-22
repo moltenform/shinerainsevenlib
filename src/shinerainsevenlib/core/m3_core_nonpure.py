@@ -218,8 +218,11 @@ def _getTrashFullDest(path, trashDir):
 
 def softDeleteFile(path, allowDirs=False, doTrace=False):
     """Delete a file in a recoverable way, either OS Trash or a designated folder.
+    
     Defaults to ~/trash
+    
     Configure behavior by editing shinerainsevenlib.cfg, 
+    
     trashDir='recycleBin' or 'currentDriveDataLocalTrash' or a path"""
     from .. import files
     from .m4_core_ui import warn
@@ -282,8 +285,11 @@ def getSoftTempDir(path='', preferEphemeral=False):
     """
     Get a temporary directory. 
     Defaults to default OS temp directory, can be configured in shinerainsevenlib.cfg
+
     tempDir = (path to dir)
+    
     tempEphemeralDir = (path to dir)
+    
     An ephemeral dir is one where data isn't kept long term. I often configure this
     to be a RAM drive, which are useful for heavy read/write scenarios.
     """

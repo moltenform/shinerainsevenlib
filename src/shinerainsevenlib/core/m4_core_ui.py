@@ -137,15 +137,19 @@ def err(*args):
     s = ' '.join(map(getPrintable, args))
     raise RuntimeError('fatal error\n' + getPrintable(s))
 
-gRedirectAlertCalls = {}
-gRedirectAlertCalls['fnHook'] = None
+_gRedirectAlertCalls = {}
+_gRedirectAlertCalls['fnHook'] = None
+
+def setRedirectAlertCalls(fnHook):
+    """For testing, you can redirect alert() calls to a callback function instead"""
+    _gRedirectAlertCalls['fnHook'] = fnHook
 
 def alert(*args, flushOutput=True, always=False):
     """Show an alert to the user (they can press Enter to continue).
     can be suppressed for automated tests via gRedirectAlertCalls"""
     s = ' '.join(map(getPrintable, args))
-    if gRedirectAlertCalls['fnHook'] and not always:
-        gRedirectAlertCalls['fnHook'](s)
+    if _gRedirectAlertCalls['fnHook'] and not always:
+        _gRedirectAlertCalls['fnHook'](s)
     else:
         trace(s)
         getRawInput('press Enter to continue', flushOutput)
@@ -154,8 +158,8 @@ def warn(*args, flushOutput=True, always=False):
     """Show an alert to the user (they can choose if they want to continue).
     can be suppressed for automated tests via gRedirectAlertCalls"""
     s = ' '.join(map(getPrintable, args))
-    if gRedirectAlertCalls['fnHook'] and not always:
-        gRedirectAlertCalls['fnHook'](s)
+    if _gRedirectAlertCalls['fnHook'] and not always:
+        _gRedirectAlertCalls['fnHook'](s)
     else:
         trace('warning\n' + getPrintable(s))
         if not getInputBool('continue?', flushOutput):

@@ -134,15 +134,18 @@ def getNowAsMillisTime():
 class SimpleTimer:
     "Simple timer to measure elapsed time"
     def __init__(self):
-        self.startedAt = self.getTime()
+        self._startedAt = self.getTime()
 
     def getTime(self):
+        "Get current time in seconds"
         return _time.time()
     
     def check(self):
-        return self.getTime() - self.startedAt
+        "Get elapsed time in seconds"
+        return self.getTime() - self._startedAt
     
     def print(self):
+        "Print the elapsed time in seconds"
         print('%04f second(s)' % self.check())
 
 class EnglishDateParserWrapper:
@@ -156,10 +159,11 @@ class EnglishDateParserWrapper:
         settings = {'STRICT_PARSING': True}
         if dateOrder:
             settings['DATE_ORDER'] = dateOrder
-        self.p = dateparser.date.DateDataParser(languages=['en'], settings=settings)
+        self._p = dateparser.date.DateDataParser(languages=['en'], settings=settings)
 
     def parse(self, s):
-        return self.p.get_date_data(s)['date_obj']
+        "Parse a string into a datetime object"
+        return self._p.get_date_data(s)['date_obj']
 
     def fromFullWithTimezone(self, s):
         """Able to parse timestamps with a timezone

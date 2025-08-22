@@ -20,18 +20,29 @@ class SrssStoreBasic:
     3) SrssStore doesn't have pysqlite's unclear transaction semantics
     4) better than jsonpickle because of indexes and reduced writing-to-disk
     5) SrssStore is an abstract layer that can support different backends
+
+    To use SrssStore, make a class that inherits from it, and then override the
+    addSchema() method to create the tables and indexes.
+    Then, you can create an instance of the class, call connectOrCreate(),
+    call txnBegin(), use cursor() to run sql queries, and call txnCommit().
     """
 
     conn = None
     in_txn = False
 
     def addSchema(self, cursor):
+        """Inherit from this class and override this method.
+        In this method, run sql statements to create the tables and indexes."""
         raise NotImplementedError('please inherit from Store and implement this method')
 
     def currentSchemaVersionNumber(self):
-        raise NotImplementedError('please inherit from Store and implement this method')
+        """You can inherit from this class and override this method.
+        In this method, return the current schema version number."""
+        return 1
 
     def stampSchemaVersion(self, cursor):
+        """Use this helper method to mark the current version. You can then, when opening an existing 
+        database, check if the database came from a different version."""
         if self.currentSchemaVersionNumber() is None:
             return
 
@@ -42,6 +53,7 @@ class SrssStoreBasic:
         )
 
     def verifySchemaVersion(self):
+        """Use this helper method to check if the database came from a different version."""
         if self.currentSchemaVersionNumber() is None:
             return
 
@@ -70,17 +82,21 @@ class SrssStoreBasic:
                 raise
 
     def cursor(self):
+        "Access the database connection"
         return self.conn.cursor()
 
     def rowExists(self, cursor, *args):
+        "Check if a row exists in the database"
         for _row in cursor.execute(*args):
             return True
         return False
 
     def connectOrCreate(self, dbpath, flags=None):
+        "Helper method to connect to a database or create if no file exists."
         import apsw
         if flags is None:
             flags = apsw.SQLITE_OPEN_NOMUTEX | apsw.SQLITE_OPEN_READWRITE | apsw.SQLITE_OPEN_CREATE
+
         did_exist = files.isFile(dbpath)
         self.conn = apsw.Connection(dbpath, flags=flags)
         cursor = self.conn.cursor()
@@ -97,21 +113,25 @@ class SrssStoreBasic:
         self.verifySchemaVersion()
 
     def txnBegin(self):
+        "Begin a transaction"
         assertTrue(not self.in_txn, 'txnBegin when in')
         self.cursor().execute('BEGIN TRANSACTION')
         self.in_txn = True
 
     def txnRollback(self):
+        "Rollback a transaction"
         assertTrue(self.in_txn, 'txnRollback when not in')
         self.cursor().execute('ROLLBACK TRANSACTION')
         self.in_txn = False
 
     def txnCommit(self):
+        "Commit a transaction"
         assertTrue(self.in_txn, 'txnCommit when not in')
         self.cursor().execute('COMMIT TRANSACTION')
         self.in_txn = False
 
     def close(self):
+        "Close the database connection"
         if self.in_txn:
             self.txnRollback()
 
@@ -120,6 +140,13 @@ class SrssStoreBasic:
             self.conn = None
 
 class SrssStore(SrssStoreBasic):
+    """
+    This class provides more helpers in addition to the helpers in SrssStoreBasic.
+
+    To use SrssStore, make a class that inherits from it, and then override the
+    getFieldNamesAndAttributes() method to specify the tables and indexes.
+    Then, you can create an instance of the class, call connectOrCreate(),
+    call txnBegin(), use cursor() to run sql queries, and call txnCommit()."""
     def __init__(self, dbpath=None, flags=None, autoConnect=True):
         assertTrue(srss.isPy3OrNewer, 'Python 3 required')
         super().__init__()
@@ -131,10 +158,18 @@ class SrssStore(SrssStoreBasic):
             self.connectOrCreate(dbpath, flags)
 
     def getFieldNamesAndAttributes(self):
-        # example return {'tblName': {'fld1': {'initprops': 'not null'}, 'fld2': {'index': True}, 'fld3': {}}}
+        """Rather than manually running sql queries to create the tables and indexes,
+        you can override this method and specify the tables and indexes in this method.
+        For example,
+        >>> return {'tblName': {'fld1': {'initprops': 'not null'}, 'fld2': {'index': True}, 'fld3': {}}}
+        """
         raise NotImplementedError('please inherit from Store and implement this method')
 
     def addSchema(self, cursor):
+        """
+        Use getFieldNamesAndAttributes instead.
+        :meta private:
+        """
         for tbl in self.schema:
             # add fields
             tblschema = self.schema[tbl]

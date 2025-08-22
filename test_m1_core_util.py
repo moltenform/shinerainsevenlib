@@ -303,7 +303,7 @@ class TestDateParsing:
     def test_spanish_dates_will_parse_if_we_hack_it_and_give_it_a_different_parser(self, workAroundDateParserWarningFixture):
         import dateparser
         uu = EnglishDateParserWrapper()
-        uu.p = dateparser.date.DateDataParser()
+        uu._p = dateparser.date.DateDataParser()
         parsed = uu.parse(u'Martes 21 de Octubre de 2014')
         assert 2014 == parsed.year
 
@@ -314,7 +314,7 @@ class TestDateParsing:
     def test_incomplete_dates_will_parse_if_we_hack_it_and_give_it_a_different_parser(self, workAroundDateParserWarningFixture):
         import dateparser
         uuu = EnglishDateParserWrapper()
-        uuu.p = dateparser.date.DateDataParser()
+        uuu._p = dateparser.date.DateDataParser()
         parsed = uuu.parse(u'December 2015')
         assert 2015 == parsed.year
 

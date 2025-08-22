@@ -18,6 +18,26 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 
+[project.optional-dependencies]
+allfeatures = [
+    "Send2Trash",
+    "crc64iso",
+    "xxhash",
+    "apsw",
+    "dateparser",
+    "parse",
+    "pyperclip",
+]
+development = [
+    "pylint",
+    "ruff",
+    "coverage",
+    "sphinx",
+    "sphinx-autoapi",
+    "pytest",
+    "pytest-mock",
+]
+
 [project.urls]
 Homepage = "https://github.com/moltenform/shinerainsevenlib"
 Issues = "https://github.com/moltenform/shinerainsevenlib/issues"

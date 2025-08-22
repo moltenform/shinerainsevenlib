@@ -37,10 +37,14 @@ def custom_skip(app, what, name, obj, skip, options):
     # name is fully qualified, get only the last part
     lastPartOfName = name.split(".")[-1]
     if lastPartOfName.startswith("_"):
+        # hide private functions, methods, and attributes
         skip = True
     if name == 'shinerainsevenlib.standard':
         skip = True
     if name == 'shinerainsevenlib.core.m0_text_io.ShineRainSevenLibError':
+        skip = True
+    if what == 'attribute':
+        # hide all class attributes
         skip = True
 
     return skip

@@ -16,17 +16,17 @@ from .m1_core_util import *
 class PersistedDict:
     "Store a dict (or dict of dicts) on disk."
 
-    data = None
-    handle = None
-    counter = 0
-    persistEveryNWrites = 1
+    _data = None
+    _handle = None
+    _counter = 0
+    _persistEveryNWrites = 1
 
     def __init__(self, filename, warnIfCreatingNew=True, keepHandle=False, persistEveryNWrites=5):
         from .. import files
         from .m4_core_ui import alert
 
-        self.filename = filename
-        self.persistEveryNWrites = persistEveryNWrites
+        self._filename = filename
+        self._persistEveryNWrites = persistEveryNWrites
         if not files.exists(filename):
             if warnIfCreatingNew:
                 alert('creating new cache at ' + filename)
@@ -35,51 +35,57 @@ class PersistedDict:
 
         self.load()
         if keepHandle:
-            self.handle = open(filename, 'w', encoding='utf-8')  # noqa
+            self._handle = open(filename, 'w', encoding='utf-8')  # noqa
             self.persist()
 
     def load(self, encoding='utf-8'):
+        "Load from disk"
         from .. import files
 
-        txt = files.readAll(self.filename, encoding=encoding)
-        self.data = _json.loads(txt)
+        txt = files.readAll(self._filename, encoding=encoding)
+        self._data = _json.loads(txt)
 
     def close(self):
-        if self.handle:
-            self.handle.close()
-            self.handle = None
+        "Close the connection"
+        if self._handle:
+            self._handle.close()
+            self._handle = None
 
     def persist(self):
+        "Save to disk. Must be called manually."
         from .. import files
 
-        txt = _json.dumps(self.data)
-        if self.handle:
-            self.handle.seek(0, _os.SEEK_SET)
-            self.handle.write(txt)
-            self.handle.truncate()
+        txt = _json.dumps(self._data)
+        if self._handle:
+            self._handle.seek(0, _os.SEEK_SET)
+            self._handle.write(txt)
+            self._handle.truncate()
         else:
-            files.writeAll(self.filename, txt, encoding='utf-8')
+            files.writeAll(self._filename, txt, encoding='utf-8')
 
-    def afterUpdate(self):
-        self.counter += 1
-        if self.counter % self.persistEveryNWrites == 0:
+    def _afterUpdate(self):
+        self._counter += 1
+        if self._counter % self._persistEveryNWrites == 0:
             self.persist()
 
     def set(self, key, value):
-        self.data[key] = value
-        self.afterUpdate()
+        "Set a value"
+        self._data[key] = value
+        self._afterUpdate()
 
     def setSubDict(self, subDictName, key, value):
-        if subDictName not in self.data:
-            self.data[subDictName] = {}
-        self.data[subDictName][key] = value
-        self.afterUpdate()
+        "Set a nested value"
+        if subDictName not in self._data:
+            self._data[subDictName] = {}
+        self._data[subDictName][key] = value
+        self._afterUpdate()
 
     def setSubSubDict(self, subDictName, key1, key2, value):
-        if subDictName not in self.data:
-            self.data[subDictName] = {}
-        self.data[subDictName][key1][key2] = value
-        self.afterUpdate()
+        "Set a doubly nested value"
+        if subDictName not in self._data:
+            self._data[subDictName] = {}
+        self._data[subDictName][key1][key2] = value
+        self._afterUpdate()
 
 # endregion
 # region retrieve text from strings
@@ -104,10 +110,10 @@ class ParsePlus:
         except ImportError as e:
             raise ImportError('Please run "pip install parse"') from e
 
-        self.pattern = pattern
-        self.caseSensitive = caseSensitive
-        self.extraTypes = extraTypes if extraTypes else {}
-        self.escapeSequences = escapeSequences if escapeSequences else []
+        self._pattern = pattern
+        self._caseSensitive = caseSensitive
+        self._extraTypes = extraTypes if extraTypes else {}
+        self._escapeSequences = escapeSequences if escapeSequences else []
         self.spans = None
         self.getTotalSpan = None
         self._escapeSequencesMap = None
@@ -117,7 +123,7 @@ class ParsePlus:
             def parse_NoNewlines(s):
                 return str(s)
 
-            self.extraTypes['NoNewlines'] = parse_NoNewlines
+            self._extraTypes['NoNewlines'] = parse_NoNewlines
 
         if 'NoSpaces' in pattern:
 
@@ -125,15 +131,15 @@ class ParsePlus:
             def parse_NoSpaces(s):
                 return str(s)
 
-            self.extraTypes['NoSpaces'] = parse_NoSpaces
+            self._extraTypes['NoSpaces'] = parse_NoSpaces
 
     def _createEscapeSequencesMap(self, s):
         self._escapeSequencesMap = {}
-        if len(self.escapeSequences) > 5:
+        if len(self._escapeSequences) > 5:
             raise ValueError('we support a max of 5 escape sequences')
 
         sTransformed = s
-        for i, seq in enumerate(self.escapeSequences):
+        for i, seq in enumerate(self._escapeSequences):
             assertTrue(
                 len(seq) > 1,
                 'an escape-sequence only makes sense if it is at least two characters',
@@ -170,7 +176,7 @@ class ParsePlus:
         return s
 
     def _resultToMyResult(self, parseResult, s):
-        "Add some extra information to the results"
+        "Be useful and tack on some extra information to the results"
         if not parseResult:
             return parseResult
 
@@ -191,14 +197,14 @@ class ParsePlus:
         return ret
 
     def _getTotalSpan(self, parseResult, lenS):
-        if '{{' in self.pattern or '}}' in self.pattern:
+        if '{{' in self._pattern or '}}' in self._pattern:
             raise RuntimeError(
                 "for simplicity, we don't yet support getTotalSpan " +
                 'if the pattern contains {{ or }}'
             )
 
-        locationOfFirstOpen = self.pattern.find('{')
-        locationOfLastClose = self.pattern.rfind('}')
+        locationOfFirstOpen = self._pattern.find('{')
+        locationOfLastClose = self._pattern.rfind('}')
         if locationOfFirstOpen == -1 or locationOfLastClose == -1:
             # pattern contained no fields?
             return None
@@ -215,7 +221,7 @@ class ParsePlus:
 
         # ex.: for the pattern aaa{field}bbb, widen by len('aaa') and len('bbb')
         smallestSpanStart -= locationOfFirstOpen
-        largestSpanEnd += len(self.pattern) - (locationOfLastClose + len('}'))
+        largestSpanEnd += len(self._pattern) - (locationOfLastClose + len('}'))
 
         # sanity check that the bounds make sense
         assertTrue(0 <= smallestSpanStart <= lenS, 'internal error: span outside bounds')
@@ -229,10 +235,10 @@ class ParsePlus:
 
         sTransformed = self._createEscapeSequencesMap(s)
         parseResult = parse.parse(
-            self.pattern,
+            self._pattern,
             sTransformed,
-            extra_types=self.extraTypes,
-            case_sensitive=self.caseSensitive,
+            extra_types=self._extraTypes,
+            case_sensitive=self._caseSensitive,
         )
         return self._resultToMyResult(parseResult, s)
 
@@ -241,10 +247,10 @@ class ParsePlus:
 
         sTransformed = self._createEscapeSequencesMap(s)
         parseResult = parse.search(
-            self.pattern,
+            self._pattern,
             sTransformed,
-            extra_types=self.extraTypes,
-            case_sensitive=self.caseSensitive,
+            extra_types=self._extraTypes,
+            case_sensitive=self._caseSensitive,
         )
         return self._resultToMyResult(parseResult, s)
 
@@ -253,10 +259,10 @@ class ParsePlus:
 
         sTransformed = self._createEscapeSequencesMap(s)
         parseResults = parse.findall(
-            self.pattern,
+            self._pattern,
             sTransformed,
-            extra_types=self.extraTypes,
-            case_sensitive=self.caseSensitive,
+            extra_types=self._extraTypes,
+            case_sensitive=self._caseSensitive,
         )
         for parseResult in parseResults:
             yield self._resultToMyResult(parseResult, s)
