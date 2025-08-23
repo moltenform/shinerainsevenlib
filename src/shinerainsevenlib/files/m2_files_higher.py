@@ -18,7 +18,7 @@ def openDirectoryInExplorer(path):
         args = ['cmd', '/c', 'start', 'explorer.exe', path]
         run(args, shell=True, captureOutput=False, throwOnFailure=False, wait=False)
     else:
-        # on mac_os, thre's usually 'open'.
+        # on mac_os, there's usually 'open'.
         for candidate in ['xdg-open', 'nautilus', 'open']:
             pathBin = findBinaryOnPath(candidate)
             if pathBin:
@@ -142,19 +142,27 @@ def _computeHashImpl(f, hasher, buffersize=defaultBufSize):
         crc = crc & 0xFFFFFFFF
         return '%08x' % crc
     elif hasher == 'crc64':
+        # at first this used crc64iso.crc64iso, but the values it gave
+        # didn't line up with any other standard I could find. currently using
+        # the crc package which seems to be called "CRC-64/ECMA-182"
+        
         try:
-            from crc64iso.crc64iso import crc64_pair, format_crc64_pair
+            from crc import Crc64, Register
         except ImportError:
-            assertTrue(False, 'To use this feature, you must install the crc64iso module.')
-
-        cur = None
+            assertTrue(False, 'To use this feature, you must install "crc" from pip.')
+        
+        register = Register(Crc64.CRC64)
+        register.init()
         while True:
             # update the hash with the contents of the file
             buffer = f.read(buffersize)
             if not buffer:
                 break
-            cur = crc64_pair(buffer, cur)
-        return format_crc64_pair(cur)
+            register.update(buffer)
+        
+        result = register.digest()
+        result = result & 0xFFFFFFFFFFFFFFFF
+        return f"{result:016x}"
     else:
         if isinstance(hasher, str):
             hasher = hasherFromString(hasher)
@@ -198,6 +206,7 @@ def runWithTimeout(
     throwOnFailure=True,
     captureOutput=True,
     timeoutSeconds=None,
+    stripText=True,
     addArgs=None,
 ):
     """Run a process, with a timeout.
@@ -230,6 +239,9 @@ def runWithTimeout(
     if captureOutput:
         stdout = ret.stdout
         stderr = ret.stderr
+        if stripText:
+            stdout = stdout.rstrip()
+            stderr = stderr.rstrip()
 
     return retcode, stdout, stderr
 
@@ -329,9 +341,10 @@ def run(
 
     return retcode, stdout, stderr
 
-def runPskill(args):
-    """Use pskill to terminate a process"""
+def runPskill(processName, pathToPskill='pskill'):
+    """Use pskill to terminate a process. processName like notepad.exe."""
     import winerror
+    args = [pathToPskill, '-accepteula', processName]
     retcode, stderr, _stdout = run(args, throwOnFailure=None)
     if retcode == 0:
         return winerror.S_OK
@@ -351,4 +364,182 @@ def makeShortcut(sourcePath, targetPath):
         winshell.CreateShortcut(sourcePath, targetPath)
     else:
         _os.symlink(sourcePath, targetPath)
+
+def isSymlink(path):
+    "Confirmed works on Windows"
+    return _os.path.islink(path)
+
+def _checkIfFileCanBeMovedInelegant(f):
+    "locked by other process writing? robocopy doesn't handle this case well."
+    tmpName = f + '~srsstemporyrename~'
+    assertTrue(not exists(tmpName), 'file already exists', tmpName)
+    try:
+        move(f, tmpName, False)
+    finally:
+        if exists(tmpName):
+            move(tmpName, f, False)
+        else:
+            # this is usually winerr 32, "held by other process"
+            return False
+    
+    return True
+
+def _checkIfSafeForRobocopy(srcRoot, destRoot):
+    "Do two checks 1) can be moved 2) no type mismatches 3) are symlinks"
+    if not exists(destRoot):
+        return
+
+    for f, short in recurseFiles(destRoot, includeDirs=True, includeFiles=True):
+        if isSymlink(f):
+            raise RuntimeError('not-safe-for-robocopy: symlink in destination', f)
+        
+        versionInSrc = acrossDir(f, destRoot, srcRoot)
+        if exists(versionInSrc):
+            isDirInSrc = isDir(versionInSrc)
+            isDirInDest = isDir(f)
+            if isDirInSrc != isDirInDest:
+                raise RuntimeError('not-safe-for-robocopy: type mismatch', f,)
+            
+            if not isDirInDest:
+                if not _checkIfFileCanBeMovedInelegant(f):
+                    raise RuntimeError('not-safe-for-robocopy: file handle prob locked', f,)
+
+def runRsync(srcDir, destDir, deleteExisting, useRobocopy=False,
+    robocopyExcludeFiles=None, robocopyExcludeDirs=None,
+    excludeRelative=None, excludeWithName=None,
+    throwOnFailure=True, checkExist=True, binPath=None):
+    """Use rsync to copy files between directories.
+    
+    On windows, you can use the flag useRobocopy.
+    
+    Robocopy has separate robocopyExcludeFiles and robocopyExcludeDirs
+    parameters because the semantics are different than rsync, e.g.
+    in how they handle glob patterns."""
+    # Specifying exclusions is complicated.
+    # There's absolute paths, relative paths, glob patterns,
+    # and "by name" (should "/XF foo.txt" also exclude "dir/subdir/foo.txt"?)
+    # Best to separate based on platform because semantics differ.
+    if checkExist:
+        assertTrue(isDir(srcDir), "not a dir", srcDir)
+        assertTrue(isDir(destDir), "not a dir", destDir)
+    
+    if useRobocopy:
+        assertTrue(not excludeRelative and not excludeWithName, 
+            "Use robocopy-specific params")
+        
+        retcode, stdout, stderr = _runRobocopy(srcDir, destDir, 
+            deleteExisting=deleteExisting, binPath=binPath,
+            robocopyExcludeFiles=robocopyExcludeFiles, 
+            robocopyExcludeDirs=robocopyExcludeDirs)
+        
+        isOk, status = interpretRobocopyErr(retcode)
+    else:
+        assertTrue(not robocopyExcludeFiles and not robocopyExcludeDirs, 
+            "Don't use robocopy-specific params")
+        
+        retcode, stdout, stderr = _runRsync(srcDir, destDir,
+            deleteExisting=deleteExisting, binPath=binPath,
+            excludeRelative=excludeRelative, excludeWithName=excludeWithName)
+        
+        isOk, status = interpretRsyncErr(retcode)
+    
+    if throwOnFailure and not isOk:
+        raise OSFileRelatedError("Could not copy. " + str(retcode) +
+            str(stdout) + str(stderr) + str(status))
+    return retcode, stdout, stderr, status
+
+def _runRobocopy(srcDir, destDir, deleteExisting,
+    robocopyExcludeFiles=None, robocopyExcludeDirs=None, binPath=None):
+    defaultToEmptyList = lambda lst: list(lst) if lst else []
+    # we could use /r:0 to eliminate retries, but an
+    # apparent bug in robocopy gives a success exit code,
+    # so it's better to leave the current repeat-million-times
+    # because at least it doesn't silently fail
+    # (example: open a file for write with the same name as incoming directory)
+    args = []
+    args.append(binPath or 'robocopy')
+    args.append(srcDir)
+    args.append(destDir)
+    if deleteExisting:
+        args.append('/MIR')
+    
+    args.append('/E')  # means 'copy all including empty dirs'
+    for ex in defaultToEmptyList(robocopyExcludeFiles):
+        args.append('/XF')
+        args.append(ex)
+    for ex in defaultToEmptyList(robocopyExcludeDirs):
+        args.append('/XD')
+        args.append(ex)
+    
+    # hack: robocopy has weird bugs where it overrides locked files -
+    # it writes data there anyways. it also badly handles cases where a path represents
+    # a directory on one side and a file on the other side.
+    _checkIfSafeForRobocopy(srcDir, destDir)
+    return run(args, throwOnFailure=False, confirmExists=True)
+
+def _runRsync(srcDir, destDir, deleteExisting,
+        excludeRelative=None, excludeWithName=None, binPath=None):
+
+    defaultToEmptyList = lambda lst: list(lst) if lst else []
+    args = []
+    args.append(binPath or 'rsync')
+    args.append('-az')
+    if not srcDir.endswith('/'):
+        # important: otherwise rsync might put files into a subdir
+        srcDir += '/'
+
+    if deleteExisting:
+        args.append('--delete-after')
+    for ex in defaultToEmptyList(excludeRelative):
+        assertTrue(not _os.path.isabs(ex), ex)
+        args.append('--exclude=/' + ex)
+    for ex in defaultToEmptyList(excludeWithName):
+        assertTrue(not _os.path.isabs(ex), ex)
+        args.append('--exclude=' + ex)
+
+    args.append(srcDir)
+    args.append(destDir)
+    return run(args, throwOnFailure=False, confirmExists=True)
+
+def interpretRobocopyErr(code):
+    status = ''
+    if code & 0x1:
+        status += "One or more files were copied successfully (that is, new files have arrived).\n"
+        code = code & ~0x1
+    if code & 0x2:
+        status += "Extra files or directories were detected.\n"
+        code = code & ~0x2
+    if code & 0x4:
+        status += "Mismatched files or directories were detected.\n"
+        code = code & ~0x4
+    if code & 0x8:
+        status += "Some files or directories could not be copied.\n"
+    if code & 0x10:
+        status += "Serious error.\n"
+    isOk = code == 0
+    return (isOk, status)
+
+def interpretRsyncErr(code):
+    mapCode = {}
+    mapCode[0] = (True, '')
+    mapCode[1] = (False, "Syntax or usage error")
+    mapCode[2] = (False, "Protocol incompatibility")
+    mapCode[3] = (False, "Errors selecting input/output files, dirs")
+    mapCode[4] = (False, "Action not supported, maybe by the client and not server")
+    mapCode[5] = (False, "Error starting client-server protocol")
+    mapCode[6] = (False, "Daemon unable to append to log-file")
+    mapCode[10] = (False, "Error in socket I/O")
+    mapCode[11] = (False, "Error in file I/O")
+    mapCode[12] = (False, "Error in rsync protocol data stream")
+    mapCode[13] = (False, "Errors with program diagnostics")
+    mapCode[14] = (False, "Error in IPC code")
+    mapCode[20] = (False, "Received SIGUSR1 or SIGINT")
+    mapCode[21] = (False, "Some error returned by waitpid()")
+    mapCode[22] = (False, "Error allocating core memory buffers")
+    mapCode[23] = (False, "Partial transfer due to error")
+    mapCode[24] = (False, "Partial transfer due to vanished source files")
+    mapCode[25] = (False, "The --max-delete limit stopped deletions")
+    mapCode[30] = (False, "Timeout in data send/receive")
+    mapCode[35] = (False, "Timeout waiting for daemon connection")
+    return mapCode.get(code, (False, "Unknown"))
 

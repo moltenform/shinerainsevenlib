@@ -7,7 +7,7 @@ Certain features can be lit up by installing one or more of these packages from 
 
 * if ``Send2Trash`` is installed, you can send files to OS trash location
 
-* if ``crc64iso`` is installed, you can get the crc64 of a file
+* if ``crc`` is installed, you can get the crc64 of a file
 
 * if ``xxhash`` is installed, you can get the xxhash of a file
 

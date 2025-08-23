@@ -12,23 +12,10 @@ from collections import OrderedDict
 import os
 import sys
 import shutil
+import time
 from src.shinerainsevenlib.files import *
-
-class TestSimpleWrappers:
-    def test(self):
-        assert files.rename is os.rename
-        assert files.exists is os.path.exists
-        assert files.join is os.path.join
-        assert files.split is os.path.split
-        assert files.isDir is os.path.isdir
-        assert files.isFile is os.path.isfile
-        assert files.getSize is os.path.getsize
-        assert files.rmDir is os.rmdir
-        assert files.chDir is os.chdir
-        assert files.sep is os.path.sep
-        assert files.lineSep is os.linesep
-        assert files.absPath is os.path.abspath
-        assert files.rmTree is shutil.rmtree
+from src.shinerainsevenlib.files import m2_files_higher
+from unittest.mock import patch
 
 
 class TestGetName:
@@ -92,6 +79,22 @@ class TestExtensionsRelated:
         assert splitExt('/path/a.b.jxl', onesToPreserve=['.l.jxl', '.j.jxl']) == ('/path/a.b', '.jxl')
         assert splitExt('/path/a.l.jxl', onesToPreserve=['.l.jxl', '.j.jxl']) == ('/path/a', '.l.jxl')
         assert splitExt('/path/a.j.jxl', onesToPreserve=['.l.jxl', '.j.jxl']) == ('/path/a', '.j.jxl')
+
+class TestSimpleWrappers:
+    def test(self):
+        assert files.exists is os.path.exists
+        assert files.join is os.path.join
+        assert files.split is os.path.split
+        assert files.isDir is os.path.isdir
+        assert files.isFile is os.path.isfile
+        assert files.getSize is os.path.getsize
+        assert files.rmDir is os.rmdir
+        assert files.chDir is os.chdir
+        assert files.sep is os.path.sep
+        assert files.lineSep is os.linesep
+        assert files.absPath is os.path.abspath
+        assert files.rmTree is shutil.rmtree
+
 
 class TestGetAltered:
     def test_getWithDifferentExt(self):
@@ -414,8 +417,8 @@ class TestMove:
         assert not exists(fxTree.pathFileExists)
     
 class TestPosixSpecificCopy:
-    def test_overWriteFile(self, fxFiles, mocker):
-        mocker.patch('sys.platform', return_value='linux')
+    @patch('sys.platform', 'linux')
+    def test_overWriteFile(self, fxFiles):
         # replace a file
         copy(fxFiles.f1, fxFiles.f2, True)
 
@@ -423,33 +426,107 @@ class TestPosixSpecificCopy:
         assert '1\u1101' == readAll(fxFiles.f1)
         assert '1\u1101' == readAll(fxFiles.f2)
 
-    def test_overWriteFileBlocked(self, fxFiles, mocker):
-        mocker.patch('sys.platform', return_value='linux')
+    @patch('sys.platform', 'linux')
+    def test_overWriteFileBlocked(self, fxFiles):
         with pytest.raises(OSError):
             copy(fxFiles.f1, fxFiles.f2, False)
     
-    def test_overWriteCapableButNotNeeded(self, fxFiles, mocker):
-        mocker.patch('sys.platform', return_value='linux')
+    @patch('sys.platform', 'linux')
+    def test_overWriteCapableButNotNeeded(self, fxFiles):
         copy(fxFiles.f1, fxFiles.f2 + '.new', False)
         assert '1\u1101' == readAll(fxFiles.f2 + '.new')
 
-    def test_overWriteCapableButNotNeededBigFile(self, fxFiles, mocker):
+    @patch('sys.platform', 'linux')
+    def test_overWriteCapableButNotNeededBigFile(self, fxFiles):
         # test with a large file to make the loop happen
-        mocker.patch('sys.platform', return_value='linux')
         oneMbOfAs = 'a' * 1024 * 1024
         files.writeAll(fxFiles.f1, oneMbOfAs)
         copy(fxFiles.f1, fxFiles.f2 + '.new', False)
         assert oneMbOfAs == readAll(fxFiles.f2 + '.new')
 
-#~ class TestPosixSpecificMove:
-    #~ def test_overWriteFile(self, fxFiles, mocker):
-        #~ mocker.patch('sys.platform', return_value='linux')
-        #~ # replace a file
-        #~ move(fxFiles.f1, fxFiles.f2, True)
+class TestPosixSpecificMove:
+    @patch('sys.platform', 'linux')
+    def test_couldOverWriteFile(self, fxFiles):
+        # replace a file
+        move(fxFiles.f1, fxFiles.f2 + '.new', True)
 
-        #~ # check contents after
-        #~ assert not exists(fxFiles.f1)
-        #~ assert '1\u1101' == readAll(fxFiles.f2)
+        # check contents after
+        assert not exists(fxFiles.f1)
+        assert '1\u1101' == readAll(fxFiles.f2 + '.new')
+
+    @patch('sys.platform', 'linux')
+    def test_overWriteFile(self, fxFiles):
+        # replace a file
+        move(fxFiles.f1, fxFiles.f2, True)
+
+        # check contents after
+        assert not exists(fxFiles.f1)
+        assert '1\u1101' == readAll(fxFiles.f2)
+    
+    @patch('sys.platform', 'linux')
+    def test_mvWithNoNoClobber(self, fxFiles, mocker):
+        def simulateMvWithNoOption(args, **kwargs):
+            assert args[0] == 'mv'
+            if '--no-clobber' in args:
+                raise OSError('no option')
+            else:
+                raise AssertionError('Not reached')
+
+        files.m0_files_wrappers.confirmedMvOpts = None
+        mocker.patch('src.shinerainsevenlib.files.m2_files_higher.run', side_effect=simulateMvWithNoOption)
+        with pytest.raises(Exception, match='failed to run no-clobber test'):
+            move(fxFiles.f1, fxFiles.f2, False)
+
+        assert 'failed to run no-clobber test' in files.m0_files_wrappers.confirmedMvOpts
+        
+        # nothing should have changed, bc exception
+        assert '1\u1101' == readAll(fxFiles.f1)
+        assert '2\u1101' == readAll(fxFiles.f2)
+    
+    @patch('sys.platform', 'linux')
+    def test_mvHasNoClobberOptionButDoesTheWrongThing(self, fxFiles, mocker):
+        def simulateMvThatAlwaysClobbers(args, **kwargs):
+            assert args[0] == 'mv'
+            assert args[1] == '--no-clobber'
+            assert exists(args[2])
+            assert exists(args[3])
+            files.delete(args[3])
+            shutil.copy(args[2], args[3])
+            files.delete(args[2])
+
+        files.m0_files_wrappers.confirmedMvOpts = None
+        mocker.patch('src.shinerainsevenlib.files.m2_files_higher.run', side_effect=simulateMvThatAlwaysClobbers)
+        with pytest.raises(Exception, match='mv still overwrote'):
+            move(fxFiles.f1, fxFiles.f2, False)
+
+        assert 'mv still overwrote' in files.m0_files_wrappers.confirmedMvOpts
+
+        # nothing should have changed, bc exception
+        assert '1\u1101' == readAll(fxFiles.f1)
+        assert '2\u1101' == readAll(fxFiles.f2)
+
+    @patch('sys.platform', 'linux')
+    def test_mvThatWorksAsExpected(self, fxFiles, mocker):
+        def simulateMvAsExpected(args, **kwargs):
+            assert args[0] == 'mv'
+            assert args[1] == '--no-clobber'
+            assert exists(args[2])
+            if exists(args[3]):
+                return 0
+            else:
+                shutil.move(args[2], args[3])
+
+        files.m0_files_wrappers.confirmedMvOpts = None
+        mocker.patch('src.shinerainsevenlib.files.m2_files_higher.run', side_effect=simulateMvAsExpected)
+        move(fxFiles.f1, fxFiles.f2, False)
+
+        assert files.m0_files_wrappers.confirmedMvOpts is True
+
+        # nothing should have changed, because overwrite=False
+        assert '1\u1101' == readAll(fxFiles.f1)
+        assert '2\u1101' == readAll(fxFiles.f2)
+
+
 
 class TestGetModTime:
     @pytest.mark.skipif('not isPy3OrNewer')
@@ -497,6 +574,14 @@ class TestGetModTime:
         assert files.getLastModTime(fxTree.pathSmallFile) == pytest.approx(tmBase, rel=0.1)
         files.setLastModTime(fxTree.pathSmallFile, tmBase*1.0e9, files.TimeUnits.Nanoseconds)
         assert files.getLastModTime(fxTree.pathSmallFile) == pytest.approx(tmBase, rel=0.1)
+
+    def test_modtimeChanges(self, fxFiles):
+        tmBase = files.getLastModTime(fxFiles.f1, files.TimeUnits.Milliseconds)
+        time.sleep(2)
+        files.writeAll(fxFiles.f1, 'change')
+        tmNew = files.getLastModTime(fxFiles.f1, files.TimeUnits.Milliseconds)
+        assert tmNew > tmBase
+
 
 class TestFilesEqual:
     def testSameContentAndSameTimes(self, fxTree):

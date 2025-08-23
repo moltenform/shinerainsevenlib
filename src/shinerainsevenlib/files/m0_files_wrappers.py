@@ -16,7 +16,6 @@ from ..core import (
     assertEq
 )
 
-rename = _os.rename
 exists = _os.path.exists
 join = _os.path.join
 split = _os.path.split

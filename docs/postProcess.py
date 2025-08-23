@@ -44,7 +44,11 @@ r'''
 <h2>Plugins<a class="headerlink" href="#submodulesplugins" title="Link to this heading">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="files/xxxx/index.html">plugin</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugins/plugin_compression/index.html">plugin compression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugins/plugin_configreader/index.html">plugin configreader</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugins/plugin_fileexts/index.html">plugin fileexts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugins/plugin_media/index.html">plugin media</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugins/plugin_store/index.html">plugin store (database utils)</a></li>
 </ul>
 </div>
 </section>

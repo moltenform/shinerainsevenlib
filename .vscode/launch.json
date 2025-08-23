@@ -7,7 +7,6 @@
             "type": "debugpy",
             "request": "launch",
             "module": "pytest",
-            //~ "args": ["--capture=no", "--maxfail=1", "-v", "tests/test_core/test_m0_text_io.py"],
             "args": ["--capture=no", "--maxfail=1", "-v", "tests/"],
             "cwd": "${workspaceFolder}"
         },

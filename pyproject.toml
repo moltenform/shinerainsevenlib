@@ -19,16 +19,7 @@ classifiers = [
 ]
 
 [project.optional-dependencies]
-allfeatures = [
-    "Send2Trash",
-    "crc64iso",
-    "xxhash",
-    "apsw",
-    "dateparser",
-    "parse",
-    "pyperclip",
-]
-development = [
+dev = [
     "pylint",
     "ruff",
     "coverage",
@@ -36,6 +27,15 @@ development = [
     "sphinx-autoapi",
     "pytest",
     "pytest-mock",
+]
+allfeatures = [
+    "Send2Trash",
+    "crc",
+    "xxhash",
+    "apsw",
+    "dateparser",
+    "parse",
+    "pyperclip",
 ]
 
 [project.urls]
@@ -149,9 +149,12 @@ exclude_also = [
     "def _getClipboardTextTk",
     "def _setClipboardTextTk",
     "def openDirectoryInExplorer",
+    "def runPskill",
+    "def makeShortcut",
     "raise NotImplementedError",
     "except ImportError:",
     "except ImportError as e:",
+    "def xxx",
     "def xxx",
 ]
 
@@ -165,6 +168,9 @@ omit = [
     "m2_core_data_structures.py",
     "m5_batch_util.py",
     "m6_jslike.py",
+    "m0_files_wrappers.py",
+    "m1_files_listing.py",
+    "xxxxx",
     "xxxxx",
     "xxxxx",
 ]
