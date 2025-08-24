@@ -78,6 +78,8 @@ def postProcessSubFile(pathFragment):
     postProcessReplace(path, rgx, 'srss.', useRe=True)
     # add extra whitespace
     postProcessReplace(path, f'<dl class', '<br/><dl class')
+    # mark as optional
+    postProcessReplace(path, f'_m2_core_data_structures.DefaultVal', '(Optional)')
     
 
 subFiles = srss.strToList('''

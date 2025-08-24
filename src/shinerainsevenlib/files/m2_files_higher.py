@@ -455,7 +455,7 @@ def _runRobocopy(srcDir, destDir, deleteExisting,
     # apparent bug in robocopy gives a success exit code,
     # so it's better to leave the current repeat-million-times
     # because at least it doesn't silently fail
-    # (example: open a file for write with the same name as incoming directory)
+    # (we use _checkIfSafeForRobocopy to work around known problems)
     args = []
     args.append(binPath or 'robocopy')
     args.append(srcDir)

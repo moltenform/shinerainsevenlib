@@ -23,7 +23,7 @@
             "name": "Explore (debug)",
             "type": "debugpy",
             "request": "launch",
-            "program": "nocpy_explore.py",
+            "program": "OUTSIDE/nocpy_explore.py",
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}"
         },

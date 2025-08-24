@@ -471,6 +471,45 @@ class TestRunRSync:
         with pytest.raises(Exception):
             self._runBasedOnPlatform(src, dest, deleteExisting=True, checkExist=False)
 
+    def test_expectFailureOntoFile(self, fxFilesPlain, fxDirPlain,  ):
+        # try to copy a dir onto a file
+        writeAll(join(fxDirPlain, 'exist.txt'), 'a')
+        with pytest.raises(AssertionError):
+            self._runBasedOnPlatform(fxFilesPlain, join(fxDirPlain, 'exist.txt'), deleteExisting=True)
+    
+    @pytest.mark.skipif('not sys.platform.startswith("win")')
+    def test_robocopyProblemsLockedFile(self, fxFilesPlain, fxDirPlain):
+        def lockAFileForOneSecond(path):
+            with open(path, 'w') as f:
+                f.write('a')
+                time.sleep(1)
+        self._restoreDirectoryContents(fxFilesPlain)
+        self._restoreDirectoryContents(fxDirPlain)
+        writeAll(join(fxFilesPlain, 's2/other.txt'), 'newcontents')
+        t = startThread(lockAFileForOneSecond, [join(fxDirPlain, 's2/other.txt')])
+        with pytest.raises(Exception, match='file handle prob locked'):
+            self._runBasedOnPlatform(fxFilesPlain, fxDirPlain, deleteExisting=True)
+        
+        t.join()
+
+    @pytest.mark.skipif('not sys.platform.startswith("win")')
+    def test_robocopyProblemsFileVsDir(self, fxFilesPlain, fxDirPlain):
+        self._restoreDirectoryContents(fxFilesPlain)
+        self._restoreDirectoryContents(fxDirPlain)
+        writeAll(join(fxFilesPlain, 's2/differentType'), 'a')
+        makeDirs(join(fxDirPlain, 's2/differentType'))
+        with pytest.raises(Exception, match='type mismatch'):
+            self._runBasedOnPlatform(fxFilesPlain, fxDirPlain, deleteExisting=True)
+    
+    @pytest.mark.skipif('not sys.platform.startswith("win")')
+    def test_robocopyProblemsDirVsFile(self, fxFilesPlain, fxDirPlain):
+        self._restoreDirectoryContents(fxFilesPlain)
+        self._restoreDirectoryContents(fxDirPlain)
+        makeDirs(join(fxFilesPlain, 's2/differentType'))
+        writeAll(join(fxDirPlain, 's2/differentType'), 'a')
+        with pytest.raises(Exception, match='type mismatch'):
+            self._runBasedOnPlatform(fxFilesPlain, fxDirPlain, deleteExisting=True)
+
     def test_nonWindowsError(self):
         assert (True, '') == interpretRsyncErr(0)
         assert (False, 'Syntax or usage error') == interpretRsyncErr(1)

@@ -170,6 +170,7 @@ omit = [
     "m6_jslike.py",
     "m0_files_wrappers.py",
     "m1_files_listing.py",
+    "m2_files_higher.py",
     "xxxxx",
     "xxxxx",
     "xxxxx",

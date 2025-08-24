@@ -158,6 +158,7 @@ def startThread(fn, args=None):
 
     t = threading.Thread(target=fn, args=args)
     t.start()
+    return t
 
 # endregion
 

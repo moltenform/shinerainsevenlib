@@ -3,13 +3,14 @@
 # Released under the LGPLv2.1 License
 
 import re
+from types import SimpleNamespace
 from .. import files as _files
 from .. import core as _srss
-from ..core import assertTrue
 from . import plugin_fileexts as _plugin_fileexts
+from ..core import assertTrue
 
 def imageTypeFromExtension(path):
-    "Gets the image type like `jpg`, `png`, etc"
+    "Gets the image type like `jpg`, `png`, etc or None if this is not a common image type."
     ext = _files.getExt(path, removeDot=False)
     if ext in _plugin_fileexts.mostCommonImageExtAlternatives:
         ext = _plugin_fileexts.mostCommonImageExtAlternatives[ext]
@@ -19,49 +20,74 @@ def imageTypeFromExtension(path):
     else:
         return None
 
-# for more, see
-# https://github.com/velocityzen/FileType/blob/master/Sources/FileType/FileTypeMatch.swift
+# for more, see pages like
+# http://fileformats.archiveteam.org/wiki/JPEG
 def imageTypeFromContents(path, treatMpoAsJpg=True):
     "Gets the image type like `jpg`, `png`, etc. Works even if extension is wrong."
     from PIL import Image
 
     with open(path, 'rb') as f:
         firstBytes = f.read(128)
-        if firstBytes.startswith(b'\x49\x49\x2A\x00'):
-            return 'tiff'
-        if firstBytes.startswith(b'\x4d\x4d\x00\x2A'):
-            return 'tiff'
+        #~ if firstBytes.startswith(b'\x49\x49\x2A\x00'):
+            #~ return 'tiff'
+        #~ elif firstBytes.startswith(b'\x4d\x4d\x00\x2A'):
+            #~ return 'tiff'
         if b'ftypheic' in firstBytes:
             return 'heic'
-        if b'ftypavif' in firstBytes:
+        elif b'ftypavif' in firstBytes:
             return 'avif'
-        if b'\x0c\x4a\x58\x4c' in firstBytes:
+        elif b'\x0c\x4a\x58\x4c' in firstBytes:
             return 'jxl'
-        if firstBytes.startswith(b'\xff\x0a'):
+        elif firstBytes.startswith(b'\xff\x0a'):
             return 'jxl'
 
-    with Image.open(path) as im:
-        imFormat = str(im.format).lower()
-        if imFormat == 'tiff':
-            imFormat = 'tif'
-        elif imFormat == 'mpo' and treatMpoAsJpg:
-            # some cameras save their images in a mpo form,
-            # but 99% of the time we want to treat the file as a typical jpg image.
-            imFormat = 'jpg'
-        elif imFormat == 'jpeg':
-            imFormat = 'jpg'
+    try:
+        with Image.open(path) as im:
+            imFormat = str(im.format).lower()
+            if imFormat == 'tiff':
+                if _evidenceOfDng(im):
+                    imFormat = 'dng'
+                else:
+                    imFormat = 'tif'
+            elif imFormat == 'mpo' and treatMpoAsJpg:
+                # some cameras save their images in a mpo form,
+                # but 99% of the time we want to treat the file as a typical jpg image.
+                imFormat = 'jpg'
+            elif imFormat == 'jpeg':
+                imFormat = 'jpg'
+    except Image.UnidentifiedImageError:
+        return 'unknown'
 
     return imFormat
+
+def _evidenceOfDng(im):
+    from PIL.TiffTags import TAGS
+    for key in im.tag_v2:
+        nameOfTag = TAGS.get(key, '')
+        if 'DNG' in nameOfTag:
+            return True
+
+    return False
+
 
 def getAudAndVidCodec(inPath, ffmpegPath='ffmpeg'):
     """Given a container format, determine the actual encoding.
     For example, a .mp4 video could internally be x264 or x265,
     and the audio could be aac or wav."""
-    results = _srss.Bucket(audFormat=None, vidFormat=None, fullResults=None, err=None)
+    
+    class AudAndVidCodecResults:
+        def __init__(self, audFormat=None, vidFormat=None, fullResults=None, err=None):
+            self.audFormat = audFormat
+            self.vidFormat = vidFormat
+            self.fullResults = fullResults
+            self.err = err
+
+    results = AudAndVidCodecResults()
     try:
         _getAudAndVidCodecImpl(inPath, results, ffmpegPath=ffmpegPath)
     except Exception as e:
         results.err = e
+    
     return results
 
 def _getAudAndVidCodecImpl(inPath, results, ffmpegPath='ffmpeg'):
