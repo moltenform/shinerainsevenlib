@@ -1,11 +1,15 @@
+from shinerainsevenlib.standard import *
 
-def addSrcLicense(dirOrDirs, newHeaderToWrite, excerptIndicatingDuplicate='', fileExts=['py']):
+def addSrcLicense(dirOrDirs, newHeaderToWrite, excerptIndicatingDuplicate='', fileExts=None):
+    if fileExts is None:
+        fileExts = ['py']
+
     warnings = []
     if isinstance(dirOrDirs, str):
         dirOrDirs = [dirOrDirs]
     
     for root in dirOrDirs:
-        for f, _short in files.recurseFiles(root, fileExts=fileExts):
+        for f, _short in files.recurseFiles(root, allowedExts=fileExts):
             _goOne(f, newHeaderToWrite, excerptIndicatingDuplicate, warnings)
     
     if warnings:

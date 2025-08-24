@@ -58,6 +58,7 @@ class TestImageTypeFromContents:
         assert SrssMedia.imageTypeFromContents('collat/img/a.txt') == 'unknown'
 
     def testMpo(self):
+        os.chdir(files.getParent(files.getParent(__file__)))
         assert SrssMedia.imageTypeFromContents('collat/img/a.jpeg', treatMpoAsJpg=False) == 'jpg'
         assert SrssMedia.imageTypeFromContents('collat/img/a.jpg', treatMpoAsJpg=False) == 'jpg'
         assert SrssMedia.imageTypeFromContents('collat/img/a.lookslikempo.jpg', treatMpoAsJpg=False) == 'mpo'
@@ -69,21 +70,22 @@ class TestImageTypeFromContents:
 class TestVidType:
     def getVidType(self, path):
         os.chdir(files.getParent(files.getParent(__file__)))
-        results = SrssMedia.getAudAndVidCodec(f'collat/media/{path}',)
+        results = SrssMedia.getAudAndVidCodec(path)
         if results.err:
             return 'ERR:' + results.err
         else:
             return [results.audFormat, results.vidFormat]
         
     def testBasic(self):
-        assert self.getVidType("flac.flac") == ["flac", None]
-        assert self.getVidType("h264.mp4") == [None, 'h264']
-        assert self.getVidType("h264_and_flac_aud.mkv") == ["flac", 'h264']
-        assert self.getVidType("h264_and_m4a_aud.mp4") == ["aac", 'h264']
-        assert self.getVidType("webm.webm") == [None, 'vp9']
+        os.chdir(files.getParent(files.getParent(__file__)))
+        assert self.getVidType("collat/media/flac.flac") == ["flac", None]
+        assert self.getVidType("collat/media/h264.mp4") == [None, 'h264']
+        assert self.getVidType("collat/media/h264_and_flac_aud.mkv") == ["flac", 'h264']
+        assert self.getVidType("collat/media/h264_and_m4a_aud.mp4") == ["aac", 'h264']
+        assert self.getVidType("collat/media/webm.webm") == [None, 'vp9']
         
         # not a video
-        assert self.getVidType("../images/a.txt") == 'ERR:Invalid data found when processing input'
+        assert self.getVidType("collat/img/a.txt") == 'ERR:Invalid data found when processing input'
 
         # file not exist
         assert self.getVidType("notexist.txt") == 'ERR:No such file or directory'

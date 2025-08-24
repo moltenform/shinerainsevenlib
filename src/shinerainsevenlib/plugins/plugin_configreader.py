@@ -85,6 +85,7 @@ class SrssConfigReader:
         "Set a value in a section."
         if not self.parsed.get(section):
             setattr(self.parsed, section, Bucket())
+
         parsedSection = self.parsed.get(section)
         setattr(parsedSection, col, v)
 
@@ -92,6 +93,7 @@ class SrssConfigReader:
         "Get a value in a section."
         if not self.parsed.get(section):
             setattr(self.parsed, section, Bucket())
+
         parsedSection = self.parsed.get(section)
         if parsedSection.get(col):
             return parsedSection.get(col)
@@ -243,7 +245,6 @@ def getSsrsInternalPrefs():
 
 def getExecutablePathFromPrefs(name, throwIfNotFound, fallbacksToTry=None):
     "We let people configure by putting paths to external executables in the cfg file,"
-    from .. import files
     prefs = getSsrsInternalPrefs()
     keyname = f'pathExecutable{name[0].upper()}{name[1:].lower()}'
     got = prefs.parsed.main.get(keyname)
@@ -261,6 +262,6 @@ def getExecutablePathFromPrefs(name, throwIfNotFound, fallbacksToTry=None):
 
     if throwIfNotFound:
         assertTrue(False, f"path to executable {name} not found. Please put it on system path, or add an entry for {keyname} in shinerainsevenlib.cfg")
-    else:
-        return None
+        
+    return None
 

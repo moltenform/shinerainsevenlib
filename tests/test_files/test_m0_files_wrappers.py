@@ -121,18 +121,18 @@ class TestGetAltered:
         assert '/path/a.other' == getWithDifferentExt('/path/a.l.jxl', '.other', onesToPreserve=['.l.jxl', '.j.jxl'])
 
     def test_getAcross(self):
-        assert files.acrossDir(r'c:\abc', r'c:\abc', r'c:\xyz') == r'c:\xyz'
-        assert files.acrossDir(r'c:\abc\def', r'c:\abc', r'c:\xyz') == r'c:\xyz\def'
-        assert files.acrossDir(r'c:\abc\def\ghi', r'c:\abc', r'c:\xyz') == r'c:\xyz\def\ghi'
-        assertException(lambda: files.acrossDir(r'c:\abc\def', r'c:\abcd', r'c:\xyz'), AssertionError)
-        assertException(lambda: files.acrossDir(r'c:\abc\def', r'c:\ab', r'c:\xyz'), AssertionError)
-        assertException(lambda: files.acrossDir(r'c:\fff\def', r'c:\abc', r'c:\xyz'), AssertionError)
-        assert files.acrossDir('/home/abc', '/home/abc', '/home/xyz') == '/home/xyz'
-        assert files.acrossDir('/home/abc/def', '/home/abc', '/home/xyz') == '/home/xyz/def'
-        assert files.acrossDir('/home/abc/def/ghi', '/home/abc', '/home/xyz') == '/home/xyz/def/ghi'
-        assertException(lambda: files.acrossDir('/home/abc/def', '/home/abcd', '/home/xyz'), AssertionError)
-        assertException(lambda: files.acrossDir('/home/abc/def', '/home/ab', '/home/xyz'), AssertionError)
-        assertException(lambda: files.acrossDir('/home/fff/def', '/home/abc', '/home/xyz'), AssertionError)
+        assert acrossDir(r'c:\abc', r'c:\abc', r'c:\xyz') == r'c:\xyz'
+        assert acrossDir(r'c:\abc\def', r'c:\abc', r'c:\xyz') == r'c:\xyz\def'
+        assert acrossDir(r'c:\abc\def\ghi', r'c:\abc', r'c:\xyz') == r'c:\xyz\def\ghi'
+        assertException(lambda: acrossDir(r'c:\abc\def', r'c:\abcd', r'c:\xyz'), AssertionError)
+        assertException(lambda: acrossDir(r'c:\abc\def', r'c:\ab', r'c:\xyz'), AssertionError)
+        assertException(lambda: acrossDir(r'c:\fff\def', r'c:\abc', r'c:\xyz'), AssertionError)
+        assert acrossDir('/home/abc', '/home/abc', '/home/xyz') == '/home/xyz'
+        assert acrossDir('/home/abc/def', '/home/abc', '/home/xyz') == '/home/xyz/def'
+        assert acrossDir('/home/abc/def/ghi', '/home/abc', '/home/xyz') == '/home/xyz/def/ghi'
+        assertException(lambda: acrossDir('/home/abc/def', '/home/abcd', '/home/xyz'), AssertionError)
+        assertException(lambda: acrossDir('/home/abc/def', '/home/ab', '/home/xyz'), AssertionError)
+        assertException(lambda: acrossDir('/home/fff/def', '/home/abc', '/home/xyz'), AssertionError)
 
 class TestMakeDirs:
     def test(self, fxDirPlain):
@@ -155,16 +155,16 @@ class TestMakeDirs:
             makeDirs('?' if sys.platform.startswith("win") else '')
         
         # exists as file
-        files.writeAll(join(fxDirPlain, 'a.txt'), 'abc')
+        writeAll(join(fxDirPlain, 'a.txt'), 'abc')
         with pytest.raises(OSError):
             makeDirs(join(fxDirPlain, 'a.txt'))
 
 class TestDelete:
     def testDelete(self, fxTree):
-        self.runDeleteTests(files.delete, fxTree)
+        self.runDeleteTests(delete, fxTree)
     
     def testDeleteSure(self, fxTree):
-        self.runDeleteTests(files.deleteSure, fxTree)
+        self.runDeleteTests(deleteSure, fxTree)
     
     def runDeleteTests(self, fnDelete, fxTree):
         # file
@@ -318,14 +318,14 @@ class TestCopy:
         assert '1\u1101' == readAll(fxFiles.f1)
         assert '2\u1101' == readAll(fxFiles.f2)
 
-        files.setLastModTime(fxFiles.f2, 1754712000)
+        setLastModTime(fxFiles.f2, 1754712000)
         
         # replace a file
         assert exists(fxFiles.f2)
         copy(fxFiles.f1, fxFiles.f2, True, keepSameModifiedTime=True)
         assert exists(fxFiles.f2)
 
-        assert files.getLastModTime(fxFiles.f2) == pytest.approx(1754712000, abs=10)
+        assert getLastModTime(fxFiles.f2) == pytest.approx(1754712000, abs=10)
 
 class TestMove:
     def test_overWriteMode_srcNotExist(self, fxFiles):
@@ -440,7 +440,7 @@ class TestPosixSpecificCopy:
     def test_overWriteCapableButNotNeededBigFile(self, fxFiles):
         # test with a large file to make the loop happen
         oneMbOfAs = 'a' * 1024 * 1024
-        files.writeAll(fxFiles.f1, oneMbOfAs)
+        writeAll(fxFiles.f1, oneMbOfAs)
         copy(fxFiles.f1, fxFiles.f2 + '.new', False)
         assert oneMbOfAs == readAll(fxFiles.f2 + '.new')
 
@@ -490,9 +490,9 @@ class TestPosixSpecificMove:
             assert args[1] == '--no-clobber'
             assert exists(args[2])
             assert exists(args[3])
-            files.delete(args[3])
+            delete(args[3])
             shutil.copy(args[2], args[3])
-            files.delete(args[2])
+            delete(args[2])
 
         files.m0_files_wrappers.confirmedMvOpts = None
         mocker.patch('src.shinerainsevenlib.files.m2_files_higher.run', side_effect=simulateMvThatAlwaysClobbers)
@@ -525,14 +525,25 @@ class TestPosixSpecificMove:
         # nothing should have changed, because overwrite=False
         assert '1\u1101' == readAll(fxFiles.f1)
         assert '2\u1101' == readAll(fxFiles.f2)
-
-
+    
+    def test_arePathsSame(self, fxFiles):
+        os.chdir(fxFiles.basedir)
+        assert arePathsSame(fxFiles.f1, fxFiles.f1)
+        assert arePathsSame('1\u1101.txt', '1\u1101.txt')
+        assert arePathsSame('1\u1101.txt', './1\u1101.txt')
+        assert arePathsSame('1\u1101.txt', '../files/1\u1101.txt')
+        if sys.platform.startswith('win'):
+            assert arePathsSame('1\u1101.TXT', '1\u1101.txt')
+            assert arePathsSame('1\u1101.txt', '../FiLeS/1\u1101.txt')
+        elif sys.platform.startswith('linux'):
+            assert not arePathsSame('1\u1101.TXT', '1\u1101.txt')
+            assert not arePathsSame('1\u1101.txt', '../FiLeS/1\u1101.txt')
 
 class TestGetModTime:
     @pytest.mark.skipif('not isPy3OrNewer')
     def test_modtimeRendered(self, fxDirPlain):
-        files.writeAll(join(fxDirPlain, 'a.txt'), 'contents')
-        curtimeWritten = files.getLastModTime(join(fxDirPlain, 'a.txt'), files.TimeUnits.Milliseconds)
+        writeAll(join(fxDirPlain, 'a.txt'), 'contents')
+        curtimeWritten = getLastModTime(join(fxDirPlain, 'a.txt'), TimeUnits.Milliseconds)
         curtimeNow = getNowAsMillisTime()
 
         # we expect it to be at least within 1 day
@@ -546,75 +557,84 @@ class TestGetModTime:
         assert scurtimeWritten[0:nCharsInDate] == scurtimeNow[0:nCharsInDate]
     
     def test_modtimeWithInvalidUnits(self, fxDirPlain):
-        files.writeAll(join(fxDirPlain, 'a.txt'), 'contents')
-        tm = files.getLastModTime(join(fxDirPlain, 'a.txt'), files.TimeUnits.Seconds)
+        writeAll(join(fxDirPlain, 'a.txt'), 'contents')
+        tm = getLastModTime(join(fxDirPlain, 'a.txt'), TimeUnits.Seconds)
         with pytest.raises(ValueError):
-            files.getLastModTime(join(fxDirPlain, 'a.txt'), 'Days')
+            getLastModTime(join(fxDirPlain, 'a.txt'), 'Days')
         
-        files.setLastModTime(join(fxDirPlain, 'a.txt'), tm, files.TimeUnits.Seconds)
+        setLastModTime(join(fxDirPlain, 'a.txt'), tm, TimeUnits.Seconds)
         with pytest.raises(ValueError):
-            files.setLastModTime(join(fxDirPlain, 'a.txt'), tm, 'Days')
+            setLastModTime(join(fxDirPlain, 'a.txt'), tm, 'Days')
     
     def test_getModtimeWithDifferentUnits(self, fxTree):
-        files.writeAll(fxTree.pathSmallFile, 'contents')
-        tmS = files.getLastModTime(fxTree.pathSmallFile, files.TimeUnits.Seconds)
-        tmMs = files.getLastModTime(fxTree.pathSmallFile, files.TimeUnits.Milliseconds)
-        tmNs = files.getLastModTime(fxTree.pathSmallFile, files.TimeUnits.Nanoseconds)
+        writeAll(fxTree.pathSmallFile, 'contents')
+        tmS = getLastModTime(fxTree.pathSmallFile, TimeUnits.Seconds)
+        tmMs = getLastModTime(fxTree.pathSmallFile, TimeUnits.Milliseconds)
+        tmNs = getLastModTime(fxTree.pathSmallFile, TimeUnits.Nanoseconds)
         assert tmMs == pytest.approx(tmS * 1000, rel=0.1)
         assert tmNs == pytest.approx(tmS * 1.0e9, rel=0.1)
     
     def test_setModtimeWithDifferentUnits(self, fxTree):
-        files.writeAll(fxTree.pathSmallFile, 'contents')
-        tmBase = files.getLastModTime(fxTree.pathSmallFile, files.TimeUnits.Seconds)
+        writeAll(fxTree.pathSmallFile, 'contents')
+        tmBase = getLastModTime(fxTree.pathSmallFile, TimeUnits.Seconds)
         tmBase -= 555
 
-        files.setLastModTime(fxTree.pathSmallFile, tmBase, files.TimeUnits.Seconds)
-        assert files.getLastModTime(fxTree.pathSmallFile) == pytest.approx(tmBase, rel=0.1)
-        files.setLastModTime(fxTree.pathSmallFile, tmBase*1000, files.TimeUnits.Milliseconds)
-        assert files.getLastModTime(fxTree.pathSmallFile) == pytest.approx(tmBase, rel=0.1)
-        files.setLastModTime(fxTree.pathSmallFile, tmBase*1.0e9, files.TimeUnits.Nanoseconds)
-        assert files.getLastModTime(fxTree.pathSmallFile) == pytest.approx(tmBase, rel=0.1)
+        setLastModTime(fxTree.pathSmallFile, tmBase, TimeUnits.Seconds)
+        assert getLastModTime(fxTree.pathSmallFile) == pytest.approx(tmBase, rel=0.1)
+        setLastModTime(fxTree.pathSmallFile, tmBase*1000, TimeUnits.Milliseconds)
+        assert getLastModTime(fxTree.pathSmallFile) == pytest.approx(tmBase, rel=0.1)
+        setLastModTime(fxTree.pathSmallFile, tmBase*1.0e9, TimeUnits.Nanoseconds)
+        assert getLastModTime(fxTree.pathSmallFile) == pytest.approx(tmBase, rel=0.1)
 
     def test_modtimeChanges(self, fxFiles):
-        tmBase = files.getLastModTime(fxFiles.f1, files.TimeUnits.Milliseconds)
+        tmBase = getLastModTime(fxFiles.f1, TimeUnits.Milliseconds)
         time.sleep(2)
-        files.writeAll(fxFiles.f1, 'change')
-        tmNew = files.getLastModTime(fxFiles.f1, files.TimeUnits.Milliseconds)
+        writeAll(fxFiles.f1, 'change')
+        tmNew = getLastModTime(fxFiles.f1, TimeUnits.Milliseconds)
         assert tmNew > tmBase
+    
+    def test_getCreatedTime(self, fxFiles):
+        nowTimeInMs = getNowAsMillisTime()
+        assert getLastModTime(fxFiles.f1, TimeUnits.Milliseconds) == pytest.approx(nowTimeInMs, rel=0.1)
+        assert getCreatedTime(fxFiles.f1, TimeUnits.Milliseconds) == pytest.approx(nowTimeInMs, rel=0.1)
+        assert getCreatedTime(fxFiles.f1, TimeUnits.Seconds) == pytest.approx(nowTimeInMs / 1000, rel=0.1)
+        assert getCreatedTime(fxFiles.f1, TimeUnits.Nanoseconds) == pytest.approx(nowTimeInMs * 1.0e6, rel=0.1)
+
+
 
 
 class TestFilesEqual:
     def testSameContentAndSameTimes(self, fxTree):
-        files.writeAll(fxTree.pathSmallFile, 'contents')
-        files.writeAll(fxTree.pathExample, 'contents')
-        tm = files.getLastModTime(fxTree.pathExample)
-        files.setLastModTime(fxTree.pathSmallFile, tm)
-        files.setLastModTime(fxTree.pathExample, tm)
-        assert files.fileContentsEqual(fxTree.pathSmallFile, fxTree.pathExample)
+        writeAll(fxTree.pathSmallFile, 'contents')
+        writeAll(fxTree.pathExample, 'contents')
+        tm = getLastModTime(fxTree.pathExample)
+        setLastModTime(fxTree.pathSmallFile, tm)
+        setLastModTime(fxTree.pathExample, tm)
+        assert fileContentsEqual(fxTree.pathSmallFile, fxTree.pathExample)
 
     def testSameContentAndDifferentTimes(self, fxTree):
-        files.writeAll(fxTree.pathSmallFile, 'contents')
-        files.writeAll(fxTree.pathExample, 'contents')
-        tm = files.getLastModTime(fxTree.pathExample)
-        files.setLastModTime(fxTree.pathSmallFile, tm)
-        files.setLastModTime(fxTree.pathExample, tm - 10)
-        assert files.fileContentsEqual(fxTree.pathSmallFile, fxTree.pathExample)
+        writeAll(fxTree.pathSmallFile, 'contents')
+        writeAll(fxTree.pathExample, 'contents')
+        tm = getLastModTime(fxTree.pathExample)
+        setLastModTime(fxTree.pathSmallFile, tm)
+        setLastModTime(fxTree.pathExample, tm - 10)
+        assert fileContentsEqual(fxTree.pathSmallFile, fxTree.pathExample)
 
     def testDiffContentAndSameTimes(self, fxTree):
-        files.writeAll(fxTree.pathSmallFile, 'contents')
-        files.writeAll(fxTree.pathExample, 'contentS')
-        tm = files.getLastModTime(fxTree.pathExample)
-        files.setLastModTime(fxTree.pathSmallFile, tm)
-        files.setLastModTime(fxTree.pathExample, tm)
-        assert not files.fileContentsEqual(fxTree.pathSmallFile, fxTree.pathExample)
+        writeAll(fxTree.pathSmallFile, 'contents')
+        writeAll(fxTree.pathExample, 'contentS')
+        tm = getLastModTime(fxTree.pathExample)
+        setLastModTime(fxTree.pathSmallFile, tm)
+        setLastModTime(fxTree.pathExample, tm)
+        assert not fileContentsEqual(fxTree.pathSmallFile, fxTree.pathExample)
 
     def testDiffContentAndDiffTimes(self, fxTree):
-        files.writeAll(fxTree.pathSmallFile, 'contents')
-        files.writeAll(fxTree.pathExample, 'contentS')
-        tm = files.getLastModTime(fxTree.pathExample)
-        files.setLastModTime(fxTree.pathSmallFile, tm)
-        files.setLastModTime(fxTree.pathExample, tm - 10)
-        assert not files.fileContentsEqual(fxTree.pathSmallFile, fxTree.pathExample)
+        writeAll(fxTree.pathSmallFile, 'contents')
+        writeAll(fxTree.pathExample, 'contentS')
+        tm = getLastModTime(fxTree.pathExample)
+        setLastModTime(fxTree.pathSmallFile, tm)
+        setLastModTime(fxTree.pathExample, tm - 10)
+        assert not fileContentsEqual(fxTree.pathSmallFile, fxTree.pathExample)
 
 class TestWriteFiles:
     def test_readAndWriteSimple(self, fxDirPlain):

@@ -5,10 +5,20 @@
 import os as _os
 import sys as _sys
 from .m0_files_wrappers import *
+from ..core import (
+    alert as _alert,
+    trace as _trace,
+    assertTrue as _assertTrue,
+)
 
 def listDirs(path, *, filenamesOnly=False, recurse=False, **kwargs):
     """Return subdirectories within a directory. Doesn't include the root,
-    unless recurse=True."""
+    unless recurse=True.
+    
+    Returns iterator of tuples `(f, short)` where `f` is full path
+    and `short` is just the name.
+    
+    If you pass in filenamesOnly=True, returns iterator of just the names."""
     if recurse:
         return recurseDirs(
             path,
@@ -19,7 +29,16 @@ def listDirs(path, *, filenamesOnly=False, recurse=False, **kwargs):
                             includeFiles=False, includeDirs=True, **kwargs)
 
 def listFiles(path, *, filenamesOnly=False, recurse=False, **kwargs):
-    "Return files within a directory"
+    """Return files within a directory,
+
+    For convenience, the results are sorted, regardless of the operating system.
+    
+    Returns iterator of tuples `(f, short)` where `f` is full path
+    and `short` is just the filename.
+    
+    You can filter extensions by passing something like allowedExts=['png', 'gif']
+    
+    If you pass in filenamesOnly=True, returns iterator of just the filenames."""
     if recurse:
         return recurseFiles(path, filenamesOnly=filenamesOnly, **kwargs)
     else:
@@ -39,8 +58,8 @@ def _listChildrenUnsorted(path, *, filenamesOnly=False, allowedExts=None,
                 continue
             yield filename if filenamesOnly else (fullPath, filename)
 
-# on windows platforms we can typically assume dir list results are sorted
-# for consistency, on other platforms, sort the results.
+# on windows platforms we can generally assume dir list results are sorted.
+# for convenience, on other platforms, sort the results.
 if _sys.platform.startswith('win'):
     exeSuffix = '.exe'
     listChildren = _listChildrenUnsorted
@@ -53,10 +72,10 @@ else:
 def _checkAllowedExts(allowedExts):
     if isinstance(allowedExts, list):
         for ext in allowedExts:
-            assertTrue(not '.' in ext, 'provide a list like ["png", "gif"]')
+            _assertTrue(not '.' in ext, 'provide a list like ["png", "gif"]')
         allowedExts = set(allowedExts)
     elif allowedExts and not isinstance(allowedExts, set):
-        assertTrue(False, 'allowedExts must be a list or set')
+        _assertTrue(False, 'allowedExts must be a list or set')
 
     return allowedExts
 
@@ -72,7 +91,15 @@ def recurseFiles(
     followSymlinks=False,
 ):
     """Return files within a directory (recursively).
-    You can provide a fnFilterDirs to filter out any directories not to traverse into."""
+    
+    You can filter extensions by passing something like allowedExts=['png', 'gif']
+
+    You can provide a fnFilterDirs callback, to skip over certain directories.
+    
+    Returns iterator of tuples `(f, short)` where `f` is full path
+    and `short` is just the filename.
+    
+    If you pass in filenamesOnly=True, returns iterator of just the filenames."""
     assert isDir(root)
     allowedExts = _checkAllowedExts(allowedExts)
 
@@ -96,7 +123,14 @@ def recurseDirs(
     root, *, filenamesOnly=False, fnFilterDirs=None, topDown=True, followSymlinks=False
 ):
     """Return directories within a directory (recursively).
-    You can provide a fnFilterDirs to filter out any directories not to traverse into.
+
+    You can provide a fnFilterDirs callback, to skip over certain directories.
+    
+    Returns iterator of tuples `(f, short)` where `f` is full path
+    and `short` is just the name.
+    
+    If you pass in filenamesOnly=True, returns iterator of just the names.
+
     Includes the root directory."""
     return recurseFiles(
         root,
@@ -156,21 +190,23 @@ def recurseFileInfo(
     """Convenient interface to python 3's file iterator.
     On Windows this can be very fast because calls to get file properties like size
     don't require an extra system call.
-    You can provide a fnFilterDirs to filter out any directories not to traverse into.
     
     >>> for f in recurseFileInfo('/path/to/files'):
     >>>     print("For the file", f.path)
     >>>     print("The size is", str(f.size()))
 
-    allowedExts in the form ['png', 'gif']
+    You can provide a fnFilterDirs to filter out any directories not to traverse into.
+    You can provide a fnDirectExceptionsTo to handle errors that occur during iteration-
+    for example, upon encountering broken symlinks or accesss-denied errors to just log
+    and continue to the next file.
+
+    You can filter extensions by passing something like allowedExts=['png', 'gif']
     
-    recurse=True,
-    followSymlinks=False,
-    includeFiles=True,
-    includeDirs=False,
-    fnFilterDirs=None,
-    fnDirectExceptionsTo=None,
-    allowedExts=None
+    Other parameters include:
+    recurse (True|False),
+    followSymlinks (True|False),
+    includeFiles (True|False),
+    includeDirs (True|False),
 
     Does not include root directory."""
     allowedExts = _checkAllowedExts(allowedExts)
@@ -187,6 +223,7 @@ def _recurseFileInfoRecurse(
     fnDirectExceptionsTo=None,
     allowedExts=None
 ):
+    "Implementation of recurseFileInfo"
     # note that scandir's resources are released in a destructor,
     # so do not create circular references holding it.
     for entry in _os.scandir(root):
@@ -227,7 +264,7 @@ def listFileInfo(root, *, recurse=False, followSymlinks=False, includeFiles=True
 def getDirectorySizeRecurse(
     dirPath, *, followSymlinks=False, fnFilterDirs=None, fnDirectExceptionsTo=None
 ):
-    "Return the total size of a directory"
+    "Calculate the total size of a directory"
     total = 0
     for obj in recurseFileInfo(
         dirPath,

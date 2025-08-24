@@ -7,8 +7,14 @@ import os as _os
 import subprocess as _subprocess
 import shutil as _shutil
 from contextlib import ExitStack as _ExitStack
+from ..core import assertEq as _assertEq
 
 from .m1_files_listing import *
+from ..core import (
+    alert as _alert,
+    trace as _trace,
+    assertTrue as _assertTrue,
+)
 
 def openDirectoryInExplorer(path):
     "Open directory in operating system, like finder or windows explorer."
@@ -16,14 +22,14 @@ def openDirectoryInExplorer(path):
     if _sys.platform.startswith('win'):
         assert '^' not in path and '"' not in path, 'path cannot contain ^ or "'
         args = ['cmd', '/c', 'start', 'explorer.exe', path]
-        run(args, shell=True, captureOutput=False, throwOnFailure=False, wait=False)
+        return run(args, shell=True, captureOutput=False, throwOnFailure=False, wait=False)
     else:
         # on mac_os, there's usually 'open'.
         for candidate in ['xdg-open', 'nautilus', 'open']:
             pathBin = findBinaryOnPath(candidate)
             if pathBin:
                 args = [pathBin, path]
-                run(
+                return run(
                     args,
                     shell=False,
                     createNoWindow=False,
@@ -31,7 +37,7 @@ def openDirectoryInExplorer(path):
                     captureOutput=False,
                     wait=False,
                 )
-                return
+                
         raise RuntimeError('unable to open directory.')
 
 def openUrl(url, filterChars=True):
@@ -45,7 +51,7 @@ def openUrl(url, filterChars=True):
         prefix = 'https://'
     else:
         # block potentially risky file:// links
-        assertTrue(False, 'url did not start with http')
+        _assertTrue(False, 'url did not start with http')
 
     if filterChars:
         url = url[len(prefix) :]
@@ -64,7 +70,11 @@ def openUrl(url, filterChars=True):
     webbrowser.open(url, new=2)
 
 def findBinaryOnPath(name):
-    "This even knows about .bat and .exe on windows platforms"
+    """Works like 'which' on linux; finds the path to a binary executable.
+    
+    For example, notepad.exe -> c:\\windows\\notepad.exe.
+
+    This even knows about .bat and .exe on windows platforms"""
     if _os.path.isabs(name) and _os.path.isfile(name):
         return name
     
@@ -139,17 +149,19 @@ def _computeHashImpl(f, hasher, buffersize=defaultBufSize):
             if not buffer:
                 break
             crc = zlib.crc32(buffer, crc)
+
         crc = crc & 0xFFFFFFFF
         return '%08x' % crc
     elif hasher == 'crc64':
         # at first this used crc64iso.crc64iso, but the values it gave
         # didn't line up with any other standard I could find. currently using
-        # the crc package which seems to be called "CRC-64/ECMA-182"
+        # the crc package which has results that line up with other websites.
+        # This crc seems to be called "CRC-64/ECMA-182".
         
         try:
             from crc import Crc64, Register
         except ImportError:
-            assertTrue(False, 'To use this feature, you must install "crc" from pip.')
+            _assertTrue(False, 'To use this feature, you must install "crc" from pip.')
         
         register = Register(Crc64.CRC64)
         register.init()
@@ -177,18 +189,19 @@ def _computeHashImpl(f, hasher, buffersize=defaultBufSize):
 
 def windowsUrlFileGet(path):
     "Extract the url from a windows .url file"
-    assertEq('.url', splitExt(path)[1].lower())
+    _assertEq('.url', splitExt(path)[1].lower())
     s = readAll(path, mode='r')
     lines = s.split('\n')
     for line in lines:
         if line.startswith('URL='):
             return line[len('URL=') :]
+    
     raise RuntimeError('no url seen in ' + path)
 
 def windowsUrlFileWrite(path, url):
     "Create a windows .url file"
-    assertTrue(len(url) > 0)
-    assertTrue(not exists(path), 'file already exists at', path)
+    _assertTrue(len(url) > 0)
+    _assertTrue(not exists(path), 'file already exists at', path)
     s = '[InternetShortcut]\n'
     s += 'URL=%s\n' % url
     writeAll(path, s)
@@ -215,7 +228,7 @@ def runWithTimeout(
     returns tuple (returncode, stdout, stderr)"""
     addArgs = addArgs if addArgs else {}
 
-    assertTrue(
+    _assertTrue(
         throwOnFailure is True or throwOnFailure is False or throwOnFailure is None,
         "we don't yet support custom exception types set here, you can use CalledProcessError",
     )
@@ -264,7 +277,7 @@ def run(
     returns tuple (returncode, stdout, stderr)"""
 
     if confirmExists:
-        assertTrue(
+        _assertTrue(
             isFile(listArgs[0]) or
             'which' not in dir(_shutil) or
             _shutil.which(listArgs[0]) or
@@ -372,24 +385,27 @@ def isSymlink(path):
 def _checkIfFileCanBeMovedInelegant(f):
     "locked by other process writing? robocopy doesn't handle this case well."
     tmpName = f + '~srsstemporyrename~'
-    assertTrue(not exists(tmpName), 'file already exists', tmpName)
+    _assertTrue(not exists(tmpName), 'file already exists', tmpName)
+    canMove = False
     try:
         move(f, tmpName, False)
+    except OSError:
+        # this is usually winerr 32, "held by other process"
+        pass
     finally:
         if exists(tmpName):
+            # undo our temporary name
+            canMove = True
             move(tmpName, f, False)
-        else:
-            # this is usually winerr 32, "held by other process"
-            return False
     
-    return True
+    return canMove
 
 def _checkIfSafeForRobocopy(srcRoot, destRoot):
     "Do two checks 1) can be moved 2) no type mismatches 3) are symlinks"
     if not exists(destRoot):
         return
 
-    for f, short in recurseFiles(destRoot, includeDirs=True, includeFiles=True):
+    for f, _short in recurseFiles(destRoot, includeDirs=True, includeFiles=True):
         if isSymlink(f):
             raise RuntimeError('not-safe-for-robocopy: symlink in destination', f)
         
@@ -414,17 +430,17 @@ def runRsync(srcDir, destDir, deleteExisting, useRobocopy=False,
     
     Robocopy has separate robocopyExcludeFiles and robocopyExcludeDirs
     parameters because the semantics are different than rsync, e.g.
-    in how they handle glob patterns."""
+    in how they handle glob patterns and relative paths."""
     # Specifying exclusions is complicated.
     # There's absolute paths, relative paths, glob patterns,
     # and "by name" (should "/XF foo.txt" also exclude "dir/subdir/foo.txt"?)
     # Best to separate based on platform because semantics differ.
     if checkExist:
-        assertTrue(isDir(srcDir), "not a dir", srcDir)
-        assertTrue(isDir(destDir), "not a dir", destDir)
+        _assertTrue(isDir(srcDir), "not a dir", srcDir)
+        _assertTrue(isDir(destDir), "not a dir", destDir)
     
     if useRobocopy:
-        assertTrue(not excludeRelative and not excludeWithName, 
+        _assertTrue(not excludeRelative and not excludeWithName, 
             "Use robocopy-specific params")
         
         retcode, stdout, stderr = _runRobocopy(srcDir, destDir, 
@@ -434,7 +450,7 @@ def runRsync(srcDir, destDir, deleteExisting, useRobocopy=False,
         
         isOk, status = interpretRobocopyErr(retcode)
     else:
-        assertTrue(not robocopyExcludeFiles and not robocopyExcludeDirs, 
+        _assertTrue(not robocopyExcludeFiles and not robocopyExcludeDirs, 
             "Don't use robocopy-specific params")
         
         retcode, stdout, stderr = _runRsync(srcDir, destDir,
@@ -491,10 +507,10 @@ def _runRsync(srcDir, destDir, deleteExisting,
     if deleteExisting:
         args.append('--delete-after')
     for ex in defaultToEmptyList(excludeRelative):
-        assertTrue(not _os.path.isabs(ex), ex)
+        _assertTrue(not _os.path.isabs(ex), ex)
         args.append('--exclude=/' + ex)
     for ex in defaultToEmptyList(excludeWithName):
-        assertTrue(not _os.path.isabs(ex), ex)
+        _assertTrue(not _os.path.isabs(ex), ex)
         args.append('--exclude=' + ex)
 
     args.append(srcDir)

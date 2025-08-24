@@ -1,4 +1,5 @@
 import ast
+from shinerainsevenlib.standard import *
 
 def parsePythonModuleIntoListOfFunctionsAndClasses(contents):
     # use real ast parsing. otherwise it is hard to know where classes end.

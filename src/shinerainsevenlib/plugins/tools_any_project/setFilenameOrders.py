@@ -1,3 +1,5 @@
+import re
+from shinerainsevenlib.standard import *
 
 def reorderFilesWithPrefix(d, newOrder, prefix):
     newOrder = srss.strToList(newOrder)

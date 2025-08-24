@@ -10,10 +10,9 @@ from enum import StrEnum as _StrEnum
 
 from .. import core as srss
 from ..core import (
-    alert,
-    trace,
-    assertTrue,
-    assertEq
+    alert as _alert,
+    trace as _trace,
+    assertTrue as _assertTrue,
 )
 
 exists = _os.path.exists
@@ -43,9 +42,16 @@ def getName(path):
     "From /path/to/file.ext to file.ext"
     return _os.path.split(path)[1]
 
-def createdTime(path):
+def getCreatedTime(path, units=TimeUnits.Seconds):
     "The created time of the file"
-    return _os.stat(path).st_birthtime
+    if units == TimeUnits.Nanoseconds:
+        return _os.stat(path).st_birthtime_ns
+    elif units == TimeUnits.Milliseconds:
+        return _os.stat(path).st_birthtime_ns / 1.0e6
+    elif units == TimeUnits.Seconds:
+        return _os.stat(path).st_birthtime
+    else:
+        raise ValueError('unknown timeunit')
 
 def getExt(s, removeDot=True, onesToPreserve=None):
     """Get extension. removeDot determines whether result is '.jpg' or 'jpg'"
@@ -79,24 +85,24 @@ def getWithDifferentExt(s, extWithDot, onesToPreserve=None):
     onesToPreserve is a list like ['.l.jxl', '.j.jxl']
     """
     name, ext = splitExt(s, onesToPreserve=onesToPreserve)
-    assertTrue(ext, s)
+    _assertTrue(ext, s)
     return name + extWithDot
 
 def acrossDir(path, directoryFrom, directoryTo):
     """Get the other version of a path.
     If path is '/path1/to/file.ext' and directoryFrom is '/path1' and directoryTo is '/path2', then return '/path2/to2/file.ext'"""
-    assertTrue(not directoryTo.endswith(('/', '\\')))
-    assertTrue(not directoryFrom.endswith(('/', '\\')))
-    assertTrue(path.startswith(directoryFrom))
+    _assertTrue(not directoryTo.endswith(('/', '\\')))
+    _assertTrue(not directoryFrom.endswith(('/', '\\')))
+    _assertTrue(path.startswith(directoryFrom))
     remainder = path[len(directoryFrom):]
-    assertTrue(remainder == '' or remainder.startswith(('/', '\\')))
+    _assertTrue(remainder == '' or remainder.startswith(('/', '\\')))
     return directoryTo + remainder
 
 
 def delete(s, doTrace=False):
     "Delete a file"
     if doTrace:
-        trace('delete()', s)
+        _trace('delete()', s)
 
     if exists(s):
         _os.unlink(s)
@@ -104,7 +110,7 @@ def delete(s, doTrace=False):
 def deleteSure(s, doTrace=False):
     "Delete a file and confirm it is no longer there"
     delete(s, doTrace=doTrace)
-    assertTrue(not exists(s))
+    _assertTrue(not exists(s))
 
 def makeDirs(s):
     "Make dirs, OK if dir already exists. also, creates parent directory(s) if needed."
@@ -129,11 +135,13 @@ def ensureEmptyDirectory(d):
             else:
                 _os.unlink(join(d, s))
 
-        assertTrue(isEmptyDir(d))
+        _assertTrue(isEmptyDir(d))
     else:
         _os.makedirs(d)
 
 def arePathsSame(path1, path2):
+    """Check if two paths are the same. For example, a relative path and absolute path to the same file.
+    Also, on Windows, two paths with different casing should be considered to be the same."""
     return _os.path.normcase(_os.path.normpath(_os.path.abspath(path1))) == \
         _os.path.normcase(_os.path.normpath(_os.path.abspath(path2)))
 
@@ -146,9 +154,23 @@ def copy(
     allowDirs=False,
     createParent=False,
     traceOnly=False):
+    """If overwrite is True, always overwrites if destination already exists.
+    if overwrite is False, always raises exception if destination already exists.
+
+    Unlike other copy() implementations, we made the behavior consistent on Windows, Mac, and Linux.
+    
+    To be extra-safe, the overwrite=False checks are safe against race-conditions.
+    In the rare case where another process or thread puts a file there exactly at the same time,
+    no data will be overwritten.
+
+    Use `doTrace` or `traceOnly` to print out the paths being copied, for logging/debugging.
+
+    (For speed and simplicity, most of the functionality in shinerainsevenlib isn't concerned
+    with race-conditions like this, but for copy() and move() we added that capability.)"""
     try:
-        return copyImpl(srcFile, destFile, overwrite, 
-                        doTrace, keepSameModifiedTime, allowDirs, createParent, traceOnly)
+        return copyImpl(srcFile, destFile, overwrite=overwrite, 
+                        doTrace=doTrace, keepSameModifiedTime=keepSameModifiedTime, allowDirs=allowDirs,
+                        createParent=createParent, traceOnly=traceOnly)
     except Exception:
         print(f"Failed to copy {srcFile} to {destFile}", file=_sys.stderr)
         raise
@@ -163,10 +185,8 @@ def copyImpl(
     createParent=False,
     traceOnly=False,
 ):
-    """If overwrite is True, always overwrites if destination already exists.
-    if overwrite is False, always raises exception if destination already exists."""
     if doTrace:
-        trace('copy()', srcFile, destFile)
+        _trace('copy()', srcFile, destFile)
     if not exists(srcFile):
         raise OSFileRelatedError('source path does not exist' + srcFile)
     if not allowDirs and not isFile(srcFile):
@@ -174,7 +194,7 @@ def copyImpl(
 
     toSetModTime = None
     if keepSameModifiedTime and exists(destFile):
-        assertTrue(isFile(destFile), 'not supported for directories')
+        _assertTrue(isFile(destFile), 'not supported for directories')
         toSetModTime = getLastModTime(destFile, units=TimeUnits.Nanoseconds)
 
     if traceOnly:
@@ -185,13 +205,13 @@ def copyImpl(
         makeDirs(getParent(destFile))
 
     if arePathsSame(srcFile, destFile):
-        trace('Paths equal, skipping.')
+        _trace('Paths equal, skipping.')
     elif _sys.platform.startswith('win'):
         _copyFileWin(srcFile, destFile, overwrite)
     else:
         _copyFilePosix(srcFile, destFile, overwrite)
 
-    assertTrue(exists(destFile))
+    _assertTrue(exists(destFile))
     if toSetModTime:
         setLastModTime(destFile, toSetModTime, units=TimeUnits.Nanoseconds)
 
@@ -204,8 +224,22 @@ def move(
     allowDirs=False,
     createParent=False,
     traceOnly=False,):
+    """If overwrite is True, always overwrites if destination already exists.
+    if overwrite is False, always raises exception if destination already exists.
+
+    Unlike other move() implementations, we made the behavior consistent on Windows, Mac, and Linux.
+    
+    To be extra-safe, the overwrite=False checks are safe against race-conditions.
+    In the rare case where another process or thread puts a file there exactly at the same time,
+    no data will be overwritten.
+
+    Use `doTrace` or `traceOnly` to print out the paths being copied, for logging/debugging.
+
+    (For speed and simplicity, most of the functionality in shinerainsevenlib isn't concerned
+    with race-conditions like this, but for copy() and move() we added that capability.)"""
     try:
-        return moveImpl(srcFile, destFile, overwrite, warnBetweenDrives, doTrace, allowDirs, createParent, traceOnly)
+        return moveImpl(srcFile, destFile, overwrite=overwrite, warnBetweenDrives=warnBetweenDrives,
+                        doTrace=doTrace, allowDirs=allowDirs, createParent=createParent, traceOnly=traceOnly)
     except Exception:
         print(f"Failed to move {srcFile} to {destFile}", file=_sys.stderr)
         raise
@@ -223,7 +257,7 @@ def moveImpl(
     """If overwrite is True, always overwrites if destination already exists.
     if overwrite is False, always raises exception if destination already exists."""
     if doTrace:
-        trace('move()', srcFile, destFile)
+        _trace('move()', srcFile, destFile)
     if not exists(srcFile):
         raise OSFileRelatedError('source path does not exist')
     if not allowDirs and not isFile(srcFile):
@@ -237,13 +271,13 @@ def moveImpl(
         makeDirs(getParent(destFile))
 
     if arePathsSame(srcFile, destFile):
-        trace('Paths equal, skipping.')
+        _trace('Paths equal, skipping.')
     elif _sys.platform.startswith('win'):
         _moveFileWin(srcFile, destFile, overwrite, warnBetweenDrives)
     else:
         _moveFilePosixNoOverwrite(srcFile, destFile, overwrite)
 
-    assertTrue(exists(destFile))
+    _assertTrue(exists(destFile))
 
 confirmedMvOpts = None
 def _moveFilePosixNoOverwrite(srcFile, destFile, overwrite):
@@ -253,13 +287,13 @@ def _moveFilePosixNoOverwrite(srcFile, destFile, overwrite):
         _shutil.move(srcFile, destFile)
         return
 
-    # why not use do a copy with an exclusive lock, like we do for copy()?
-    # because the implementation of copy that way would look like this:
+    # why not use copy-with-exclusive lock, like we do for copy()?
+    # because the implementation of move that way would look like this:
     # 1) copy src to dest 2) delete src
     # so if for some reason src and dest pointed to the same data, this could
-    # lead to data loss. we do prevent this in arePathsSame() but there could be
+    # lead to data loss. we do a check for this in arePathsSame() but there could be
     # some type of scenario like hardlinks where we'd still be in trouble.
-    # could potentially build a solution by copying to temp file, but slow.
+    # could potentially build a solution by copying to temp file, but that's complex
     # so let's shell out to mv just to be safe.
 
     if confirmedMvOpts is None:
@@ -271,6 +305,7 @@ def _moveFilePosixNoOverwrite(srcFile, destFile, overwrite):
         m2_files_higher.run(['mv', '--no-clobber', srcFile, destFile], shell=True)
     
 def _confirmMvOpts():
+    "Check that --no-clobber both 1) doesn't error and 2) actually doesn't clobber"
     from . import m2_files_higher
     import tempfile as _tmpfile
     err = None
@@ -292,7 +327,7 @@ def _confirmMvOpts():
         delete(f2)
     
     if didClobber:
-        return f'mv still overwrote even with --no-clobber, please use gnu coreutils or rust uutils'
+        return 'mv still overwrote even with --no-clobber, please use gnu coreutils or rust uutils'
     else:
         return True
         
@@ -307,7 +342,7 @@ _winErrs = {
 def _copyFileWin(srcFile, destFile, overwrite):
     from ctypes import windll, c_wchar_p, c_int, GetLastError
 
-    assertTrue(_sys.platform.startswith('win'))
+    _assertTrue(_sys.platform.startswith('win'))
     failIfExists = c_int(0) if overwrite else c_int(1)
     res = windll.kernel32.CopyFileW(c_wchar_p(srcFile), c_wchar_p(destFile), failIfExists)
     if not res:
@@ -327,7 +362,7 @@ def _moveFileWin(srcFile, destFile, overwrite, warnBetweenDrives):
     if not res:
         err = GetLastError()
         if _winErrs.get(err) == 'Different drives' and warnBetweenDrives:
-            alert(
+            _alert(
                 'Note: moving file from one drive to another. ' +
                 srss.getPrintable(srcFile + '->' + destFile)
             )
@@ -340,6 +375,7 @@ def _moveFileWin(srcFile, destFile, overwrite, warnBetweenDrives):
     return None
 
 def _copyFilePosixByContentsNoOverwrite(srcFile, destFile):
+    "This is an opt-in type of lock, but works in all scenarios tested."
     # fails if destination already exists. O_EXCL prevents other files from writing to location.
     # raises OSError on failure.
     flags = _os.O_CREAT | _os.O_EXCL | _os.O_WRONLY
@@ -354,7 +390,7 @@ def _copyFilePosixByContentsNoOverwrite(srcFile, destFile):
                 fDest.write(buffer)
 
 def _copyFilePosix(srcFile, destFile, overwrite):
-    assertTrue(not _sys.platform.startswith('win'))
+    _assertTrue(not _sys.platform.startswith('win'))
     if overwrite:
         _shutil.copy(srcFile, destFile)
     else:
@@ -402,21 +438,27 @@ def setLastModTime(path, newVal, units=TimeUnits.Seconds):
 
 def readAll(path, mode='r', encoding=None):
     """Read entire file into string (mode=='r') or bytes (mode=='rb')
-    When reading as text, defaults to utf-8."""
+    
+    When reading as text, defaults to utf-8. Not python2 compatible."""
     if 'b' not in mode and encoding is None:
         encoding = 'utf-8'
+
     with open(path, mode, encoding=encoding) as f:
         return f.read()
 
 def writeAll(
     path, content, mode='w', encoding=None, skipIfSameContent=False, updateTimeIfSameContent=True
 ):
-    """Write entire file. When writing text, defaults to utf-8."""
+    """Write entire file. 
+    
+    Common modes are 'w' for writing text and 'wb' for writing bytes.
+    
+    When writing text, defaults to utf-8. Not python2 compatible."""
     if 'b' not in mode and encoding is None:
         encoding = 'utf-8'
 
     if skipIfSameContent and isFile(path):
-        assertTrue(mode in ('w', 'wb'))
+        _assertTrue(mode in ('w', 'wb'))
         currentContent = readAll(path, mode=mode.replace('w', 'r'), encoding=encoding)
         if currentContent == content:
             if updateTimeIfSameContent:
@@ -440,3 +482,4 @@ def fileContentsEqual(f1, f2):
 
 class OSFileRelatedError(OSError):
     "Indicates a file-related exception"
+
