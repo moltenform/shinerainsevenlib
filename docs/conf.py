@@ -43,6 +43,12 @@ def custom_skip(app, what, name, obj, skip, options):
         skip = True
     if name == 'shinerainsevenlib.core.m0_text_io.ShineRainSevenLibError':
         skip = True
+    if name == 'shinerainsevenlib.core.m2_core_data_structures.DefaultVal':
+        skip = True
+    if name == 'shinerainsevenlib.files.m2_files_higher.interpretRobocopyErr':
+        skip = True
+    if name == 'shinerainsevenlib.files.m2_files_higher.interpretRsyncErr':
+        skip = True
     if what == 'attribute':
         # hide all class attributes
         skip = True

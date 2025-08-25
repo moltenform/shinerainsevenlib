@@ -8,9 +8,9 @@ import os as _os
 import shutil as _shutil
 
 from .plugin_fileexts import *
-from .. import files
-from .. import core as srss
-from ..core import assertTrue, assertEq, Bucket, jslike
+#~ from .. import files
+#~ from .. import core as srss
+#~ from ..core import assertTrue, assertEq, Bucket, jslike
 
 class SrssConfigReader:
     """

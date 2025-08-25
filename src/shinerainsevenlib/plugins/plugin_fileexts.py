@@ -3,6 +3,7 @@
 # Released under the LGPLv2.1 License
 
 from .. import files as _files
+import os as _os
 
 imageExtensions = {
     '.jpg': 1,  # section
@@ -229,7 +230,7 @@ archiveExtensions = {
     '.zz': 1,
 }
 
-# based on  default_compressed_extensions.txt in Duplicati source code
+# based on default_compressed_extensions.txt in Duplicati source code
 alreadyCompressedExt = {
     '.7z': 1,
     '.alz': 1,
@@ -395,7 +396,7 @@ moreNonTextual = {
     '.pyc': 1,
     '.pch': 1,
     '.pyd': 1,
-    '.lnk': 1,  #
+    '.lnk': 1,
     '.scssc': 1,
     '.mid': 1,
     '.db': 1,
@@ -598,11 +599,18 @@ def extensionPossiblyExecutable(s):
     else:
         return False
 
-def isCompressedTarExtension(archive):
+def _endsWithOneOfTheSuffixesButNotEqualToIt(s, suffixes):
+    for suffix in suffixes:
+        if s.endswith(suffix) and not s == suffix:
+            return True
+        
+    return False
+
+def isCompressedTarExtension(path):
     """Is this a compressed tar archive, like example.tar.gz or example.tgz'
     Not example.gz which should fall under isSingleFileCompressionExtension() instead"""
-    archive = archive.lower()
-    return archive.endswith((
+    path = _files.getName(path).lower()
+    return _endsWithOneOfTheSuffixesButNotEqualToIt(path, (
         '.tar.z',
         '.tar.br',
         '.tar.zst',
@@ -614,22 +622,20 @@ def isCompressedTarExtension(archive):
         '.tbz2',
         '.txz'))
 
-def isSingleFileCompressionExtension(archive):
+def isSingleFileCompressionExtension(path):
     """Is this a plain single-file-archive, like example.gz'
     Not example.tar.gz which should fall under isCompressedTarExtension() instead"""
-    archive = archive.lower()
-    a, _b = _files.splitExt(archive)
-    if a.endswith('.tar'):
-        return False
-    else:
-        return archive.endswith((
+    path = _files.getName(path).lower()
+    hasSingleFileCompression = _endsWithOneOfTheSuffixesButNotEqualToIt(path, (
         '.z',
         '.br',
         '.zst',
         '.gz',
         '.bz2',
-        '.xz',
-        ))
+        '.xz'))
+    
+    # we need to return False for .tar.gz
+    return hasSingleFileCompression and not '.tar.' in path
 
 mostCommonImageExt = {
     '.gif': 1,
@@ -654,5 +660,5 @@ mostCommonImageExtAlternatives = {
 }
 
 def removeDotsFromExts(obj):
-    "Get a version of the dictionary without leading ."
+    "Get a version without leading ."
     return set(k[1:] if k.startswith('.') else k for k in obj)

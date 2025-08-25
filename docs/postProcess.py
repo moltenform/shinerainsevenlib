@@ -10,15 +10,17 @@ if not os.path.exists('pyproject.toml'):
 sys.path.append('./src')
 from shinerainsevenlib.standard import *
 
-def postProcessReplace(path, search, replace, useRe=False):
+def postProcessReplace(path, search, replace, useRe=False, optional=False):
     path = './docs/_build/html/' + path
     oldTxt = files.readAll(path)
     if useRe:
         txt = re.sub(search, replace, oldTxt)
     else:
-        txt = srss.replaceMustExist(oldTxt, search, replace)
+        txt = oldTxt.replace(search, replace)
     
-    assertTrue(txt != oldTxt, search, replace)
+    if not optional:
+        assertTrue(txt != oldTxt, search, replace)
+    
     files.writeAll(path, txt)
 
 
@@ -74,12 +76,18 @@ def postProcessSubFile(pathFragment):
     postProcessReplace(path, rgx, '', useRe=True)
     #~ re.escape('<span class="pre">shinerainsevenlib.core.m0_text_io.</span>')
     mname = pathFragment.split('/')[1]
-    rgx = re.escape(f'<span class="pre">shinerainsevenlib.core.{mname}.</span>')
-    postProcessReplace(path, rgx, 'srss.', useRe=True)
+    
+    if 'core' in pathFragment:
+        rgx = re.escape(f'<span class="pre">shinerainsevenlib.core.{mname}.</span>')
+        postProcessReplace(path, rgx, 'srss.', useRe=True)
+    elif 'files' in pathFragment:
+        rgx = re.escape(f'<span class="pre">shinerainsevenlib.files.{mname}.</span>')
+        postProcessReplace(path, rgx, 'files.', useRe=True)
+
     # add extra whitespace
     postProcessReplace(path, f'<dl class', '<br/><dl class')
     # mark as optional
-    postProcessReplace(path, f'_m2_core_data_structures.DefaultVal', '(Optional)')
+    postProcessReplace(path, f'_m2_core_data_structures.DefaultVal', '(Optional)', optional=True)
     
 
 subFiles = srss.strToList('''
@@ -89,6 +97,10 @@ core/m2_core_data_structures
 core/m3_core_nonpure
 core/m4_core_ui
 core/m5_batch_util
-core/m6_jslike''')
+core/m6_jslike
+files/m0_files_wrappers
+files/m1_files_listing
+files/m2_files_higher''')
 for subFile in subFiles:
+    print(f'processing {subFile}')
     postProcessSubFile(subFile)
