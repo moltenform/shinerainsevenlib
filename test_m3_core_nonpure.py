@@ -123,13 +123,7 @@ class TestStartThread:
         startThread(lambda: None, (1, 2, 3))
         threading.Thread.start.assert_called_once()
 
-def doClipboardTests():
-    # could not get pyperclip to work in gh actions
-    # even after running
-    # sudo apt-get update && sudo apt-get install -y xclip(and xsel)
-    return not os.getenv('GITHUB_ACTION')
-
-@pytest.mark.skipif('not doClipboardTests()')
+@pytest.mark.skipif('not os.getenv("GITHUB_ACTION")')
 class TestClipboard:
     def test_getClipboardTextWithNoUnicode(self):
         import pyperclip
@@ -148,6 +142,10 @@ class TestClipboard:
             assert u'\u1E31\u1E77\u1E53\u006E' == getClipboardText()
         finally:
             setClipboardText(prev)
+    
+    # could not get pyperclip to work in gh actions
+    # even after adding
+    # sudo apt-get update && sudo apt-get install -y xclip(and xsel)
     
 
 #~ class TestSoftDeleteFile:

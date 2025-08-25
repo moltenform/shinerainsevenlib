@@ -6,7 +6,6 @@ import sys as _sys
 import os as _os
 import subprocess as _subprocess
 import shutil as _shutil
-from contextlib import ExitStack as _ExitStack
 from ..core import assertEq as _assertEq
 
 from .m1_files_listing import *
@@ -356,17 +355,20 @@ def run(
 
 def runPskill(processName, pathToPskill='pskill'):
     """Use pskill to terminate a process. processName like notepad.exe."""
-    import winerror
+    # use constants instead of importing winerror
+    winerror_OK = 0
+    winerror_ERROR_ACCESS_DENIED = 5
+    winerror_ERROR_NOT_FOUND = 1168
     args = [pathToPskill, '-accepteula', processName]
     retcode, stderr, _stdout = run(args, throwOnFailure=None)
     if retcode == 0:
-        return winerror.S_OK
+        return winerror_OK
     else:
         stderr = stderr.decode('utf-8')
         if '\nAccess is denied.' in stderr:
-            return winerror.E_ACCESSDENIED
+            return winerror_ERROR_ACCESS_DENIED
         elif '\nProcess does not exist.' in stderr:
-            return winerror.ERROR_NOT_FOUND
+            return winerror_ERROR_NOT_FOUND
         else:
             raise RuntimeError('pskill failed ' + stderr)
 

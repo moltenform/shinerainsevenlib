@@ -173,6 +173,8 @@ omit = [
     "m0_files_wrappers.py",
     "m1_files_listing.py",
     "m2_files_higher.py",
+    "plugin_media.py",
+    "xxxxx",
     "xxxxx",
     "xxxxx",
     "xxxxx",

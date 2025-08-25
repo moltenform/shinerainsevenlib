@@ -2,12 +2,10 @@
 # shinerainsevenlib (Ben Fisher, moltenform.com)
 # Released under the LGPLv2.1 License
 
-import re
-from types import SimpleNamespace
+import re as _re
 from .. import files as _files
-from .. import core as _srss
 from . import plugin_fileexts as _plugin_fileexts
-from ..core import assertTrue
+from ..core import assertTrue as _assertTrue
 
 def imageTypeFromExtension(path):
     "Gets the image type like `jpg`, `png`, etc or None if this is not a common image type."
@@ -28,10 +26,6 @@ def imageTypeFromContents(path, treatMpoAsJpg=True):
 
     with open(path, 'rb') as f:
         firstBytes = f.read(128)
-        #~ if firstBytes.startswith(b'\x49\x49\x2A\x00'):
-            #~ return 'tiff'
-        #~ elif firstBytes.startswith(b'\x4d\x4d\x00\x2A'):
-            #~ return 'tiff'
         if b'ftypheic' in firstBytes:
             return 'heic'
         elif b'ftypavif' in firstBytes:
@@ -55,6 +49,7 @@ def imageTypeFromContents(path, treatMpoAsJpg=True):
                 imFormat = 'jpg'
             elif imFormat == 'jpeg':
                 imFormat = 'jpg'
+
     except Image.UnidentifiedImageError:
         return 'unknown'
 
@@ -70,7 +65,7 @@ def _evidenceOfDng(im):
     return False
 
 
-def getAudAndVidCodec(inPath, ffmpegPath='ffmpeg'):
+def getAudAndVidCodec(inPath, customFn=None):
     """Given a container format, determine the actual encoding.
     For example, a .mp4 video could internally be x264 or x265,
     and the audio could be aac or wav."""
@@ -84,53 +79,69 @@ def getAudAndVidCodec(inPath, ffmpegPath='ffmpeg'):
 
     results = AudAndVidCodecResults()
     try:
-        _getAudAndVidCodecImpl(inPath, results, ffmpegPath=ffmpegPath)
+        _getAudAndVidCodecImpl(inPath, results, customFn=customFn)
     except Exception as e:
         results.err = e
     
     return results
 
-def _getAudAndVidCodecImpl(inPath, results, ffmpegPath='ffmpeg'):
-    args = [ffmpegPath, '-nostdin', '-i', inPath]
-    _ret, _stdout, stderr = _files.run(args, throwOnFailure=None, confirmExists=True)
+def _getAudAndVidCodecImpl(inPath, results, customFn=None):
+    if customFn:
+        _ret, _stdout, stderr = customFn(inPath, results)
+    else:
+        args = ['ffmpeg', '-nostdin', '-i', inPath]
+        _ret, _stdout, stderr = _files.run(args, throwOnFailure=None, confirmExists=True)
+    
     stderr = stderr.decode('utf-8').replace('\r\n', '\n')
-    stderr = stderr.replace('At least one output file must be specified', '(Intentional err)')
+    expectedErrSeen = False
+    if 'At least one output file must be specified' in stderr:
+        # take this out of the stderr returned to user, or it's misleading
+        expectedErrSeen = True
+        stderr = stderr.replace('At least one output file must be specified', '(Placeholder)')
+    
     results.fullResults = stderr
     if 'Error opening input: Invalid data found when processing input' in stderr:
         # often happens for unrecognized input formats / non-video files
-        results.err = 'Invalid data found when processing input'
+        results.err = RuntimeError('Invalid data found when processing input')
         return
     elif 'Error opening input: No such file or directory' in stderr:
-        results.err = 'No such file or directory'
+        results.err = RuntimeError('No such file or directory')
+        return
+    elif not expectedErrSeen:
+        results.err = RuntimeError('Could not interpret the file')
         return
 
     audFormat = None
     vidFormat = None
     attempts = [
-        r'\n  Stream #[0-9]\((?:[a-z]{3})\): ',
-        r'\n  Stream #[0-9]:[0-9]\[0x[0-9a-f]+\]\((?:[a-z]{3})\): ',
-        r'\n  Stream #[0-9]:[0-9]\[0x[0-9a-f]+\]: ',
-        r'\n  Stream #[0-9]:[0-9]\((?:[a-z]{3})\): ',
-        r'\n  Stream #[0-9]:[0-9]: ',
-        r'\n  Stream #[0-9]: ',
+        r'\n\s*Stream #[0-9]\((?:[a-z]{3})\): ',
+        r'\n\s*Stream #[0-9]:[0-9]\[0x[0-9a-f]+\]\((?:[a-z]{3})\): ',
+        r'\n\s*Stream #[0-9]:[0-9]\[0x[0-9a-f]+\]: ',
+        r'\n\s*Stream #[0-9]:[0-9]\((?:[a-z]{3})\): ',
+        r'\n\s*Stream #[0-9]:[0-9]: ',
+        r'\n\s*Stream #[0-9]: ',
     ]
 
     for attempt in attempts:
-        pts = re.split(attempt, stderr)
+        pts = _re.split(attempt, stderr)
         pts.pop(0)
         for line in pts:
             s = line.split('\n')[0]
             if s.startswith('Audio: '):
-                assertTrue(audFormat is None, 'two audio tracks?', inPath)
+                _assertTrue(audFormat is None, 'two audio tracks?', inPath)
                 audFormat = _getAFormat(s[len('Audio: ') :])
             elif s.startswith('Video: '):
-                assertTrue(vidFormat is None, 'two video tracks?', inPath)
+                _assertTrue(vidFormat is None, 'two video tracks?', inPath)
                 vidFormat = _getVFormat(s[len('Video: ') :])
             elif s.startswith('Data: '):
                 pass
             else:
-                assertTrue(False, 'unknown stream type', s, inPath)
+                _assertTrue(False, 'unknown stream type', s, inPath)
 
+    if audFormat is None and vidFormat is None:
+        results.err = RuntimeError('No streams found')
+        return
+    
     results.audFormat = audFormat
     results.vidFormat = vidFormat
 
@@ -176,7 +187,7 @@ def _getAFormat(s):
     s = s.replace(',', ' ')
     firstWord = s.split(' ')[0]
     if firstWord not in aFormatsFfmpeg:
-        assertTrue(False, 'unknown audio format', s, firstWord)
+        _assertTrue(False, 'unknown audio format', s, firstWord)
 
     return aFormatsFfmpeg[firstWord]
 
@@ -184,6 +195,6 @@ def _getVFormat(s):
     s = s.replace(',', ' ')
     firstWord = s.split(' ')[0]
     if firstWord not in vFormatsFfmpeg:
-        assertTrue(False, 'unknown vid format', s, firstWord)
+        _assertTrue(False, 'unknown vid format', s, firstWord)
 
     return vFormatsFfmpeg[firstWord]
