@@ -128,4 +128,16 @@ class TestFilesUtils:
 
 class TestRemoveDotsFromExts:
     def testBasic(self):
-        pass
+        s1 = set(['.a', '.b', '.c'])
+        assert removeDotsFromExts(s1) == set(['a', 'b', 'c'])
+        
+        s1 = list(['.a', '.b', '.c'])
+        assert removeDotsFromExts(s1) == set(['a', 'b', 'c'])
+        
+        s1 = {'.a': 1, '.b': 1, '.c': 1}
+        assert removeDotsFromExts(s1) == set(['a', 'b', 'c'])
+
+    def testEdgeCases(self):
+        s1 = set(['a.a', '', '.', 'other'])
+        assert removeDotsFromExts(s1) == set(['a.a', '', '', 'other'])
+    

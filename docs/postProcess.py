@@ -11,7 +11,9 @@ sys.path.append('./src')
 from shinerainsevenlib.standard import *
 
 def postProcessReplace(path, search, replace, useRe=False, optional=False):
-    path = './docs/_build/html/' + path
+    if not path.startswith('./docs'):
+        path = './docs/_build/html/' + path
+    
     oldTxt = files.readAll(path)
     if useRe:
         txt = re.sub(search, replace, oldTxt)
@@ -46,11 +48,11 @@ r'''
 <h2>Plugins<a class="headerlink" href="#submodulesplugins" title="Link to this heading">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="plugins/plugin_compression/index.html">plugin compression</a></li>
-<li class="toctree-l1"><a class="reference internal" href="plugins/plugin_configreader/index.html">plugin configreader</a></li>
-<li class="toctree-l1"><a class="reference internal" href="plugins/plugin_fileexts/index.html">plugin fileexts</a></li>
-<li class="toctree-l1"><a class="reference internal" href="plugins/plugin_media/index.html">plugin media</a></li>
-<li class="toctree-l1"><a class="reference internal" href="plugins/plugin_store/index.html">plugin store (database utils)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugins/plugin_compression/index.html">compression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugins/plugin_configreader/index.html">configreader</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugins/plugin_fileexts/index.html">fileexts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugins/plugin_media/index.html">media</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugins/plugin_store/index.html">store (database utils)</a></li>
 </ul>
 </div>
 </section>
@@ -122,3 +124,15 @@ plugins/plugin_media
 for subFile in subFiles:
     print(f'processing {subFile}')
     postProcessSubFile(subFile)
+
+for f, short in files.recurseFiles('./docs/_build/html'):
+    if short.endswith('.html'):
+        if f.replace('\\', '/').endswith('_build/html/index.html'):
+            rgx = re.compile(r'(\|.*?Powered by.*?)\|.*?<a href="_sources.*?Page source</a>', re.DOTALL)
+            #~ rgx = re.compile(r'\|\s*?<a href=".*?configuration.rst.txt.*?</a>', re.DOTALL)
+            postProcessReplace(f, rgx, r'\1', useRe=True, optional=True)
+        else:
+            rgx = re.compile(r'\|.*?Powered by.*?Page source</a>', re.DOTALL)
+            postProcessReplace(f, rgx, '', useRe=True, optional=True)
+
+

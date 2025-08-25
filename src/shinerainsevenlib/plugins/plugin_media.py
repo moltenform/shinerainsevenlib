@@ -176,6 +176,7 @@ aFormatsFfmpeg = dict(
     qdm2='applequicktime_qdm2',
     wmav2='wma2',
 )
+":meta private:"
 
 vFormatsFfmpeg = dict(
     av1='av1',
@@ -199,6 +200,7 @@ vFormatsFfmpeg = dict(
     rpza='applequicktime_rpza',
     svq1='applequicktime_svq1',
 )
+":meta private:"
 
 def _getAFormat(s):
     s = s.replace(',', ' ')

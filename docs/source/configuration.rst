@@ -13,4 +13,9 @@ Example contents,
     trashDir = /path/to/trash
     tempDir = /path/to/temp
     tempEphemeralDir = /path/to/ramdrive
+    
+    pathExecutableCjxl = /usr/bin/cjxl
+    pathExecutableCksum = /usr/bin/cksum
+    pathExecutableRar = /usr/bin/rar
+    pathExecutable7z = /usr/bin/7z
 

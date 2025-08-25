@@ -39,26 +39,11 @@ def custom_skip(app, what, name, obj, skip, options):
     if lastPartOfName.startswith("_"):
         # hide private functions, methods, and attributes
         skip = True
-    if name == 'shinerainsevenlib.standard':
+    
+    existingDocString = obj.docstring or ''
+    if ':meta private:' in existingDocString:
         skip = True
-    if name == 'shinerainsevenlib.core.m0_text_io.ShineRainSevenLibError':
-        skip = True
-    if name == 'shinerainsevenlib.core.m2_core_data_structures.SentinalIndicatingDefault':
-        skip = True
-    if name == 'shinerainsevenlib.files.m2_files_higher.interpretRobocopyErr':
-        skip = True
-    if name == 'shinerainsevenlib.files.m2_files_higher.interpretRsyncErr':
-        skip = True
-    if name == 'shinerainsevenlib.files.m2_files_higher.defaultBufSize':
-        skip = True
-    if name == 'shinerainsevenlib.files.m0_files_wrappers.confirmedMvOpts':
-        skip = True
-    if name == 'shinerainsevenlib.plugins.plugin_store.SrssStore.addSchema':
-        skip = True
-    if name == 'shinerainsevenlib.plugins.plugin_media.aFormatsFfmpeg':
-        skip = True
-    if name == 'shinerainsevenlib.plugins.plugin_media.vFormatsFfmpeg':
-        skip = True
+    
     if what == 'attribute':
         # hide all class attributes
         skip = True

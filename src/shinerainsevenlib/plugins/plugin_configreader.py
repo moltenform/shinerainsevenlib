@@ -7,10 +7,13 @@ import configparser as _configparser
 import os as _os
 import shutil as _shutil
 
-from .plugin_fileexts import *
-#~ from .. import files
-#~ from .. import core as srss
-#~ from ..core import assertTrue, assertEq, Bucket, jslike
+from .. import files as _files
+from ..core import (
+    assertTrue as _assertTrue,
+    Bucket as _Bucket,
+    m6_jslike as _jslike
+)
+#~ from . import core as _srss
 
 class SrssConfigReader:
     """Example:
@@ -34,7 +37,7 @@ class SrssConfigReader:
     Wrapper around ConfigParser that 1) doesn't need a main section 2) validates schema 3) has better defaults."""
 
     def __init__(self, autoInsertDefaultSection='main', checkSchema=True, caseSensitive=True):
-        self.parsed = Bucket()
+        self.parsed = _Bucket()
         self._checkSchema = checkSchema
         self._schema = {}
         self._autoInsertMainSection = autoInsertDefaultSection
@@ -49,7 +52,7 @@ class SrssConfigReader:
             if _fnmatch.fnmatch(sectionName, key):
                 return val
 
-        assertTrue(False, 'unknown section name', sectionName)
+        _assertTrue(False, 'unknown section name', sectionName)
         return None
 
     def _lookupSchemaCol(self, sectionName, colName):
@@ -58,7 +61,7 @@ class SrssConfigReader:
             if _fnmatch.fnmatch(colName, key):
                 return sectionData[key]
 
-        assertTrue(False, 'unknown column', colName)
+        _assertTrue(False, 'unknown column', colName)
         return None
 
     def _populateDefaultsForAll(self):
@@ -71,7 +74,7 @@ class SrssConfigReader:
         for colName in sectionData:
             colType, colDefaultVal = sectionData[colName]
             if '*' in colName:
-                assertTrue(not colDefaultVal, "we don't support default values for wildcard ")
+                _assertTrue(not colDefaultVal, "we don't support default values for wildcard ")
             else:
                 # confirm that the default value is the correct type
                 colDefaultVal = self.interpretValue(
@@ -82,7 +85,7 @@ class SrssConfigReader:
     def setVal(self, section, col, v):
         "Set a value in a section."
         if not self.parsed.get(section):
-            setattr(self.parsed, section, Bucket())
+            setattr(self.parsed, section, _Bucket())
 
         parsedSection = self.parsed.get(section)
         setattr(parsedSection, col, v)
@@ -90,7 +93,7 @@ class SrssConfigReader:
     def getValOrNone(self, section, col):
         "Get a value in a section."
         if not self.parsed.get(section):
-            setattr(self.parsed, section, Bucket())
+            setattr(self.parsed, section, _Bucket())
 
         parsedSection = self.parsed.get(section)
         if parsedSection.get(col):
@@ -103,7 +106,7 @@ class SrssConfigReader:
         if not self._checkSchema:
             return val
         colData = self._lookupSchemaCol(sectionName, colName)
-        assertTrue(colData, 'unknown col')
+        _assertTrue(colData, 'unknown col')
         colType, _colDefaultVal = colData
         return self.interpretValue(val, colType, context=f'col {colName}')
 
@@ -112,19 +115,19 @@ class SrssConfigReader:
         if colType is bool:
             val = SrssConfigReader.strToBool(val)
         else:
-            assertTrue(callable(colType), 'invalid col type, want function or class', context)
+            _assertTrue(callable(colType), 'invalid col type, want function or class', context)
             val = colType(val)
         return val
 
     def parse(self, path):
         "Load a file, and check validity against schema."
-        text = files.readAll(path)
+        text = _files.readAll(path)
         return self.parseText(text)
 
     def parseText(self, text):
         "Load cfg from a string, and check validity against schema."
         # different versions of python have different configparser behavior
-        assertTrue(srss.isPy3OrNewer, 'Py2 not supported')
+        _assertTrue(_srss.isPy3OrNewer, 'Py2 not supported')
 
         # check expected start
         if self._autoInsertMainSection:
@@ -144,12 +147,12 @@ class SrssConfigReader:
         sections = rawparsed.sections()
         for sectionName in sections:
             # populate again for this section, to support wildcards
-            assertTrue(not sectionName == 'DEFAULT', 'we do not support defaults')
+            _assertTrue(not sectionName == 'DEFAULT', 'we do not support defaults')
             self._populateDefaultsForSection(sectionName)
             options = rawparsed.options(sectionName)
             for option in options:
                 val = rawparsed.get(sectionName, option, fallback=None)
-                assertTrue(val is not None)
+                _assertTrue(val is not None)
                 val = self.checkSchemaCol(sectionName, option, val)
                 self.setVal(sectionName, option, val)
 
@@ -201,7 +204,7 @@ myPath = _os.path.abspath(__file__)
 
 def getSrssConfigLocation():
     "Internal helper for finding where shinerainsevenlib's own cfgs are"
-    dirPath = files.getParent(files.getParent(myPath))
+    dirPath = _files.getParent(_files.getParent(myPath))
     userHome = _os.path.expanduser('~')
     candidates = [
         dirPath + '/shinerainsevenlib.cfg',
@@ -210,7 +213,7 @@ def getSrssConfigLocation():
         userHome + '/.shinerainsevenlib/shinerainsevenlib.cfg',
     ]
 
-    return jslike.find(candidates, lambda path: files.exists(path))
+    return _jslike.find(candidates, lambda path: _files.exists(path))
 
 _gCachedInternalPrefs = None
 
@@ -219,9 +222,9 @@ def getSsrsInternalPrefs():
     global _gCachedInternalPrefs
     if not _gCachedInternalPrefs:
         cfgPath = getSrssConfigLocation()
-        assertTrue(cfgPath and files.isFile(cfgPath), 'currently require cfg file')
+        _assertTrue(cfgPath and _files.isFile(cfgPath), 'currently require cfg file')
         if cfgPath:
-            configText = files.readAll(cfgPath)
+            configText = _files.readAll(cfgPath)
         else:
             configText = ''
 
@@ -247,19 +250,19 @@ def getExecutablePathFromPrefs(name, throwIfNotFound, fallbacksToTry=None):
     keyname = f'pathExecutable{name[0].upper()}{name[1:].lower()}'
     got = prefs.parsed.main.get(keyname)
     if got:
-        assertTrue(files.isFile(got) or _shutil.which(got), "shinerainsevenlib.cfg File not found", keyname, got)
+        _assertTrue(_files.isFile(got) or _shutil.which(got), "shinerainsevenlib.cfg File not found", keyname, got)
         return got
 
-    if files.isFile(name) or _shutil.which(name):
+    if _files.isFile(name) or _shutil.which(name):
         return name
     
     if fallbacksToTry:
         for fallback in fallbacksToTry:
-            if files.isFile(fallback) or _shutil.which(fallback):
+            if _files.isFile(fallback) or _shutil.which(fallback):
                 return fallback
 
     if throwIfNotFound:
-        assertTrue(False, f"path to executable {name} not found. Please put it on system path, or add an entry for {keyname} in shinerainsevenlib.cfg")
+        _assertTrue(False, f"path to executable {name} not found. Please put it on system path, or add an entry for {keyname} in shinerainsevenlib.cfg")
         
     return None
 

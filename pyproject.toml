@@ -174,7 +174,7 @@ omit = [
     "m1_files_listing.py",
     "m2_files_higher.py",
     "plugin_media.py",
-    "xxxxx",
+    "plugin_fileexts.py",
     "xxxxx",
     "xxxxx",
     "xxxxx",

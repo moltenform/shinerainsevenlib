@@ -308,6 +308,8 @@ def _moveImpl(
     _assertTrue(exists(destFile))
 
 confirmedMvOpts = None
+"Cache the results of our confirmMvOpts check. :meta private:"
+
 def _moveFilePosixNoOverwrite(srcFile, destFile, overwrite):
     from . import m2_files_higher
     global confirmedMvOpts

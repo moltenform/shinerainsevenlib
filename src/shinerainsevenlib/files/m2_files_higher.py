@@ -124,6 +124,7 @@ def hasherFromString(s):
         raise ValueError('Unknown hash type ' + s)
 
 defaultBufSize = 0x40000  # 256kb
+"Buffer size, in bytes. :meta private:"
 
 def computeHashBytes(b, hasher='sha1', buffersize=defaultBufSize):
     "Get hash of a bytes object, or a crc32"
@@ -529,6 +530,7 @@ def _runRsync(srcDir, destDir, deleteExisting,
     return run(args, throwOnFailure=False, confirmExists=True)
 
 def interpretRobocopyErr(code):
+    ":meta private:"
     status = ''
     if code & 0x1:
         status += "One or more files were copied successfully (that is, new files have arrived).\n"
@@ -547,6 +549,7 @@ def interpretRobocopyErr(code):
     return (isOk, status)
 
 def interpretRsyncErr(code):
+    ":meta private:"
     mapCode = {}
     mapCode[0] = (True, '')
     mapCode[1] = (False, "Syntax or usage error")

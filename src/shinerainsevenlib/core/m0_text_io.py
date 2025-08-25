@@ -192,6 +192,8 @@ def tracep(*args, always=False):
 # endregion
 
 class ShineRainSevenLibError(RuntimeError):
+    """For exceptions in the ShineRainSevenLib layer and not lower layers
+    :meta private:"""
     def __init__(self, *args):
         """For exceptions in the ShineRainSevenLib layer and not lower layers.
         You can pass in more than one string"""

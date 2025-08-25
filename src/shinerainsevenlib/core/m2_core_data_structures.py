@@ -361,6 +361,7 @@ assertEq(1, _EnumExampleInt.first.value)
 assertEq('first', _EnumExampleStr.first)
 
 class SentinalIndicatingDefault:
+    ":meta private:"
     def __repr__(self):
         return 'DefaultValue'
 
