@@ -1,0 +1,19 @@
+shinerainsevenlib.plugins.tools_any_project.addSrcLicense
+=========================================================
+
+.. py:module:: shinerainsevenlib.plugins.tools_any_project.addSrcLicense
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   shinerainsevenlib.plugins.tools_any_project.addSrcLicense.addSrcLicense
+
+
+Module Contents
+---------------
+
+.. py:function:: addSrcLicense(dirOrDirs, newHeaderToWrite, excerptIndicatingDuplicate='', fileExts=None)
+

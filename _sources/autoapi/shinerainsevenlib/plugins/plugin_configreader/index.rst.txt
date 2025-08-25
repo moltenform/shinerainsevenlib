@@ -1,0 +1,142 @@
+shinerainsevenlib.plugins.plugin_configreader
+=============================================
+
+.. py:module:: shinerainsevenlib.plugins.plugin_configreader
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   shinerainsevenlib.plugins.plugin_configreader.myPath
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   shinerainsevenlib.plugins.plugin_configreader.SrssConfigReader
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   shinerainsevenlib.plugins.plugin_configreader.getSrssConfigLocation
+   shinerainsevenlib.plugins.plugin_configreader.getSsrsInternalPrefs
+   shinerainsevenlib.plugins.plugin_configreader.getExecutablePathFromPrefs
+
+
+Module Contents
+---------------
+
+.. py:class:: SrssConfigReader(autoInsertDefaultSection='main', checkSchema=True, caseSensitive=True)
+
+   Example:
+
+   >>> config = SimpleConfigReader()
+   >>> config.setSchemaForSection('main', {'setting1' : [int, 0], 'setting2' : [bool, True], 'setting3' : [str, 'default']})
+   >>> config.setSchemaForSection('customSection*', {'path*' : [str, '']})
+
+   example config:
+   >>> # comment
+   >>> ; comment
+   >>> key=value
+   >>> spaces in keys=allowed
+   >>> spaces in values=allowed as well
+   >>> emptystring=
+   >>> example=a multi-line
+   >>>     string that continues across strings
+
+   We don't yet support required fields or required sections.
+
+   Wrapper around ConfigParser that 1) doesn't need a main section 2) validates schema 3) has better defaults.
+
+
+   .. py:method:: setSchemaForSection(sectionName, schemaData)
+
+      Provide a schema for a section, so that type-checking can be performed.
+
+
+
+   .. py:method:: setVal(section, col, v)
+
+      Set a value in a section.
+
+
+
+   .. py:method:: getValOrNone(section, col)
+
+      Get a value in a section.
+
+
+
+   .. py:method:: checkSchemaCol(sectionName, colName, val)
+
+      Ensure value is of correct type
+
+
+
+   .. py:method:: interpretValue(val, colType, context)
+
+      Get a value, and convert to the correct type. For example 'yes' gets read as True
+
+
+
+   .. py:method:: parse(path)
+
+      Load a file, and check validity against schema.
+
+
+
+   .. py:method:: parseText(text)
+
+      Load cfg from a string, and check validity against schema.
+
+
+
+   .. py:method:: findKeyForPath(path, prefix, sectionName='main')
+
+      Helper method finding the longest match,
+      that starts with the prefix. See tests.
+
+
+
+   .. py:method:: findKeyByLongestMatch(s, prefix, sectionName='main')
+
+      Helper method finding the longest match:
+      Find the column that starts with the prefix and
+      matches as much of `s` as possible. See tests.
+
+
+
+   .. py:method:: strToBool(s, context='')
+      :staticmethod:
+
+
+      Interpret string as a boolean, for example 'yes' gets read as True
+
+
+
+.. py:data:: myPath
+   :value: b'.'
+
+
+.. py:function:: getSrssConfigLocation()
+
+   Internal helper for finding where shinerainsevenlib's own cfgs are
+
+
+.. py:function:: getSsrsInternalPrefs()
+
+   Internal helper for getting shinerainsevenlib's own cfgs
+
+
+.. py:function:: getExecutablePathFromPrefs(name, throwIfNotFound, fallbacksToTry=None)
+
+   We let people configure by putting paths to external executables in the cfg file,
+
+

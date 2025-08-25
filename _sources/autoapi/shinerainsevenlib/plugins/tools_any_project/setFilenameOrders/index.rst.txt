@@ -1,0 +1,19 @@
+shinerainsevenlib.plugins.tools_any_project.setFilenameOrders
+=============================================================
+
+.. py:module:: shinerainsevenlib.plugins.tools_any_project.setFilenameOrders
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   shinerainsevenlib.plugins.tools_any_project.setFilenameOrders.reorderFilesWithPrefix
+
+
+Module Contents
+---------------
+
+.. py:function:: reorderFilesWithPrefix(d, newOrder, prefix)
+

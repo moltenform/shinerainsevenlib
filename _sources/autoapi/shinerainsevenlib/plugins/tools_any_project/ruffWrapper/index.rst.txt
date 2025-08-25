@@ -1,0 +1,22 @@
+shinerainsevenlib.plugins.tools_any_project.ruffWrapper
+=======================================================
+
+.. py:module:: shinerainsevenlib.plugins.tools_any_project.ruffWrapper
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   shinerainsevenlib.plugins.tools_any_project.ruffWrapper.cleanupAfterRuff
+   shinerainsevenlib.plugins.tools_any_project.ruffWrapper.cleanupAfterRuffAll
+
+
+Module Contents
+---------------
+
+.. py:function:: cleanupAfterRuff(path)
+
+.. py:function:: cleanupAfterRuffAll(dirPath)
+

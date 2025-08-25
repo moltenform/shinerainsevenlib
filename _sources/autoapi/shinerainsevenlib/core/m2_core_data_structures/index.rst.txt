@@ -1,0 +1,248 @@
+shinerainsevenlib.core.m2_core_data_structures
+==============================================
+
+.. py:module:: shinerainsevenlib.core.m2_core_data_structures
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   shinerainsevenlib.core.m2_core_data_structures.DefaultVal
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   shinerainsevenlib.core.m2_core_data_structures.PersistedDict
+   shinerainsevenlib.core.m2_core_data_structures.ParsePlus
+   shinerainsevenlib.core.m2_core_data_structures.Bucket
+   shinerainsevenlib.core.m2_core_data_structures.TakeBatch
+   shinerainsevenlib.core.m2_core_data_structures.RecentlyUsedList
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   shinerainsevenlib.core.m2_core_data_structures.appendToListInDictOrStartNewList
+   shinerainsevenlib.core.m2_core_data_structures.takeBatchOnArbitraryIterable
+   shinerainsevenlib.core.m2_core_data_structures.takeBatch
+   shinerainsevenlib.core.m2_core_data_structures.listToNPieces
+   shinerainsevenlib.core.m2_core_data_structures.BoundedMemoize
+
+
+Module Contents
+---------------
+
+.. py:class:: PersistedDict(filename, warnIfCreatingNew=True, keepHandle=False, persistEveryNWrites=5)
+
+   Store a dict (or dict of dicts) on disk.
+
+
+   .. py:method:: load(encoding='utf-8')
+
+      Load from disk
+
+
+
+   .. py:method:: close()
+
+      Close the connection
+
+
+
+   .. py:method:: persist()
+
+      Save to disk. Must be called manually.
+
+
+
+   .. py:method:: set(key, value)
+
+      Set a value
+
+
+
+   .. py:method:: setSubDict(subDictName, key, value)
+
+      Set a nested value
+
+
+
+   .. py:method:: setSubSubDict(subDictName, key1, key2, value)
+
+      Set a doubly nested value
+
+
+
+.. py:class:: ParsePlus(pattern, extraTypes=None, escapeSequences=None, caseSensitive=True)
+
+   Adds the following features to the "parse" module:
+
+   {s:NoNewlines} field type
+
+   {s:NoSpaces} works like {s:S}
+
+   remember that "{s} and {s}" matches "a and a" but not "a and b",
+
+   use "{s1} and {s2}" or "{} and {}" if the contents can differ.
+
+   escapeSequences such as backslash-escapes (see examples in tests).
+
+   Added features beyond parse, including:
+
+   replaceFieldWithText()
+
+   getTotalSpan attribute
+
+   accessing results directly, writing result.name instead of result.get('name')
+
+
+   .. py:method:: match(s)
+
+      Entire string must match
+
+
+
+   .. py:method:: search(s)
+
+      Get one result
+
+
+
+   .. py:method:: findAll(s)
+
+      Get an iterator with all results
+
+
+
+   .. py:method:: replaceFieldWithText(s, key, newValue, appendIfNotFound=None, allowOnlyOnce=False)
+
+      Example: <title>{title}</title>
+
+
+
+   .. py:method:: replaceFieldWithTextIntoFile(path, key, newValue, appendIfNotFound=None, allowOnlyOnce=False, encoding='utf-8')
+
+      Convenience method to write the results to a file
+
+
+
+.. py:class:: Bucket(**kwargs)
+
+   Simple named-tuple; for cases where o.field looks nicer than o['field'].
+   Similar to standard library's types.SimpleNamespace.
+
+
+   .. py:method:: get(k, fallback=None)
+
+      You typically would say bucket.field, but if needed, bucket.get('field') is equivalent.
+
+
+
+   .. py:method:: set(k, v)
+
+      You typically would say bucket.field = 123, but if needed,
+
+
+
+   .. py:method:: getChildKeys()
+
+      Returns a list of keys in this bucket.
+
+
+
+.. py:data:: DefaultVal
+
+   Use this special constant when writing keyword args to see if an argument was passed
+   rather than fallback to a default, see pep 661
+
+
+.. py:function:: appendToListInDictOrStartNewList(d, key, val)
+
+   Could use setdefault, but this is easier to read in my opinion
+
+
+.. py:function:: takeBatchOnArbitraryIterable(iterable, size)
+
+   Yield successive n-sized chunks from a list, like javascript's _.chunk
+
+
+.. py:function:: takeBatch(itr, n)
+
+   Get successive n-sized chunks from a list, like javascript's _.chunk
+
+
+.. py:class:: TakeBatch(batchSize, callback)
+
+   Run a callback on n-sized chunks from a list, like javascript's _.chunk.
+   The convenient part is that any leftover pieces will be automatically processed.
+
+   >>> def callback(batch):
+   >>>     print(batch)
+   >>>    
+   >>> with TakeBatch(batchSize=2, callback=callback) as obj:
+   >>>    obj.append(1)
+   >>>    obj.append(2)
+   >>>    obj.append(3)
+   >>>
+   >>> # (at this point anything left in the object is run automatically)
+   >>>
+   >>> # prints:
+   >>> # [1, 2]
+   >>> # [3]
+
+
+
+   .. py:method:: append(item)
+
+      Add an item, and if the batch is full, run the callback
+
+
+
+.. py:function:: listToNPieces(lst, nPieces)
+
+   Split a list into n pieces
+
+   listToNPieces([1, 2, 3, 4, 5, 6], 2) -> [[1, 2, 3], [4, 5, 6]]
+
+
+.. py:class:: RecentlyUsedList(maxSize=None, startList=None)
+
+   Keep a list of items. Doesn't store duplicates
+
+
+   .. py:method:: getList()
+
+      Access the list
+
+
+
+   .. py:method:: add(s)
+
+      Add an item to the list. If we are full, removes an old item to make space
+
+
+
+.. py:function:: BoundedMemoize(fn)
+
+   Inspired by http://code.activestate.com/recipes/496879-memoize-decorator-function-with-cache-size-limit/
+
+   The number of items cached defaults to 20.
+   You can adjust the number of items cached by setting the .limit expando property on the function itself.
+
+   >>> @BoundedMemoize
+   >>> def addTwoNumbers(a, b):
+   >>>     return a + b
+   >>>
+   >>> addTwoNumbers.limit = 20
+   >>> 
+   >>> # this will cause the results from addTwoNumbers to be cached,
+   >>> # enabling fast performance on subsequent calls.
+
+

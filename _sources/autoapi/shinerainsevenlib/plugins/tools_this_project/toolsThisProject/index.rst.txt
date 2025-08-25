@@ -1,0 +1,22 @@
+shinerainsevenlib.plugins.tools_this_project.toolsThisProject
+=============================================================
+
+.. py:module:: shinerainsevenlib.plugins.tools_this_project.toolsThisProject
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   shinerainsevenlib.plugins.tools_this_project.toolsThisProject.getProjectRoot
+   shinerainsevenlib.plugins.tools_this_project.toolsThisProject.chDirToProjectRoot
+
+
+Module Contents
+---------------
+
+.. py:function:: getProjectRoot()
+
+.. py:function:: chDirToProjectRoot()
+

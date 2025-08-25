@@ -1,0 +1,139 @@
+shinerainsevenlib.core.m5_batch_util
+====================================
+
+.. py:module:: shinerainsevenlib.core.m5_batch_util
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   shinerainsevenlib.core.m5_batch_util.SrssLooper
+   shinerainsevenlib.core.m5_batch_util.SrssFileIterator
+   shinerainsevenlib.core.m5_batch_util.CleanupTempFilesOnClose
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   shinerainsevenlib.core.m5_batch_util.removeEmptyDirs
+
+
+Module Contents
+---------------
+
+.. py:class:: SrssLooper(listOrLambda)
+
+   Helpful for batch processing, when you want to add pauses every n iterations
+
+   >>> loop = SrssLooper(list(range(10)))
+   >>> loop.showPercentageEstimates()
+   >>> loop.addPauses(2, seconds=2)
+   >>> loop.waitUntilValueSeen(3)
+   >>> for number in loop:
+   >>>     if number % 2 == 0:
+   >>>         print('skipping even number', number)
+   >>>         loop.flagDidNoMeaningfulWork()
+   >>>     else:
+   >>>         print('found an odd number', number)
+
+   input can be a
+
+   * list 
+
+   * iterable
+
+   * lambda that returns iterable (useful because we can estimate length by generating iter twice)
+
+   waitUntilValueSeen can be a
+
+   * value- we'll skip the loop until we see that value come up
+
+   * lambda that returns boolean- we'll skip the loop until the lambda returns True
+
+
+   .. py:method:: showPercentageEstimates(displayStr='\n...')
+
+      Print progress to the user. It will be an estimate, since the iterable
+      might return a different number of items
+
+
+
+   .. py:method:: setFormatStateToPrint(fn)
+
+      You can optionally provide a callback for showing progress
+
+
+
+   .. py:method:: addPauses(pauseEveryNTimes=20, seconds=20)
+
+      Add pauses every n times. Can be good to help a laptop not overheat.
+
+
+
+   .. py:method:: waitUntilValueSeen(valOrFn)
+
+      If you specify a value, we'll skip the loop until we see that value come up
+
+
+
+   .. py:method:: flagDidNoMeaningfulWork()
+
+      You can call this to signal that you did no meaningful work, and so we don't need to pause
+
+
+
+   .. py:method:: countIterable(itr)
+      :staticmethod:
+
+
+      Helper method for counting the length of an iterable
+
+
+
+.. py:class:: SrssFileIterator(rootOrListOfRoots, fnIncludeTheseFiles=None, fnFilterDirs=None, allowRelativePaths=None, excludeNodeModules=False, **params)
+
+   Helpful for file iteration,
+   adding some extra features to files.recurseFiles.
+   Can be used to skip node_modules directories.
+
+
+   .. py:method:: pathContainsThisName(path, s)
+      :staticmethod:
+
+
+      Returns True if path contains a directory named exactly s
+
+
+
+.. py:class:: CleanupTempFilesOnClose
+
+   Bases: :py:obj:`contextlib.ExitStack`
+
+
+   Register temp files to be deleted later.
+   Example:
+
+   >>> with CleanupTempFilesOnClose() as cleanup:
+   >>>     cleanup.registerTempFile('temp.txt')
+   >>>     files.writeAll('temp.txt', 'abc')
+   >>>     ...something that might throw
+
+   ...when code reaches here, the temp file will be deleted,
+   even if an exception is thrown.
+
+
+   .. py:method:: registerTempFile(path)
+
+      Registers a temp file, we'll delete it soon
+
+
+
+.. py:function:: removeEmptyDirs(path, removeRootIfEmpty=True, verbose=False)
+
+   Recursively removes empty directories
+
+
