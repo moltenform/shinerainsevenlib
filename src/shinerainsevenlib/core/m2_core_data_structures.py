@@ -95,13 +95,22 @@ class ParsePlus:
     Adds the following features to the "parse" module:
     
     {s:NoNewlines} field type
+    
     {s:NoSpaces} works like {s:S}
+    
     remember that "{s} and {s}" matches "a and a" but not "a and b",
     
     use "{s1} and {s2}" or "{} and {}" if the contents can differ.
+
     escapeSequences such as backslash-escapes (see examples in tests).
-    replaceFieldWithText (see examples in tests).
-    getTotalSpan.
+    
+    Added features beyond parse, including:
+
+    replaceFieldWithText()
+    
+    getTotalSpan attribute
+
+    accessing results directly, writing result.name instead of result.get('name')
     """
 
     def __init__(self, pattern, extraTypes=None, escapeSequences=None, caseSensitive=True):
@@ -243,6 +252,7 @@ class ParsePlus:
         return self._resultToMyResult(parseResult, s)
 
     def search(self, s):
+        "Get one result"
         import parse
 
         sTransformed = self._createEscapeSequencesMap(s)
@@ -255,6 +265,7 @@ class ParsePlus:
         return self._resultToMyResult(parseResult, s)
 
     def findAll(self, s):
+        "Get an iterator with all results"
         import parse
 
         sTransformed = self._createEscapeSequencesMap(s)
@@ -302,8 +313,8 @@ class ParsePlus:
 # region enum helpers
 
 class Bucket:
-    """Simple named-tuple; o.field looks nicer than o['field'].
-    similar to standard library's types.SimpleNamespace."""
+    """Simple named-tuple; for cases where o.field looks nicer than o['field'].
+    Similar to standard library's types.SimpleNamespace."""
 
     def __init__(self, **kwargs):
         for key, val in kwargs.items():
@@ -315,15 +326,19 @@ class Bucket:
         )
 
     def get(self, k, fallback=None):
+        "You typically would say bucket.field, but if needed, bucket.get('field') is equivalent."
         if hasattr(self, k):
             return getattr(self, k)
         else:
             return fallback
     
     def set(self, k, v):
+        "You typically would say bucket.field = 123, but if needed,"
+        "bucket.set('field', 123) is equivalent."
         setattr(self, k, v)
     
     def getChildKeys(self):
+        "Returns a list of keys in this bucket."
         return [k for k in dir(self) if not k.startswith('_') and not callable(self.get(k))]
 
 # we used to have our own SimpleEnum implementation, before IntEnum was in std lib
@@ -346,12 +361,13 @@ assertEq(1, _EnumExampleInt.first.value)
 assertEq('first', _EnumExampleStr.first)
 
 class SentinalIndicatingDefault:
-    "Use this with keyword args to see if an argument was passed vs. left to default, see pep 661"
     def __repr__(self):
         return 'DefaultValue'
 
 
 DefaultVal = SentinalIndicatingDefault()
+"""Use this special constant when writing keyword args to see if an argument was passed
+rather than fallback to a default, see pep 661"""
 
 
 # endregion
@@ -381,7 +397,23 @@ def takeBatch(itr, n):
 
 class TakeBatch:
     """Run a callback on n-sized chunks from a list, like javascript's _.chunk.
-    The convenient part is that any leftover pieces will be automatically processed."""
+    The convenient part is that any leftover pieces will be automatically processed.
+    
+    >>> def callback(batch):
+    >>>     print(batch)
+    >>>    
+    >>> with TakeBatch(batchSize=2, callback=callback) as obj:
+    >>>    obj.append(1)
+    >>>    obj.append(2)
+    >>>    obj.append(3)
+    >>>
+    >>> # (at this point anything left in the object is run automatically)
+    >>>
+    >>> # prints:
+    >>> # [1, 2]
+    >>> # [3]
+    
+    """
 
     def __init__(self, batchSize, callback):
         self.batch = []
@@ -389,6 +421,7 @@ class TakeBatch:
         self.callback = callback
 
     def append(self, item):
+        "Add an item, and if the batch is full, run the callback"
         self.batch.append(item)
         if len(self.batch) >= self.batchSize:
             self.callback(self.batch)
@@ -405,6 +438,7 @@ class TakeBatch:
 
 def listToNPieces(lst, nPieces):
     """Split a list into n pieces
+
     listToNPieces([1, 2, 3, 4, 5, 6], 2) -> [[1, 2, 3], [4, 5, 6]]"""
     if nPieces > len(lst):
         raise ValueError('list is not long enough')
@@ -420,9 +454,12 @@ class RecentlyUsedList:
         self.maxSize = maxSize
 
     def getList(self):
+        "Access the list"
         return self.list
 
     def add(self, s):
+        "Add an item to the list. If we are full, removes an old item to make space"
+
         # if it's also elsewhere in the list, remove that one
         from . import m6_jslike
 
@@ -443,8 +480,19 @@ class RecentlyUsedList:
 
 def BoundedMemoize(fn, ):
     """Inspired by http://code.activestate.com/recipes/496879-memoize-decorator-function-with-cache-size-limit/
+    
     The number of items cached defaults to 20.
-    You can adjust the number of items cached by setting the .limit expando property on the function itself."""
+    You can adjust the number of items cached by setting the .limit expando property on the function itself.
+    
+    >>> @BoundedMemoize
+    >>> def addTwoNumbers(a, b):
+    >>>     return a + b
+    >>>
+    >>> addTwoNumbers.limit = 20
+    >>> 
+    >>> # this will cause the results from addTwoNumbers to be cached,
+    >>> # enabling fast performance on subsequent calls.
+    """
     from collections import OrderedDict
     import pickle
 

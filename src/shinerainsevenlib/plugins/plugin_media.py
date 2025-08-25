@@ -8,7 +8,11 @@ from . import plugin_fileexts as _plugin_fileexts
 from ..core import assertTrue as _assertTrue
 
 def imageTypeFromExtension(path):
-    "Gets the image type like `jpg`, `png`, etc or None if this is not a common image type."
+    """Gets the image type from a path, like ``jpg``, ``png``, etc.
+    Looks at 10-11 of the most common modern formats, doesn't include
+    archaic formats like pict.
+    
+    Returns ``None`` if this is not a common image type."""
     ext = _files.getExt(path, removeDot=False)
     if ext in _plugin_fileexts.mostCommonImageExtAlternatives:
         ext = _plugin_fileexts.mostCommonImageExtAlternatives[ext]
@@ -21,7 +25,11 @@ def imageTypeFromExtension(path):
 # for more, see pages like
 # http://fileformats.archiveteam.org/wiki/JPEG
 def imageTypeFromContents(path, treatMpoAsJpg=True):
-    "Gets the image type like `jpg`, `png`, etc. Works even if extension is wrong."
+    """Gets the image type like ``jpg``, ``png``, etc.
+    
+    Works even if extension is wrong.
+    
+    We read tags and can usually differentiate tiff and dng"""
     from PIL import Image
 
     with open(path, 'rb') as f:
@@ -66,9 +74,18 @@ def _evidenceOfDng(im):
 
 
 def getAudAndVidCodec(inPath, customFn=None):
-    """Given a container format, determine the actual encoding.
+    """Given a container format, determine the actual encoding of the media.
     For example, a .mp4 video could internally be x264 or x265,
-    and the audio could be aac or wav."""
+    and the audio could be aac or wav.
+    
+    >>> formats = getAudAndVidCodec('/path/to/file.mp4')
+    >>> if formats.err:
+    >>>     print('error', formats.err)
+    >>> else:
+    >>>     print('audio format: ', formats.audFormat)
+    >>>     print('video format: ', formats.vidFormat)
+    >>> 
+    """
     
     class AudAndVidCodecResults:
         def __init__(self, audFormat=None, vidFormat=None, fullResults=None, err=None):

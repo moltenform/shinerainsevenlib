@@ -97,9 +97,11 @@ def addAllToZip(
     **kwargs,
 ):
     """Create a zip file. Input should be path to a file or directory.
+    
     I recommend ZipMethods.LZMA for better compression.
+    
     If you set the flag alreadyCompressedAsStore, known binary formats
-    like jpg and png will be set to STORE: this way you won't waste cpu cycles
+    like jpg and png will be set to STORE. This way you won't waste cpu cycles
     trying to compress something that's already compressed."""
     if creatingNewArchive:
         assertTrue(not _files.exists(zipPath), 'already exists')
@@ -149,6 +151,7 @@ def getContents(
     archive, verbose=True, silenceWarnings=False, pword=None, okToFallbackTo7zForRar=False, alwaysUse7z=False
 ):
     """List contents of the zip, 7z, rar, or other type of archive.
+    
     Details are provided about each item: ``Path, Type, Modified,
     CRC, Size, PackedSize, and Raw (raw data about the item)``"""
     results = None
@@ -192,12 +195,13 @@ def runProcessThatCreatesOutput(
     copyLastModTimeFromInput=False,
     handleUnicodeInputs=True,
 ):
-    """
-    Writes to a temp location first,
+    """Writes to a temp location first,
+    
     1) no risk of getting a half-made file (like if user hits ctrl-c halfway through).
+    
     2) handles unicode output names even if the external tool doesn't.
-    Example:
-    runProcessThatCreatesOutput(['magick', 'convert', '%input%', '%output%'], inPath='a.bmp', outPath='b.png')
+    
+    >>> runProcessThatCreatesOutput(['magick', 'convert', '%input%', '%output%'], inPath='a.bmp', outPath='b.png')
     """
     with _srss.CleanupTempFilesOnClose() as cleanup:
         assertTrue(not _files.exists(outPath), 'output already there')

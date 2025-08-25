@@ -95,7 +95,9 @@ def getInputFromChoices(
     zeroBased=False,
 ):
     """Allows user to choose from a numbered list.
-    return value is the tuple (index, text)
+    
+    Return value is the tuple (index, text)
+    
     if user cancels, return value is the tuple (-1, 'Cancel')"""
     if cancelString:
         trace(cancelString)
@@ -203,7 +205,7 @@ def getInputFloatGui(prompt, default=None, minVal=0.0, maxVal=100.0, title=' '):
     return tkSimpleDialog.askfloat(title, prompt, minvalue=minVal, maxvalue=maxVal, **options)
 
 def getInputStringGui(prompt, initialvalue=None, title=' '):
-    "Returns '' on cancel"
+    "Returns ``''`` on cancel"
     _Tkinter, tkSimpleDialog, _root = _createTkSimpleDialog()
     options = dict(initialvalue=initialvalue) if initialvalue else dict()
     s = tkSimpleDialog.askstring(title, prompt, **options)
@@ -220,7 +222,9 @@ def findUnusedLetter(dictUsed, newWord):
 
 def getInputFromChoicesGui(prompt, arOptions):
     """Allows user to choose from a list.
+    
     return value is the tuple (index, text)
+    
     if user cancels, return value is the tuple (-1, 'Cancel')"""
     import tkinter as Tkinter
 

@@ -42,7 +42,9 @@ def addAllToRar(
 
 def getContentsViaRar(archive, verbose, _silenceWarnings, pword=None):
     """List contents of the zip, 7z, rar, or other type of archive.
+    
     Details are provided about each item: ``Path, Type, Modified,
+    
     CRC, Size, PackedSize, and Raw (raw data about the item)``"""
     from . import plugin_compression_7z
 

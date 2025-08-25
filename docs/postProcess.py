@@ -83,11 +83,26 @@ def postProcessSubFile(pathFragment):
     elif 'files' in pathFragment:
         rgx = re.escape(f'<span class="pre">shinerainsevenlib.files.{mname}.</span>')
         postProcessReplace(path, rgx, 'files.', useRe=True)
+    elif 'plugins/plugin_media' in pathFragment:
+        rgx = re.escape(f'<span class="pre">shinerainsevenlib.plugins.{mname}.</span>')
+        postProcessReplace(path, rgx, 'SrssMedia.', useRe=True)
+    elif 'plugins/plugin_fileexts' in pathFragment:
+        rgx = re.escape(f'<span class="pre">shinerainsevenlib.plugins.{mname}.</span>')
+        postProcessReplace(path, rgx, 'SrssFileExts.', useRe=True)
 
     # add extra whitespace
-    postProcessReplace(path, f'<dl class', '<br/><dl class')
+    postProcessReplace(path, f'<dl class', '<br/><br/><br/><dl class')
     # mark as optional
     postProcessReplace(path, f'_m2_core_data_structures.DefaultVal', '(Optional)', optional=True)
+    # hide titles
+    postProcessReplace(path, '<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>', '', optional=True)
+    #~ postProcessReplace(path, '<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>', '', optional=True)
+    postProcessReplace(path, '<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>', '', optional=True)
+    postProcessReplace(path, '<h2>Exceptions<a class="headerlink" href="#exceptions" title="Link to this heading">¶</a></h2>', '', optional=True)
+    postProcessReplace(path, '<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>', '', optional=True)
+    # add periods
+    rgx = re.compile(r'<dd>(.*?[^\.\?])</p>', re.DOTALL)
+    postProcessReplace(path, rgx, r'<dd>\1.</p>', useRe=True, optional=True)
     
 
 subFiles = srss.strToList('''
@@ -100,7 +115,10 @@ core/m5_batch_util
 core/m6_jslike
 files/m0_files_wrappers
 files/m1_files_listing
-files/m2_files_higher''')
+files/m2_files_higher
+plugins/plugin_fileexts
+plugins/plugin_media
+                          ''')
 for subFile in subFiles:
     print(f'processing {subFile}')
     postProcessSubFile(subFile)

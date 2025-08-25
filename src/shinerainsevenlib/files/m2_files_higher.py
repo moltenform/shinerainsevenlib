@@ -71,7 +71,7 @@ def openUrl(url, filterChars=True):
 def findBinaryOnPath(name):
     """Works like 'which' on linux; finds the path to a binary executable.
     
-    For example, notepad.exe -> c:\\windows\\notepad.exe.
+    For example, notepad.exe -> c:\\windows\\system32\\notepad.exe.
 
     This even knows about .bat and .exe on windows platforms"""
     if _os.path.isabs(name) and _os.path.isfile(name):
@@ -272,7 +272,9 @@ def run(
     """Run a process.
     on some windows IDEs, starting a process visually shows a black window appearing,
     so can pass createNoWindow to prevent this.
-    by default throws if the process fails (return code is nonzero).
+
+    By default throws if the process fails (return code is nonzero).
+    
     returns tuple (returncode, stdout, stderr)"""
 
     if confirmExists:
@@ -381,7 +383,10 @@ def makeShortcut(sourcePath, targetPath):
         _os.symlink(sourcePath, targetPath)
 
 def isSymlink(path):
-    "Confirmed works on Windows"
+    """Is the path a symlink.
+    
+    Confirmed works on Windows (where symlinks are rare but
+    can be created with tools like ``mklink``)"""
     return _os.path.islink(path)
 
 def _checkIfFileCanBeMovedInelegant(f):
@@ -428,11 +433,15 @@ def runRsync(srcDir, destDir, deleteExisting, useRobocopy=False,
     throwOnFailure=True, checkExist=True, binPath=None):
     """Use rsync to copy files between directories.
     
-    On windows, you can use the flag useRobocopy.
+    On Windows, if you do not have rsync, you can use the flag useRobocopy.
     
     Robocopy has separate robocopyExcludeFiles and robocopyExcludeDirs
     parameters because the semantics are different than rsync, e.g.
-    in how they handle glob patterns and relative paths."""
+    in how they handle glob patterns and relative paths.
+    
+    robocopy does many retries on failure, which can appear as hangs,
+    we work around this by proactively checking for problems like locked files
+    in the destination. Setting retries to 0 could mask other problems."""
     # Specifying exclusions is complicated.
     # There's absolute paths, relative paths, glob patterns,
     # and "by name" (should "/XF foo.txt" also exclude "dir/subdir/foo.txt"?)

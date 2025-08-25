@@ -13,8 +13,7 @@ from .plugin_fileexts import *
 #~ from ..core import assertTrue, assertEq, Bucket, jslike
 
 class SrssConfigReader:
-    """
-    Example:
+    """Example:
 
     >>> config = SimpleConfigReader()
     >>> config.setSchemaForSection('main', {'setting1' : [int, 0], 'setting2' : [bool, True], 'setting3' : [str, 'default']})
@@ -32,8 +31,7 @@ class SrssConfigReader:
 
     We don't yet support required fields or required sections.
 
-    Wrapper around ConfigParser that 1) doesn't need a main section 2) validates schema 3) has better defaults.
-    """
+    Wrapper around ConfigParser that 1) doesn't need a main section 2) validates schema 3) has better defaults."""
 
     def __init__(self, autoInsertDefaultSection='main', checkSchema=True, caseSensitive=True):
         self.parsed = Bucket()

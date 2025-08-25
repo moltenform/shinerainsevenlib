@@ -15,8 +15,8 @@ def listDirs(path, *, filenamesOnly=False, recurse=False, **kwargs):
     """Return subdirectories within a directory. Doesn't include the root,
     unless recurse=True.
     
-    Returns iterator of tuples `(f, short)` where `f` is full path
-    and `short` is just the name.
+    Returns iterator of tuples ``(f, short)`` where ``f`` is full path
+    and ``short`` is just the name.
     
     If you pass in filenamesOnly=True, returns iterator of just the names."""
     if recurse:
@@ -33,8 +33,8 @@ def listFiles(path, *, filenamesOnly=False, recurse=False, **kwargs):
 
     For convenience, the results are sorted, regardless of the operating system.
     
-    Returns iterator of tuples `(f, short)` where `f` is full path
-    and `short` is just the filename.
+    Returns iterator of tuples ``(f, short)`` where ``f`` is full path
+    and ``short`` is just the filename.
     
     You can filter extensions by passing something like allowedExts=['png', 'gif']
     
@@ -62,9 +62,11 @@ def _listChildrenUnsorted(path, *, filenamesOnly=False, allowedExts=None,
 # for convenience, on other platforms, sort the results.
 if _sys.platform.startswith('win'):
     exeSuffix = '.exe'
+    "Default extension for executable files, like '.exe' on Windows."
     listChildren = _listChildrenUnsorted
 else:
     exeSuffix = ''
+    "Default extension for executable files, like '.exe' on Windows."
 
     def listChildren(*args, **kwargs):
         return sorted(_listChildrenUnsorted(*args, **kwargs))
@@ -96,8 +98,8 @@ def recurseFiles(
 
     You can provide a fnFilterDirs callback, to skip over certain directories.
     
-    Returns iterator of tuples `(f, short)` where `f` is full path
-    and `short` is just the filename.
+    Returns iterator of tuples ``(f, short)`` where ``f`` is full path
+    and ``short`` is just the filename.
     
     If you pass in filenamesOnly=True, returns iterator of just the filenames."""
     assert isDir(root)
@@ -126,8 +128,8 @@ def recurseDirs(
 
     You can provide a fnFilterDirs callback, to skip over certain directories.
     
-    Returns iterator of tuples `(f, short)` where `f` is full path
-    and `short` is just the name.
+    Returns iterator of tuples ``(f, short)`` where ``f`` is full path
+    and ``short`` is just the name.
     
     If you pass in filenamesOnly=True, returns iterator of just the names.
 
@@ -196,6 +198,7 @@ def recurseFileInfo(
     >>>     print("The size is", str(f.size()))
 
     You can provide a fnFilterDirs to filter out any directories not to traverse into.
+    
     You can provide a fnDirectExceptionsTo to handle errors that occur during iteration-
     for example, upon encountering broken symlinks or accesss-denied errors to just log
     and continue to the next file.
@@ -203,9 +206,13 @@ def recurseFileInfo(
     You can filter extensions by passing something like allowedExts=['png', 'gif']
     
     Other parameters include:
+
     recurse (True|False),
+    
     followSymlinks (True|False),
+    
     includeFiles (True|False),
+    
     includeDirs (True|False),
 
     Does not include root directory."""

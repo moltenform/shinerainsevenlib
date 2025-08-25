@@ -88,7 +88,9 @@ def _processAttributes7z(item):
 
 def getContentsVia7z(archive, verbose, silenceWarnings, pword=None):
     """List contents of the zip, 7z, rar, or other type of archive.
+
     Details are provided about each item: ``Path, Type, Modified,
+    
     CRC, Size, PackedSize, and Raw (raw data about the item)``"""
     assertTrue(files.isFile(archive))
     assertTrue(verbose, 'we only support verbose listing')

@@ -16,20 +16,50 @@ from ..core import (
 )
 
 exists = _os.path.exists
+"Check if a path exists"
+
 join = _os.path.join
+"Join a parent directory to a child path fragment, like ``os.path.join``"
+
 split = _os.path.split
+"Split a path intto two parts: parent directory and name, like ``os.path.split``"
+
 isDir = _os.path.isdir
+"Does the path exist and is it a directory?"
+
 isFile = _os.path.isfile
+"Does the path exist and is it a file?"
+
 getSize = _os.path.getsize
+"Get the size of a file in bytes"
+
 rmDir = _os.rmdir
+"Remove a directory"
+
 chDir = _os.chdir
+"Change the current directory"
+
 sep = _os.path.sep
+"The directory separator, like /"
+
 lineSep = _os.linesep
+"The line separator character for the current operating system"
+
 absPath = _os.path.abspath
+"Convert any path to an absolute path"
+
 rmTree = _shutil.rmtree
+"Remove a directory, even if it contains files"
 
 class TimeUnits(_StrEnum):
-    "Specify milliseconds vs seconds"
+    """When calling a function like getLastModTime, use this enum to specify
+    if you want the results in milliseconds, seconds, or nanoseconds.
+    
+    ``TimeUnits.Milliseconds``
+
+    ``TimeUnits.Seconds``
+
+    ``TimeUnits.Nanoseconds``"""
     Milliseconds = _enum.auto()
     Seconds = _enum.auto()
     Nanoseconds = _enum.auto()
@@ -55,8 +85,7 @@ def getCreatedTime(path, units=TimeUnits.Seconds):
 
 def getExt(s, removeDot=True, onesToPreserve=None):
     """Get extension. removeDot determines whether result is '.jpg' or 'jpg'"
-    onesToPreserve is a list like ['.l.jxl', '.j.jxl']
-    """
+    onesToPreserve is a list like ['.l.jxl', '.j.jxl']"""
     _before, after = splitExt(s, onesToPreserve=onesToPreserve)
     if removeDot and len(after) > 0 and after[0] == '.':
         return after[1:].lower()
@@ -65,9 +94,9 @@ def getExt(s, removeDot=True, onesToPreserve=None):
 
 def splitExt(path, onesToPreserve=None):
     """From /a/b/c.ext1 to '/a/b/c' and '.ext1'
+    
     onesToPreserve is a list like ['.l.jxl', '.j.jxl']
-    , in which case '/a/b/c.l.jxl' will return '/a/b/c' and '.l.jxl'
-    """
+    , in which case '/a/b/c.l.jxl' will return '/a/b/c' and '.l.jxl'"""
     if onesToPreserve:
         for item in onesToPreserve:
             if path.endswith(item):
@@ -82,8 +111,7 @@ def splitExt(path, onesToPreserve=None):
 def getWithDifferentExt(s, extWithDot, onesToPreserve=None):
     """From /a/b/c.ext1 to /a/b/c.ext1
     
-    onesToPreserve is a list like ['.l.jxl', '.j.jxl']
-    """
+    onesToPreserve is a list like ['.l.jxl', '.j.jxl']"""
     name, ext = splitExt(s, onesToPreserve=onesToPreserve)
     _assertTrue(ext, s)
     return name + extWithDot
@@ -168,14 +196,14 @@ def copy(
     (For speed and simplicity, most of the functionality in shinerainsevenlib isn't concerned
     with race-conditions like this, but for copy() and move() we added that capability.)"""
     try:
-        return copyImpl(srcFile, destFile, overwrite=overwrite, 
+        return _copyImpl(srcFile, destFile, overwrite=overwrite, 
                         doTrace=doTrace, keepSameModifiedTime=keepSameModifiedTime, allowDirs=allowDirs,
                         createParent=createParent, traceOnly=traceOnly)
     except Exception:
         print(f"Failed to copy {srcFile} to {destFile}", file=_sys.stderr)
         raise
 
-def copyImpl(
+def _copyImpl(
     srcFile,
     destFile,
     overwrite,
@@ -238,13 +266,13 @@ def move(
     (For speed and simplicity, most of the functionality in shinerainsevenlib isn't concerned
     with race-conditions like this, but for copy() and move() we added that capability.)"""
     try:
-        return moveImpl(srcFile, destFile, overwrite=overwrite, warnBetweenDrives=warnBetweenDrives,
+        return _moveImpl(srcFile, destFile, overwrite=overwrite, warnBetweenDrives=warnBetweenDrives,
                         doTrace=doTrace, allowDirs=allowDirs, createParent=createParent, traceOnly=traceOnly)
     except Exception:
         print(f"Failed to move {srcFile} to {destFile}", file=_sys.stderr)
         raise
 
-def moveImpl(
+def _moveImpl(
     srcFile,
     destFile,
     overwrite,

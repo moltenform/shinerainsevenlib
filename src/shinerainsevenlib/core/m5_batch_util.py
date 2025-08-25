@@ -37,8 +37,7 @@ class SrssLooper:
     
     * value- we'll skip the loop until we see that value come up
     
-    * lambda that returns boolean- we'll skip the loop until the lambda returns True
-    """
+    * lambda that returns boolean- we'll skip the loop until the lambda returns True"""
 
     def __init__(self, listOrLambda):
         self._showPercentages = False
@@ -224,8 +223,7 @@ class CleanupTempFilesOnClose(_contextlib.ExitStack):
     >>>     ...something that might throw
     
     ...when code reaches here, the temp file will be deleted,
-    even if an exception is thrown.
-    """
+    even if an exception is thrown."""
 
     def registerTempFile(self, path):
         "Registers a temp file, we'll delete it soon"

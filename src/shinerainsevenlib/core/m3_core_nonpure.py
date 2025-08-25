@@ -126,7 +126,7 @@ def genUuid(asBase64=False):
 
 class IndependentRNG:
     """Keep a separate random stream that won't get affected by someone else.
-    sometimes you want to set rng state to get a repeatable sequence of numbers back,
+    Sometimes you want to set rng state to get a repeatable sequence of numbers back,
     which would get thrown off by other parts of the program also getting rng values."""
 
     def __init__(self, seed=None):
@@ -150,7 +150,16 @@ def downloadUrl(url, toFile=None, timeout=30, asText=False):
         return resp.content
 
 def startThread(fn, args=None):
-    "Start a thread"
+    """Start a thread
+    
+    >>> import time
+    >>> def fn(name):
+    >>>     print('my name is ' + name)
+    >>>     time.sleep(1)
+    >>>
+    >>> t = startThread(fn, ['Bob'])
+    >>> t.join()    
+    """
     import threading
 
     if args is None:
@@ -224,7 +233,7 @@ def softDeleteFile(path, allowDirs=False, doTrace=False):
     
     Configure behavior by editing shinerainsevenlib.cfg, 
     
-    trashDir='recycleBin' or 'currentDriveDataLocalTrash' or a path"""
+    You can set trashDir to be ``'recycleBin'`` or ``'currentDriveDataLocalTrash'`` or a path"""
     from .. import files
     from .m4_core_ui import warn
 
@@ -283,8 +292,8 @@ def _getTempDirAndCreateIfNeeded(originalPath, preferEphemeral):
     return tempDir
 
 def getSoftTempDir(path='', preferEphemeral=False):
-    """
-    Get a temporary directory. 
+    """Get a temporary directory. 
+    
     Defaults to default OS temp directory, can be configured in shinerainsevenlib.cfg
 
     tempDir = (path to dir)
@@ -292,8 +301,7 @@ def getSoftTempDir(path='', preferEphemeral=False):
     tempEphemeralDir = (path to dir)
     
     An ephemeral dir is one where data isn't kept long term. I often configure this
-    to be a RAM drive, which are useful for heavy read/write scenarios.
-    """
+    to be a RAM drive, which are useful for heavy read/write scenarios."""
     ret = _getTempDirAndCreateIfNeeded(path, preferEphemeral)
     assertTrue(_os.path.isdir(ret), 'temp dir not a directory', ret)
     return _os.path.join(ret, path) if path else ret

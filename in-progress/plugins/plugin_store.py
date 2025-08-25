@@ -16,15 +16,20 @@ class SrssStoreBasic:
     SrssStore, a database abstraction layer
 
     1) SrssStore should be about as simple as using pickle/jsonpickle, but scaling better
+    
     2) SrssStore handles common tasks like checking latest schema
+    
     3) SrssStore doesn't have pysqlite's unclear transaction semantics
+    
     4) better than jsonpickle because of indexes and reduced writing-to-disk
+    
     5) SrssStore is an abstract layer that can support different backends
 
     To use SrssStore, make a class that inherits from it, and then override the
-    addSchema() method to create the tables and indexes.
-    Then, you can create an instance of the class, call connectOrCreate(),
-    call txnBegin(), use cursor() to run sql queries, and call txnCommit().
+    ``addSchema()`` method to create the tables and indexes.
+    
+    Then, you can create an instance of the class, call ``connectOrCreate()``,
+    call ``txnBegin()``, use ``cursor()`` to run sql queries, and call ``txnCommit()``.
     """
 
     conn = None
@@ -144,9 +149,9 @@ class SrssStore(SrssStoreBasic):
     This class provides more helpers in addition to the helpers in SrssStoreBasic.
 
     To use SrssStore, make a class that inherits from it, and then override the
-    getFieldNamesAndAttributes() method to specify the tables and indexes.
-    Then, you can create an instance of the class, call connectOrCreate(),
-    call txnBegin(), use cursor() to run sql queries, and call txnCommit()."""
+    ``getFieldNamesAndAttributes()`` method to specify the tables and indexes.
+    Then, you can create an instance of the class, call ``connectOrCreate()``,
+    call ``txnBegin()``, use ``cursor()`` to run sql queries, and call ``txnCommit()``."""
     def __init__(self, dbpath=None, flags=None, autoConnect=True):
         assertTrue(srss.isPy3OrNewer, 'Python 3 required')
         super().__init__()
@@ -160,6 +165,7 @@ class SrssStore(SrssStoreBasic):
     def getFieldNamesAndAttributes(self):
         """Rather than manually running sql queries to create the tables and indexes,
         you can override this method and specify the tables and indexes in this method.
+        
         For example,
         >>> return {'tblName': {'fld1': {'initprops': 'not null'}, 'fld2': {'index': True}, 'fld3': {}}}
         """
@@ -207,7 +213,7 @@ class SrssStore(SrssStoreBasic):
                     )
 
     def insert(self, record_data, table=None):
-        # record_data is a dict from field names to values
+        "Insert row into the database. ``record_data`` is a dict from field names to values."
         table = table or self.default_tbl
         s = 'INSERT INTO ' + self._check(table) + ' ('
         flds = [self._check(fld) for fld in record_data]
@@ -218,7 +224,7 @@ class SrssStore(SrssStoreBasic):
         return cursor.execute(s, vals)
 
     def delete(self, conditions, table=None):
-        # conditions is a dict from field names to values
+        "Delete row(s) in the database. ``conditions`` is a dict from field names to values."
         table = table or self.default_tbl
         s = 'DELETE FROM ' + self._check(table) + ' WHERE '
         conditionflds = [self._check(fld) + ' = ?' for fld in conditions]
@@ -228,7 +234,7 @@ class SrssStore(SrssStoreBasic):
         return cursor.execute(s, vals)
 
     def update(self, conditions, updates, table=None):
-        # conditions an updates is a dict from field names to values
+        "Update row(s) in the database. ``updates`` is a dict from field names to values."
         updateflds = [self._check(fld) + ' = ?' for fld in updates]
         conditionflds = [self._check(fld) + ' = ?' for fld in conditions]
 
@@ -242,7 +248,7 @@ class SrssStore(SrssStoreBasic):
         return cursor.execute(s, updatevals + conditionvals)
 
     def query(self, conditions, table=None, limit=None):
-        # conditions is a dict from field names to values
+        "Query the database and get list of rows. ``conditions`` is a dict from field names to values."
         table = table or self.default_tbl
         allflds = ', '.join([self._check(fld) for fld in self.schema[table]])
         s = 'SELECT ' + allflds + ' FROM ' + self._check(table) + ' WHERE '
@@ -256,16 +262,17 @@ class SrssStore(SrssStoreBasic):
         if raw_results:
             results = []
             for record in raw_results:
-                results.append(self.tupleToDict(self.schema[table], record))
+                results.append(self._tupleToDict(self.schema[table], record))
             return results
         else:
             return []
 
     def queryOne(self, conditions, table=None):
+        "Query the database and return first row. ``conditions`` is a dict from field names to values."
         results = self.query(conditions, table, limit=1)
         return results[0] if results else None
 
-    def tupleToDict(self, tableSchema, tpl):
+    def _tupleToDict(self, tableSchema, tpl):
         assertEq(len(tpl), len(tableSchema), 'different lengths')
         fldnames = (fld for fld in tableSchema)
         return dict(zip(fldnames, tpl))
@@ -283,5 +290,7 @@ class SrssStore(SrssStoreBasic):
         return s
 
 class SrssStoreException(Exception):
+    "For exceptions in the ``store`` layer. Errors in lower layers will result in apsw exceptions."
     def __str__(self):
         return 'SrssStoreException: ' + Exception.__str__(self)
+

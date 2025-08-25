@@ -149,9 +149,11 @@ class SimpleTimer:
         print('%04f second(s)' % self.check())
 
 class EnglishDateParserWrapper:
-    """More convenient than directly calling dateparser
-    defaults to month-day-year
-    restrict to English, less possibility of accidentally parsing a non-date string"""
+    """1) More convenient than directly calling dateparser
+    
+    2) defaults to month-day-year
+    
+    3) restrict to English, less possibility of accidentally parsing a non-date string"""
 
     def __init__(self, dateOrder='MDY'):
         import dateparser
@@ -167,8 +169,9 @@ class EnglishDateParserWrapper:
 
     def fromFullWithTimezone(self, s):
         """Able to parse timestamps with a timezone
-        compensate for +0000
-        Wed Nov 07 04:01:10 +0000 2018"""
+        
+        compensates for the '+0000' for cases like
+        ``Wed Nov 07 04:01:10 +0000 2018``"""
         pts = s.split(' ')
         newpts = []
         isTimeZone = ''
@@ -271,7 +274,8 @@ def formatSize(n):
 def runAndCatchException(fn):
     """Can be convenient to not need a try/except structure.
     use like golang,
-    result, err = callFn()"""
+    
+    ``result, err = callFn()``"""
     Result = _collections.namedtuple('Result', ['result', 'err'])
     try:
         result = fn()
@@ -327,9 +331,10 @@ def toValidFilename(pathOrig, dirsepOk=False, maxLen=None):
 
 def stripHtmlTags(s, removeRepeatedWhitespace=True):
     """Remove all html tags.
-    see also: html.escape, html.unescape
-    a (?:) is a non-capturing group"""
+    
+    see also: html.escape, html.unescape"""
 
+    # A (?:) is a non-capturing group
     reTags = _re.compile(r'<[^>]+(?:>|$)', _re.DOTALL)
     s = reTags.sub(' ', s)
     if removeRepeatedWhitespace:
@@ -343,7 +348,7 @@ def stripHtmlTags(s, removeRepeatedWhitespace=True):
 
 def replaceNonAsciiWith(s, replaceWith):
     """Replace non-ascii or control chars.
-    printable is 32-126"""
+    Printable is 32-126"""
     return _re.sub(r'[^\x20-\x7e]', replaceWith, s)
 
 def containsNonAscii(s):

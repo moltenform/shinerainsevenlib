@@ -168,8 +168,11 @@ def setRedirectTraceCalls(fnHook):
 
 def trace(*args, always=False):
     """Similar to print, but
+
     1) distinguish debugging prints vs intentional production prints
+    
     2) can be redirected to fnHook, e.g. for testing
+    
     3) certain terminals throw exceptions if given unicode characters"""
     val = ' '.join(map(getPrintable, args))
     if _gRedirectTraceCalls['fnHook'] and not always:

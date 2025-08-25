@@ -34,6 +34,7 @@ imageExtensions = {
     '.psd': 1,
     '.bmp': 1,
 }
+"File extensions referring to images"
 
 vidExtensions = {
     '.webm': 1,  # section
@@ -71,6 +72,7 @@ vidExtensions = {
     '.3gp': 1,
     '.3g2': 1,
 }
+"File extensions referring to videos"
 
 audExtensions = {
     '.flac': 1,  # section
@@ -128,6 +130,7 @@ audExtensions = {
     '.cda': 1,
     '.8svx': 1,
 }
+"File extensions referring to audio"
 
 archiveExtensions = {
     '.ar': 1,  # section
@@ -229,6 +232,7 @@ archiveExtensions = {
     '.zpaq': 1,
     '.zz': 1,
 }
+"File extensions referring to archives (zip, tar, etc.)"
 
 # based on default_compressed_extensions.txt in Duplicati source code
 alreadyCompressedExt = {
@@ -386,6 +390,7 @@ alreadyCompressedExt = {
     '.avif': 1,
     '.mpo': 1,
 }
+"Formats that are usually already-compressed. Cases like mp4 where a zip would not compress any further."
 
 moreNonTextual = {
     '.com': 1,
@@ -404,6 +409,7 @@ moreNonTextual = {
     '.dat': 1,
     '.wasm': 1,
 }
+"Binary formats that might be compressable."
 
 documentExtensions = {
     '.docx': 1,
@@ -415,6 +421,7 @@ documentExtensions = {
     '.pdf': 1,
     '.ttf': 1,
 }
+"Document formats."
 
 exeExt = {
     '.action': 1,
@@ -466,6 +473,7 @@ exeExt = {
     '.wsf': 1,
     '.wsh': 1,
 }
+"File extensions that refer to executables, includes different operating systems"
 
 warnExt = {
     '.0xe': 1,
@@ -585,12 +593,14 @@ warnExt = {
     '.xys': 1,
     '.zl9': 1,
 }
+"File extensions that are potentially dangerous, such as scripts or macros."
 
 def extensionPossiblyExecutable(s):
     """Returns 'exe' if it looks executable,
+    
     Returns 'warn' if it is a document type that can include embedded scripts,
+    
     Returns False otherwise"""
-
     ext = _files.getExt(s, removeDot=False)
     if ext in exeExt:
         return 'exe'
@@ -649,6 +659,7 @@ mostCommonImageExt = {
     '.heic': 1,
     '.avif': 1,
 }
+"The most common modern image formats"
 
 mostCommonImageExtAlternatives = {
     '.jpeg_large': '.jpg',
@@ -658,6 +669,7 @@ mostCommonImageExtAlternatives = {
     '.tiff': '.tif',
     '.png_large': '.png',
 }
+"Alternate extensions for common image formats"
 
 def removeDotsFromExts(obj):
     "Get a version without leading ."
