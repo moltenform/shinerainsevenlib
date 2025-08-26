@@ -16,7 +16,15 @@ from ..core import (
 )
 
 exists = _os.path.exists
-"Check if a path exists"
+"""Check if a path exists.
+
+>>> from shinerainsevenlib.standard import *
+>>> # (this will import files)
+>>> 
+>>> path = '/path/to/file.jpeg'
+>>> if files.exists(path):
+>>>     print('this file exists.')
+"""
 
 join = _os.path.join
 "Join a parent directory to a child path fragment, like ``os.path.join``"

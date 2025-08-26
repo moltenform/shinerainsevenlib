@@ -12,7 +12,15 @@ def imageTypeFromExtension(path):
     Looks at 10-11 of the most common modern formats, doesn't include
     archaic formats like pict.
     
-    Returns ``None`` if this is not a common image type."""
+    Returns ``None`` if this is not a common image type.
+    
+    >>> from shinerainsevenlib.standard import *
+    >>> # (this will import files and SrssMedia)
+    >>> 
+    >>> path = '/path/to/file.jpeg'
+    >>> if SrssMedia.imageTypeFromExtension(path) == 'jpg':
+    >>>     print('this is a jpg')
+    """
     ext = _files.getExt(path, removeDot=False)
     if ext in _plugin_fileexts.mostCommonImageExtAlternatives:
         ext = _plugin_fileexts.mostCommonImageExtAlternatives[ext]

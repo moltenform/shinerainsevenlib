@@ -34,7 +34,15 @@ imageExtensions = {
     '.psd': 1,
     '.bmp': 1,
 }
-"File extensions referring to images"
+"""File extensions referring to images
+
+>>> from shinerainsevenlib.standard import *
+>>> # (this will import files and SrssFileExts)
+>>> 
+>>> path = '/path/to/file.jpg'
+>>> if files.getExt(path) in SrssFileExts.imageExtensions:
+>>>     print('looks like an image')
+"""
 
 vidExtensions = {
     '.webm': 1,  # section

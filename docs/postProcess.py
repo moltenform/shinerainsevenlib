@@ -48,10 +48,15 @@ r'''
 <h2>Plugins<a class="headerlink" href="#submodulesplugins" title="Link to this heading">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="plugins/plugin_compression/index.html">compression</a></li>
-<li class="toctree-l1"><a class="reference internal" href="plugins/plugin_configreader/index.html">configreader</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plugins/plugin_fileexts/index.html">fileexts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plugins/plugin_media/index.html">media</a></li>
+
+'''
+)
+
+notyet = '''
+<li class="toctree-l1"><a class="reference internal" href="plugins/plugin_configreader/index.html">configreader</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugins/plugin_compression/index.html">compression</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plugins/plugin_store/index.html">store (database utils)</a></li>
 </ul>
 </div>
@@ -62,7 +67,6 @@ r'''
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="files/xxxx/index.html">tool</a></li>
 '''
-)
 
 postProcessReplace('autoapi/shinerainsevenlib/index.html', '<h2>Submodules<a class="headerlink',
                    '<h2>Core<a class="headerlink')
@@ -76,7 +80,6 @@ def postProcessSubFile(pathFragment):
     postProcessReplace(path, rgx, '', useRe=True)
     rgx = re.compile(r'<h1>.*?</h1>', re.DOTALL)
     postProcessReplace(path, rgx, '', useRe=True)
-    #~ re.escape('<span class="pre">shinerainsevenlib.core.m0_text_io.</span>')
     mname = pathFragment.split('/')[1]
     
     if 'core' in pathFragment:
@@ -98,10 +101,10 @@ def postProcessSubFile(pathFragment):
     postProcessReplace(path, f'_m2_core_data_structures.DefaultVal', '(Optional)', optional=True)
     # hide titles
     postProcessReplace(path, '<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>', '', optional=True)
-    #~ postProcessReplace(path, '<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>', '', optional=True)
     postProcessReplace(path, '<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>', '', optional=True)
     postProcessReplace(path, '<h2>Exceptions<a class="headerlink" href="#exceptions" title="Link to this heading">¶</a></h2>', '', optional=True)
     postProcessReplace(path, '<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>', '', optional=True)
+    # leave 'module contents'
     # add periods
     rgx = re.compile(r'<dd>(.*?[^\.\?])</p>', re.DOTALL)
     postProcessReplace(path, rgx, r'<dd>\1.</p>', useRe=True, optional=True)
@@ -126,13 +129,14 @@ for subFile in subFiles:
     postProcessSubFile(subFile)
 
 for f, short in files.recurseFiles('./docs/_build/html'):
+    print(f)
     if short.endswith('.html'):
         if f.replace('\\', '/').endswith('_build/html/index.html'):
             rgx = re.compile(r'(\|.*?Powered by.*?)\|.*?<a href="_sources.*?Page source</a>', re.DOTALL)
-            #~ rgx = re.compile(r'\|\s*?<a href=".*?configuration.rst.txt.*?</a>', re.DOTALL)
             postProcessReplace(f, rgx, r'\1', useRe=True, optional=True)
         else:
             rgx = re.compile(r'\|.*?Powered by.*?Page source</a>', re.DOTALL)
             postProcessReplace(f, rgx, '', useRe=True, optional=True)
+            postProcessReplace(f, '&#169;2025, Ben Fisher.', '&#169;2025, Ben Fisher, LGPLv2.1', optional=True)
 
 

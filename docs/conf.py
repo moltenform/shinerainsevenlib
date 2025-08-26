@@ -44,6 +44,9 @@ def custom_skip(app, what, name, obj, skip, options):
     if ':meta private:' in existingDocString:
         skip = True
     
+    if name == 'shinerainsevenlib.standard':
+        skip = True
+    
     if what == 'attribute':
         # hide all class attributes
         skip = True

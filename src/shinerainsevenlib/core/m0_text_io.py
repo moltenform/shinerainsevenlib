@@ -11,7 +11,18 @@ import collections as _collections
 # region string helpers
 
 def strToList(s, replaceComments=True):
-    "When quickly writing code, get a list of strings, useful for short scripts"
+    """When quickly writing code, get a list of strings, useful for short scripts
+    
+    >>> from shinerainsevenlib.standard import *
+    >>> # (this will import srss)
+    >>> 
+    >>> srss.strToList('''
+    >>>   many
+    >>>   lines
+    >>>   of
+    >>>   text''')
+    ['many', 'lines', 'of', 'text']
+    """
     lines = standardNewlines(s).split('\n')
     if replaceComments:
         lines = [line for line in lines if not line.strip().startswith('#')]
