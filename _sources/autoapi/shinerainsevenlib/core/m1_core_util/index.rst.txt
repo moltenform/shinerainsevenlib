@@ -1,0 +1,259 @@
+shinerainsevenlib.core.m1_core_util
+===================================
+
+.. py:module:: shinerainsevenlib.core.m1_core_util
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   shinerainsevenlib.core.m1_core_util.SimpleTimer
+   shinerainsevenlib.core.m1_core_util.EnglishDateParserWrapper
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   shinerainsevenlib.core.m1_core_util.assertTrue
+   shinerainsevenlib.core.m1_core_util.assertEq
+   shinerainsevenlib.core.m1_core_util.assertWarn
+   shinerainsevenlib.core.m1_core_util.assertWarnEq
+   shinerainsevenlib.core.m1_core_util.assertFloatEq
+   shinerainsevenlib.core.m1_core_util.assertEqArray
+   shinerainsevenlib.core.m1_core_util.assertException
+   shinerainsevenlib.core.m1_core_util.getTraceback
+   shinerainsevenlib.core.m1_core_util.getCurrentException
+   shinerainsevenlib.core.m1_core_util.renderMillisTime
+   shinerainsevenlib.core.m1_core_util.renderMillisTimeStandard
+   shinerainsevenlib.core.m1_core_util.getNowAsMillisTime
+   shinerainsevenlib.core.m1_core_util.replaceMustExist
+   shinerainsevenlib.core.m1_core_util.reSearchWholeWord
+   shinerainsevenlib.core.m1_core_util.reReplaceWholeWord
+   shinerainsevenlib.core.m1_core_util.reReplace
+   shinerainsevenlib.core.m1_core_util.truncateWithEllipsis
+   shinerainsevenlib.core.m1_core_util.formatSize
+   shinerainsevenlib.core.m1_core_util.runAndCatchException
+   shinerainsevenlib.core.m1_core_util.toValidFilename
+   shinerainsevenlib.core.m1_core_util.stripHtmlTags
+   shinerainsevenlib.core.m1_core_util.replaceNonAsciiWith
+   shinerainsevenlib.core.m1_core_util.containsNonAscii
+   shinerainsevenlib.core.m1_core_util.unused
+   shinerainsevenlib.core.m1_core_util.getObjAttributes
+   shinerainsevenlib.core.m1_core_util.getClassNameFromInstance
+   shinerainsevenlib.core.m1_core_util.endsWith
+
+
+Module Contents
+---------------
+
+.. py:function:: assertTrue(condition, *messageArgs)
+
+   Throw if condition is false
+
+
+.. py:function:: assertEq(expected, received, *messageArgs)
+
+   Throw if values are not equal
+
+
+.. py:function:: assertWarn(condition, *messageArgs)
+
+   Show a message to user if condition is false
+
+
+.. py:function:: assertWarnEq(expected, received, *messageArgs)
+
+   Show a message to user if values are not equal
+
+
+.. py:function:: assertFloatEq(expected, received, *messageArgs)
+
+   Throw if values are not very close, use this if comparing floats
+
+
+.. py:function:: assertEqArray(expected, received)
+
+   Throw if arrays are not the same, with a convenient message
+
+
+.. py:function:: assertException(fn, excType, excTypeExpectedString=None, msg='')
+
+   Expect fn to throw
+
+
+.. py:function:: getTraceback(e)
+
+   Get _traceback from an exception
+
+
+.. py:function:: getCurrentException()
+
+   Get current exception
+
+
+.. py:function:: renderMillisTime(millisTime)
+
+   `millistime` is number of milliseconds past epoch (unix _time * 1000)
+
+
+.. py:function:: renderMillisTimeStandard(millisTime)
+
+   `millistime` is number of milliseconds past epoch (unix _time * 1000)
+
+
+.. py:function:: getNowAsMillisTime()
+
+   Gets the number of milliseconds past epoch (unix _time * 1000)
+
+
+.. py:class:: SimpleTimer
+
+   Simple timer to measure elapsed time
+
+
+   .. py:method:: getTime()
+
+      Get current time in seconds
+
+
+
+   .. py:method:: check()
+
+      Get elapsed time in seconds
+
+
+
+   .. py:method:: print()
+
+      Print the elapsed time in seconds
+
+
+
+.. py:class:: EnglishDateParserWrapper(dateOrder='MDY')
+
+   1) More convenient than directly calling dateparser
+
+   2) defaults to month-day-year
+
+   3) restrict to English, less possibility of accidentally parsing a non-date string
+
+
+   .. py:method:: parse(s)
+
+      Parse a string into a datetime object
+
+
+
+   .. py:method:: fromFullWithTimezone(s)
+
+      Able to parse timestamps with a timezone
+
+      compensates for the '+0000' for cases like
+      ``Wed Nov 07 04:01:10 +0000 2018``
+
+
+
+   .. py:method:: getDaysBefore(baseDate, nDaysBefore)
+
+      Subtract n days (simple), return datetime object
+
+
+
+   .. py:method:: getDaysBeforeInMilliseconds(sBaseDate, nDaysBefore)
+
+      Subtract n days (simple), return number of milliseconds past epoch
+
+
+
+   .. py:method:: toUnixMilliseconds(s)
+
+      Conviently go straight from string to the number of milliseconds past epoch
+
+
+
+.. py:function:: replaceMustExist(haystack, needle, replace)
+
+   Replace needle in haystack, fail if needle not in haystack
+
+
+.. py:function:: reSearchWholeWord(haystack, needle)
+
+   Search haystack for needle, return match object
+
+
+.. py:function:: reReplaceWholeWord(haystack, needle, replace)
+
+   Replace needle in haystack with a 'whole word' style search
+
+
+.. py:function:: reReplace(haystack, reNeedle, replace)
+
+   Replace needle in haystack
+
+
+.. py:function:: truncateWithEllipsis(s, maxLength)
+
+   Truncate a string with an ellipsis if it is too long
+
+
+.. py:function:: formatSize(n)
+
+   Format a number of bytes into a human-readable string
+
+
+.. py:function:: runAndCatchException(fn)
+
+   Can be convenient to not need a try/except structure.
+   use like golang,
+
+   ``result, err = callFn()``
+
+
+.. py:function:: toValidFilename(pathOrig, dirsepOk=False, maxLen=None)
+
+   Convert path to a valid filename, especially on Windows where many characters are not allowed
+
+
+.. py:function:: stripHtmlTags(s, removeRepeatedWhitespace=True)
+
+   Remove all html tags.
+
+   see also: html.escape, html.unescape
+
+
+.. py:function:: replaceNonAsciiWith(s, replaceWith)
+
+   Replace non-ascii or control chars.
+   Printable is 32-126
+
+
+.. py:function:: containsNonAscii(s)
+
+   Does string contain non-ascii or control chars?
+   aka does string contain chars outside 32-126
+
+
+.. py:function:: unused(_obj)
+
+   Use this to tell linters the variable is intentionally unused
+
+
+.. py:function:: getObjAttributes(obj)
+
+   Get properties on an object
+
+
+.. py:function:: getClassNameFromInstance(obj)
+
+   Get class name from an instance
+
+
+.. py:function:: endsWith(a, b)
+
+   a endsWith that works with either str or bytes
+
+

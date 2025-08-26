@@ -1,0 +1,139 @@
+shinerainsevenlib.core.m0_text_io
+=================================
+
+.. py:module:: shinerainsevenlib.core.m0_text_io
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   shinerainsevenlib.core.m0_text_io.strToList
+   shinerainsevenlib.core.m0_text_io.strToSet
+   shinerainsevenlib.core.m0_text_io.standardNewlines
+   shinerainsevenlib.core.m0_text_io.longStr
+   shinerainsevenlib.core.m0_text_io.easyToEnterFilepath
+   shinerainsevenlib.core.m0_text_io.parseIntOrFallback
+   shinerainsevenlib.core.m0_text_io.parseFloatOrFallback
+   shinerainsevenlib.core.m0_text_io.clampNumber
+   shinerainsevenlib.core.m0_text_io.compareTwoListsAsSets
+   shinerainsevenlib.core.m0_text_io.expectEqualityTwoListsAsSets
+   shinerainsevenlib.core.m0_text_io.throwIfDuplicates
+   shinerainsevenlib.core.m0_text_io.mergeDict
+   shinerainsevenlib.core.m0_text_io.mergeDictIntoBucket
+   shinerainsevenlib.core.m0_text_io.getPrintable
+   shinerainsevenlib.core.m0_text_io.setRedirectTraceCalls
+   shinerainsevenlib.core.m0_text_io.trace
+   shinerainsevenlib.core.m0_text_io.tracep
+
+
+Module Contents
+---------------
+
+.. py:function:: strToList(s, replaceComments=True)
+
+   When quickly writing code, get a list of strings, useful for short scripts
+
+   >>> from shinerainsevenlib.standard import *
+   >>> # (this will import srss)
+   >>> 
+   >>> srss.strToList('''
+   >>>   many
+   >>>   lines
+   >>>   of
+   >>>   text''')
+   ['many', 'lines', 'of', 'text']
+
+
+.. py:function:: strToSet(s, replaceComments=True)
+
+   When quickly writing code, get a set from a list of strings, useful for short scripts
+
+
+.. py:function:: standardNewlines(s)
+
+   Normalize newlines to \n
+
+
+.. py:function:: longStr(s)
+
+   When quickly writing code, get a string that spans multiple lines.
+
+
+.. py:function:: easyToEnterFilepath(s, checkIfExists=True)
+
+   When writing a quick script, you'll often copy a filepath and paste it in.
+   Sometimes that filepath will have quotes around it, or sometimes there will be newlines.
+   If you use easyToEnterFilepath, it will
+   1) remove quotes and extra whitespace
+   2) confirm that the path exists
+   3) also support commenting out lines with #
+
+
+.. py:function:: parseIntOrFallback(s, fallBack=None)
+
+   Parse as an int, or return None
+
+
+.. py:function:: parseFloatOrFallback(s, fallBack=None)
+
+   Parse as a float, or return None
+
+
+.. py:function:: clampNumber(value, minValue, maxValue)
+
+   If the input is bigger than maxValue, return maxValue, if smaller than minValue, return minValue
+
+
+.. py:function:: compareTwoListsAsSets(l1, l2, transformFn1=None, transformFn2=None)
+
+   Compare two lists of strings
+
+
+.. py:function:: expectEqualityTwoListsAsSets(l1, l2, transformFn1=None, transformFn2=None)
+
+   Display differences between two lists of strings
+
+
+.. py:function:: throwIfDuplicates(l1, transformFn1=None, context='')
+
+   Detect duplicate items in a list
+
+
+.. py:function:: mergeDict(dict1, dict2)
+
+   Merge two dictionaries
+
+
+.. py:function:: mergeDictIntoBucket(bucketConfigs, dictParams, allowNewKeys=False)
+
+   Merge a dictionary into a bucket (see the Bucket class for more)
+
+
+.. py:function:: getPrintable(s, okToIgnore=False)
+
+   From a-with-accent to plain a, get closest visual ascii equivalent
+
+
+.. py:function:: setRedirectTraceCalls(fnHook)
+
+   Redirect trace() calls to a callback function instead
+
+
+.. py:function:: trace(*args, always=False)
+
+   Similar to print, but
+
+   1) distinguish debugging prints vs intentional production prints
+
+   2) can be redirected to fnHook, e.g. for testing
+
+   3) certain terminals throw exceptions if given unicode characters
+
+
+.. py:function:: tracep(*args, always=False)
+
+   Similar to print, but uses pprint to pretty-print
+
+

@@ -1,0 +1,596 @@
+shinerainsevenlib.files
+=======================
+
+.. py:module:: shinerainsevenlib.files
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/shinerainsevenlib/files/m0_files_wrappers/index
+   /autoapi/shinerainsevenlib/files/m1_files_listing/index
+   /autoapi/shinerainsevenlib/files/m2_files_higher/index
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   shinerainsevenlib.files.exeSuffix
+   shinerainsevenlib.files.exists
+   shinerainsevenlib.files.join
+   shinerainsevenlib.files.split
+   shinerainsevenlib.files.isDir
+   shinerainsevenlib.files.isFile
+   shinerainsevenlib.files.getSize
+   shinerainsevenlib.files.rmDir
+   shinerainsevenlib.files.chDir
+   shinerainsevenlib.files.sep
+   shinerainsevenlib.files.lineSep
+   shinerainsevenlib.files.absPath
+   shinerainsevenlib.files.rmTree
+
+
+Exceptions
+----------
+
+.. autoapisummary::
+
+   shinerainsevenlib.files.OSFileRelatedError
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   shinerainsevenlib.files.FileInfoEntryWrapper
+   shinerainsevenlib.files.TimeUnits
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   shinerainsevenlib.files.openDirectoryInExplorer
+   shinerainsevenlib.files.openUrl
+   shinerainsevenlib.files.findBinaryOnPath
+   shinerainsevenlib.files.hasherFromString
+   shinerainsevenlib.files.computeHashBytes
+   shinerainsevenlib.files.computeHash
+   shinerainsevenlib.files.windowsUrlFileGet
+   shinerainsevenlib.files.windowsUrlFileWrite
+   shinerainsevenlib.files.runWithoutWait
+   shinerainsevenlib.files.runWithTimeout
+   shinerainsevenlib.files.run
+   shinerainsevenlib.files.runPskill
+   shinerainsevenlib.files.makeShortcut
+   shinerainsevenlib.files.isSymlink
+   shinerainsevenlib.files.runRsync
+   shinerainsevenlib.files.listDirs
+   shinerainsevenlib.files.listFiles
+   shinerainsevenlib.files.recurseFiles
+   shinerainsevenlib.files.recurseDirs
+   shinerainsevenlib.files.recurseFileInfo
+   shinerainsevenlib.files.listFileInfo
+   shinerainsevenlib.files.getDirectorySizeRecurse
+   shinerainsevenlib.files.getParent
+   shinerainsevenlib.files.getName
+   shinerainsevenlib.files.getCreatedTime
+   shinerainsevenlib.files.getExt
+   shinerainsevenlib.files.splitExt
+   shinerainsevenlib.files.getWithDifferentExt
+   shinerainsevenlib.files.acrossDir
+   shinerainsevenlib.files.delete
+   shinerainsevenlib.files.deleteSure
+   shinerainsevenlib.files.makeDirs
+   shinerainsevenlib.files.ensureEmptyDirectory
+   shinerainsevenlib.files.arePathsSame
+   shinerainsevenlib.files.copy
+   shinerainsevenlib.files.move
+   shinerainsevenlib.files.getLastModTime
+   shinerainsevenlib.files.setLastModTime
+   shinerainsevenlib.files.readAll
+   shinerainsevenlib.files.writeAll
+   shinerainsevenlib.files.isEmptyDir
+   shinerainsevenlib.files.fileContentsEqual
+
+
+Package Contents
+----------------
+
+.. py:function:: openDirectoryInExplorer(path)
+
+   Open directory in operating system, like finder or windows explorer.
+
+
+.. py:function:: openUrl(url, filterChars=True)
+
+   Open a url in the default browser
+
+
+.. py:function:: findBinaryOnPath(name)
+
+   Works like 'which' on linux; finds the path to a binary executable.
+
+   For example, notepad.exe -> c:\windows\system32\notepad.exe.
+
+   This even knows about .bat and .exe on windows platforms
+
+
+.. py:function:: hasherFromString(s)
+
+   Get a hash function from a string. If you've
+   installed xxhash, you can use 'xxhash_32' and 'xxhash_64' here.
+
+
+.. py:function:: computeHashBytes(b, hasher='sha1', buffersize=defaultBufSize)
+
+   Get hash of a bytes object, or a crc32
+
+
+.. py:function:: computeHash(path, hasher='sha1', buffersize=defaultBufSize)
+
+   Get hash of file, or a crc32
+
+
+.. py:function:: windowsUrlFileGet(path)
+
+   Extract the url from a windows .url file
+
+
+.. py:function:: windowsUrlFileWrite(path, url)
+
+   Create a windows .url file
+
+
+.. py:function:: runWithoutWait(listArgs)
+
+   Run process without waiting for completion
+
+
+.. py:function:: runWithTimeout(args, *, shell=False, createNoWindow=True, throwOnFailure=True, captureOutput=True, timeoutSeconds=None, stripText=True, addArgs=None)
+
+   Run a process, with a timeout.
+   on some windows IDEs, starting a process visually shows a black window appearing,
+   so can pass createNoWindow to prevent this.
+   returns tuple (returncode, stdout, stderr)
+
+
+.. py:function:: run(listArgs, *, shell=False, createNoWindow=True, throwOnFailure=RuntimeError, stripText=True, captureOutput=True, silenceOutput=False, wait=True, confirmExists=False)
+
+   Run a process.
+   on some windows IDEs, starting a process visually shows a black window appearing,
+   so can pass createNoWindow to prevent this.
+
+   By default throws if the process fails (return code is nonzero).
+
+   returns tuple (returncode, stdout, stderr)
+
+
+.. py:function:: runPskill(processName, pathToPskill='pskill')
+
+   Use pskill to terminate a process. processName like notepad.exe.
+
+
+.. py:function:: makeShortcut(sourcePath, targetPath)
+
+   Create a symlink (or .lnk shortcut on Windows)
+
+
+.. py:function:: isSymlink(path)
+
+   Is the path a symlink.
+
+   Confirmed works on Windows (where symlinks are rare but
+   can be created with tools like ``mklink``)
+
+
+.. py:function:: runRsync(srcDir, destDir, deleteExisting, useRobocopy=False, robocopyExcludeFiles=None, robocopyExcludeDirs=None, excludeRelative=None, excludeWithName=None, throwOnFailure=True, checkExist=True, binPath=None)
+
+   Use rsync to copy files between directories.
+
+   On Windows, if you do not have rsync, you can use the flag useRobocopy.
+
+   Robocopy has separate robocopyExcludeFiles and robocopyExcludeDirs
+   parameters because the semantics are different than rsync, e.g.
+   in how they handle glob patterns and relative paths.
+
+   robocopy does many retries on failure, which can appear as hangs,
+   we work around this by proactively checking for problems like locked files
+   in the destination. Setting retries to 0 could mask other problems.
+
+
+.. py:function:: listDirs(path, *, filenamesOnly=False, recurse=False, **kwargs)
+
+   Return subdirectories within a directory. Doesn't include the root,
+   unless recurse=True.
+
+   Returns iterator of tuples ``(f, short)`` where ``f`` is full path
+   and ``short`` is just the name.
+
+   If you pass in filenamesOnly=True, returns iterator of just the names.
+
+
+.. py:function:: listFiles(path, *, filenamesOnly=False, recurse=False, **kwargs)
+
+   Return files within a directory,
+
+   For convenience, the results are sorted, regardless of the operating system.
+
+   Returns iterator of tuples ``(f, short)`` where ``f`` is full path
+   and ``short`` is just the filename.
+
+   You can filter extensions by passing something like allowedExts=['png', 'gif']
+
+   If you pass in filenamesOnly=True, returns iterator of just the filenames.
+
+
+.. py:data:: exeSuffix
+   :value: '.exe'
+
+
+   Default extension for executable files, like '.exe' on Windows.
+
+
+.. py:function:: recurseFiles(root, *, filenamesOnly=False, allowedExts=None, fnFilterDirs=None, includeFiles=True, includeDirs=False, topDown=True, followSymlinks=False)
+
+   Return files within a directory (recursively).
+
+   You can filter extensions by passing something like allowedExts=['png', 'gif']
+
+   You can provide a fnFilterDirs callback, to skip over certain directories.
+
+   Returns iterator of tuples ``(f, short)`` where ``f`` is full path
+   and ``short`` is just the filename.
+
+   If you pass in filenamesOnly=True, returns iterator of just the filenames.
+
+
+.. py:function:: recurseDirs(root, *, filenamesOnly=False, fnFilterDirs=None, topDown=True, followSymlinks=False)
+
+   Return directories within a directory (recursively).
+
+   You can provide a fnFilterDirs callback, to skip over certain directories.
+
+   Returns iterator of tuples ``(f, short)`` where ``f`` is full path
+   and ``short`` is just the name.
+
+   If you pass in filenamesOnly=True, returns iterator of just the names.
+
+   Includes the root directory.
+
+
+.. py:class:: FileInfoEntryWrapper(obj)
+
+   When you call recurseFileInfo, the results are instances of this class.
+
+
+   .. py:method:: isDir(*args)
+
+      Is this a directory?
+
+
+
+   .. py:method:: isFile(*args)
+
+      Is this a file?
+
+
+
+   .. py:method:: short()
+
+      The short name aka leaf of the file
+
+
+
+   .. py:method:: size()
+
+      The size of the file, in bytes
+
+
+
+   .. py:method:: mtime()
+
+      The modified time of the file, in unix seconds
+
+
+
+   .. py:method:: getLastModTime(units=TimeUnits.Seconds)
+
+      The last-modified time, in units that you specify
+
+
+
+.. py:function:: recurseFileInfo(root, allowedExts=None, **kwargs)
+
+   Convenient interface to python 3's file iterator.
+   On Windows this can be very fast because calls to get file properties like size
+   don't require an extra system call.
+
+   >>> for f in recurseFileInfo('/path/to/files'):
+   >>>     print("For the file", f.path)
+   >>>     print("The size is", str(f.size()))
+
+   You can provide a fnFilterDirs to filter out any directories not to traverse into.
+
+   You can provide a fnDirectExceptionsTo to handle errors that occur during iteration-
+   for example, upon encountering broken symlinks or accesss-denied errors to just log
+   and continue to the next file.
+
+   You can filter extensions by passing something like allowedExts=['png', 'gif']
+
+   Other parameters include:
+
+   recurse (True|False),
+
+   followSymlinks (True|False),
+
+   includeFiles (True|False),
+
+   includeDirs (True|False),
+
+   Does not include root directory.
+
+
+.. py:function:: listFileInfo(root, *, recurse=False, followSymlinks=False, includeFiles=True, includeDirs=False)
+
+   Like recurseFileInfo, but does not recurse.
+
+
+.. py:function:: getDirectorySizeRecurse(dirPath, *, followSymlinks=False, fnFilterDirs=None, fnDirectExceptionsTo=None)
+
+   Calculate the total size of a directory
+
+
+.. py:data:: exists
+
+   Check if a path exists.
+
+   >>> from shinerainsevenlib.standard import *
+   >>> # (this will import files)
+   >>> 
+   >>> path = '/path/to/file.jpeg'
+   >>> if files.exists(path):
+   >>>     print('this file exists.')
+
+
+.. py:data:: join
+
+   Join a parent directory to a child path fragment, like ``os.path.join``
+
+
+.. py:data:: split
+
+   Split a path intto two parts: parent directory and name, like ``os.path.split``
+
+
+.. py:data:: isDir
+
+   Does the path exist and is it a directory?
+
+
+.. py:data:: isFile
+
+   Does the path exist and is it a file?
+
+
+.. py:data:: getSize
+
+   Get the size of a file in bytes
+
+
+.. py:data:: rmDir
+
+   Remove a directory
+
+
+.. py:data:: chDir
+
+   Change the current directory
+
+
+.. py:data:: sep
+   :value: '/'
+
+
+   The directory separator, like /
+
+
+.. py:data:: lineSep
+   :value: Multiline-String
+
+   .. raw:: html
+
+      <details><summary>Show Value</summary>
+
+   .. code-block:: python
+
+      """
+      """
+
+   .. raw:: html
+
+      </details>
+
+
+
+   The line separator character for the current operating system
+
+
+.. py:data:: absPath
+
+   Convert any path to an absolute path
+
+
+.. py:data:: rmTree
+
+   Remove a directory, even if it contains files
+
+
+.. py:class:: TimeUnits
+
+   Bases: :py:obj:`enum.StrEnum`
+
+
+   When calling a function like getLastModTime, use this enum to specify
+   if you want the results in milliseconds, seconds, or nanoseconds.
+
+   ``TimeUnits.Milliseconds``
+
+   ``TimeUnits.Seconds``
+
+   ``TimeUnits.Nanoseconds``
+
+
+.. py:function:: getParent(path)
+
+   From /path/to/file.ext to /path/to
+
+
+.. py:function:: getName(path)
+
+   From /path/to/file.ext to file.ext
+
+
+.. py:function:: getCreatedTime(path, units=TimeUnits.Seconds)
+
+   The created time of the file
+
+
+.. py:function:: getExt(s, removeDot=True, onesToPreserve=None)
+
+   Get extension. removeDot determines whether result is '.jpg' or 'jpg'"
+   onesToPreserve is a list like ['.l.jxl', '.j.jxl']
+
+
+.. py:function:: splitExt(path, onesToPreserve=None)
+
+   From /a/b/c.ext1 to '/a/b/c' and '.ext1'
+
+   onesToPreserve is a list like ['.l.jxl', '.j.jxl']
+   , in which case '/a/b/c.l.jxl' will return '/a/b/c' and '.l.jxl'
+
+
+.. py:function:: getWithDifferentExt(s, extWithDot, onesToPreserve=None)
+
+   From /a/b/c.ext1 to /a/b/c.ext1
+
+   onesToPreserve is a list like ['.l.jxl', '.j.jxl']
+
+
+.. py:function:: acrossDir(path, directoryFrom, directoryTo)
+
+   Get the other version of a path.
+   If path is '/path1/to/file.ext' and directoryFrom is '/path1' and directoryTo is '/path2', then return '/path2/to2/file.ext'
+
+
+.. py:function:: delete(s, doTrace=False)
+
+   Delete a file
+
+
+.. py:function:: deleteSure(s, doTrace=False)
+
+   Delete a file and confirm it is no longer there
+
+
+.. py:function:: makeDirs(s)
+
+   Make dirs, OK if dir already exists. also, creates parent directory(s) if needed.
+
+
+.. py:function:: ensureEmptyDirectory(d)
+
+   Delete all contents, or raise exception if that fails
+
+
+.. py:function:: arePathsSame(path1, path2)
+
+   Check if two paths are the same. For example, a relative path and absolute path to the same file.
+   Also, on Windows, two paths with different casing should be considered to be the same.
+
+
+.. py:function:: copy(srcFile, destFile, overwrite, doTrace=False, keepSameModifiedTime=False, allowDirs=False, createParent=False, traceOnly=False)
+
+   If overwrite is True, always overwrites if destination already exists.
+   if overwrite is False, always raises exception if destination already exists.
+
+   Unlike other copy() implementations, we made the behavior consistent on Windows, Mac, and Linux.
+
+   To be extra-safe, the overwrite=False checks are safe against race-conditions.
+   In the rare case where another process or thread puts a file there exactly at the same time,
+   no data will be overwritten.
+
+   Use `doTrace` or `traceOnly` to print out the paths being copied, for logging/debugging.
+
+   (For speed and simplicity, most of the functionality in shinerainsevenlib isn't concerned
+   with race-conditions like this, but for copy() and move() we added that capability.)
+
+
+.. py:function:: move(srcFile, destFile, overwrite, warnBetweenDrives=False, doTrace=False, allowDirs=False, createParent=False, traceOnly=False)
+
+   If overwrite is True, always overwrites if destination already exists.
+   if overwrite is False, always raises exception if destination already exists.
+
+   Unlike other move() implementations, we made the behavior consistent on Windows, Mac, and Linux.
+
+   To be extra-safe, the overwrite=False checks are safe against race-conditions.
+   In the rare case where another process or thread puts a file there exactly at the same time,
+   no data will be overwritten.
+
+   Use `doTrace` or `traceOnly` to print out the paths being copied, for logging/debugging.
+
+   (For speed and simplicity, most of the functionality in shinerainsevenlib isn't concerned
+   with race-conditions like this, but for copy() and move() we added that capability.)
+
+
+.. py:function:: getLastModTime(path, units=TimeUnits.Seconds)
+
+   Last-modified time
+
+
+.. py:function:: setLastModTime(path, newVal, units=TimeUnits.Seconds)
+
+   Set the last-modified time of a file
+
+
+.. py:function:: readAll(path, mode='r', encoding=None)
+
+   Read entire file into string (mode=='r') or bytes (mode=='rb')
+
+   When reading as text, defaults to utf-8. Not python2 compatible.
+
+
+.. py:function:: writeAll(path, content, mode='w', encoding=None, skipIfSameContent=False, updateTimeIfSameContent=True)
+
+   Write entire file. 
+
+   Common modes are 'w' for writing text and 'wb' for writing bytes.
+
+   When writing text, defaults to utf-8. Not python2 compatible.
+
+
+.. py:function:: isEmptyDir(dirPath)
+
+   Is a directory empty
+
+
+.. py:function:: fileContentsEqual(f1, f2)
+
+   Efficiently tests if the content of two files is the same
+
+
+.. py:exception:: OSFileRelatedError
+
+   Bases: :py:obj:`OSError`
+
+
+   Indicates a file-related exception
+
+

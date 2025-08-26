@@ -1,0 +1,19 @@
+shinerainsevenlib.plugins.tools_this_project.srssSetFilenameOrders
+==================================================================
+
+.. py:module:: shinerainsevenlib.plugins.tools_this_project.srssSetFilenameOrders
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   shinerainsevenlib.plugins.tools_this_project.srssSetFilenameOrders.sourceCode
+
+
+Module Contents
+---------------
+
+.. py:data:: sourceCode
+

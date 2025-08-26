@@ -1,0 +1,114 @@
+shinerainsevenlib.core.m3_core_nonpure
+======================================
+
+.. py:module:: shinerainsevenlib.core.m3_core_nonpure
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   shinerainsevenlib.core.m3_core_nonpure.IndependentRNG
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   shinerainsevenlib.core.m3_core_nonpure.getClipboardText
+   shinerainsevenlib.core.m3_core_nonpure.setClipboardText
+   shinerainsevenlib.core.m3_core_nonpure.DBG
+   shinerainsevenlib.core.m3_core_nonpure.registerDebughook
+   shinerainsevenlib.core.m3_core_nonpure.getRandomString
+   shinerainsevenlib.core.m3_core_nonpure.genUuid
+   shinerainsevenlib.core.m3_core_nonpure.downloadUrl
+   shinerainsevenlib.core.m3_core_nonpure.startThread
+   shinerainsevenlib.core.m3_core_nonpure.softDeleteFile
+   shinerainsevenlib.core.m3_core_nonpure.getSoftTempDir
+
+
+Module Contents
+---------------
+
+.. py:function:: getClipboardText()
+
+   Get clipboard text
+
+
+.. py:function:: setClipboardText(s)
+
+   Set clipboard text
+
+
+.. py:function:: DBG(obj=None)
+
+   Print values of local variables
+
+
+.. py:function:: registerDebughook(b=True)
+
+   Register callback for printing values of local variables
+
+
+.. py:function:: getRandomString(maxVal=1000 * 1000, asHex=False, rng=_random)
+
+   Generate a random string of digits
+
+
+.. py:function:: genUuid(asBase64=False)
+
+   Generate a UUID
+
+
+.. py:class:: IndependentRNG(seed=None)
+
+   Keep a separate random stream that won't get affected by someone else.
+   Sometimes you want to set rng state to get a repeatable sequence of numbers back,
+   which would get thrown off by other parts of the program also getting rng values.
+
+
+.. py:function:: downloadUrl(url, toFile=None, timeout=30, asText=False)
+
+   Download a URL, if toFile is not specified returns the results as a string.
+
+
+.. py:function:: startThread(fn, args=None)
+
+   Start a thread
+
+   >>> import time
+   >>> def fn(name):
+   >>>     print('my name is ' + name)
+   >>>     time.sleep(1)
+   >>>
+   >>> t = startThread(fn, ['Bob'])
+   >>> t.join()    
+
+
+.. py:function:: softDeleteFile(path, allowDirs=False, doTrace=False)
+
+   Delete a file in a recoverable way, either OS Trash or a designated folder.
+
+   Defaults to ~/trash
+
+   Configure behavior by editing shinerainsevenlib.cfg, 
+
+   You can set trashDir to be ``'recycleBin'`` or ``'currentDriveDataLocalTrash'`` or a path
+
+
+.. py:function:: getSoftTempDir(path='', preferEphemeral=False)
+
+   Get a temporary directory. 
+
+   Defaults to default OS temp directory, can be configured in shinerainsevenlib.cfg
+
+   tempDir = (path to dir)
+
+   tempEphemeralDir = (path to dir)
+
+   An ephemeral dir is one where data isn't kept long term. I often configure this
+   to be a RAM drive, which are useful for heavy read/write scenarios.
+
+
