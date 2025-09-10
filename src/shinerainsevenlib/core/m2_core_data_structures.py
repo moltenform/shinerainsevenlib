@@ -355,10 +355,24 @@ class _EnumExampleStr(_StrEnum):
     "Demo using StrEnum"
     first = _enum.auto()
     second = _enum.auto()
-    third = _enum.auto()
+    thirdVal = _enum.auto()
+
+class _EnumExampleStrPascalCase(_StrEnum):
+    "Demo using StrEnum"
+
+    @staticmethod
+    def _generate_next_value_(name, _start, _count, _last_values):
+        return name
+
+    FirstVal = _enum.auto()
+    SecondVal = _enum.auto()
+    ThirdVal = _enum.auto()
 
 assertEq(1, _EnumExampleInt.first.value)
+assertEq(2, _EnumExampleInt.second.value)
 assertEq('first', _EnumExampleStr.first)
+assertEq('thirdval', _EnumExampleStr.thirdVal)
+assertEq('ThirdVal', _EnumExampleStrPascalCase.ThirdVal)
 
 class SentinalIndicatingDefault:
     ":meta private:"

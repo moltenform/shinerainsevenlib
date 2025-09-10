@@ -5,7 +5,7 @@
         {
             "label": "python lint",
             "type": "shell",
-            "command": "python -m pylint ./src",
+            "command": "python ./src/shinerainsevenlib/plugins/tools_this_project/srssPylintWrapper.py ./pyproject.toml ./src",
             "problemMatcher": [],
             "group": {
                 "kind": "build",

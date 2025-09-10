@@ -35,6 +35,7 @@ def _fxTreeImpl():
         fullpath = files.join(basedir, item)
         files.makeDirs(files.getParent(fullpath))
         files.writeAll(fullpath, 'test')
+        
     return basedir
 
 @pytest.fixture()

@@ -134,7 +134,7 @@ def getRawInput(prompt, flushOutput=True):
 # endregion
 # region user messages
 
-def err(*args):
+def raiseErr(*args):
     "Throw an exception"
     s = ' '.join(map(getPrintable, args))
     raise RuntimeError('fatal error\n' + getPrintable(s))
