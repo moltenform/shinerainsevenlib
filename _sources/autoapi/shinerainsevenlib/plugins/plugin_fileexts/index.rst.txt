@@ -1,0 +1,126 @@
+shinerainsevenlib.plugins.plugin_fileexts
+=========================================
+
+.. py:module:: shinerainsevenlib.plugins.plugin_fileexts
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   shinerainsevenlib.plugins.plugin_fileexts.imageExtensions
+   shinerainsevenlib.plugins.plugin_fileexts.vidExtensions
+   shinerainsevenlib.plugins.plugin_fileexts.audExtensions
+   shinerainsevenlib.plugins.plugin_fileexts.archiveExtensions
+   shinerainsevenlib.plugins.plugin_fileexts.alreadyCompressedExt
+   shinerainsevenlib.plugins.plugin_fileexts.moreNonTextual
+   shinerainsevenlib.plugins.plugin_fileexts.documentExtensions
+   shinerainsevenlib.plugins.plugin_fileexts.exeExt
+   shinerainsevenlib.plugins.plugin_fileexts.warnExt
+   shinerainsevenlib.plugins.plugin_fileexts.mostCommonImageExt
+   shinerainsevenlib.plugins.plugin_fileexts.mostCommonImageExtAlternatives
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   shinerainsevenlib.plugins.plugin_fileexts.extensionPossiblyExecutable
+   shinerainsevenlib.plugins.plugin_fileexts.isCompressedTarExtension
+   shinerainsevenlib.plugins.plugin_fileexts.isSingleFileCompressionExtension
+   shinerainsevenlib.plugins.plugin_fileexts.removeDotsFromExts
+
+
+Module Contents
+---------------
+
+.. py:data:: imageExtensions
+
+   File extensions referring to images
+
+   >>> from shinerainsevenlib.standard import *
+   >>> # (this will import files and SrssFileExts)
+   >>> 
+   >>> path = '/path/to/file.jpg'
+   >>> if files.getExt(path) in SrssFileExts.imageExtensions:
+   >>>     print('looks like an image')
+
+
+.. py:data:: vidExtensions
+
+   File extensions referring to videos
+
+
+.. py:data:: audExtensions
+
+   File extensions referring to audio
+
+
+.. py:data:: archiveExtensions
+
+   File extensions referring to archives (zip, tar, etc.)
+
+
+.. py:data:: alreadyCompressedExt
+
+   Formats that are usually already-compressed. Cases like mp4 where a zip would not compress any further.
+
+
+.. py:data:: moreNonTextual
+
+   Binary formats that might be compressable.
+
+
+.. py:data:: documentExtensions
+
+   Document formats.
+
+
+.. py:data:: exeExt
+
+   File extensions that refer to executables, includes different operating systems
+
+
+.. py:data:: warnExt
+
+   File extensions that are potentially dangerous, such as scripts or macros.
+
+
+.. py:function:: extensionPossiblyExecutable(s)
+
+   Returns 'exe' if it looks executable,
+
+   Returns 'warn' if it is a document type that can include embedded scripts,
+
+   Returns False otherwise
+
+
+.. py:function:: isCompressedTarExtension(path)
+
+   Is this a compressed tar archive, like example.tar.gz or example.tgz'
+   Not example.gz which should fall under isSingleFileCompressionExtension() instead
+
+
+.. py:function:: isSingleFileCompressionExtension(path)
+
+   Is this a plain single-file-archive, like example.gz'
+   Not example.tar.gz which should fall under isCompressedTarExtension() instead
+
+
+.. py:data:: mostCommonImageExt
+
+   The most common modern image formats
+
+
+.. py:data:: mostCommonImageExtAlternatives
+
+   Alternate extensions for common image formats
+
+
+.. py:function:: removeDotsFromExts(obj)
+
+   Get a version without leading .
+
+

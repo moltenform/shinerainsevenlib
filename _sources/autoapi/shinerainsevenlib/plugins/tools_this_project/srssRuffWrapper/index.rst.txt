@@ -1,0 +1,19 @@
+shinerainsevenlib.plugins.tools_this_project.srssRuffWrapper
+============================================================
+
+.. py:module:: shinerainsevenlib.plugins.tools_this_project.srssRuffWrapper
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   shinerainsevenlib.plugins.tools_this_project.srssRuffWrapper.main
+
+
+Module Contents
+---------------
+
+.. py:function:: main()
+

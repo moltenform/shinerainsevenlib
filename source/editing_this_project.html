@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Editing This Project &#8212; shinerainsevenlib 1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+    <script src="../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="API Reference" href="../autoapi/index.html" />
+    <link rel="prev" title="Configuration" href="configuration.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="editing-this-project">
+<h1>Editing This Project<a class="headerlink" href="#editing-this-project" title="Link to this heading">¶</a></h1>
+<p>If you open this project in VSCode, there will be some defined tasks and launchers, to make it easy to run tests and attach a debugger.</p>
+<p>To get full features editing this project, do the following:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp gp-VirtualEnv">(in a virtual environment,)</span>
+<span class="go">python -m pip install shinerainsevenlib[dev]</span>
+<span class="go">code .</span>
+<span class="gp gp-VirtualEnv">(now vscode will have the correct context and path.)</span>
+<span class="go">(when you open a .py file, an icon saying something</span>
+<span class="go">like &quot;3.12.3&quot; or &quot;3.13.1&quot; will appear in the lower right of vscode,</span>
+<span class="go">click that icon and confirm that you are in the context</span>
+<span class="go">of the virtual environment.)</span>
+<span class="gp gp-VirtualEnv">(you can go to the Run tab to run tests. breakpoints work.)</span>
+<span class="gp gp-VirtualEnv">(you can hit ctrl+shift+b and run a task like linting.)</span>
+</pre></div>
+</div>
+<p>Features of this project include,</p>
+<ul class="simple">
+<li><p>lint via pylint</p></li>
+<li><p>lint and autoformatting via ruff</p></li>
+<li><p>documentation via sphinx</p></li>
+<li><p>testing via pytest</p></li>
+<li><p>coverage via coverage</p></li>
+<li><p>github actions verify PRs by running tests</p></li>
+<li><p>can publish to pip</p></li>
+</ul>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">shinerainsevenlib</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="example_usage.html">Example Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optional_dependencies.html">Optional Dependencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Editing This Project</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../autoapi/index.html">API Reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="configuration.html" title="previous chapter">Configuration</a></li>
+      <li>Next: <a href="../autoapi/index.html" title="next chapter">API Reference</a></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Ben Fisher, LGPLv2.1
+      
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

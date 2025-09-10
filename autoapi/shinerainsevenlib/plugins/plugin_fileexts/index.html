@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>shinerainsevenlib.plugins.plugin_fileexts &#8212; shinerainsevenlib 1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+    <script src="../../../../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="shinerainsevenlib.plugins.plugin_media" href="../plugin_media/index.html" />
+    <link rel="prev" title="shinerainsevenlib.plugins.plugin_configreader" href="../plugin_configreader/index.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-shinerainsevenlib.plugins.plugin_fileexts">
+<span id="shinerainsevenlib-plugins-plugin-fileexts"></span>
+<section id="attributes">
+
+
+</section>
+<section id="functions">
+
+
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<br/><br/><br/><dl class="py data">
+<dt class="sig sig-object py" id="shinerainsevenlib.plugins.plugin_fileexts.imageExtensions">
+<span class="sig-prename descclassname">SrssFileExts.</span><span class="sig-name descname"><span class="pre">imageExtensions</span></span><a class="headerlink" href="#shinerainsevenlib.plugins.plugin_fileexts.imageExtensions" title="Link to this definition">¶</a></dt>
+<dd><p>File extensions referring to images.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">shinerainsevenlib.standard</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># (this will import files and SrssFileExts)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;/path/to/file.jpg&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">if</span> <span class="n">files</span><span class="o">.</span><span class="n">getExt</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="ow">in</span> <span class="n">SrssFileExts</span><span class="o">.</span><span class="n">imageExtensions</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;looks like an image&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<br/><br/><br/><dl class="py data">
+<dt class="sig sig-object py" id="shinerainsevenlib.plugins.plugin_fileexts.vidExtensions">
+<span class="sig-prename descclassname">SrssFileExts.</span><span class="sig-name descname"><span class="pre">vidExtensions</span></span><a class="headerlink" href="#shinerainsevenlib.plugins.plugin_fileexts.vidExtensions" title="Link to this definition">¶</a></dt>
+<dd><p>File extensions referring to videos.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py data">
+<dt class="sig sig-object py" id="shinerainsevenlib.plugins.plugin_fileexts.audExtensions">
+<span class="sig-prename descclassname">SrssFileExts.</span><span class="sig-name descname"><span class="pre">audExtensions</span></span><a class="headerlink" href="#shinerainsevenlib.plugins.plugin_fileexts.audExtensions" title="Link to this definition">¶</a></dt>
+<dd><p>File extensions referring to audio.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py data">
+<dt class="sig sig-object py" id="shinerainsevenlib.plugins.plugin_fileexts.archiveExtensions">
+<span class="sig-prename descclassname">SrssFileExts.</span><span class="sig-name descname"><span class="pre">archiveExtensions</span></span><a class="headerlink" href="#shinerainsevenlib.plugins.plugin_fileexts.archiveExtensions" title="Link to this definition">¶</a></dt>
+<dd><p>File extensions referring to archives (zip, tar, etc.).</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py data">
+<dt class="sig sig-object py" id="shinerainsevenlib.plugins.plugin_fileexts.alreadyCompressedExt">
+<span class="sig-prename descclassname">SrssFileExts.</span><span class="sig-name descname"><span class="pre">alreadyCompressedExt</span></span><a class="headerlink" href="#shinerainsevenlib.plugins.plugin_fileexts.alreadyCompressedExt" title="Link to this definition">¶</a></dt>
+<dd><p>Formats that are usually already-compressed. Cases like mp4 where a zip would not compress any further.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py data">
+<dt class="sig sig-object py" id="shinerainsevenlib.plugins.plugin_fileexts.moreNonTextual">
+<span class="sig-prename descclassname">SrssFileExts.</span><span class="sig-name descname"><span class="pre">moreNonTextual</span></span><a class="headerlink" href="#shinerainsevenlib.plugins.plugin_fileexts.moreNonTextual" title="Link to this definition">¶</a></dt>
+<dd><p>Binary formats that might be compressable.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py data">
+<dt class="sig sig-object py" id="shinerainsevenlib.plugins.plugin_fileexts.documentExtensions">
+<span class="sig-prename descclassname">SrssFileExts.</span><span class="sig-name descname"><span class="pre">documentExtensions</span></span><a class="headerlink" href="#shinerainsevenlib.plugins.plugin_fileexts.documentExtensions" title="Link to this definition">¶</a></dt>
+<dd><p>Document formats.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py data">
+<dt class="sig sig-object py" id="shinerainsevenlib.plugins.plugin_fileexts.exeExt">
+<span class="sig-prename descclassname">SrssFileExts.</span><span class="sig-name descname"><span class="pre">exeExt</span></span><a class="headerlink" href="#shinerainsevenlib.plugins.plugin_fileexts.exeExt" title="Link to this definition">¶</a></dt>
+<dd><p>File extensions that refer to executables, includes different operating systems.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py data">
+<dt class="sig sig-object py" id="shinerainsevenlib.plugins.plugin_fileexts.warnExt">
+<span class="sig-prename descclassname">SrssFileExts.</span><span class="sig-name descname"><span class="pre">warnExt</span></span><a class="headerlink" href="#shinerainsevenlib.plugins.plugin_fileexts.warnExt" title="Link to this definition">¶</a></dt>
+<dd><p>File extensions that are potentially dangerous, such as scripts or macros.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.plugins.plugin_fileexts.extensionPossiblyExecutable">
+<span class="sig-prename descclassname">SrssFileExts.</span><span class="sig-name descname"><span class="pre">extensionPossiblyExecutable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.plugins.plugin_fileexts.extensionPossiblyExecutable" title="Link to this definition">¶</a></dt>
+<dd><p>Returns ‘exe’ if it looks executable,.</p>
+<p>Returns ‘warn’ if it is a document type that can include embedded scripts,</p>
+<p>Returns False otherwise</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.plugins.plugin_fileexts.isCompressedTarExtension">
+<span class="sig-prename descclassname">SrssFileExts.</span><span class="sig-name descname"><span class="pre">isCompressedTarExtension</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.plugins.plugin_fileexts.isCompressedTarExtension" title="Link to this definition">¶</a></dt>
+<dd><p>Is this a compressed tar archive, like example.tar.gz or example.tgz’
+Not example.gz which should fall under isSingleFileCompressionExtension() instead.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.plugins.plugin_fileexts.isSingleFileCompressionExtension">
+<span class="sig-prename descclassname">SrssFileExts.</span><span class="sig-name descname"><span class="pre">isSingleFileCompressionExtension</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.plugins.plugin_fileexts.isSingleFileCompressionExtension" title="Link to this definition">¶</a></dt>
+<dd><p>Is this a plain single-file-archive, like example.gz’
+Not example.tar.gz which should fall under isCompressedTarExtension() instead.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py data">
+<dt class="sig sig-object py" id="shinerainsevenlib.plugins.plugin_fileexts.mostCommonImageExt">
+<span class="sig-prename descclassname">SrssFileExts.</span><span class="sig-name descname"><span class="pre">mostCommonImageExt</span></span><a class="headerlink" href="#shinerainsevenlib.plugins.plugin_fileexts.mostCommonImageExt" title="Link to this definition">¶</a></dt>
+<dd><p>The most common modern image formats.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py data">
+<dt class="sig sig-object py" id="shinerainsevenlib.plugins.plugin_fileexts.mostCommonImageExtAlternatives">
+<span class="sig-prename descclassname">SrssFileExts.</span><span class="sig-name descname"><span class="pre">mostCommonImageExtAlternatives</span></span><a class="headerlink" href="#shinerainsevenlib.plugins.plugin_fileexts.mostCommonImageExtAlternatives" title="Link to this definition">¶</a></dt>
+<dd><p>Alternate extensions for common image formats.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.plugins.plugin_fileexts.removeDotsFromExts">
+<span class="sig-prename descclassname">SrssFileExts.</span><span class="sig-name descname"><span class="pre">removeDotsFromExts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.plugins.plugin_fileexts.removeDotsFromExts" title="Link to this definition">¶</a></dt>
+<dd><p>Get a version without leading .</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">shinerainsevenlib</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/example_usage.html">Example Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/optional_dependencies.html">Optional Dependencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/editing_this_project.html">Editing This Project</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">shinerainsevenlib</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">API Reference</a><ul>
+  <li><a href="../../index.html">shinerainsevenlib</a><ul>
+  <li><a href="../index.html">shinerainsevenlib.plugins</a><ul>
+      <li>Previous: <a href="../plugin_configreader/index.html" title="previous chapter">shinerainsevenlib.plugins.plugin_configreader</a></li>
+      <li>Next: <a href="../plugin_media/index.html" title="next chapter">shinerainsevenlib.plugins.plugin_media</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Ben Fisher, LGPLv2.1
+      
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

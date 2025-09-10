@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>shinerainsevenlib.plugins.plugin_configreader &#8212; shinerainsevenlib 1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+    <script src="../../../../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="shinerainsevenlib.plugins.plugin_fileexts" href="../plugin_fileexts/index.html" />
+    <link rel="prev" title="shinerainsevenlib.plugins" href="../index.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-shinerainsevenlib.plugins.plugin_configreader">
+<span id="shinerainsevenlib-plugins-plugin-configreader"></span><h1>shinerainsevenlib.plugins.plugin_configreader<a class="headerlink" href="#module-shinerainsevenlib.plugins.plugin_configreader" title="Link to this heading">¶</a></h1>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.plugins.plugin_configreader.myPath" title="shinerainsevenlib.plugins.plugin_configreader.myPath"><code class="xref py py-obj docutils literal notranslate"><span class="pre">myPath</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.plugins.plugin_configreader.SrssConfigReader" title="shinerainsevenlib.plugins.plugin_configreader.SrssConfigReader"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SrssConfigReader</span></code></a></p></td>
+<td><p>Example:</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Link to this heading">¶</a></h2>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.plugins.plugin_configreader.getSrssConfigLocation" title="shinerainsevenlib.plugins.plugin_configreader.getSrssConfigLocation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getSrssConfigLocation</span></code></a>()</p></td>
+<td><p>Internal helper for finding where shinerainsevenlib's own cfgs are</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#shinerainsevenlib.plugins.plugin_configreader.getSsrsInternalPrefs" title="shinerainsevenlib.plugins.plugin_configreader.getSsrsInternalPrefs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getSsrsInternalPrefs</span></code></a>()</p></td>
+<td><p>Internal helper for getting shinerainsevenlib's own cfgs</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#shinerainsevenlib.plugins.plugin_configreader.getExecutablePathFromPrefs" title="shinerainsevenlib.plugins.plugin_configreader.getExecutablePathFromPrefs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getExecutablePathFromPrefs</span></code></a>(name, throwIfNotFound[, ...])</p></td>
+<td><p>We let people configure by putting paths to external executables in the cfg file,</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="shinerainsevenlib.plugins.plugin_configreader.SrssConfigReader">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.plugins.plugin_configreader.</span></span><span class="sig-name descname"><span class="pre">SrssConfigReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">autoInsertDefaultSection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'main'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">checkSchema</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">caseSensitive</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.plugins.plugin_configreader.SrssConfigReader" title="Link to this definition">¶</a></dt>
+<dd><p>Example:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">config</span> <span class="o">=</span> <span class="n">SimpleConfigReader</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">config</span><span class="o">.</span><span class="n">setSchemaForSection</span><span class="p">(</span><span class="s1">&#39;main&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;setting1&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;setting2&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span> <span class="s1">&#39;setting3&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s1">&#39;default&#39;</span><span class="p">]})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">config</span><span class="o">.</span><span class="n">setSchemaForSection</span><span class="p">(</span><span class="s1">&#39;customSection*&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;path*&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">]})</span>
+</pre></div>
+</div>
+<p>example config:
+&gt;&gt;&gt; # comment
+&gt;&gt;&gt; ; comment
+&gt;&gt;&gt; key=value
+&gt;&gt;&gt; spaces in keys=allowed
+&gt;&gt;&gt; spaces in values=allowed as well
+&gt;&gt;&gt; emptystring=
+&gt;&gt;&gt; example=a multi-line
+&gt;&gt;&gt;     string that continues across strings</p>
+<p>We don’t yet support required fields or required sections.</p>
+<p>Wrapper around ConfigParser that 1) doesn’t need a main section 2) validates schema 3) has better defaults.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.plugins.plugin_configreader.SrssConfigReader.setSchemaForSection">
+<span class="sig-name descname"><span class="pre">setSchemaForSection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sectionName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">schemaData</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.plugins.plugin_configreader.SrssConfigReader.setSchemaForSection" title="Link to this definition">¶</a></dt>
+<dd><p>Provide a schema for a section, so that type-checking can be performed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.plugins.plugin_configreader.SrssConfigReader.setVal">
+<span class="sig-name descname"><span class="pre">setVal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.plugins.plugin_configreader.SrssConfigReader.setVal" title="Link to this definition">¶</a></dt>
+<dd><p>Set a value in a section.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.plugins.plugin_configreader.SrssConfigReader.getValOrNone">
+<span class="sig-name descname"><span class="pre">getValOrNone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">section</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.plugins.plugin_configreader.SrssConfigReader.getValOrNone" title="Link to this definition">¶</a></dt>
+<dd><p>Get a value in a section.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.plugins.plugin_configreader.SrssConfigReader.checkSchemaCol">
+<span class="sig-name descname"><span class="pre">checkSchemaCol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sectionName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.plugins.plugin_configreader.SrssConfigReader.checkSchemaCol" title="Link to this definition">¶</a></dt>
+<dd><p>Ensure value is of correct type</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.plugins.plugin_configreader.SrssConfigReader.interpretValue">
+<span class="sig-name descname"><span class="pre">interpretValue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.plugins.plugin_configreader.SrssConfigReader.interpretValue" title="Link to this definition">¶</a></dt>
+<dd><p>Get a value, and convert to the correct type. For example ‘yes’ gets read as True</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.plugins.plugin_configreader.SrssConfigReader.parse">
+<span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.plugins.plugin_configreader.SrssConfigReader.parse" title="Link to this definition">¶</a></dt>
+<dd><p>Load a file, and check validity against schema.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.plugins.plugin_configreader.SrssConfigReader.parseText">
+<span class="sig-name descname"><span class="pre">parseText</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.plugins.plugin_configreader.SrssConfigReader.parseText" title="Link to this definition">¶</a></dt>
+<dd><p>Load cfg from a string, and check validity against schema.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.plugins.plugin_configreader.SrssConfigReader.findKeyForPath">
+<span class="sig-name descname"><span class="pre">findKeyForPath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sectionName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'main'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.plugins.plugin_configreader.SrssConfigReader.findKeyForPath" title="Link to this definition">¶</a></dt>
+<dd><p>Helper method finding the longest match,
+that starts with the prefix. See tests.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.plugins.plugin_configreader.SrssConfigReader.findKeyByLongestMatch">
+<span class="sig-name descname"><span class="pre">findKeyByLongestMatch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sectionName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'main'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.plugins.plugin_configreader.SrssConfigReader.findKeyByLongestMatch" title="Link to this definition">¶</a></dt>
+<dd><p>Helper method finding the longest match:
+Find the column that starts with the prefix and
+matches as much of <cite>s</cite> as possible. See tests.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="shinerainsevenlib.plugins.plugin_configreader.SrssConfigReader.strToBool">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">strToBool</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.plugins.plugin_configreader.SrssConfigReader.strToBool" title="Link to this definition">¶</a></dt>
+<dd><p>Interpret string as a boolean, for example ‘yes’ gets read as True</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="shinerainsevenlib.plugins.plugin_configreader.myPath">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.plugins.plugin_configreader.</span></span><span class="sig-name descname"><span class="pre">myPath</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">b'.'</span></em><a class="headerlink" href="#shinerainsevenlib.plugins.plugin_configreader.myPath" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.plugins.plugin_configreader.getSrssConfigLocation">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.plugins.plugin_configreader.</span></span><span class="sig-name descname"><span class="pre">getSrssConfigLocation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.plugins.plugin_configreader.getSrssConfigLocation" title="Link to this definition">¶</a></dt>
+<dd><p>Internal helper for finding where shinerainsevenlib’s own cfgs are</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.plugins.plugin_configreader.getSsrsInternalPrefs">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.plugins.plugin_configreader.</span></span><span class="sig-name descname"><span class="pre">getSsrsInternalPrefs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.plugins.plugin_configreader.getSsrsInternalPrefs" title="Link to this definition">¶</a></dt>
+<dd><p>Internal helper for getting shinerainsevenlib’s own cfgs</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.plugins.plugin_configreader.getExecutablePathFromPrefs">
+<span class="sig-prename descclassname"><span class="pre">shinerainsevenlib.plugins.plugin_configreader.</span></span><span class="sig-name descname"><span class="pre">getExecutablePathFromPrefs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">throwIfNotFound</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fallbacksToTry</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.plugins.plugin_configreader.getExecutablePathFromPrefs" title="Link to this definition">¶</a></dt>
+<dd><p>We let people configure by putting paths to external executables in the cfg file,</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">shinerainsevenlib</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/example_usage.html">Example Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/optional_dependencies.html">Optional Dependencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/editing_this_project.html">Editing This Project</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">shinerainsevenlib</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">API Reference</a><ul>
+  <li><a href="../../index.html">shinerainsevenlib</a><ul>
+  <li><a href="../index.html">shinerainsevenlib.plugins</a><ul>
+      <li>Previous: <a href="../index.html" title="previous chapter">shinerainsevenlib.plugins</a></li>
+      <li>Next: <a href="../plugin_fileexts/index.html" title="next chapter">shinerainsevenlib.plugins.plugin_fileexts</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Ben Fisher, LGPLv2.1
+      
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>shinerainsevenlib.core.m6_jslike &#8212; shinerainsevenlib 1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+    <script src="../../../../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="shinerainsevenlib.files" href="../../files/index.html" />
+    <link rel="prev" title="shinerainsevenlib.core.m5_batch_util" href="../m5_batch_util/index.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-shinerainsevenlib.core.m6_jslike">
+<span id="shinerainsevenlib-core-m6-jslike"></span>
+<section id="functions">
+
+
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m6_jslike.concat">
+<span class="sig-prename descclassname">srss.</span><span class="sig-name descname"><span class="pre">concat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ar1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ar2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m6_jslike.concat" title="Link to this definition">¶</a></dt>
+<dd><p>Like extend, but operates on a copy.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m6_jslike.every">
+<span class="sig-prename descclassname">srss.</span><span class="sig-name descname"><span class="pre">every</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fn</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m6_jslike.every" title="Link to this definition">¶</a></dt>
+<dd><p>Return true if the condition holds for all items, will exit early.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m6_jslike.some">
+<span class="sig-prename descclassname">srss.</span><span class="sig-name descname"><span class="pre">some</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fn</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m6_jslike.some" title="Link to this definition">¶</a></dt>
+<dd><p>Return true if fn called on any element returns true, exits early.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m6_jslike.filter">
+<span class="sig-prename descclassname">srss.</span><span class="sig-name descname"><span class="pre">filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fn</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m6_jslike.filter" title="Link to this definition">¶</a></dt>
+<dd><p>Return a list with items where the condition holds.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m6_jslike.find">
+<span class="sig-prename descclassname">srss.</span><span class="sig-name descname"><span class="pre">find</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fn</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m6_jslike.find" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the value in a list where fn returns true, or None.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m6_jslike.findIndex">
+<span class="sig-prename descclassname">srss.</span><span class="sig-name descname"><span class="pre">findIndex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fn</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m6_jslike.findIndex" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the position in a list where fn returns true, or None.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m6_jslike.indexOf">
+<span class="sig-prename descclassname">srss.</span><span class="sig-name descname"><span class="pre">indexOf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valToFind</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m6_jslike.indexOf" title="Link to this definition">¶</a></dt>
+<dd><p>Search for a value and return first position where seen, or -1.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m6_jslike.lastIndexOf">
+<span class="sig-prename descclassname">srss.</span><span class="sig-name descname"><span class="pre">lastIndexOf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valToFind</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m6_jslike.lastIndexOf" title="Link to this definition">¶</a></dt>
+<dd><p>Search for a value and return last position where seen, or -1.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m6_jslike.map">
+<span class="sig-prename descclassname">srss.</span><span class="sig-name descname"><span class="pre">map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fn</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m6_jslike.map" title="Link to this definition">¶</a></dt>
+<dd><p>Return a list with fn called on each item.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m6_jslike.times">
+<span class="sig-prename descclassname">srss.</span><span class="sig-name descname"><span class="pre">times</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fn</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m6_jslike.times" title="Link to this definition">¶</a></dt>
+<dd><p>Return a list with n items, values from calling fn.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m6_jslike.reduce">
+<span class="sig-prename descclassname">srss.</span><span class="sig-name descname"><span class="pre">reduce</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initialVal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(Optional)</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m6_jslike.reduce" title="Link to this definition">¶</a></dt>
+<dd><p>Like JS reduce. Callback should have 2 parameters.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m6_jslike.splice">
+<span class="sig-prename descclassname">srss.</span><span class="sig-name descname"><span class="pre">splice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">insertionPoint</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lenToDelete</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">newText</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m6_jslike.splice" title="Link to this definition">¶</a></dt>
+<dd><p>Like javascript’s splice.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m6_jslike.spliceSpan">
+<span class="sig-prename descclassname">srss.</span><span class="sig-name descname"><span class="pre">spliceSpan</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">span</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">newText</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m6_jslike.spliceSpan" title="Link to this definition">¶</a></dt>
+<dd><p>Provide a span [startIndex, stopIndex] to be replaced with newText.</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">shinerainsevenlib</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/example_usage.html">Example Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/optional_dependencies.html">Optional Dependencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/editing_this_project.html">Editing This Project</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">shinerainsevenlib</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">API Reference</a><ul>
+  <li><a href="../../index.html">shinerainsevenlib</a><ul>
+  <li><a href="../index.html">shinerainsevenlib.core</a><ul>
+      <li>Previous: <a href="../m5_batch_util/index.html" title="previous chapter">shinerainsevenlib.core.m5_batch_util</a></li>
+      <li>Next: <a href="../../files/index.html" title="next chapter">shinerainsevenlib.files</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Ben Fisher, LGPLv2.1
+      
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

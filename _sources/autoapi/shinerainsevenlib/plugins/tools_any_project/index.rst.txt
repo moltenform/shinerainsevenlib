@@ -1,0 +1,19 @@
+shinerainsevenlib.plugins.tools_any_project
+===========================================
+
+.. py:module:: shinerainsevenlib.plugins.tools_any_project
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/shinerainsevenlib/plugins/tools_any_project/addSrcLicense/index
+   /autoapi/shinerainsevenlib/plugins/tools_any_project/lintWrapper/index
+   /autoapi/shinerainsevenlib/plugins/tools_any_project/parseCode/index
+   /autoapi/shinerainsevenlib/plugins/tools_any_project/ruffWrapper/index
+   /autoapi/shinerainsevenlib/plugins/tools_any_project/setFilenameOrders/index
+
+

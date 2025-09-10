@@ -1,0 +1,181 @@
+shinerainsevenlib.files.m1_files_listing
+========================================
+
+.. py:module:: shinerainsevenlib.files.m1_files_listing
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   shinerainsevenlib.files.m1_files_listing.exeSuffix
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   shinerainsevenlib.files.m1_files_listing.FileInfoEntryWrapper
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   shinerainsevenlib.files.m1_files_listing.listDirs
+   shinerainsevenlib.files.m1_files_listing.listFiles
+   shinerainsevenlib.files.m1_files_listing.recurseFiles
+   shinerainsevenlib.files.m1_files_listing.recurseDirs
+   shinerainsevenlib.files.m1_files_listing.recurseFileInfo
+   shinerainsevenlib.files.m1_files_listing.listFileInfo
+   shinerainsevenlib.files.m1_files_listing.getDirectorySizeRecurse
+
+
+Module Contents
+---------------
+
+.. py:function:: listDirs(path, *, filenamesOnly=False, recurse=False, **kwargs)
+
+   Return subdirectories within a directory. Doesn't include the root,
+   unless recurse=True.
+
+   Returns iterator of tuples ``(f, short)`` where ``f`` is full path
+   and ``short`` is just the name.
+
+   If you pass in filenamesOnly=True, returns iterator of just the names.
+
+
+.. py:function:: listFiles(path, *, filenamesOnly=False, recurse=False, **kwargs)
+
+   Return files within a directory,
+
+   For convenience, the results are sorted, regardless of the operating system.
+
+   Returns iterator of tuples ``(f, short)`` where ``f`` is full path
+   and ``short`` is just the filename.
+
+   You can filter extensions by passing something like allowedExts=['png', 'gif']
+
+   If you pass in filenamesOnly=True, returns iterator of just the filenames.
+
+
+.. py:data:: exeSuffix
+   :value: '.exe'
+
+
+   Default extension for executable files, like '.exe' on Windows.
+
+
+.. py:function:: recurseFiles(root, *, filenamesOnly=False, allowedExts=None, fnFilterDirs=None, includeFiles=True, includeDirs=False, topDown=True, followSymlinks=False)
+
+   Return files within a directory (recursively).
+
+   You can filter extensions by passing something like allowedExts=['png', 'gif']
+
+   You can provide a fnFilterDirs callback, to skip over certain directories.
+
+   Returns iterator of tuples ``(f, short)`` where ``f`` is full path
+   and ``short`` is just the filename.
+
+   If you pass in filenamesOnly=True, returns iterator of just the filenames.
+
+
+.. py:function:: recurseDirs(root, *, filenamesOnly=False, fnFilterDirs=None, topDown=True, followSymlinks=False)
+
+   Return directories within a directory (recursively).
+
+   You can provide a fnFilterDirs callback, to skip over certain directories.
+
+   Returns iterator of tuples ``(f, short)`` where ``f`` is full path
+   and ``short`` is just the name.
+
+   If you pass in filenamesOnly=True, returns iterator of just the names.
+
+   Includes the root directory.
+
+
+.. py:class:: FileInfoEntryWrapper(obj)
+
+   When you call recurseFileInfo, the results are instances of this class.
+
+
+   .. py:method:: isDir(*args)
+
+      Is this a directory?
+
+
+
+   .. py:method:: isFile(*args)
+
+      Is this a file?
+
+
+
+   .. py:method:: short()
+
+      The short name aka leaf of the file
+
+
+
+   .. py:method:: size()
+
+      The size of the file, in bytes
+
+
+
+   .. py:method:: mtime()
+
+      The modified time of the file, in unix seconds
+
+
+
+   .. py:method:: getLastModTime(units=TimeUnits.Seconds)
+
+      The last-modified time, in units that you specify
+
+
+
+.. py:function:: recurseFileInfo(root, allowedExts=None, **kwargs)
+
+   Convenient interface to python 3's file iterator.
+   On Windows this can be very fast because calls to get file properties like size
+   don't require an extra system call.
+
+   >>> for f in recurseFileInfo('/path/to/files'):
+   >>>     print("For the file", f.path)
+   >>>     print("The size is", str(f.size()))
+
+   You can provide a fnFilterDirs to filter out any directories not to traverse into.
+
+   You can provide a fnDirectExceptionsTo to handle errors that occur during iteration-
+   for example, upon encountering broken symlinks or accesss-denied errors to just log
+   and continue to the next file.
+
+   You can filter extensions by passing something like allowedExts=['png', 'gif']
+
+   Other parameters include:
+
+   recurse (True|False),
+
+   followSymlinks (True|False),
+
+   includeFiles (True|False),
+
+   includeDirs (True|False),
+
+   Does not include root directory.
+
+
+.. py:function:: listFileInfo(root, *, recurse=False, followSymlinks=False, includeFiles=True, includeDirs=False)
+
+   Like recurseFileInfo, but does not recurse.
+
+
+.. py:function:: getDirectorySizeRecurse(dirPath, *, followSymlinks=False, fnFilterDirs=None, fnDirectExceptionsTo=None)
+
+   Calculate the total size of a directory
+
+

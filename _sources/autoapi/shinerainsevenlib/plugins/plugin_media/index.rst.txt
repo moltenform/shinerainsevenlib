@@ -1,0 +1,59 @@
+shinerainsevenlib.plugins.plugin_media
+======================================
+
+.. py:module:: shinerainsevenlib.plugins.plugin_media
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   shinerainsevenlib.plugins.plugin_media.imageTypeFromExtension
+   shinerainsevenlib.plugins.plugin_media.imageTypeFromContents
+   shinerainsevenlib.plugins.plugin_media.getAudAndVidCodec
+
+
+Module Contents
+---------------
+
+.. py:function:: imageTypeFromExtension(path)
+
+   Gets the image type from a path, like ``jpg``, ``png``, etc.
+   Looks at 10-11 of the most common modern formats, doesn't include
+   archaic formats like pict.
+
+   Returns ``None`` if this is not a common image type.
+
+   >>> from shinerainsevenlib.standard import *
+   >>> # (this will import files and SrssMedia)
+   >>> 
+   >>> path = '/path/to/file.jpeg'
+   >>> if SrssMedia.imageTypeFromExtension(path) == 'jpg':
+   >>>     print('this is a jpg')
+
+
+.. py:function:: imageTypeFromContents(path, treatMpoAsJpg=True)
+
+   Gets the image type like ``jpg``, ``png``, etc.
+
+   Works even if extension is wrong.
+
+   We read tags and can usually differentiate tiff and dng
+
+
+.. py:function:: getAudAndVidCodec(inPath, customFn=None)
+
+   Given a container format, determine the actual encoding of the media.
+   For example, a .mp4 video could internally be x264 or x265,
+   and the audio could be aac or wav.
+
+   >>> formats = getAudAndVidCodec('/path/to/file.mp4')
+   >>> if formats.err:
+   >>>     print('error', formats.err)
+   >>> else:
+   >>>     print('audio format: ', formats.audFormat)
+   >>>     print('video format: ', formats.vidFormat)
+   >>> 
+
+

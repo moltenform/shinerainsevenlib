@@ -1,0 +1,33 @@
+
+
+Editing This Project
+=======================
+
+If you open this project in VSCode, there will be some defined tasks and launchers, to make it easy to run tests and attach a debugger.
+
+To get full features editing this project, do the following:
+
+
+.. code-block:: console
+
+    (in a virtual environment,)
+    python -m pip install shinerainsevenlib[dev]
+    code .
+    (now vscode will have the correct context and path.)
+    (when you open a .py file, an icon saying something 
+    like "3.12.3" or "3.13.1" will appear in the lower right of vscode,
+    click that icon and confirm that you are in the context
+    of the virtual environment.)
+    (you can go to the Run tab to run tests. breakpoints work.)
+    (you can hit ctrl+shift+b and run a task like linting.)
+
+Features of this project include,
+
+* lint via pylint
+* lint and autoformatting via ruff
+* documentation via sphinx
+* testing via pytest
+* coverage via coverage
+* github actions verify PRs by running tests
+* can publish to pip
+

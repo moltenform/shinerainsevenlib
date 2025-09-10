@@ -1,0 +1,317 @@
+shinerainsevenlib.files.m0_files_wrappers
+=========================================
+
+.. py:module:: shinerainsevenlib.files.m0_files_wrappers
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   shinerainsevenlib.files.m0_files_wrappers.exists
+   shinerainsevenlib.files.m0_files_wrappers.join
+   shinerainsevenlib.files.m0_files_wrappers.split
+   shinerainsevenlib.files.m0_files_wrappers.isDir
+   shinerainsevenlib.files.m0_files_wrappers.isFile
+   shinerainsevenlib.files.m0_files_wrappers.getSize
+   shinerainsevenlib.files.m0_files_wrappers.rmDir
+   shinerainsevenlib.files.m0_files_wrappers.chDir
+   shinerainsevenlib.files.m0_files_wrappers.sep
+   shinerainsevenlib.files.m0_files_wrappers.lineSep
+   shinerainsevenlib.files.m0_files_wrappers.absPath
+   shinerainsevenlib.files.m0_files_wrappers.rmTree
+
+
+Exceptions
+----------
+
+.. autoapisummary::
+
+   shinerainsevenlib.files.m0_files_wrappers.OSFileRelatedError
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   shinerainsevenlib.files.m0_files_wrappers.TimeUnits
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   shinerainsevenlib.files.m0_files_wrappers.getParent
+   shinerainsevenlib.files.m0_files_wrappers.getName
+   shinerainsevenlib.files.m0_files_wrappers.getCreatedTime
+   shinerainsevenlib.files.m0_files_wrappers.getExt
+   shinerainsevenlib.files.m0_files_wrappers.splitExt
+   shinerainsevenlib.files.m0_files_wrappers.getWithDifferentExt
+   shinerainsevenlib.files.m0_files_wrappers.acrossDir
+   shinerainsevenlib.files.m0_files_wrappers.delete
+   shinerainsevenlib.files.m0_files_wrappers.deleteSure
+   shinerainsevenlib.files.m0_files_wrappers.makeDirs
+   shinerainsevenlib.files.m0_files_wrappers.ensureEmptyDirectory
+   shinerainsevenlib.files.m0_files_wrappers.arePathsSame
+   shinerainsevenlib.files.m0_files_wrappers.copy
+   shinerainsevenlib.files.m0_files_wrappers.move
+   shinerainsevenlib.files.m0_files_wrappers.getLastModTime
+   shinerainsevenlib.files.m0_files_wrappers.setLastModTime
+   shinerainsevenlib.files.m0_files_wrappers.readAll
+   shinerainsevenlib.files.m0_files_wrappers.writeAll
+   shinerainsevenlib.files.m0_files_wrappers.isEmptyDir
+   shinerainsevenlib.files.m0_files_wrappers.fileContentsEqual
+
+
+Module Contents
+---------------
+
+.. py:data:: exists
+
+   Check if a path exists.
+
+   >>> from shinerainsevenlib.standard import *
+   >>> # (this will import files)
+   >>> 
+   >>> path = '/path/to/file.jpeg'
+   >>> if files.exists(path):
+   >>>     print('this file exists.')
+
+
+.. py:data:: join
+
+   Join a parent directory to a child path fragment, like ``os.path.join``
+
+
+.. py:data:: split
+
+   Split a path intto two parts: parent directory and name, like ``os.path.split``
+
+
+.. py:data:: isDir
+
+   Does the path exist and is it a directory?
+
+
+.. py:data:: isFile
+
+   Does the path exist and is it a file?
+
+
+.. py:data:: getSize
+
+   Get the size of a file in bytes
+
+
+.. py:data:: rmDir
+
+   Remove a directory
+
+
+.. py:data:: chDir
+
+   Change the current directory
+
+
+.. py:data:: sep
+   :value: '/'
+
+
+   The directory separator, like /
+
+
+.. py:data:: lineSep
+   :value: Multiline-String
+
+   .. raw:: html
+
+      <details><summary>Show Value</summary>
+
+   .. code-block:: python
+
+      """
+      """
+
+   .. raw:: html
+
+      </details>
+
+
+
+   The line separator character for the current operating system
+
+
+.. py:data:: absPath
+
+   Convert any path to an absolute path
+
+
+.. py:data:: rmTree
+
+   Remove a directory, even if it contains files
+
+
+.. py:class:: TimeUnits
+
+   Bases: :py:obj:`enum.StrEnum`
+
+
+   When calling a function like getLastModTime, use this enum to specify
+   if you want the results in milliseconds, seconds, or nanoseconds.
+
+   ``TimeUnits.Milliseconds``
+
+   ``TimeUnits.Seconds``
+
+   ``TimeUnits.Nanoseconds``
+
+
+.. py:function:: getParent(path)
+
+   From /path/to/file.ext to /path/to
+
+
+.. py:function:: getName(path)
+
+   From /path/to/file.ext to file.ext
+
+
+.. py:function:: getCreatedTime(path, units=TimeUnits.Seconds)
+
+   The created time of the file
+
+
+.. py:function:: getExt(s, removeDot=True, onesToPreserve=None)
+
+   Get extension. removeDot determines whether result is '.jpg' or 'jpg'"
+   onesToPreserve is a list like ['.l.jxl', '.j.jxl']
+
+
+.. py:function:: splitExt(path, onesToPreserve=None)
+
+   From /a/b/c.ext1 to '/a/b/c' and '.ext1'
+
+   onesToPreserve is a list like ['.l.jxl', '.j.jxl']
+   , in which case '/a/b/c.l.jxl' will return '/a/b/c' and '.l.jxl'
+
+
+.. py:function:: getWithDifferentExt(s, extWithDot, onesToPreserve=None)
+
+   From /a/b/c.ext1 to /a/b/c.ext1
+
+   onesToPreserve is a list like ['.l.jxl', '.j.jxl']
+
+
+.. py:function:: acrossDir(path, directoryFrom, directoryTo)
+
+   Get the other version of a path.
+   If path is '/path1/to/file.ext' and directoryFrom is '/path1' and directoryTo is '/path2', then return '/path2/to2/file.ext'
+
+
+.. py:function:: delete(s, doTrace=False)
+
+   Delete a file
+
+
+.. py:function:: deleteSure(s, doTrace=False)
+
+   Delete a file and confirm it is no longer there
+
+
+.. py:function:: makeDirs(s)
+
+   Make dirs, OK if dir already exists. also, creates parent directory(s) if needed.
+
+
+.. py:function:: ensureEmptyDirectory(d)
+
+   Delete all contents, or raise exception if that fails
+
+
+.. py:function:: arePathsSame(path1, path2)
+
+   Check if two paths are the same. For example, a relative path and absolute path to the same file.
+   Also, on Windows, two paths with different casing should be considered to be the same.
+
+
+.. py:function:: copy(srcFile, destFile, overwrite, doTrace=False, keepSameModifiedTime=False, allowDirs=False, createParent=False, traceOnly=False)
+
+   If overwrite is True, always overwrites if destination already exists.
+   if overwrite is False, always raises exception if destination already exists.
+
+   Unlike other copy() implementations, we made the behavior consistent on Windows, Mac, and Linux.
+
+   To be extra-safe, the overwrite=False checks are safe against race-conditions.
+   In the rare case where another process or thread puts a file there exactly at the same time,
+   no data will be overwritten.
+
+   Use `doTrace` or `traceOnly` to print out the paths being copied, for logging/debugging.
+
+   (For speed and simplicity, most of the functionality in shinerainsevenlib isn't concerned
+   with race-conditions like this, but for copy() and move() we added that capability.)
+
+
+.. py:function:: move(srcFile, destFile, overwrite, warnBetweenDrives=False, doTrace=False, allowDirs=False, createParent=False, traceOnly=False)
+
+   If overwrite is True, always overwrites if destination already exists.
+   if overwrite is False, always raises exception if destination already exists.
+
+   Unlike other move() implementations, we made the behavior consistent on Windows, Mac, and Linux.
+
+   To be extra-safe, the overwrite=False checks are safe against race-conditions.
+   In the rare case where another process or thread puts a file there exactly at the same time,
+   no data will be overwritten.
+
+   Use `doTrace` or `traceOnly` to print out the paths being copied, for logging/debugging.
+
+   (For speed and simplicity, most of the functionality in shinerainsevenlib isn't concerned
+   with race-conditions like this, but for copy() and move() we added that capability.)
+
+
+.. py:function:: getLastModTime(path, units=TimeUnits.Seconds)
+
+   Last-modified time
+
+
+.. py:function:: setLastModTime(path, newVal, units=TimeUnits.Seconds)
+
+   Set the last-modified time of a file
+
+
+.. py:function:: readAll(path, mode='r', encoding=None)
+
+   Read entire file into string (mode=='r') or bytes (mode=='rb')
+
+   When reading as text, defaults to utf-8. Not python2 compatible.
+
+
+.. py:function:: writeAll(path, content, mode='w', encoding=None, skipIfSameContent=False, updateTimeIfSameContent=True)
+
+   Write entire file. 
+
+   Common modes are 'w' for writing text and 'wb' for writing bytes.
+
+   When writing text, defaults to utf-8. Not python2 compatible.
+
+
+.. py:function:: isEmptyDir(dirPath)
+
+   Is a directory empty
+
+
+.. py:function:: fileContentsEqual(f1, f2)
+
+   Efficiently tests if the content of two files is the same
+
+
+.. py:exception:: OSFileRelatedError
+
+   Bases: :py:obj:`OSError`
+
+
+   Indicates a file-related exception
+
+

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>shinerainsevenlib.core.m0_text_io &#8212; shinerainsevenlib 1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+    <script src="../../../../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="shinerainsevenlib.core.m1_core_util" href="../m1_core_util/index.html" />
+    <link rel="prev" title="shinerainsevenlib.core" href="../index.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-shinerainsevenlib.core.m0_text_io">
+<span id="shinerainsevenlib-core-m0-text-io"></span>
+<section id="functions">
+
+
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m0_text_io.strToList">
+<span class="sig-prename descclassname">srss.</span><span class="sig-name descname"><span class="pre">strToList</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">replaceComments</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m0_text_io.strToList" title="Link to this definition">¶</a></dt>
+<dd><p>When quickly writing code, get a list of strings, useful for short scripts.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">shinerainsevenlib.standard</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># (this will import srss)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">srss</span><span class="o">.</span><span class="n">strToList</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s1">  many</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s1">  lines</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s1">  of</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s1">  text&#39;&#39;&#39;</span><span class="p">)</span>
+<span class="go">[&#39;many&#39;, &#39;lines&#39;, &#39;of&#39;, &#39;text&#39;]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m0_text_io.strToSet">
+<span class="sig-prename descclassname">srss.</span><span class="sig-name descname"><span class="pre">strToSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">replaceComments</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m0_text_io.strToSet" title="Link to this definition">¶</a></dt>
+<dd><p>When quickly writing code, get a set from a list of strings, useful for short scripts.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m0_text_io.standardNewlines">
+<span class="sig-prename descclassname">srss.</span><span class="sig-name descname"><span class="pre">standardNewlines</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m0_text_io.standardNewlines" title="Link to this definition">¶</a></dt>
+<dd><p>Normalize newlines to n.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m0_text_io.longStr">
+<span class="sig-prename descclassname">srss.</span><span class="sig-name descname"><span class="pre">longStr</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m0_text_io.longStr" title="Link to this definition">¶</a></dt>
+<dd><p>When quickly writing code, get a string that spans multiple lines.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m0_text_io.easyToEnterFilepath">
+<span class="sig-prename descclassname">srss.</span><span class="sig-name descname"><span class="pre">easyToEnterFilepath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">checkIfExists</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m0_text_io.easyToEnterFilepath" title="Link to this definition">¶</a></dt>
+<dd><p>When writing a quick script, you’ll often copy a filepath and paste it in.
+Sometimes that filepath will have quotes around it, or sometimes there will be newlines.
+If you use easyToEnterFilepath, it will
+1) remove quotes and extra whitespace
+2) confirm that the path exists
+3) also support commenting out lines with #.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m0_text_io.parseIntOrFallback">
+<span class="sig-prename descclassname">srss.</span><span class="sig-name descname"><span class="pre">parseIntOrFallback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fallBack</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m0_text_io.parseIntOrFallback" title="Link to this definition">¶</a></dt>
+<dd><p>Parse as an int, or return None.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m0_text_io.parseFloatOrFallback">
+<span class="sig-prename descclassname">srss.</span><span class="sig-name descname"><span class="pre">parseFloatOrFallback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fallBack</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m0_text_io.parseFloatOrFallback" title="Link to this definition">¶</a></dt>
+<dd><p>Parse as a float, or return None.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m0_text_io.clampNumber">
+<span class="sig-prename descclassname">srss.</span><span class="sig-name descname"><span class="pre">clampNumber</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minValue</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxValue</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m0_text_io.clampNumber" title="Link to this definition">¶</a></dt>
+<dd><p>If the input is bigger than maxValue, return maxValue, if smaller than minValue, return minValue.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m0_text_io.compareTwoListsAsSets">
+<span class="sig-prename descclassname">srss.</span><span class="sig-name descname"><span class="pre">compareTwoListsAsSets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">l1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transformFn1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transformFn2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m0_text_io.compareTwoListsAsSets" title="Link to this definition">¶</a></dt>
+<dd><p>Compare two lists of strings.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m0_text_io.expectEqualityTwoListsAsSets">
+<span class="sig-prename descclassname">srss.</span><span class="sig-name descname"><span class="pre">expectEqualityTwoListsAsSets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">l1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">l2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transformFn1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transformFn2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m0_text_io.expectEqualityTwoListsAsSets" title="Link to this definition">¶</a></dt>
+<dd><p>Display differences between two lists of strings.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m0_text_io.throwIfDuplicates">
+<span class="sig-prename descclassname">srss.</span><span class="sig-name descname"><span class="pre">throwIfDuplicates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">l1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transformFn1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m0_text_io.throwIfDuplicates" title="Link to this definition">¶</a></dt>
+<dd><p>Detect duplicate items in a list.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m0_text_io.mergeDict">
+<span class="sig-prename descclassname">srss.</span><span class="sig-name descname"><span class="pre">mergeDict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dict1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dict2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m0_text_io.mergeDict" title="Link to this definition">¶</a></dt>
+<dd><p>Merge two dictionaries.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m0_text_io.mergeDictIntoBucket">
+<span class="sig-prename descclassname">srss.</span><span class="sig-name descname"><span class="pre">mergeDictIntoBucket</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bucketConfigs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dictParams</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowNewKeys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m0_text_io.mergeDictIntoBucket" title="Link to this definition">¶</a></dt>
+<dd><p>Merge a dictionary into a bucket (see the Bucket class for more).</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m0_text_io.getPrintable">
+<span class="sig-prename descclassname">srss.</span><span class="sig-name descname"><span class="pre">getPrintable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">okToIgnore</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m0_text_io.getPrintable" title="Link to this definition">¶</a></dt>
+<dd><p>From a-with-accent to plain a, get closest visual ascii equivalent.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m0_text_io.setRedirectTraceCalls">
+<span class="sig-prename descclassname">srss.</span><span class="sig-name descname"><span class="pre">setRedirectTraceCalls</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fnHook</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m0_text_io.setRedirectTraceCalls" title="Link to this definition">¶</a></dt>
+<dd><p>Redirect trace() calls to a callback function instead.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m0_text_io.trace">
+<span class="sig-prename descclassname">srss.</span><span class="sig-name descname"><span class="pre">trace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">always</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m0_text_io.trace" title="Link to this definition">¶</a></dt>
+<dd><p>Similar to print, but.</p>
+<ol class="arabic simple">
+<li><p>distinguish debugging prints vs intentional production prints</p></li>
+<li><p>can be redirected to fnHook, e.g. for testing</p></li>
+<li><p>certain terminals throw exceptions if given unicode characters</p></li>
+</ol>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.core.m0_text_io.tracep">
+<span class="sig-prename descclassname">srss.</span><span class="sig-name descname"><span class="pre">tracep</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">always</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.core.m0_text_io.tracep" title="Link to this definition">¶</a></dt>
+<dd><p>Similar to print, but uses pprint to pretty-print.</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">shinerainsevenlib</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/example_usage.html">Example Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/optional_dependencies.html">Optional Dependencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/editing_this_project.html">Editing This Project</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">shinerainsevenlib</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">API Reference</a><ul>
+  <li><a href="../../index.html">shinerainsevenlib</a><ul>
+  <li><a href="../index.html">shinerainsevenlib.core</a><ul>
+      <li>Previous: <a href="../index.html" title="previous chapter">shinerainsevenlib.core</a></li>
+      <li>Next: <a href="../m1_core_util/index.html" title="next chapter">shinerainsevenlib.core.m1_core_util</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Ben Fisher, LGPLv2.1
+      
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

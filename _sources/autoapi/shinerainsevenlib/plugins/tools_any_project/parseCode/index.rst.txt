@@ -1,0 +1,22 @@
+shinerainsevenlib.plugins.tools_any_project.parseCode
+=====================================================
+
+.. py:module:: shinerainsevenlib.plugins.tools_any_project.parseCode
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   shinerainsevenlib.plugins.tools_any_project.parseCode.parsePythonModuleIntoListOfFunctionsAndClasses
+   shinerainsevenlib.plugins.tools_any_project.parseCode.getTopLevelConstantsAndImportFroms
+
+
+Module Contents
+---------------
+
+.. py:function:: parsePythonModuleIntoListOfFunctionsAndClasses(contents)
+
+.. py:function:: getTopLevelConstantsAndImportFroms(filename)
+

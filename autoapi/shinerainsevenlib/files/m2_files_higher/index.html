@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>shinerainsevenlib.files.m2_files_higher &#8212; shinerainsevenlib 1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+    <script src="../../../../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="shinerainsevenlib.plugins" href="../../plugins/index.html" />
+    <link rel="prev" title="shinerainsevenlib.files.m1_files_listing" href="../m1_files_listing/index.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-shinerainsevenlib.files.m2_files_higher">
+<span id="shinerainsevenlib-files-m2-files-higher"></span>
+<section id="functions">
+
+
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m2_files_higher.openDirectoryInExplorer">
+<span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">openDirectoryInExplorer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m2_files_higher.openDirectoryInExplorer" title="Link to this definition">¶</a></dt>
+<dd><p>Open directory in operating system, like finder or windows explorer.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m2_files_higher.openUrl">
+<span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">openUrl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filterChars</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m2_files_higher.openUrl" title="Link to this definition">¶</a></dt>
+<dd><p>Open a url in the default browser.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m2_files_higher.findBinaryOnPath">
+<span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">findBinaryOnPath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m2_files_higher.findBinaryOnPath" title="Link to this definition">¶</a></dt>
+<dd><p>Works like ‘which’ on linux; finds the path to a binary executable.</p>
+<p>For example, notepad.exe -&gt; c:windowssystem32notepad.exe.</p>
+<p>This even knows about .bat and .exe on windows platforms.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m2_files_higher.hasherFromString">
+<span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">hasherFromString</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m2_files_higher.hasherFromString" title="Link to this definition">¶</a></dt>
+<dd><p>Get a hash function from a string. If you’ve
+installed xxhash, you can use ‘xxhash_32’ and ‘xxhash_64’ here.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m2_files_higher.computeHashBytes">
+<span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">computeHashBytes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hasher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sha1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buffersize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">defaultBufSize</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m2_files_higher.computeHashBytes" title="Link to this definition">¶</a></dt>
+<dd><p>Get hash of a bytes object, or a crc32.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m2_files_higher.computeHash">
+<span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">computeHash</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hasher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sha1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buffersize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">defaultBufSize</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m2_files_higher.computeHash" title="Link to this definition">¶</a></dt>
+<dd><p>Get hash of file, or a crc32.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m2_files_higher.windowsUrlFileGet">
+<span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">windowsUrlFileGet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m2_files_higher.windowsUrlFileGet" title="Link to this definition">¶</a></dt>
+<dd><p>Extract the url from a windows .url file.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m2_files_higher.windowsUrlFileWrite">
+<span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">windowsUrlFileWrite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">url</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m2_files_higher.windowsUrlFileWrite" title="Link to this definition">¶</a></dt>
+<dd><p>Create a windows .url file.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m2_files_higher.runWithoutWait">
+<span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">runWithoutWait</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">listArgs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m2_files_higher.runWithoutWait" title="Link to this definition">¶</a></dt>
+<dd><p>Run process without waiting for completion.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m2_files_higher.runWithTimeout">
+<span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">runWithTimeout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">shell</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">createNoWindow</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">throwOnFailure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">captureOutput</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeoutSeconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stripText</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">addArgs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m2_files_higher.runWithTimeout" title="Link to this definition">¶</a></dt>
+<dd><p>Run a process, with a timeout.
+on some windows IDEs, starting a process visually shows a black window appearing,
+so can pass createNoWindow to prevent this.
+returns tuple (returncode, stdout, stderr).</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m2_files_higher.run">
+<span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">listArgs</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">shell</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">createNoWindow</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">throwOnFailure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">RuntimeError</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stripText</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">captureOutput</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">silenceOutput</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">confirmExists</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m2_files_higher.run" title="Link to this definition">¶</a></dt>
+<dd><p>Run a process.
+on some windows IDEs, starting a process visually shows a black window appearing,
+so can pass createNoWindow to prevent this.</p>
+<p>By default throws if the process fails (return code is nonzero).</p>
+<p>returns tuple (returncode, stdout, stderr).</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m2_files_higher.runPskill">
+<span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">runPskill</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">processName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pathToPskill</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pskill'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m2_files_higher.runPskill" title="Link to this definition">¶</a></dt>
+<dd><p>Use pskill to terminate a process. processName like notepad.exe.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m2_files_higher.makeShortcut">
+<span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">makeShortcut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sourcePath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targetPath</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m2_files_higher.makeShortcut" title="Link to this definition">¶</a></dt>
+<dd><p>Create a symlink (or .lnk shortcut on Windows).</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m2_files_higher.isSymlink">
+<span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">isSymlink</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m2_files_higher.isSymlink" title="Link to this definition">¶</a></dt>
+<dd><p>Is the path a symlink.</p>
+<p>Confirmed works on Windows (where symlinks are rare but
+can be created with tools like <code class="docutils literal notranslate"><span class="pre">mklink</span></code>).</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m2_files_higher.runRsync">
+<span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">runRsync</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">srcDir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destDir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deleteExisting</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">useRobocopy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">robocopyExcludeFiles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">robocopyExcludeDirs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">excludeRelative</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">excludeWithName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">throwOnFailure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">checkExist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binPath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m2_files_higher.runRsync" title="Link to this definition">¶</a></dt>
+<dd><p>Use rsync to copy files between directories.</p>
+<p>On Windows, if you do not have rsync, you can use the flag useRobocopy.</p>
+<p>Robocopy has separate robocopyExcludeFiles and robocopyExcludeDirs
+parameters because the semantics are different than rsync, e.g.
+in how they handle glob patterns and relative paths.</p>
+<p>robocopy does many retries on failure, which can appear as hangs,
+we work around this by proactively checking for problems like locked files
+in the destination. Setting retries to 0 could mask other problems.</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">shinerainsevenlib</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/example_usage.html">Example Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/optional_dependencies.html">Optional Dependencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/editing_this_project.html">Editing This Project</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">shinerainsevenlib</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">API Reference</a><ul>
+  <li><a href="../../index.html">shinerainsevenlib</a><ul>
+  <li><a href="../index.html">shinerainsevenlib.files</a><ul>
+      <li>Previous: <a href="../m1_files_listing/index.html" title="previous chapter">shinerainsevenlib.files.m1_files_listing</a></li>
+      <li>Next: <a href="../../plugins/index.html" title="next chapter">shinerainsevenlib.plugins</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Ben Fisher, LGPLv2.1
+      
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

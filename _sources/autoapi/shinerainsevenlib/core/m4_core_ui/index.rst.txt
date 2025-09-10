@@ -1,0 +1,152 @@
+shinerainsevenlib.core.m4_core_ui
+=================================
+
+.. py:module:: shinerainsevenlib.core.m4_core_ui
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   shinerainsevenlib.core.m4_core_ui.getInputBool
+   shinerainsevenlib.core.m4_core_ui.getInputYesNoExtended
+   shinerainsevenlib.core.m4_core_ui.getInputInt
+   shinerainsevenlib.core.m4_core_ui.getInputString
+   shinerainsevenlib.core.m4_core_ui.getInputFromChoices
+   shinerainsevenlib.core.m4_core_ui.getRawInput
+   shinerainsevenlib.core.m4_core_ui.raiseErr
+   shinerainsevenlib.core.m4_core_ui.setRedirectAlertCalls
+   shinerainsevenlib.core.m4_core_ui.alert
+   shinerainsevenlib.core.m4_core_ui.warn
+   shinerainsevenlib.core.m4_core_ui.getInputBoolGui
+   shinerainsevenlib.core.m4_core_ui.getInputYesNoCancelGui
+   shinerainsevenlib.core.m4_core_ui.getInputFloatGui
+   shinerainsevenlib.core.m4_core_ui.getInputStringGui
+   shinerainsevenlib.core.m4_core_ui.findUnusedLetter
+   shinerainsevenlib.core.m4_core_ui.getInputFromChoicesGui
+   shinerainsevenlib.core.m4_core_ui.errGui
+   shinerainsevenlib.core.m4_core_ui.alertGui
+   shinerainsevenlib.core.m4_core_ui.warnGui
+   shinerainsevenlib.core.m4_core_ui.getOpenFileGui
+   shinerainsevenlib.core.m4_core_ui.getSaveFileGui
+
+
+Module Contents
+---------------
+
+.. py:function:: getInputBool(prompt, defaultTo=None, flushOutput=True)
+
+   Ask yes or no. Returns True on yes and False on no
+
+
+.. py:function:: getInputYesNoExtended(prompt, addCancel=False, addAlwaysYes=False, addAlwaysNo=False, flushOutput=True)
+
+   Ask yes or no. Returns 'y', 'n', 'Y', 'N', or 'cancel'.
+
+
+.. py:function:: getInputInt(prompt, minVal=None, maxVal=None, defaultTo=None, flushOutput=True)
+
+   Validated to be an integer. Returns None on cancel.
+
+
+.. py:function:: getInputString(prompt, confirmation=True, defaultTo=None, flushOutput=True)
+
+   Ask for a string. If confirmation is True, ask for confirmation before continuing.
+
+
+.. py:function:: getInputFromChoices(prompt, arrChoices, fnOtherCommands=None, otherCommandsContext=None, flushOutput=True, cancelString='0) cancel', zeroBased=False)
+
+   Allows user to choose from a numbered list.
+
+   Return value is the tuple (index, text)
+
+   if user cancels, return value is the tuple (-1, 'Cancel')
+
+
+.. py:function:: getRawInput(prompt, flushOutput=True)
+
+   Ask for input. Returns the input, or None on cancel.
+
+
+.. py:function:: raiseErr(*args)
+
+   Throw an exception
+
+
+.. py:function:: setRedirectAlertCalls(fnHook)
+
+   For testing, you can redirect alert() calls to a callback function instead
+
+
+.. py:function:: alert(*args, flushOutput=True, always=False)
+
+   Show an alert to the user (they can press Enter to continue).
+   can be suppressed for automated tests via gRedirectAlertCalls
+
+
+.. py:function:: warn(*args, flushOutput=True, always=False)
+
+   Show an alert to the user (they can choose if they want to continue).
+   can be suppressed for automated tests via gRedirectAlertCalls
+
+
+.. py:function:: getInputBoolGui(prompt)
+
+   Ask yes or no. Returns True on yes and False on no.
+
+
+.. py:function:: getInputYesNoCancelGui(prompt)
+
+   Ask yes, no, or cancel. Returns the string chosen.
+
+
+.. py:function:: getInputFloatGui(prompt, default=None, minVal=0.0, maxVal=100.0, title=' ')
+
+   Validated to be an float (decimal number). Returns None on cancel.
+
+
+.. py:function:: getInputStringGui(prompt, initialvalue=None, title=' ')
+
+   Returns ``''`` on cancel
+
+
+.. py:function:: findUnusedLetter(dictUsed, newWord)
+
+   Returns the index of the first unused letter in newWord, or None if all letters are used
+
+
+.. py:function:: getInputFromChoicesGui(prompt, arOptions)
+
+   Allows user to choose from a list.
+
+   return value is the tuple (index, text)
+
+   if user cancels, return value is the tuple (-1, 'Cancel')
+
+
+.. py:function:: errGui(*args)
+
+   Display error message in GUI, then throw an exception
+
+
+.. py:function:: alertGui(*args)
+
+   Display message in GUI
+
+
+.. py:function:: warnGui(*args)
+
+   Display warning message in GUI
+
+
+.. py:function:: getOpenFileGui(initialDir=None, types=None, title='Open')
+
+   Specify types in the format ['.png|Png image','.gif|Gif image'] and so on.
+
+
+.. py:function:: getSaveFileGui(initialDir=None, types=None, title='Save As')
+
+   Specify types in the format ['.png|Png image','.gif|Gif image'] and so on.
+
+

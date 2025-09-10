@@ -1,0 +1,19 @@
+shinerainsevenlib.plugins.tools_this_project.srssAddSrcLicense
+==============================================================
+
+.. py:module:: shinerainsevenlib.plugins.tools_this_project.srssAddSrcLicense
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   shinerainsevenlib.plugins.tools_this_project.srssAddSrcLicense.main
+
+
+Module Contents
+---------------
+
+.. py:function:: main()
+

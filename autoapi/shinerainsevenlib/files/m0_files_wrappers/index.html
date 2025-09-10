@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>shinerainsevenlib.files.m0_files_wrappers &#8212; shinerainsevenlib 1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/alabaster.css?v=27fed22d" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+    <script src="../../../../_static/documentation_options.js?v=f2a433a1"></script>
+    <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="shinerainsevenlib.files.m1_files_listing" href="../m1_files_listing/index.html" />
+    <link rel="prev" title="shinerainsevenlib.files" href="../index.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-shinerainsevenlib.files.m0_files_wrappers">
+<span id="shinerainsevenlib-files-m0-files-wrappers"></span>
+<section id="attributes">
+
+
+</section>
+<section id="exceptions">
+
+
+</section>
+<section id="classes">
+
+
+</section>
+<section id="functions">
+
+
+</section>
+<section id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<br/><br/><br/><dl class="py data">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m0_files_wrappers.exists">
+<span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">exists</span></span><a class="headerlink" href="#shinerainsevenlib.files.m0_files_wrappers.exists" title="Link to this definition">¶</a></dt>
+<dd><p>Check if a path exists.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">shinerainsevenlib.standard</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># (this will import files)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;/path/to/file.jpeg&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">if</span> <span class="n">files</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;this file exists.&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<br/><br/><br/><dl class="py data">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m0_files_wrappers.join">
+<span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">join</span></span><a class="headerlink" href="#shinerainsevenlib.files.m0_files_wrappers.join" title="Link to this definition">¶</a></dt>
+<dd><p>Join a parent directory to a child path fragment, like <code class="docutils literal notranslate"><span class="pre">os.path.join</span></code>.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py data">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m0_files_wrappers.split">
+<span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">split</span></span><a class="headerlink" href="#shinerainsevenlib.files.m0_files_wrappers.split" title="Link to this definition">¶</a></dt>
+<dd><p>Split a path intto two parts: parent directory and name, like <code class="docutils literal notranslate"><span class="pre">os.path.split</span></code>.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py data">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m0_files_wrappers.isDir">
+<span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">isDir</span></span><a class="headerlink" href="#shinerainsevenlib.files.m0_files_wrappers.isDir" title="Link to this definition">¶</a></dt>
+<dd><p>Does the path exist and is it a directory?</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py data">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m0_files_wrappers.isFile">
+<span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">isFile</span></span><a class="headerlink" href="#shinerainsevenlib.files.m0_files_wrappers.isFile" title="Link to this definition">¶</a></dt>
+<dd><p>Does the path exist and is it a file?</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py data">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m0_files_wrappers.getSize">
+<span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">getSize</span></span><a class="headerlink" href="#shinerainsevenlib.files.m0_files_wrappers.getSize" title="Link to this definition">¶</a></dt>
+<dd><p>Get the size of a file in bytes.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py data">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m0_files_wrappers.rmDir">
+<span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">rmDir</span></span><a class="headerlink" href="#shinerainsevenlib.files.m0_files_wrappers.rmDir" title="Link to this definition">¶</a></dt>
+<dd><p>Remove a directory.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py data">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m0_files_wrappers.chDir">
+<span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">chDir</span></span><a class="headerlink" href="#shinerainsevenlib.files.m0_files_wrappers.chDir" title="Link to this definition">¶</a></dt>
+<dd><p>Change the current directory.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py data">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m0_files_wrappers.sep">
+<span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">sep</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/'</span></em><a class="headerlink" href="#shinerainsevenlib.files.m0_files_wrappers.sep" title="Link to this definition">¶</a></dt>
+<dd><p>The directory separator, like /.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py data">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m0_files_wrappers.lineSep">
+<span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">lineSep</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">Multiline-String</span></em><a class="headerlink" href="#shinerainsevenlib.files.m0_files_wrappers.lineSep" title="Link to this definition">¶</a></dt>
+<dd><details><summary>Show Value</summary><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</details><p>The line separator character for the current operating system.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py data">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m0_files_wrappers.absPath">
+<span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">absPath</span></span><a class="headerlink" href="#shinerainsevenlib.files.m0_files_wrappers.absPath" title="Link to this definition">¶</a></dt>
+<dd><p>Convert any path to an absolute path.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py data">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m0_files_wrappers.rmTree">
+<span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">rmTree</span></span><a class="headerlink" href="#shinerainsevenlib.files.m0_files_wrappers.rmTree" title="Link to this definition">¶</a></dt>
+<dd><p>Remove a directory, even if it contains files.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py class">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m0_files_wrappers.TimeUnits">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">TimeUnits</span></span><a class="headerlink" href="#shinerainsevenlib.files.m0_files_wrappers.TimeUnits" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">enum.StrEnum</span></code>.</p>
+<p>When calling a function like getLastModTime, use this enum to specify
+if you want the results in milliseconds, seconds, or nanoseconds.</p>
+<p><code class="docutils literal notranslate"><span class="pre">TimeUnits.Milliseconds</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">TimeUnits.Seconds</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">TimeUnits.Nanoseconds</span></code></p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m0_files_wrappers.getParent">
+<span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">getParent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m0_files_wrappers.getParent" title="Link to this definition">¶</a></dt>
+<dd><p>From /path/to/file.ext to /path/to.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m0_files_wrappers.getName">
+<span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">getName</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m0_files_wrappers.getName" title="Link to this definition">¶</a></dt>
+<dd><p>From /path/to/file.ext to file.ext.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m0_files_wrappers.getCreatedTime">
+<span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">getCreatedTime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">TimeUnits.Seconds</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m0_files_wrappers.getCreatedTime" title="Link to this definition">¶</a></dt>
+<dd><p>The created time of the file.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m0_files_wrappers.getExt">
+<span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">getExt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">removeDot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">onesToPreserve</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m0_files_wrappers.getExt" title="Link to this definition">¶</a></dt>
+<dd><p>Get extension. removeDot determines whether result is ‘.jpg’ or ‘jpg’”
+onesToPreserve is a list like [‘.l.jxl’, ‘.j.jxl’].</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m0_files_wrappers.splitExt">
+<span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">splitExt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">onesToPreserve</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m0_files_wrappers.splitExt" title="Link to this definition">¶</a></dt>
+<dd><p>From /a/b/c.ext1 to ‘/a/b/c’ and ‘.ext1’.</p>
+<p>onesToPreserve is a list like [‘.l.jxl’, ‘.j.jxl’]
+, in which case ‘/a/b/c.l.jxl’ will return ‘/a/b/c’ and ‘.l.jxl’</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m0_files_wrappers.getWithDifferentExt">
+<span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">getWithDifferentExt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extWithDot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">onesToPreserve</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m0_files_wrappers.getWithDifferentExt" title="Link to this definition">¶</a></dt>
+<dd><p>From /a/b/c.ext1 to /a/b/c.ext1.</p>
+<p>onesToPreserve is a list like [‘.l.jxl’, ‘.j.jxl’]</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m0_files_wrappers.acrossDir">
+<span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">acrossDir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directoryFrom</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directoryTo</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m0_files_wrappers.acrossDir" title="Link to this definition">¶</a></dt>
+<dd><p>Get the other version of a path.
+If path is ‘/path1/to/file.ext’ and directoryFrom is ‘/path1’ and directoryTo is ‘/path2’, then return ‘/path2/to2/file.ext’.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m0_files_wrappers.delete">
+<span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">doTrace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m0_files_wrappers.delete" title="Link to this definition">¶</a></dt>
+<dd><p>Delete a file.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m0_files_wrappers.deleteSure">
+<span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">deleteSure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">doTrace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m0_files_wrappers.deleteSure" title="Link to this definition">¶</a></dt>
+<dd><p>Delete a file and confirm it is no longer there.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m0_files_wrappers.makeDirs">
+<span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">makeDirs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m0_files_wrappers.makeDirs" title="Link to this definition">¶</a></dt>
+<dd><p>Make dirs, OK if dir already exists. also, creates parent directory(s) if needed.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m0_files_wrappers.ensureEmptyDirectory">
+<span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">ensureEmptyDirectory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m0_files_wrappers.ensureEmptyDirectory" title="Link to this definition">¶</a></dt>
+<dd><p>Delete all contents, or raise exception if that fails.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m0_files_wrappers.arePathsSame">
+<span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">arePathsSame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m0_files_wrappers.arePathsSame" title="Link to this definition">¶</a></dt>
+<dd><p>Check if two paths are the same. For example, a relative path and absolute path to the same file.
+Also, on Windows, two paths with different casing should be considered to be the same.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m0_files_wrappers.copy">
+<span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">srcFile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destFile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">doTrace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keepSameModifiedTime</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowDirs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">createParent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">traceOnly</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m0_files_wrappers.copy" title="Link to this definition">¶</a></dt>
+<dd><p>If overwrite is True, always overwrites if destination already exists.
+if overwrite is False, always raises exception if destination already exists.</p>
+<p>Unlike other copy() implementations, we made the behavior consistent on Windows, Mac, and Linux.</p>
+<p>To be extra-safe, the overwrite=False checks are safe against race-conditions.
+In the rare case where another process or thread puts a file there exactly at the same time,
+no data will be overwritten.</p>
+<p>Use <cite>doTrace</cite> or <cite>traceOnly</cite> to print out the paths being copied, for logging/debugging.</p>
+<p>(For speed and simplicity, most of the functionality in shinerainsevenlib isn’t concerned
+with race-conditions like this, but for copy() and move() we added that capability.).</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m0_files_wrappers.move">
+<span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">move</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">srcFile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destFile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">warnBetweenDrives</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">doTrace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allowDirs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">createParent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">traceOnly</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m0_files_wrappers.move" title="Link to this definition">¶</a></dt>
+<dd><p>If overwrite is True, always overwrites if destination already exists.
+if overwrite is False, always raises exception if destination already exists.</p>
+<p>Unlike other move() implementations, we made the behavior consistent on Windows, Mac, and Linux.</p>
+<p>To be extra-safe, the overwrite=False checks are safe against race-conditions.
+In the rare case where another process or thread puts a file there exactly at the same time,
+no data will be overwritten.</p>
+<p>Use <cite>doTrace</cite> or <cite>traceOnly</cite> to print out the paths being copied, for logging/debugging.</p>
+<p>(For speed and simplicity, most of the functionality in shinerainsevenlib isn’t concerned
+with race-conditions like this, but for copy() and move() we added that capability.).</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m0_files_wrappers.getLastModTime">
+<span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">getLastModTime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">TimeUnits.Seconds</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m0_files_wrappers.getLastModTime" title="Link to this definition">¶</a></dt>
+<dd><p>Last-modified time.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m0_files_wrappers.setLastModTime">
+<span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">setLastModTime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">newVal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">TimeUnits.Seconds</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m0_files_wrappers.setLastModTime" title="Link to this definition">¶</a></dt>
+<dd><p>Set the last-modified time of a file.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m0_files_wrappers.readAll">
+<span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">readAll</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'r'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m0_files_wrappers.readAll" title="Link to this definition">¶</a></dt>
+<dd><p>Read entire file into string (mode==’r’) or bytes (mode==’rb’).</p>
+<p>When reading as text, defaults to utf-8. Not python2 compatible.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m0_files_wrappers.writeAll">
+<span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">writeAll</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">content</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'w'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skipIfSameContent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">updateTimeIfSameContent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m0_files_wrappers.writeAll" title="Link to this definition">¶</a></dt>
+<dd><p>Write entire file.</p>
+<p>Common modes are ‘w’ for writing text and ‘wb’ for writing bytes.</p>
+<p>When writing text, defaults to utf-8. Not python2 compatible.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m0_files_wrappers.isEmptyDir">
+<span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">isEmptyDir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dirPath</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m0_files_wrappers.isEmptyDir" title="Link to this definition">¶</a></dt>
+<dd><p>Is a directory empty.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py function">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m0_files_wrappers.fileContentsEqual">
+<span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">fileContentsEqual</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#shinerainsevenlib.files.m0_files_wrappers.fileContentsEqual" title="Link to this definition">¶</a></dt>
+<dd><p>Efficiently tests if the content of two files is the same.</p>
+</dd></dl>
+
+<br/><br/><br/><dl class="py exception">
+<dt class="sig sig-object py" id="shinerainsevenlib.files.m0_files_wrappers.OSFileRelatedError">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname">files.</span><span class="sig-name descname"><span class="pre">OSFileRelatedError</span></span><a class="headerlink" href="#shinerainsevenlib.files.m0_files_wrappers.OSFileRelatedError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">OSError</span></code>.</p>
+<p>Indicates a file-related exception</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">shinerainsevenlib</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/example_usage.html">Example Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/optional_dependencies.html">Optional Dependencies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../source/editing_this_project.html">Editing This Project</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../../index.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../../index.html">shinerainsevenlib</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">API Reference</a><ul>
+  <li><a href="../../index.html">shinerainsevenlib</a><ul>
+  <li><a href="../index.html">shinerainsevenlib.files</a><ul>
+      <li>Previous: <a href="../index.html" title="previous chapter">shinerainsevenlib.files</a></li>
+      <li>Next: <a href="../m1_files_listing/index.html" title="next chapter">shinerainsevenlib.files.m1_files_listing</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Ben Fisher, LGPLv2.1
+      
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,58 @@
+shinerainsevenlib.plugins.tools_any_project.lintWrapper
+=======================================================
+
+.. py:module:: shinerainsevenlib.plugins.tools_any_project.lintWrapper
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   shinerainsevenlib.plugins.tools_any_project.lintWrapper.verifyCfg
+   shinerainsevenlib.plugins.tools_any_project.lintWrapper.main
+   shinerainsevenlib.plugins.tools_any_project.lintWrapper.mainPylint
+   shinerainsevenlib.plugins.tools_any_project.lintWrapper.mainRufflint
+   shinerainsevenlib.plugins.tools_any_project.lintWrapper.mainFormat
+   shinerainsevenlib.plugins.tools_any_project.lintWrapper.findFileInParentDirs
+   shinerainsevenlib.plugins.tools_any_project.lintWrapper.formatOneLineRuff
+   shinerainsevenlib.plugins.tools_any_project.lintWrapper.formatOneLinePylint
+   shinerainsevenlib.plugins.tools_any_project.lintWrapper.getFromCfgTyped
+   shinerainsevenlib.plugins.tools_any_project.lintWrapper.getSectionFromToml
+   shinerainsevenlib.plugins.tools_any_project.lintWrapper.getBuiltinSpecificIgnores
+   shinerainsevenlib.plugins.tools_any_project.lintWrapper.getIgnoresModern
+   shinerainsevenlib.plugins.tools_any_project.lintWrapper.getIgnoresLegacy
+   shinerainsevenlib.plugins.tools_any_project.lintWrapper.getRecommendedOtherSettings
+
+
+Module Contents
+---------------
+
+.. py:function:: verifyCfg(cfg)
+
+.. py:function:: main(argv)
+
+.. py:function:: mainPylint(argv, thisCfg, tomlCfg, tomlPath)
+
+.. py:function:: mainRufflint(argv, thisCfg, tomlCfg, tomlPath)
+
+.. py:function:: mainFormat(argv, thisCfg, tomlCfg, tomlPath)
+
+.. py:function:: findFileInParentDirs(filename, path='')
+
+.. py:function:: formatOneLineRuff(msg)
+
+.. py:function:: formatOneLinePylint(msg)
+
+.. py:function:: getFromCfgTyped(cfg, key, type)
+
+.. py:function:: getSectionFromToml(cfg, key)
+
+.. py:function:: getBuiltinSpecificIgnores(toolShortName)
+
+.. py:function:: getIgnoresModern(toolShortName)
+
+.. py:function:: getIgnoresLegacy(toolShortName)
+
+.. py:function:: getRecommendedOtherSettings(toolShortName)
+
